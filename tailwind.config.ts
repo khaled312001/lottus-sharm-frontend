@@ -27,6 +27,7 @@ const config: Config = {
           700: '#0d3a3a',
           800: '#0a2828',
           900: '#051818',
+          950: '#020c0c',
         },
         accent: {
           DEFAULT: 'hsl(var(--accent))',

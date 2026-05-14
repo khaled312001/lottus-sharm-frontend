@@ -14,7 +14,8 @@ const LANGS = [
   { code: 'it', label: 'Italiano', flag: '🇮🇹' },
 ] as const;
 
-export function LanguageSwitcher({ transparent = false }: { transparent?: boolean }) {
+export function LanguageSwitcher({ transparent = false, compact = false }: { transparent?: boolean; compact?: boolean }) {
+  void compact;
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
