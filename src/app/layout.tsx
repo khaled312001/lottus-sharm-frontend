@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Cairo } from 'next/font/google';
+import { Cairo, Playfair_Display } from 'next/font/google';
 import './globals.css';
 
 const cairo = Cairo({
@@ -9,15 +9,22 @@ const cairo = Cairo({
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
+});
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: { default: 'Lottus Sharm Tourism', template: '%s | Lottus Sharm' },
-  description: 'Lottus Sharm Tourism — 13+ years organizing trips in Sharm El Sheikh',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://lotussharm.com'),
+  title: { default: 'Lotus Sharm Travel', template: '%s | Lotus Sharm' },
+  description: 'Lotus Sharm Travel — Luxury tourism in Sharm El Sheikh. 13+ years curating unforgettable Egyptian journeys.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={cairo.variable} suppressHydrationWarning>
+    <html className={`${cairo.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body>{children}</body>
     </html>
   );

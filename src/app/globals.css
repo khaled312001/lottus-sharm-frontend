@@ -4,22 +4,30 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 210 30% 12%;
+    /* Lotus Sharm — dark teal + gold luxury palette (from logo) */
+    --background: 38 38% 96%;          /* cream off-white */
+    --foreground: 178 38% 12%;         /* deep teal ink */
     --card: 0 0% 100%;
-    --card-foreground: 210 30% 12%;
-    --primary: 192 91% 36%;
-    --primary-foreground: 0 0% 100%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 210 30% 12%;
-    --muted: 210 16% 96%;
-    --muted-foreground: 210 12% 46%;
-    --border: 210 16% 90%;
-    --input: 210 16% 90%;
-    --ring: 192 91% 36%;
+    --card-foreground: 178 38% 12%;
+    --primary: 178 65% 13%;            /* logo dark teal #0d3a3a */
+    --primary-foreground: 38 38% 96%;
+    --accent: 39 49% 57%;              /* logo gold #c9a86a */
+    --accent-foreground: 178 38% 12%;
+    --muted: 38 28% 92%;
+    --muted-foreground: 178 18% 36%;
+    --border: 38 22% 86%;
+    --input: 38 22% 86%;
+    --ring: 39 49% 57%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --radius: 0.75rem;
+    --radius: 0.5rem;
+    --gold: #c9a86a;
+    --gold-light: #d9bf86;
+    --gold-deep: #a88a52;
+    --teal-deep: #0a2828;
+    --teal: #0d3a3a;
+    --teal-bright: #134949;
+    --cream: #f7f1e3;
   }
 
   * {
@@ -40,15 +48,76 @@
 
 @layer components {
   .gradient-sea {
-    background: linear-gradient(135deg, #0e7490 0%, #06b6d4 100%);
+    background: linear-gradient(135deg, #0a2828 0%, #0d3a3a 50%, #134949 100%);
   }
-  .gradient-sunset {
-    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  .gradient-gold {
+    background: linear-gradient(135deg, #c9a86a 0%, #d9bf86 50%, #a88a52 100%);
+  }
+  .gradient-luxury {
+    background: radial-gradient(ellipse at top right, rgba(201, 168, 106, 0.15), transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(19, 73, 73, 0.3), transparent 60%),
+                linear-gradient(135deg, #0a2828 0%, #0d3a3a 100%);
+  }
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #d9bf86 0%, #c9a86a 50%, #a88a52 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .card-shadow {
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 30px -4px rgba(10, 40, 40, 0.12), 0 2px 6px rgba(10, 40, 40, 0.04);
+  }
+  .card-shadow-gold {
+    box-shadow: 0 8px 30px -4px rgba(201, 168, 106, 0.25);
   }
   .text-balance {
     text-wrap: balance;
   }
+  .glass {
+    backdrop-filter: blur(12px) saturate(180%);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(201, 168, 106, 0.15);
+  }
+  .glass-dark {
+    backdrop-filter: blur(12px) saturate(180%);
+    background: rgba(13, 58, 58, 0.7);
+    border: 1px solid rgba(201, 168, 106, 0.2);
+  }
+  .gold-border-glow {
+    box-shadow: 0 0 0 1px rgba(201, 168, 106, 0.3), 0 0 30px -10px rgba(201, 168, 106, 0.4);
+  }
+  .heading-serif {
+    font-family: var(--font-serif), Georgia, serif;
+    letter-spacing: -0.01em;
+  }
 }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 30px -10px rgba(201, 168, 106, 0.3); }
+  50% { box-shadow: 0 0 50px -5px rgba(201, 168, 106, 0.5); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-float { animation: float-slow 6s ease-in-out infinite; }
+.animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 106, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #f7f1e3; }
+::-webkit-scrollbar-thumb { background: #c9a86a; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #a88a52; }

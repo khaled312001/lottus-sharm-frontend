@@ -1,68 +1,93 @@
+'use client';
+
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
-import { Clock, MapPin, Star } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import type { TripDTO } from '@/types/api';
+import { motion } from 'framer-motion';
+import { Clock, MapPin, Star, ArrowUpRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import type { TripDTO } from '@/types/api';
 
-export function TripCard({ trip, locale }: { trip: TripDTO; locale: string }) {
+export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: string; index?: number }) {
   const t = useTranslations();
   const tr = trip.tr || trip.translations.find((x) => x.locale === 'EN') || trip.translations[0];
   const hours = Math.floor(trip.durationMinutes / 60);
   const price = Number(trip.priceLocalEGP);
   const isAr = locale === 'ar';
-  const hero = trip.heroImage?.mediumUrl || trip.heroImage?.url || trip.gallery[0]?.media?.mediumUrl || '/placeholder.jpg';
+  const hero =
+    trip.heroImage?.mediumUrl ||
+    trip.heroImage?.url ||
+    trip.gallery[0]?.media?.mediumUrl ||
+    trip.gallery[0]?.media?.url ||
+    '/placeholder.jpg';
 
   return (
-    <Link href={`/trips/${trip.slug}`} className="group">
-      <article className="overflow-hidden rounded-2xl bg-white border card-shadow hover:shadow-2xl transition-shadow">
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -8 }}
+    >
+      <Link
+        href={`/trips/${trip.slug}`}
+        className="group block relative overflow-hidden rounded-2xl bg-white card-shadow hover:card-shadow-gold transition-shadow duration-500"
+      >
+        <div className="relative aspect-[4/5] overflow-hidden bg-primary-800">
           <Image
             src={hero}
             alt={tr?.title || ''}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-700"
+            className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
           />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-primary-900 via-primary-900/30 to-transparent opacity-90" />
+
           {trip.isFeatured && (
-            <Badge variant="accent" className="absolute top-3 start-3 shadow">
-              <Star className="h-3 w-3 me-1 fill-current" /> Featured
-            </Badge>
-          )}
-          <div className="absolute bottom-0 inset-x-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-3 start-3 end-3 flex items-center justify-between text-white">
-            <Badge className="bg-white/20 backdrop-blur text-white">
-              {t(`trips.category.${trip.category}`)}
-            </Badge>
-            <div className="text-sm font-bold flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" /> {hours} {t('common.hours')}
+            <div className="absolute top-4 start-4 flex items-center gap-1.5 rounded-full bg-accent/95 backdrop-blur px-3 py-1.5 text-xs font-bold text-primary shadow-lg">
+              <Star className="h-3 w-3 fill-current" />
+              {isAr ? 'مميزة' : 'Featured'}
             </div>
+          )}
+
+          <div className="absolute top-4 end-4 h-10 w-10 rounded-full bg-cream/90 backdrop-blur flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+            <ArrowUpRight className="h-5 w-5 rtl:rotate-90" />
           </div>
-        </div>
-        <div className="p-5">
-          <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-            {tr?.title}
-          </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{tr?.shortDesc}</p>
-          {trip.meetingPoint && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
-              <MapPin className="h-3.5 w-3.5" />
-              <span className="line-clamp-1">{trip.meetingPoint}</span>
+
+          <div className="absolute inset-x-0 bottom-0 p-6 text-cream">
+            <div className="flex items-center gap-2 text-xs mb-2">
+              <span className="px-2.5 py-1 rounded-full bg-cream/15 backdrop-blur border border-cream/20 font-semibold uppercase tracking-wider">
+                {t(`trips.category.${trip.category}`)}
+              </span>
+              <span className="inline-flex items-center gap-1 text-cream/80">
+                <Clock className="h-3 w-3" /> {hours} {t('common.hours')}
+              </span>
             </div>
-          )}
-          <div className="flex items-center justify-between border-t pt-4">
-            <div>
-              <div className="text-[11px] text-muted-foreground">{t('common.from')}</div>
-              <div className="font-bold text-primary text-lg">
-                {isAr ? `${price} ج.م` : `$${Number(trip.priceForeignUSD)}`}
-                <span className="text-xs text-muted-foreground font-normal"> {t('common.perPerson')}</span>
+            <h3 className="font-serif text-2xl font-bold leading-tight mb-2 group-hover:text-accent-300 transition-colors duration-300">
+              {tr?.title}
+            </h3>
+            {trip.meetingPoint && (
+              <div className="flex items-center gap-1.5 text-xs text-cream/75 mb-3">
+                <MapPin className="h-3 w-3" />
+                <span className="line-clamp-1">{trip.meetingPoint}</span>
+              </div>
+            )}
+            <div className="flex items-end justify-between pt-3 border-t border-cream/15">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-cream/60">{t('common.from')}</div>
+                <div className="font-serif text-2xl font-bold text-accent">
+                  {isAr ? `${price} ج.م` : `$${Number(trip.priceForeignUSD)}`}
+                </div>
+                <div className="text-[10px] text-cream/60">{t('common.perPerson')}</div>
+              </div>
+              <div className="text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-1 pb-1">
+                {t('common.bookNow')}
+                <ArrowUpRight className="h-4 w-4 rtl:rotate-90" />
               </div>
             </div>
-            <Button size="sm" variant="outline">{t('common.bookNow')}</Button>
           </div>
         </div>
-      </article>
-    </Link>
+      </Link>
+    </motion.div>
   );
 }
