@@ -1,0 +1,81 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+          API_INTERNAL_URL: ${{ secrets.API_INTERNAL_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.SITE_URL }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_GA_ID: ${{ secrets.GA_ID }}
+          NEXT_PUBLIC_WHATSAPP: '201090767278'
+        run: npm run build
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p artifact
+          cp -r .next public messages package.json package-lock.json next.config.ts artifact/
+          tar -czf frontend.tar.gz -C artifact .
+
+      - name: Deploy via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "frontend.tar.gz"
+          target: "/home/${{ secrets.SSH_USER }}/deploy/"
+          overwrite: true
+
+      - name: Extract & restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            APP_DIR=/home/${{ secrets.SSH_USER }}/lottus-frontend
+            mkdir -p "$APP_DIR/logs"
+            tar -xzf /home/${{ secrets.SSH_USER }}/deploy/frontend.tar.gz -C "$APP_DIR"
+            cd "$APP_DIR"
+            if [ ! -f .env ]; then
+              echo "⚠️  Missing .env on server"
+              exit 1
+            fi
+            npm ci --omit=dev
+            if [ ! -f ecosystem.config.js ]; then
+              cat > ecosystem.config.js <<'PMEOF'
+            module.exports = { apps: [{ name: 'lottus-frontend', script: 'node_modules/next/dist/bin/next', args: 'start -p 3000', exec_mode: 'fork', max_memory_restart: '768M', env: { NODE_ENV: 'production' } }] };
+            PMEOF
+            fi
+            pm2 reload ecosystem.config.js --update-env || pm2 start ecosystem.config.js
+            pm2 save
+            rm -f /home/${{ secrets.SSH_USER }}/deploy/frontend.tar.gz
+            echo "✅ Deploy complete"

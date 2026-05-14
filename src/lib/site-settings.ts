@@ -1,0 +1,61 @@
+import { api } from './api';
+import type { SiteSettingsDTO } from '@/types/api';
+
+export async function getSiteSettings(): Promise<SiteSettingsDTO> {
+  try {
+    return await api.get<SiteSettingsDTO>('/public/settings');
+  } catch {
+    return {
+      companyNameAr: 'لوتتس شرم للسياحة',
+      companyNameEn: 'Lottus Sharm Tourism',
+      companyNameRu: 'Лотус Шарм Туризм',
+      companyNameIt: 'Lottus Sharm Turismo',
+      taglineAr: 'اكتشف جمال شرم الشيخ مع لوتتس شرم',
+      taglineEn: 'Discover the Beauty of Sharm El Sheikh',
+      taglineRu: 'Откройте для себя красоту Шарм-эль-Шейха',
+      taglineIt: 'Scopri la bellezza di Sharm El Sheikh',
+      phone: '01090767278',
+      whatsapp: '201090767278',
+      email: 'info@lottussharm.com',
+      addressAr: null,
+      facebookUrl: 'https://www.facebook.com/share/1DMY8SUNTT/',
+      instagramUrl: 'https://www.instagram.com/lotus_sharm',
+      tiktokUrl: 'https://www.tiktok.com/@lotus_sharm',
+      youtubeUrl: 'https://youtube.com/@lotussharm',
+      bankName: 'بنك أبو ظبي الإسلامي',
+      bankAccount: '100001177381',
+      vodafoneCash: '01090767278',
+      instaPay: 'lottussharm',
+      logoUrl: null,
+      primaryColor: '#0891b2',
+      accentColor: '#f59e0b',
+      yearsExperience: 13,
+    };
+  }
+}
+
+export function getLocalizedName(s: SiteSettingsDTO, locale: string): string {
+  switch (locale) {
+    case 'ar':
+      return s.companyNameAr;
+    case 'ru':
+      return s.companyNameRu;
+    case 'it':
+      return s.companyNameIt;
+    default:
+      return s.companyNameEn;
+  }
+}
+
+export function getLocalizedTagline(s: SiteSettingsDTO, locale: string): string {
+  switch (locale) {
+    case 'ar':
+      return s.taglineAr;
+    case 'ru':
+      return s.taglineRu;
+    case 'it':
+      return s.taglineIt;
+    default:
+      return s.taglineEn;
+  }
+}
