@@ -42,15 +42,37 @@ if (!fs.existsSync(PATCH_TEMPLATE)) {
 
 const current = fs.readFileSync(STANDALONE_SERVER, 'utf-8');
 if (current.includes(PATCH_MARKER)) {
-  log('patch already applied — skipping');
-  process.exit(0);
+  log('patch already applied — skipping prepend');
+} else {
+  const patch = fs.readFileSync(PATCH_TEMPLATE, 'utf-8');
+  const patched = patch + '\n' + current;
+  fs.writeFileSync(STANDALONE_SERVER, patched, 'utf-8');
+  log(`✅ patched ${STANDALONE_SERVER} (now ${patched.length} bytes; original ${current.length})`);
 }
 
-const patch = fs.readFileSync(PATCH_TEMPLATE, 'utf-8');
-const patched = patch + '\n' + current;
-fs.writeFileSync(STANDALONE_SERVER, patched, 'utf-8');
-log(`✅ patched ${STANDALONE_SERVER} (now ${patched.length} bytes; original ${current.length})`);
+// Next.js standalone output doesn't bundle public/ or .next/static — copy
+// them so the standalone build is fully self-contained and Hostinger's deploy
+// includes the static assets (hero slides, logo, etc.).
+function copyDir(src, dst) {
+  if (!fs.existsSync(src)) return false;
+  fs.mkdirSync(dst, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, entry.name);
+    const d = path.join(dst, entry.name);
+    if (entry.isDirectory()) copyDir(s, d);
+    else fs.copyFileSync(s, d);
+  }
+  return true;
+}
 
-// Also copy the patched server.js into public_html/uploads symlink check —
-// but symlinks have to be created server-side, not at build time. We leave
-// that to a server-side maintenance script.
+const PUBLIC_SRC = path.join(ROOT, 'public');
+const PUBLIC_DST = path.join(ROOT, '.next', 'standalone', 'public');
+if (copyDir(PUBLIC_SRC, PUBLIC_DST)) {
+  log(`✅ copied public/ → .next/standalone/public/`);
+}
+
+const STATIC_SRC = path.join(ROOT, '.next', 'static');
+const STATIC_DST = path.join(ROOT, '.next', 'standalone', '.next', 'static');
+if (copyDir(STATIC_SRC, STATIC_DST)) {
+  log(`✅ copied .next/static → .next/standalone/.next/static`);
+}
