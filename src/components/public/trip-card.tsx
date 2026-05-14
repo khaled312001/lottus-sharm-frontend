@@ -15,7 +15,7 @@ export function TripCard({ trip, locale }: { trip: TripDTO; locale: string }) {
   const hero = trip.heroImage?.mediumUrl || trip.heroImage?.url || trip.gallery[0]?.media?.mediumUrl || '/placeholder.jpg';
 
   return (
-    <Link href={{ pathname: '/trips/[slug]', params: { slug: trip.slug } }} className="group">
+    <Link href={`/trips/${trip.slug}`} className="group">
       <article className="overflow-hidden rounded-2xl bg-white border card-shadow hover:shadow-2xl transition-shadow">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           <Image

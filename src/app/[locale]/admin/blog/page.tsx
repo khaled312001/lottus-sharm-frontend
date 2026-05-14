@@ -60,7 +60,7 @@ export default function AdminBlogPage() {
                     <td className="py-2 px-3"><Badge variant={p.status === 'PUBLISHED' ? 'default' : 'secondary'}>{p.status === 'PUBLISHED' ? 'منشور' : 'مسودة'}</Badge></td>
                     <td className="py-2 px-3 text-xs">{p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('ar-EG') : '—'}</td>
                     <td className="py-2 px-3">
-                      <Button asChild size="icon" variant="ghost"><Link href={{ pathname: '/admin/blog/[id]', params: { id: String(p.id) } }}><Edit className="h-4 w-4" /></Link></Button>
+                      <Button asChild size="icon" variant="ghost"><Link href={`/admin/blog/${p.id}`}><Edit className="h-4 w-4" /></Link></Button>
                       <Button size="icon" variant="ghost" onClick={() => del(p.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                     </td>
                   </tr>

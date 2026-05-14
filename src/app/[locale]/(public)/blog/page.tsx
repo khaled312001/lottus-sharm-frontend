@@ -38,7 +38,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((p) => (
-              <Link key={p.id} href={{ pathname: '/blog/[slug]', params: { slug: p.slug } }} className="group">
+              <Link key={p.id} href={`/blog/${p.slug}`} className="group">
                 <article className="bg-white rounded-2xl overflow-hidden border card-shadow hover:shadow-xl transition-shadow">
                   <div className="aspect-[16/9] relative bg-muted">
                     {p.coverImage?.url && (

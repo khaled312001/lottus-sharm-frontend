@@ -43,8 +43,8 @@ export default function AdminPaymentsPage() {
 
   useEffect(() => { void load(); /* eslint-disable-next-line */ }, [statusFilter]);
 
-  const confirm = async (id: number) => {
-    if (!confirm('تأكيد استلام الدفعة؟')) return;
+  const confirmPayment = async (id: number) => {
+    if (!window.confirm('تأكيد استلام الدفعة؟')) return;
     try {
       await api.post(`/admin/payments/${id}/confirm`);
       toast.success('تم التأكيد');
@@ -105,7 +105,7 @@ export default function AdminPaymentsPage() {
                     </td>
                     <td className="py-2 px-3">
                       {p.status === 'UNPAID' && (
-                        <Button size="sm" onClick={() => confirm(p.id)}>
+                        <Button size="sm" onClick={() => confirmPayment(p.id)}>
                           <CheckCircle2 className="h-4 w-4" /> تأكيد
                         </Button>
                       )}

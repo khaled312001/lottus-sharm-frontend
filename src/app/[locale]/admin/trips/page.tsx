@@ -87,7 +87,7 @@ export default function AdminTripsPage() {
                     </td>
                     <td className="py-2 px-4">
                       <div className="flex gap-1">
-                        <Button asChild size="icon" variant="ghost"><Link href={{ pathname: '/admin/trips/[id]', params: { id: String(t.id) } }}><Edit className="h-4 w-4" /></Link></Button>
+                        <Button asChild size="icon" variant="ghost"><Link href={`/admin/trips/${t.id}`}><Edit className="h-4 w-4" /></Link></Button>
                         <Button asChild size="icon" variant="ghost"><a href={`/${'ar'}/trips/${t.slug}`} target="_blank" rel="noopener"><Eye className="h-4 w-4" /></a></Button>
                         <Button size="icon" variant="ghost" onClick={() => del(t.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                       </div>

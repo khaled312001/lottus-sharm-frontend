@@ -12,9 +12,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost' },
-      { protocol: 'https', hostname: 'lottussharm.com' },
-      { protocol: 'https', hostname: 'www.lottussharm.com' },
-      { protocol: 'https', hostname: 'api.lottussharm.com' },
+      { protocol: 'https', hostname: 'lotussharm.com' },
+      { protocol: 'https', hostname: 'www.lotussharm.com' },
+      { protocol: 'https', hostname: 'api.lotussharm.com' },
       { protocol: 'https', hostname: '**.hstgr.io' },
       { protocol: 'https', hostname: '**.hstgr.cloud' },
     ],
