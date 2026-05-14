@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  output: 'standalone', // required for Hostinger Node.js Application + our combined-server patch
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
