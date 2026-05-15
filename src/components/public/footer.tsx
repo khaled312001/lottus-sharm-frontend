@@ -77,40 +77,77 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
         </div>
       </div>
 
-      <div className="border-t border-cream/10 relative">
-        <div className="container py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs opacity-75">
-          <p>© {year} <strong className="font-semibold text-accent">Lotus Sharm Travel</strong>. {t('footer.rights')}.</p>
-          <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-accent transition-colors">{L(locale, { ar: 'الخصوصية', en: 'Privacy', ru: 'Конфиденциальность', it: 'Privacy' })}</Link>
-            <Link href="/terms" className="hover:text-accent transition-colors">{L(locale, { ar: 'الشروط', en: 'Terms', ru: 'Условия', it: 'Termini' })}</Link>
+      {/* Bottom bar — copyright + legal links */}
+      <div className="relative border-t border-cream/10">
+        {/* Decorative gold line */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+        <div className="container py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+            {/* Copyright */}
+            <p className="text-cream/70 text-center md:text-start">
+              © {year} <strong className="font-semibold text-accent">Lotus Sharm Travel</strong>
+              <span className="hidden md:inline opacity-50"> · </span>
+              <span className="block md:inline mt-0.5 md:mt-0 text-xs md:text-sm">{t('footer.rights')}</span>
+            </p>
+
+            {/* Legal links */}
+            <nav aria-label="Legal" className="flex items-center gap-1 text-xs">
+              <Link
+                href="/privacy"
+                className="px-3 py-1.5 rounded-md text-cream/70 hover:text-accent hover:bg-cream/5 transition-all"
+              >
+                {L(locale, { ar: 'سياسة الخصوصية', en: 'Privacy Policy', ru: 'Конфиденциальность', it: 'Privacy' })}
+              </Link>
+              <span className="text-cream/30">•</span>
+              <Link
+                href="/terms"
+                className="px-3 py-1.5 rounded-md text-cream/70 hover:text-accent hover:bg-cream/5 transition-all"
+              >
+                {L(locale, { ar: 'الشروط والأحكام', en: 'Terms of Service', ru: 'Условия использования', it: 'Termini' })}
+              </Link>
+              <span className="text-cream/30">•</span>
+              <Link
+                href="/cancellation-policy"
+                className="px-3 py-1.5 rounded-md text-cream/70 hover:text-accent hover:bg-cream/5 transition-all"
+              >
+                {L(locale, { ar: 'سياسة الإلغاء', en: 'Cancellation', ru: 'Отмена', it: 'Cancellazione' })}
+              </Link>
+            </nav>
           </div>
         </div>
       </div>
 
-      {/* Dedicated developer credit strip */}
-      <div className="relative bg-primary-950/80 border-t border-accent/15">
-        <div className="container py-3.5 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 text-[11px] text-cream/65">
-          <Code2 className="h-3.5 w-3.5 text-accent flex-shrink-0" />
-          <span>
-            {L(locale, {
-              ar: 'تم تطوير هذا الموقع بواسطة',
-              en: 'This website was developed by',
-              ru: 'Этот сайт разработан компанией',
-              it: 'Sito sviluppato da',
-            })}
-          </span>
-          <a
-            href="http://barmagly.tech/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-bold text-accent hover:text-accent-300 transition-colors group"
-          >
-            <span className="border-b border-accent/30 group-hover:border-accent/80 transition-colors">
-              {L(locale, { ar: 'شركة برمجلي', en: 'Barmagly', ru: 'Barmagly', it: 'Barmagly' })}
+      {/* Dedicated developer credit strip — Barmagly */}
+      <div className="relative bg-primary-950 border-t border-accent/20">
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        <a
+          href="http://barmagly.tech/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Barmagly — barmagly.tech"
+          className="block group hover:bg-primary-950/60 transition-colors"
+        >
+          <div className="container py-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-cream/65 group-hover:text-cream/90 transition-colors">
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-accent/15 border border-accent/30 text-accent group-hover:bg-accent group-hover:text-primary transition-all">
+              <Code2 className="h-3.5 w-3.5" />
             </span>
-            <span aria-hidden className="text-accent/70 group-hover:text-accent transition-colors">↗</span>
-          </a>
-        </div>
+            <span className="text-center">
+              {L(locale, {
+                ar: 'تم تطوير هذا الموقع بواسطة',
+                en: 'This website was crafted by',
+                ru: 'Этот сайт разработан компанией',
+                it: 'Sito sviluppato da',
+              })}
+            </span>
+            <span className="inline-flex items-center gap-1.5 font-bold text-accent group-hover:text-accent-300 transition-colors">
+              <span className="border-b border-accent/40 group-hover:border-accent transition-colors">
+                {L(locale, { ar: 'شركة برمجلي', en: 'Barmagly Software', ru: 'Barmagly Software', it: 'Barmagly Software' })}
+              </span>
+              <span aria-hidden className="text-accent/80">↗</span>
+            </span>
+          </div>
+        </a>
       </div>
     </footer>
   );
