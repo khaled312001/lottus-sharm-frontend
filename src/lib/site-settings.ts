@@ -6,17 +6,17 @@ export async function getSiteSettings(): Promise<SiteSettingsDTO> {
     return await api.get<SiteSettingsDTO>('/public/settings');
   } catch {
     return {
-      companyNameAr: 'لوتتس شرم للسياحة',
-      companyNameEn: 'Lottus Sharm Tourism',
-      companyNameRu: 'Лотус Шарм Туризм',
-      companyNameIt: 'Lottus Sharm Turismo',
-      taglineAr: 'اكتشف جمال شرم الشيخ مع لوتتس شرم',
+      companyNameAr: 'لوتس شرم للسياحة',
+      companyNameEn: 'Lotus Sharm Tourism',
+      companyNameRu: 'Лотус Шарм',
+      companyNameIt: 'Lotus Sharm',
+      taglineAr: 'اكتشف جمال شرم الشيخ مع لوتس شرم',
       taglineEn: 'Discover the Beauty of Sharm El Sheikh',
       taglineRu: 'Откройте для себя красоту Шарм-эль-Шейха',
       taglineIt: 'Scopri la bellezza di Sharm El Sheikh',
       phone: '01090767278',
       whatsapp: '201090767278',
-      email: 'info@lottussharm.com',
+      email: 'info@lotussharm.com',
       addressAr: null,
       facebookUrl: 'https://www.facebook.com/share/1DMY8SUNTT/',
       instagramUrl: 'https://www.instagram.com/lotus_sharm',
