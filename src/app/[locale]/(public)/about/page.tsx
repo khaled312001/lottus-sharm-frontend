@@ -125,9 +125,15 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3 leading-tight">
                 {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lotus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lotus Sharm Tourism Investment & Marketing»', it: 'Lotus Sharm Tourism Investment & Marketing S.r.l.' })}
               </h3>
-              <p className="text-sm md:text-base text-foreground/75 leading-relaxed">
+              <p className="text-sm md:text-base text-foreground/75 leading-relaxed mb-5">
                 {L(locale, { ar: 'الاسم التجاري المعتمد: "لوتس شرم — Lotus Sharm" · مرخّصة قانونياً بمصر · مقرها شرم الشيخ، محافظة جنوب سيناء', en: 'Trade name: "Lotus Sharm" · Legally licensed in Egypt · Based in Sharm El Sheikh, South Sinai Governorate' })}
               </p>
+              <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 rounded-xl bg-accent/10 border border-accent/30 text-sm">
+                <span className="text-foreground/70">
+                  {L(locale, { ar: 'سجل تجاري رقم', en: 'Commercial Registration', ru: 'Регистрационный номер', it: 'Reg. commerciale n.' })}
+                </span>
+                <span className="font-mono font-bold tracking-wider text-accent-700">269494</span>
+              </div>
             </div>
           </Reveal>
         </div>

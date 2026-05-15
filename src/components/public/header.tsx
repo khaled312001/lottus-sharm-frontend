@@ -12,6 +12,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './language-switcher';
+import { SearchBar } from './search-bar';
 import { Logo } from './logo';
 import { cn, buildWhatsAppLink } from '@/lib/utils';
 
@@ -147,6 +148,10 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Search bar — visible on lg+, drawer renders own copy */}
+          <div className="hidden lg:block">
+            <SearchBar variant="header" />
+          </div>
           <LanguageSwitcher transparent={transparent} compact />
           <Button
             asChild
@@ -223,6 +228,11 @@ export function Header() {
 
               {/* Scroll area */}
               <div className="relative flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-5">
+                {/* Search */}
+                <div>
+                  <SearchBar variant="drawer" />
+                </div>
+
                 {/* Section label */}
                 <div className="space-y-1">
                   <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
