@@ -11,7 +11,7 @@ interface Page {
 
 async function fetchPage(locale: string): Promise<Page | null> {
   try {
-    return await api.get<Page>(`/public/pages/terms?locale=${localeToApiCode(locale)}`);
+    return await api.get<Page>(`/public/pages/cancellation-policy?locale=${localeToApiCode(locale)}`);
   } catch {
     return null;
   }
@@ -21,19 +21,19 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const page = await fetchPage(locale);
   return {
-    title: page?.tr?.metaTitle || page?.tr?.title || 'Terms of Service',
+    title: page?.tr?.metaTitle || page?.tr?.title || 'Cancellation Policy',
     description: page?.tr?.metaDesc || undefined,
   };
 }
 
-export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function CancellationPolicyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const page = await fetchPage(locale);
   if (!page?.tr) notFound();
   return (
     <LegalPage
-      slug="terms"
+      slug="cancellation-policy"
       locale={locale}
       title={page.tr.title}
       content={page.tr.content}
