@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { Compass, Sparkles, Calendar, MessageCircle } from 'lucide-react';
 import { buildWhatsAppLink } from '@/lib/utils';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ locale: string }>;

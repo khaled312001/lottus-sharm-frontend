@@ -15,7 +15,7 @@ import type { TripDTO } from '@/types/api';
 import { localeToApiCode, buildWhatsAppLink } from '@/lib/utils';
 import { inquiryWhatsAppLink } from '@/lib/whatsapp';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;

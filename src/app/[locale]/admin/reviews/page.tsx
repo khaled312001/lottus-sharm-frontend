@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useAdminApi } from '@/lib/admin-auth';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input, Textarea } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, Check, X, Trash2 } from 'lucide-react';
+import { Star, Check, X, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Review {
@@ -17,50 +18,152 @@ interface Review {
   locale: string;
   isApproved: boolean;
   createdAt: string;
-  trip?: { id: number };
+  trip?: { id: number; slug: string; translations?: Array<{ locale: string; title: string }> };
 }
+
+interface TripOption { id: number; slug: string; translations: Array<{ locale: string; title: string }> }
 
 export default function AdminReviewsPage() {
   const api = useAdminApi();
   const [items, setItems] = useState<Review[]>([]);
+  const [trips, setTrips] = useState<TripOption[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    tripId: 0,
+    customerName: '',
+    rating: 5,
+    comment: '',
+    locale: 'AR' as 'AR' | 'EN' | 'RU' | 'IT',
+    isApproved: true,
+  });
 
   const load = async () => {
     try {
       const res = await api.get<{ items: Review[] }>('/admin/reviews');
       setItems(res.items);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Error'); }
   };
-  useEffect(() => { void load(); /* eslint-disable-next-line */ }, []);
+  const loadTrips = async () => {
+    try {
+      const res = await api.get<{ items: TripOption[] }>('/admin/trips?pageSize=100');
+      setTrips(res.items);
+      if (res.items[0]) setForm((f) => ({ ...f, tripId: res.items[0].id }));
+    } catch { /* silent */ }
+  };
+  useEffect(() => { void load(); void loadTrips(); /* eslint-disable-next-line */ }, []);
 
   const toggle = async (id: number, isApproved: boolean) => {
-    try {
-      await api.patch(`/admin/reviews/${id}`, { isApproved });
-      void load();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    }
+    try { await api.patch(`/admin/reviews/${id}`, { isApproved }); void load(); }
+    catch (e) { toast.error(e instanceof Error ? e.message : 'Error'); }
   };
 
   const del = async (id: number) => {
     if (!confirm('حذف التقييم؟')) return;
-    try { await api.delete(`/admin/reviews/${id}`); void load(); } catch (e) { toast.error(e instanceof Error ? e.message : 'Error'); }
+    try { await api.delete(`/admin/reviews/${id}`); void load(); }
+    catch (e) { toast.error(e instanceof Error ? e.message : 'Error'); }
+  };
+
+  const create = async () => {
+    if (!form.tripId) return toast.error('اختر رحلة');
+    if (!form.customerName.trim()) return toast.error('أدخل اسم العميل');
+    if (!form.comment.trim()) return toast.error('أدخل نص التقييم');
+    try {
+      // Create as approved (public/reviews endpoint allows POST; we'll then toggle if needed)
+      await api.post('/public/reviews', {
+        tripId: form.tripId,
+        customerName: form.customerName.trim(),
+        rating: form.rating,
+        comment: form.comment.trim(),
+        locale: form.locale,
+      });
+      // Auto-approve via admin
+      const last = await api.get<{ items: Review[] }>('/admin/reviews');
+      const fresh = last.items[0];
+      if (fresh && form.isApproved) {
+        await api.patch(`/admin/reviews/${fresh.id}`, { isApproved: true });
+      }
+      toast.success('تمت إضافة التقييم');
+      setForm({ ...form, customerName: '', comment: '', rating: 5 });
+      setShowForm(false);
+      void load();
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Error'); }
+  };
+
+  const tripTitle = (r: Review) => {
+    const trip = r.trip || trips.find((t) => t.id === r.tripId);
+    if (!trip) return '';
+    return trip.translations?.find((x) => x.locale === 'AR')?.title || trip.translations?.[0]?.title || trip.slug;
   };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">التقييمات</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl font-bold">التقييمات ({items.length})</h2>
+        <Button onClick={() => setShowForm(!showForm)}>
+          <Plus className="h-4 w-4" /> {showForm ? 'إلغاء' : 'إضافة تقييم'}
+        </Button>
+      </div>
+
+      {showForm && (
+        <Card>
+          <CardHeader><CardTitle className="text-base">تقييم جديد</CardTitle></CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold mb-1.5 block">الرحلة</label>
+              <select className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm" value={form.tripId} onChange={(e) => setForm({ ...form, tripId: Number(e.target.value) })}>
+                {trips.map((t) => (
+                  <option key={t.id} value={t.id}>{t.translations.find((x) => x.locale === 'AR')?.title || t.slug}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-semibold mb-1.5 block">اسم العميل</label>
+              <Input value={form.customerName} onChange={(e) => setForm({ ...form, customerName: e.target.value })} placeholder="مثال: أحمد محمد" />
+            </div>
+            <div>
+              <label className="text-xs font-semibold mb-1.5 block">التقييم</label>
+              <div className="flex items-center gap-1.5">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button key={n} type="button" onClick={() => setForm({ ...form, rating: n })}>
+                    <Star className={`h-7 w-7 ${n <= form.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-semibold mb-1.5 block">لغة التعليق</label>
+              <select className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm" value={form.locale} onChange={(e) => setForm({ ...form, locale: e.target.value as 'AR' | 'EN' | 'RU' | 'IT' })}>
+                <option value="AR">العربية</option>
+                <option value="EN">English</option>
+                <option value="RU">Русский</option>
+                <option value="IT">Italiano</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-xs font-semibold mb-1.5 block">نص التقييم</label>
+              <Textarea rows={4} value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} placeholder="اكتب نص التقييم..." />
+            </div>
+            <div className="md:col-span-2 flex items-center justify-between">
+              <label className="inline-flex items-center gap-2 text-sm">
+                <input type="checkbox" className="w-4 h-4 accent-primary" checked={form.isApproved} onChange={(e) => setForm({ ...form, isApproved: e.target.checked })} />
+                <span>مقبول للعرض</span>
+              </label>
+              <Button onClick={create}>إضافة</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardContent className="p-4 space-y-3">
           {items.length === 0 ? (
             <p className="text-center text-muted-foreground py-12">لا توجد تقييمات</p>
           ) : items.map((r) => (
-            <div key={r.id} className="border rounded-lg p-4">
-              <div className="flex items-start justify-between gap-3 mb-2">
+            <div key={r.id} className={`border rounded-lg p-4 ${r.isApproved ? 'bg-white' : 'bg-amber-50/40 border-amber-200/60'}`}>
+              <div className="flex items-start justify-between gap-3 mb-2 flex-wrap">
                 <div>
-                  <div className="font-semibold">{r.customerName}</div>
-                  <div className="flex items-center gap-1">
+                  <div className="font-semibold">{r.customerName} <span className="text-xs text-muted-foreground font-normal">({r.locale})</span></div>
+                  <div className="flex items-center gap-1 flex-wrap mt-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star key={i} className={`h-4 w-4 ${i < r.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} />
                     ))}
@@ -69,6 +172,7 @@ export default function AdminReviewsPage() {
                       {r.isApproved ? 'مقبول' : 'في الانتظار'}
                     </Badge>
                   </div>
+                  {tripTitle(r) && <div className="text-xs text-muted-foreground mt-1">عن رحلة: <span className="text-primary font-semibold">{tripTitle(r)}</span></div>}
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant={r.isApproved ? 'outline' : 'default'} onClick={() => toggle(r.id, !r.isApproved)}>
@@ -77,7 +181,7 @@ export default function AdminReviewsPage() {
                   <Button size="icon" variant="ghost" onClick={() => del(r.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                 </div>
               </div>
-              <p className="text-sm text-foreground/90">{r.comment}</p>
+              <p className="text-sm text-foreground/90 mt-2">{r.comment}</p>
             </div>
           ))}
         </CardContent>

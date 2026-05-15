@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button';
 import { TripCard } from '@/components/public/trip-card';
 import { Reveal } from '@/components/public/motion';
 import { HeroSlider } from '@/components/public/hero-slider';
+import { ReviewsCarousel, type ReviewItem } from '@/components/public/reviews-carousel';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
-import { Award, Shield, Compass, Clock, ArrowRight, Sparkles, Quote } from 'lucide-react';
+import { Award, Shield, Compass, Clock, ArrowRight, Sparkles } from 'lucide-react';
 import { localeToApiCode } from '@/lib/utils';
 import { getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -28,6 +29,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   } catch {
     trips = [];
   }
+
+  let reviews: ReviewItem[] = [];
+  try {
+    const r = await api.get<{ items: ReviewItem[] }>('/public/reviews?limit=12');
+    reviews = r.items;
+  } catch { reviews = []; }
 
   const isAr = locale === 'ar';
 
@@ -181,24 +188,31 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* ============ TESTIMONIAL ============ */}
-      <section className="py-16 md:py-24 bg-primary-800 text-cream relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/10 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/5 blur-3xl" />
-        <div className="container relative">
-          <Reveal className="max-w-3xl mx-auto text-center">
-            <Quote className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-5 md:mb-6 opacity-80" />
-            <p className="font-serif text-xl md:text-2xl lg:text-3xl leading-relaxed mb-6 md:mb-8 text-balance">
-              {isAr
-                ? '"تجربة لا تُنسى! نظّموا لنا رحلة لراس محمد بشكل احترافي. الفريق محترم والأسعار ممتازة."'
-                : '"An unforgettable experience! Professionally organized with attention to every detail."'}
-            </p>
-            <div className="font-bold text-accent text-sm md:text-base">
-              {isAr ? '— أحمد محمد، القاهرة' : '— Ahmed Mohammed, Cairo'}
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* ============ REVIEWS CAROUSEL ============ */}
+      {reviews.length > 0 && (
+        <section className="py-16 md:py-24 bg-primary-800 text-cream relative overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/5 blur-3xl" />
+          <div className="container relative">
+            <Reveal className="text-center mb-10 md:mb-14">
+              <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">
+                {isAr ? 'آراء عملائنا' : 'What our guests say'}
+              </div>
+              <h2 className="font-serif text-3xl md:text-5xl font-bold mb-2">
+                {isAr ? 'تجارب حقيقية من رحلاتهم معنا' : 'Real stories from real travelers'}
+              </h2>
+              <p className="text-sm md:text-base opacity-75 max-w-xl mx-auto">
+                {isAr
+                  ? `أكثر من ${reviews.length} مراجعة من زوار حقيقيين عاشوا تجربة لوتس شرم`
+                  : `${reviews.length}+ verified reviews from real Lotus Sharm travelers`}
+              </p>
+            </Reveal>
+            <Reveal>
+              <ReviewsCarousel reviews={reviews} locale={locale} />
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* ============ CTA ============ */}
       <section className="py-16 md:py-24 bg-cream">
