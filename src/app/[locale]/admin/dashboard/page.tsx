@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { AreaChart, BarChart, Donut } from '@/components/admin/charts';
 import { Link } from '@/i18n/routing';
+import { CountUp, StaggerList, StaggerItem, HoverLift, FadeInWhenVisible } from '@/components/motion-kit';
 
 interface RecentBooking {
   id: number;
@@ -122,44 +123,44 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-        <KpiCard
+      <StaggerList className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <StaggerItem><KpiCard
           icon={DollarSign} color="from-amber-500 to-amber-600"
           label="إيرادات الشهر"
-          value={`${Math.round(t.revenueMonth).toLocaleString('ar-EG')} ج.م`}
+          value={<><CountUp value={Math.round(t.revenueMonth)} /> ج.م</>}
           delta={t.revenueGrowth}
           deltaLabel={`vs الشهر السابق (${Math.round(t.revenuePrev).toLocaleString('ar-EG')})`}
-        />
-        <KpiCard
+        /></StaggerItem>
+        <StaggerItem><KpiCard
           icon={CalendarCheck} color="from-emerald-500 to-emerald-600"
           label="حجوزات الشهر"
-          value={t.totalBookingsMonth}
+          value={<CountUp value={t.totalBookingsMonth} />}
           delta={t.bookingsGrowth}
-        />
-        <KpiCard
+        /></StaggerItem>
+        <StaggerItem><KpiCard
           icon={Users} color="from-purple-500 to-purple-600"
           label="إجمالي العملاء"
-          value={t.totalCustomers}
+          value={<CountUp value={t.totalCustomers} />}
           sub={`+${t.customersThisMonth} هذا الشهر`}
-        />
-        <KpiCard
+        /></StaggerItem>
+        <StaggerItem><KpiCard
           icon={Map} color="from-blue-500 to-blue-600"
           label="الرحلات النشطة"
-          value={t.activeTrips}
+          value={<CountUp value={t.activeTrips} />}
           sub={`من إجمالي ${t.totalTrips}`}
-        />
-      </div>
+        /></StaggerItem>
+      </StaggerList>
 
       {/* Secondary KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <SmallKpi icon={AlertCircle} color="text-amber-600 bg-amber-50" label="حجوزات معلقة" value={t.pendingBookings} href="/admin/bookings?status=PENDING" />
-        <SmallKpi icon={Inbox}       color="text-pink-600 bg-pink-50"     label="رسائل جديدة"  value={t.newInquiries}    href="/admin/inquiries" />
-        <SmallKpi icon={Send}        color="text-blue-600 bg-blue-50"     label="مشتركو النشرة" value={t.totalSubscribers} href="/admin/newsletter" />
-        <SmallKpi icon={CalendarCheck} color="text-emerald-600 bg-emerald-50" label="حجوزات مؤكدة" value={t.confirmedBookings} href="/admin/bookings?status=CONFIRMED" />
-      </div>
+      <StaggerList className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StaggerItem><SmallKpi icon={AlertCircle} color="text-amber-600 bg-amber-50" label="حجوزات معلقة" value={t.pendingBookings} href="/admin/bookings?status=PENDING" /></StaggerItem>
+        <StaggerItem><SmallKpi icon={Inbox}       color="text-pink-600 bg-pink-50"     label="رسائل جديدة"  value={t.newInquiries}    href="/admin/inquiries" /></StaggerItem>
+        <StaggerItem><SmallKpi icon={Send}        color="text-blue-600 bg-blue-50"     label="مشتركو النشرة" value={t.totalSubscribers} href="/admin/newsletter" /></StaggerItem>
+        <StaggerItem><SmallKpi icon={CalendarCheck} color="text-emerald-600 bg-emerald-50" label="حجوزات مؤكدة" value={t.confirmedBookings} href="/admin/bookings?status=CONFIRMED" /></StaggerItem>
+      </StaggerList>
 
       {/* Charts row 1: Revenue + Bookings trend */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <FadeInWhenVisible className="grid grid-cols-1 lg:grid-cols-3 gap-4" delay={0.05}>
         <Card className="lg:col-span-2">
           <CardHeader>
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -200,10 +201,10 @@ export default function DashboardPage() {
             />
           </CardContent>
         </Card>
-      </div>
+      </FadeInWhenVisible>
 
       {/* Charts row 2: Bookings count + Customer lang */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <FadeInWhenVisible className="grid grid-cols-1 lg:grid-cols-3 gap-4" delay={0.1}>
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
@@ -235,7 +236,7 @@ export default function DashboardPage() {
             />
           </CardContent>
         </Card>
-      </div>
+      </FadeInWhenVisible>
 
       {/* Top trips bar */}
       <Card>
@@ -347,34 +348,36 @@ export default function DashboardPage() {
 function KpiCard({
   icon: Icon, color, label, value, delta, deltaLabel, sub,
 }: {
-  icon: typeof Map; color: string; label: string; value: string | number;
+  icon: typeof Map; color: string; label: string; value: React.ReactNode;
   delta?: number; deltaLabel?: string; sub?: string;
 }) {
   const positive = (delta ?? 0) >= 0;
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-4 md:p-5 relative">
-        <div className={`absolute -top-8 -end-8 w-24 h-24 rounded-full opacity-10 bg-gradient-to-br ${color}`} />
-        <div className="relative">
-          <div className="flex items-center justify-between mb-3">
-            <div className={`w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg`}>
-              <Icon className="h-5 w-5" />
+    <HoverLift>
+      <Card className="overflow-hidden h-full">
+        <CardContent className="p-4 md:p-5 relative">
+          <div className={`absolute -top-8 -end-8 w-24 h-24 rounded-full opacity-10 bg-gradient-to-br ${color}`} />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-3">
+              <div className={`w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg`}>
+                <Icon className="h-5 w-5" />
+              </div>
+              {delta !== undefined && Number.isFinite(delta) && (
+                <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-full ${
+                  positive ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                }`}>
+                  {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                  {Math.abs(delta).toFixed(0)}%
+                </span>
+              )}
             </div>
-            {delta !== undefined && Number.isFinite(delta) && (
-              <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-full ${
-                positive ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-              }`}>
-                {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                {Math.abs(delta).toFixed(0)}%
-              </span>
-            )}
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold mb-1">{label}</div>
+            <div className="font-extrabold text-xl md:text-2xl tabular-nums text-foreground leading-tight">{value}</div>
+            {(sub || deltaLabel) && <div className="text-[11px] text-muted-foreground mt-1.5 truncate">{sub || deltaLabel}</div>}
           </div>
-          <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold mb-1">{label}</div>
-          <div className="font-extrabold text-xl md:text-2xl tabular-nums text-foreground leading-tight">{value}</div>
-          {(sub || deltaLabel) && <div className="text-[11px] text-muted-foreground mt-1.5 truncate">{sub || deltaLabel}</div>}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </HoverLift>
   );
 }
 
@@ -382,15 +385,17 @@ function SmallKpi({
   icon: Icon, color, label, value, href,
 }: { icon: typeof Map; color: string; label: string; value: number; href?: string }) {
   const inner = (
-    <div className="flex items-center gap-3 p-3 md:p-3.5 rounded-xl bg-white border border-accent/15 hover:border-accent/40 hover:shadow-md transition-all">
-      <span className={`w-9 h-9 rounded-lg flex items-center justify-center ${color}`}>
-        <Icon className="h-4 w-4" />
-      </span>
-      <div className="flex-1 min-w-0">
-        <div className="text-[11px] text-muted-foreground truncate">{label}</div>
-        <div className="font-bold text-lg tabular-nums">{value}</div>
+    <HoverLift scale={1.03}>
+      <div className="flex items-center gap-3 p-3 md:p-3.5 rounded-xl bg-white border border-accent/15 hover:border-accent/40 hover:shadow-md transition-all">
+        <span className={`w-9 h-9 rounded-lg flex items-center justify-center ${color}`}>
+          <Icon className="h-4 w-4" />
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="text-[11px] text-muted-foreground truncate">{label}</div>
+          <div className="font-bold text-lg tabular-nums"><CountUp value={value} duration={1.3} /></div>
+        </div>
       </div>
-    </div>
+    </HoverLift>
   );
   return href ? <Link href={href as never}>{inner}</Link> : inner;
 }

@@ -1,8 +1,9 @@
 'use client';
 
-// Lightweight, dependency-free SVG charts.
-// Three primitives: AreaChart, BarChart, Donut.
+// Lightweight, dependency-free SVG charts (animated on mount).
+// Primitives: AreaChart, BarChart, Donut, StackedBar.
 import { useId } from 'react';
+import { motion } from 'framer-motion';
 
 const BRAND = {
   primary: '#0d3a3a',
@@ -85,16 +86,39 @@ export function AreaChart({
           </g>
         ))}
 
-        {/* Area */}
-        <path d={areaPath} fill={`url(#area-${gid})`} />
-        <path d={linePath} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+        {/* Area (fade in) */}
+        <motion.path
+          d={areaPath}
+          fill={`url(#area-${gid})`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        />
+        {/* Line (drawn left → right) */}
+        <motion.path
+          d={linePath}
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
+        />
 
-        {/* Points */}
+        {/* Points (pop in after the line) */}
         {data.map((d, i) => (
-          <g key={i}>
+          <motion.g
+            key={i}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.25, delay: 1.0 + (i / data.length) * 0.4 }}
+            style={{ transformOrigin: `${xScale(i)}px ${yScale(d.value)}px` }}
+          >
             <circle cx={xScale(i)} cy={yScale(d.value)} r="3" fill="white" stroke={color} strokeWidth="2" />
             <title>{d.label}: {valueFormat(d.value)}</title>
-          </g>
+          </motion.g>
         ))}
 
         {/* X-axis labels */}
@@ -142,12 +166,34 @@ export function BarChart({
           const x = padX + i * bandW + (bandW - barW) / 2;
           const y = yScale(d.value);
           const h = height - padY - y;
+          const delay = 0.15 + i * 0.05;
           return (
             <g key={i}>
-              <rect x={x} y={y} width={barW} height={h} rx="4" fill={color} opacity="0.9">
+              <motion.rect
+                x={x}
+                width={barW}
+                rx="4"
+                fill={color}
+                opacity="0.9"
+                initial={{ y: height - padY, height: 0 }}
+                animate={{ y, height: h }}
+                transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <title>{d.label}: {valueFormat(d.value)}</title>
-              </rect>
-              <text x={x + barW / 2} y={y - 6} fontSize="10" textAnchor="middle" fill={color} fontWeight="700">{valueFormat(d.value)}</text>
+              </motion.rect>
+              <motion.text
+                x={x + barW / 2}
+                y={y - 6}
+                fontSize="10"
+                textAnchor="middle"
+                fill={color}
+                fontWeight="700"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: delay + 0.5 }}
+              >
+                {valueFormat(d.value)}
+              </motion.text>
               <text x={x + barW / 2} y={height - 8} fontSize="10" textAnchor="middle" fill="#64748b">{d.label}</text>
             </g>
           );
@@ -195,16 +241,19 @@ export function Donut({
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle cx={c} cy={c} r={r} fill="none" stroke="#f1f5f9" strokeWidth={thickness} />
         {arcs.map((a, i) => (
-          <path
+          <motion.path
             key={i}
             d={a.path}
             fill="none"
             stroke={a.color}
             strokeWidth={thickness}
             strokeLinecap="butt"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.9, delay: 0.1 + i * 0.12, ease: 'easeOut' }}
           >
             <title>{a.label}: {a.value} ({a.pct.toFixed(1)}%)</title>
-          </path>
+          </motion.path>
         ))}
         <text x={c} y={c - 2} textAnchor="middle" fontSize="20" fontWeight="800" fill={BRAND.primary}>{total}</text>
         <text x={c} y={c + 16} textAnchor="middle" fontSize="10" fill="#64748b">الإجمالي</text>

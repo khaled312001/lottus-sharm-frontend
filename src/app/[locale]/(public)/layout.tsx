@@ -2,6 +2,7 @@ import { Header } from '@/components/public/header';
 import { Footer } from '@/components/public/footer';
 import { WhatsAppFAB } from '@/components/public/whatsapp-fab';
 import { MainWrapper } from '@/components/public/main-wrapper';
+import { ScrollProgress } from '@/components/motion-kit';
 import { getSiteSettings } from '@/lib/site-settings';
 
 export default async function PublicLayout({
@@ -14,6 +15,7 @@ export default async function PublicLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <ScrollProgress />
       <Header />
       <MainWrapper>{children}</MainWrapper>
       <Footer settings={settings} />
