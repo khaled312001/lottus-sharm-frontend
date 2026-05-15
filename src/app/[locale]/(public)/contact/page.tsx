@@ -84,7 +84,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <p className="text-sm opacity-90 mb-5">
                   {isAr ? 'احصل على خطة رحلة مخصصة تناسب اهتماماتك وميزانيتك بدون أي التزام.' : 'Get a customized trip plan matching your interests and budget — no commitment.'}
                 </p>
-                <a href={buildWhatsAppLink('201090767278') + (isAr ? '&text=' : '&text=') + encodeURIComponent(isAr ? 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ' : 'Hi! I\'d like a free trip consultation for Sharm El Sheikh')} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
+                <a href={buildWhatsAppLink('201090767278', isAr ? 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ' : 'Hi! I\'d like a free trip consultation for Sharm El Sheikh')} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
                   <MessageCircle className="h-4 w-4" /> {isAr ? 'تواصل واتساب' : 'WhatsApp Chat'}
                 </a>
               </div>

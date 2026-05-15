@@ -190,7 +190,7 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
               <p className="opacity-85 mb-6 max-w-xl mx-auto">
                 {isAr ? 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك' : 'WhatsApp us — we\'ll design a 100% custom trip for your interests and budget'}
               </p>
-              <a href={buildWhatsAppLink('201090767278') + '&text=' + encodeURIComponent(isAr ? 'مرحبا، أريد تصميم رحلة مخصصة' : 'Hi! I\'d like a custom trip design.')}
+              <a href={buildWhatsAppLink('201090767278', isAr ? 'مرحبا، أريد تصميم رحلة مخصصة' : 'Hi! I\'d like a custom trip design.')}
                 target="_blank" rel="noopener"
                 className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-[#25D366]/30">
                 <MessageCircle className="h-5 w-5" /> {isAr ? 'تواصل واتساب' : 'WhatsApp us'}

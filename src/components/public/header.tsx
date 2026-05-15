@@ -2,13 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { Link, usePathname } from '@/i18n/routing';
-import { Menu, X, Phone, MessageCircle, Home, Map, Info, Image as ImageIcon, BookOpen, Mail, Sparkles } from 'lucide-react';
+import {
+  Menu, X, Phone, MessageCircle, Home, Map, Info, Image as ImageIcon, BookOpen, Mail, Sparkles,
+  Facebook, Instagram, Youtube, ChevronLeft,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './language-switcher';
 import { Logo } from './logo';
-import { cn } from '@/lib/utils';
+import { cn, buildWhatsAppLink } from '@/lib/utils';
+
+const SOCIALS = [
+  { href: 'https://www.facebook.com/share/1DMY8SUNTT/?mibextid=wwXIfr', Icon: Facebook, label: 'Facebook',  bg: 'bg-[#1877F2]/15 text-[#4d97ff]' },
+  { href: 'https://www.instagram.com/lotus_sharm',                       Icon: Instagram, label: 'Instagram', bg: 'bg-[#E4405F]/15 text-[#ff6480]' },
+  { href: 'https://www.tiktok.com/@lotus_sharm',                          Icon: MessageCircle, label: 'TikTok',  bg: 'bg-[#000000]/30 text-cream' },
+  { href: 'https://youtube.com/@lotussharm',                              Icon: Youtube, label: 'YouTube',  bg: 'bg-[#FF0000]/15 text-[#ff6b6b]' },
+];
 
 export function Header() {
   const t = useTranslations('nav');
@@ -16,6 +27,9 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
+  const params = useParams<{ locale: string }>();
+  const locale = (params?.locale as string) || 'ar';
+  const isAr = locale === 'ar';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -23,6 +37,17 @@ export function Header() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Body scroll lock when drawer is open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
+  // Close drawer on route change
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   // Transparent only on Home AND not scrolled AND menu closed
   const transparent = isHome && !scrolled && !open;
@@ -145,107 +170,187 @@ export function Header() {
 
       <AnimatePresence>
         {open && (
-          <>
+          <div className="lg:hidden">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.25 }}
               onClick={() => setOpen(false)}
-              className="lg:hidden fixed inset-0 top-16 md:top-20 bg-black/60 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/70 backdrop-blur-md z-[60]"
+              aria-hidden="true"
             />
 
-            {/* Drawer */}
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden bg-gradient-to-b from-primary-900 to-primary-950 border-t border-accent/20 overflow-hidden relative z-50 shadow-2xl"
+            {/* Side drawer — slides from the start side (right in RTL, left in LTR) */}
+            <motion.aside
+              initial={{ x: isAr ? '100%' : '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: isAr ? '100%' : '-100%' }}
+              transition={{ type: 'tween', ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
+              className={cn(
+                'fixed top-0 bottom-0 z-[70] w-[88vw] max-w-[360px] flex flex-col bg-gradient-to-b from-primary-900 via-primary-900 to-primary-950 shadow-2xl',
+                isAr ? 'end-0 border-s border-accent/25' : 'start-0 border-e border-accent/25',
+              )}
+              role="dialog"
+              aria-modal="true"
             >
-              <nav className="container py-5 space-y-1">
-                <div className="text-[10px] uppercase tracking-[0.25em] text-accent/80 font-bold px-3 mb-2">
-                  ✦ القائمة
-                </div>
-                {links.map((l, i) => {
-                  const active = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href));
-                  const Icon = l.icon;
-                  return (
-                    <motion.div
-                      key={l.href}
-                      initial={{ opacity: 0, x: -16 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.04 }}
-                    >
-                      <Link
-                        href={l.href}
-                        onClick={() => setOpen(false)}
-                        className={cn(
-                          'flex items-center gap-3 px-3 py-3.5 rounded-xl text-[15px] font-bold transition-all',
-                          active
-                            ? 'bg-accent text-primary shadow-lg shadow-accent/25'
-                            : 'text-cream hover:bg-cream/10 hover:text-accent',
-                        )}
+              {/* Decorative gold glow */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
+              <div className="pointer-events-none absolute -top-24 -end-24 w-72 h-72 rounded-full bg-accent/15 blur-3xl" />
+
+              {/* Drawer header */}
+              <div className="relative flex items-center justify-between gap-3 px-5 py-4 border-b border-accent/15">
+                <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5 min-w-0">
+                  <Logo size={40} />
+                  <div className="leading-tight">
+                    <div className="font-serif font-bold text-cream text-sm">LOTUS SHARM</div>
+                    <div className="text-[9px] tracking-[0.3em] text-accent font-light mt-0.5">TRAVEL</div>
+                  </div>
+                </Link>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="w-10 h-10 rounded-full bg-cream/10 hover:bg-accent hover:text-primary text-cream flex items-center justify-center transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Scroll area */}
+              <div className="relative flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-5">
+                {/* Section label */}
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
+                    {isAr ? '✦ القائمة' : '✦ Menu'}
+                  </div>
+
+                  {links.map((l, i) => {
+                    const active = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href));
+                    const Icon = l.icon;
+                    return (
+                      <motion.div
+                        key={l.href}
+                        initial={{ opacity: 0, x: isAr ? 24 : -24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.05 + i * 0.04, ease: 'easeOut' }}
                       >
-                        <span className={cn(
-                          'flex items-center justify-center w-9 h-9 rounded-lg transition-colors',
-                          active ? 'bg-primary/10 text-primary' : 'bg-accent/15 text-accent',
-                        )}>
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1">{l.label}</span>
-                        {active && <Sparkles className="h-4 w-4 opacity-80" />}
-                      </Link>
-                    </motion.div>
-                  );
-                })}
+                        <Link
+                          href={l.href}
+                          onClick={() => setOpen(false)}
+                          className={cn(
+                            'flex items-center gap-3 px-3 py-3 rounded-xl text-[15px] font-bold transition-all',
+                            active
+                              ? 'bg-accent text-primary shadow-lg shadow-accent/30'
+                              : 'text-cream hover:bg-cream/10 active:bg-cream/15',
+                          )}
+                        >
+                          <span className={cn(
+                            'flex items-center justify-center w-10 h-10 rounded-xl transition-colors flex-shrink-0',
+                            active ? 'bg-primary/10 text-primary' : 'bg-accent/15 text-accent',
+                          )}>
+                            <Icon className="h-[18px] w-[18px]" />
+                          </span>
+                          <span className="flex-1 text-start">{l.label}</span>
+                          <ChevronLeft className={cn(
+                            'h-4 w-4 transition-opacity',
+                            isAr ? '' : 'rotate-180',
+                            active ? 'opacity-90 text-primary' : 'opacity-40 text-cream',
+                          )} />
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </div>
 
-                {/* Divider */}
-                <div className="my-3 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+                {/* Quick contact */}
+                <div className="space-y-2">
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
+                    {isAr ? '✦ تواصل معنا' : '✦ Contact'}
+                  </div>
 
-                {/* Contact */}
-                <a
-                  href="tel:+201090767278"
-                  className="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-cream/5 hover:bg-cream/10 transition-colors group"
-                >
-                  <span className="flex items-center gap-3 text-cream">
-                    <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-accent/15 text-accent">
-                      <Phone className="h-4 w-4" />
+                  <a
+                    href="tel:+201090767278"
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl bg-cream/5 hover:bg-cream/10 active:bg-cream/15 transition-colors"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/15 text-accent flex-shrink-0">
+                      <Phone className="h-[18px] w-[18px]" />
                     </span>
-                    <span className="text-sm font-semibold">اتصل بنا</span>
-                  </span>
-                  <span dir="ltr" className="text-accent text-sm font-bold tabular-nums">+20 109 076 7278</span>
-                </a>
-
-                <a
-                  href="https://wa.me/201090767278"
-                  target="_blank"
-                  rel="noopener"
-                  className="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-cream/5 hover:bg-cream/10 transition-colors"
-                >
-                  <span className="flex items-center gap-3 text-cream">
-                    <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#25D366]/20 text-[#25D366]">
-                      <MessageCircle className="h-4 w-4" />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[11px] text-cream/60 leading-none mb-0.5">{isAr ? 'اتصل' : 'Call'}</span>
+                      <span dir="ltr" className="block text-cream font-bold text-sm tabular-nums">+20 109 076 7278</span>
                     </span>
-                    <span className="text-sm font-semibold">واتساب</span>
-                  </span>
-                  <span className="text-[#25D366] text-xs font-bold opacity-80">رد فوري</span>
-                </a>
+                  </a>
 
+                  <a
+                    href={buildWhatsAppLink('201090767278', isAr ? 'مرحبا، أريد الاستفسار عن الرحلات' : 'Hi! I have a question about your trips')}
+                    target="_blank"
+                    rel="noopener"
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl bg-[#25D366]/12 hover:bg-[#25D366]/20 transition-colors"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#25D366]/25 text-[#25D366] flex-shrink-0">
+                      <MessageCircle className="h-[18px] w-[18px]" />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[11px] text-[#25D366]/80 leading-none mb-0.5 font-semibold">{isAr ? 'واتساب · رد فوري' : 'WhatsApp · Instant reply'}</span>
+                      <span className="block text-cream font-bold text-sm">{isAr ? 'تحدث معنا الآن' : 'Chat with us now'}</span>
+                    </span>
+                  </a>
+
+                  <a
+                    href="mailto:info@lotussharm.com"
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl bg-cream/5 hover:bg-cream/10 transition-colors"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/15 text-accent flex-shrink-0">
+                      <Mail className="h-[18px] w-[18px]" />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[11px] text-cream/60 leading-none mb-0.5">{isAr ? 'البريد' : 'Email'}</span>
+                      <span dir="ltr" className="block text-cream font-bold text-sm">info@lotussharm.com</span>
+                    </span>
+                  </a>
+                </div>
+
+                {/* Socials */}
+                <div className="space-y-2">
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
+                    {isAr ? '✦ تابعنا' : '✦ Follow us'}
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {SOCIALS.map(({ href, Icon, label, bg }) => (
+                      <a
+                        key={label}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        className={cn('flex items-center justify-center h-12 rounded-xl transition-transform hover:-translate-y-0.5', bg)}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Sticky footer CTA */}
+              <div className="relative border-t border-accent/15 bg-primary-950/80 backdrop-blur-sm p-4">
                 <Button
                   asChild
                   size="lg"
-                  className="w-full mt-3 bg-accent text-primary font-extrabold shadow-lg shadow-accent/25 h-12 text-base"
+                  className="w-full bg-accent hover:bg-accent-400 text-primary font-extrabold shadow-lg shadow-accent/30 h-12 text-[15px]"
                 >
                   <Link href="/trips" onClick={() => setOpen(false)}>
                     <Sparkles className="h-4 w-4 me-1" />
                     {t('book')}
                   </Link>
                 </Button>
-              </nav>
-            </motion.div>
-          </>
+                <p className="text-center text-[11px] text-cream/50 mt-2.5">
+                  {isAr ? '© لوتس شرم للسياحة · سياحة فاخرة منذ 2013' : '© Lottus Sharm · Luxury tourism since 2013'}
+                </p>
+              </div>
+            </motion.aside>
+          </div>
         )}
       </AnimatePresence>
     </motion.header>
