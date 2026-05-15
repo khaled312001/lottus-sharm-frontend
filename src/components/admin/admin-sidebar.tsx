@@ -3,12 +3,15 @@
 import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
-  Settings, Star, Mail, MessageSquare, UserCog, Image as ImageIcon, X, Send,
+  Settings, Star, Mail, MessageSquare, UserCog, Image as ImageIcon, X, Send, BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const SECTIONS = [
-  { title: 'الرئيسية', items: [{ href: '/admin/dashboard' as const, icon: LayoutDashboard, label: 'لوحة التحكم' }] },
+  { title: 'الرئيسية', items: [
+    { href: '/admin/dashboard' as const, icon: LayoutDashboard, label: 'لوحة التحكم' },
+    { href: '/admin/reports' as const,   icon: BarChart3,       label: 'التقارير' },
+  ]},
   { title: 'المحتوى', items: [
     { href: '/admin/trips' as const, icon: Map, label: 'الرحلات' },
     { href: '/admin/blog' as const, icon: FileText, label: 'المدونة' },
