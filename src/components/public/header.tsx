@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Link, usePathname } from '@/i18n/routing';
@@ -30,6 +31,8 @@ export function Header() {
   const params = useParams<{ locale: string }>();
   const locale = (params?.locale as string) || 'ar';
   const isAr = locale === 'ar';
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -168,7 +171,8 @@ export function Header() {
         </div>
       </div>
 
-      <AnimatePresence>
+      {mounted && createPortal(
+        <AnimatePresence>
         {open && (
           <div className="lg:hidden">
             {/* Backdrop */}
@@ -352,7 +356,9 @@ export function Header() {
             </motion.aside>
           </div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+        document.body,
+      )}
     </motion.header>
   );
 }
