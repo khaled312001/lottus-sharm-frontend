@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Toaster } from 'sonner';
 import { getLocalizedName, getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
+import { MaintenanceGate } from '@/components/maintenance-gate';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lottussharm.com';
 const ALL_LOCALES = ['ar', 'en', 'ru', 'it'] as const;
@@ -47,7 +48,9 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <div dir={dir} lang={locale} className="min-h-screen bg-background">
-        {children}
+        <MaintenanceGate>
+          {children}
+        </MaintenanceGate>
         <Toaster position={locale === 'ar' ? 'top-left' : 'top-right'} richColors />
       </div>
     </NextIntlClientProvider>
