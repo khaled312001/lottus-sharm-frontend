@@ -27,16 +27,19 @@ export function LanguageSwitcher({ transparent = false, compact = false }: { tra
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
+        aria-label="Change language"
         className={cn(
-          'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-          transparent ? 'text-cream/90 hover:bg-white/10' : 'text-primary/80 hover:bg-muted',
+          'inline-flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-2 text-sm font-semibold transition-all border',
+          // Header is always dark-teal so always use cream text + subtle gold border
+          'text-cream hover:text-accent border-cream/20 hover:border-accent/60 bg-cream/5 hover:bg-cream/10',
+          open && 'bg-accent text-primary border-accent',
           isPending && 'opacity-60',
         )}
       >
         <Globe className="h-4 w-4" />
         <span className="hidden sm:inline">{current?.label}</span>
-        <span className="sm:hidden">{current?.flag}</span>
-        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
+        <span className="sm:hidden text-base leading-none">{current?.flag}</span>
+        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform opacity-70', open && 'rotate-180 opacity-100')} />
       </button>
       <AnimatePresence>
         {open && (

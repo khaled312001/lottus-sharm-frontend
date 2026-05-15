@@ -7,7 +7,7 @@ import { Toaster } from 'sonner';
 import { getLocalizedName, getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 import { MaintenanceGate } from '@/components/maintenance-gate';
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lottussharm.com';
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lotussharm.com';
 const ALL_LOCALES = ['ar', 'en', 'ru', 'it'] as const;
 
 export function generateStaticParams() {
@@ -19,15 +19,37 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const s = await getSiteSettings();
   const brand = getLocalizedName(s, locale);
   const tagline = getLocalizedTagline(s, locale);
+  const ogImage = s.logoUrl || `${SITE}/hero-slides/hero-01.jpg`;
+
+  // Build hreflang map (x-default points at AR since the contract is Egypt-first)
+  const languages: Record<string, string> = { 'x-default': `${SITE}/ar` };
+  for (const l of ALL_LOCALES) languages[l] = `${SITE}/${l}`;
+
   return {
+    metadataBase: new URL(SITE),
     title: { default: brand, template: `%s | ${brand}` },
     description: tagline,
+    keywords: ['Sharm El Sheikh', 'شرم الشيخ', 'tourism', 'سياحة', 'desert safari', 'Ras Mohammed', 'snorkeling', 'diving', 'tours'],
     alternates: {
       canonical: `${SITE}/${locale}`,
-      languages: Object.fromEntries(ALL_LOCALES.map((l) => [l, `${SITE}/${l}`])),
+      languages,
     },
-    openGraph: { title: brand, description: tagline, url: `${SITE}/${locale}`, siteName: brand, locale, type: 'website' },
-    twitter: { card: 'summary_large_image', title: brand, description: tagline },
+    openGraph: {
+      title: brand,
+      description: tagline,
+      url: `${SITE}/${locale}`,
+      siteName: brand,
+      locale,
+      type: 'website',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: brand }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: brand,
+      description: tagline,
+      images: [ogImage],
+    },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
   };
 }
 
