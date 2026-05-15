@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
-  Phone, MessageCircle, Mail, Send, Sparkles, Check, Loader2,
-  Facebook, Instagram, Youtube,
+  Phone, MessageCircle, Facebook, Instagram, Youtube,
 } from 'lucide-react';
 
 const BYPASS_KEY = 'lotus_preview';
@@ -42,8 +41,8 @@ export function MaintenanceGate({ children }: { children: React.ReactNode }) {
   return <ComingSoon />;
 }
 
-// Countdown target: end of May 2026 (~2 weeks from contract delivery)
-const LAUNCH_DATE = new Date('2026-05-30T12:00:00Z').getTime();
+// Countdown target — under 3 days from now (client wants imminent launch feel)
+const LAUNCH_DATE = new Date('2026-05-18T12:00:00Z').getTime();
 
 function useCountdown() {
   const [t, setT] = useState({ d: 0, h: 0, m: 0, s: 0, expired: false });
@@ -69,30 +68,6 @@ function useCountdown() {
 
 function ComingSoon() {
   const t = useCountdown();
-  const [email, setEmail] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  async function subscribe(e: FormEvent) {
-    e.preventDefault();
-    if (!email.includes('@')) { setErr('بريد إلكتروني غير صالح'); return; }
-    setSubmitting(true); setErr(null);
-    try {
-      const res = await fetch('/api/public/newsletter/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, locale: 'AR' }),
-      });
-      if (!res.ok) throw new Error('فشل الاشتراك');
-      setSubscribed(true);
-      setEmail('');
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'حصل خطأ');
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   return (
     <div
@@ -164,24 +139,26 @@ function ComingSoon() {
           <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-accent/10 blur-2xl" />
 
           <div className="relative text-center">
-            {/* Logo */}
-            <motion.div
-              initial={{ scale: 0.5, rotate: -10, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 14, delay: 0.15 }}
-              className="inline-block mb-7 relative"
-            >
-              {/* Soft gold halo around logo */}
-              <div className="absolute -inset-3 rounded-3xl bg-accent/25 blur-2xl" />
-              <Image
-                src="/logo.jpg"
-                alt="Lotus Sharm"
-                width={120}
-                height={120}
-                className="relative rounded-2xl ring-2 ring-accent/50 shadow-2xl shadow-accent/30"
-                priority
-              />
-            </motion.div>
+            {/* Logo — centered */}
+            <div className="flex justify-center mb-7">
+              <motion.div
+                initial={{ scale: 0.5, rotate: -10, opacity: 0 }}
+                animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 120, damping: 14, delay: 0.15 }}
+                className="relative"
+              >
+                {/* Soft gold halo around logo */}
+                <div className="absolute -inset-3 rounded-3xl bg-accent/25 blur-2xl" />
+                <Image
+                  src="/logo.jpg"
+                  alt="Lotus Sharm"
+                  width={120}
+                  height={120}
+                  className="relative rounded-2xl ring-2 ring-accent/50 shadow-2xl shadow-accent/30"
+                  priority
+                />
+              </motion.div>
+            </div>
 
             {/* Coming Soon chip */}
             <motion.div
@@ -260,64 +237,10 @@ function ComingSoon() {
               ))}
             </motion.div>
 
-            {/* Email subscribe */}
-            {!subscribed ? (
-              <motion.form
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.85 }}
-                onSubmit={subscribe}
-                className="max-w-md mx-auto mb-8"
-              >
-                <div className="flex items-center gap-1.5 mb-2 text-xs text-cream/65">
-                  <Sparkles className="h-3 w-3 text-accent" />
-                  <span>اشترك لتعرف أول من يفتح الموقع — وعروض الإطلاق</span>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2 bg-cream/5 backdrop-blur border border-accent/25 rounded-xl p-1.5 focus-within:border-accent/60 transition-colors">
-                  <div className="flex-1 flex items-center gap-2 px-3">
-                    <Mail className="h-4 w-4 text-accent/70 flex-shrink-0" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="بريدك الإلكتروني"
-                      dir="ltr"
-                      className="flex-1 bg-transparent border-0 outline-none text-sm py-2.5 text-cream placeholder:text-cream/40"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="inline-flex items-center justify-center gap-1.5 bg-accent hover:bg-accent-400 text-primary font-bold text-sm px-5 py-2.5 rounded-lg shadow-lg shadow-accent/20 transition-colors disabled:opacity-60"
-                  >
-                    {submitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Send className="h-3.5 w-3.5" />
-                        أعلِمني
-                      </>
-                    )}
-                  </button>
-                </div>
-                {err && <p className="mt-2 text-xs text-rose-300">{err}</p>}
-              </motion.form>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="max-w-md mx-auto mb-8 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 text-sm"
-              >
-                <Check className="h-4 w-4 flex-shrink-0" />
-                <span>تمام! هنبعتلك أول إشعار عند الإطلاق</span>
-              </motion.div>
-            )}
-
             {/* Divider */}
             <div className="max-w-sm mx-auto my-7 flex items-center gap-3 text-[10px] text-cream/40 uppercase tracking-[0.3em]">
               <span className="h-px flex-1 bg-cream/15" />
-              <span>أو تواصل مباشرة</span>
+              <span>تواصل مباشرة</span>
               <span className="h-px flex-1 bg-cream/15" />
             </div>
 
