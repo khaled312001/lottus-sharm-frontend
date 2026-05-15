@@ -163,6 +163,78 @@
   }
 }
 
+/* =========== PRINT (PDF export) =========== */
+@media print {
+  /* Hide chrome */
+  .no-print,
+  header[role="banner"],
+  nav,
+  aside,
+  .admin-sidebar,
+  .admin-topbar,
+  button:not(.print-keep),
+  [data-no-print] {
+    display: none !important;
+  }
+
+  /* Reset page layout: drop admin shell offsets, show full width */
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt;
+  }
+  body * {
+    visibility: visible;
+  }
+  /* Admin shell's ms-64 offset shouldn't apply on paper */
+  .lg\:ms-64, .lg\:me-64 {
+    margin-inline-start: 0 !important;
+    margin-inline-end: 0 !important;
+  }
+  main {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  /* Cards become clean blocks */
+  [data-card], .card, .rounded-2xl, .rounded-xl {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Headings/charts shouldn't split */
+  h1, h2, h3, h4, table, svg {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Force light theme on dark elements */
+  .bg-primary, .bg-primary-900, .bg-primary-800, .bg-primary-950 {
+    background: #0d3a3a !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Ensure SVG charts print with their colors */
+  svg, svg * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Page setup: A4, narrow margins, footer */
+  @page {
+    size: A4;
+    margin: 12mm 10mm 14mm 10mm;
+  }
+  /* Page break before each major section card */
+  .print-page-break {
+    page-break-before: always;
+  }
+  /* Hide framer-motion transforms so charts don't print invisible */
+  [style*="opacity: 0"] {
+    opacity: 1 !important;
+  }
+}
+
 /* Smooth scroll */
 html { scroll-behavior: smooth; }
 

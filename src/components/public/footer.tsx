@@ -1,9 +1,10 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { Facebook, Instagram, Youtube, Phone, Mail, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, Code2 } from 'lucide-react';
 import { NewsletterForm } from './newsletter-form';
 import { Logo } from './logo';
 import { getLocalizedTagline } from '@/lib/site-settings';
+import { L } from '@/lib/utils';
 import type { SiteSettingsDTO } from '@/types/api';
 
 export function Footer({ settings }: { settings: SiteSettingsDTO }) {
@@ -80,12 +81,35 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
         <div className="container py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs opacity-75">
           <p>© {year} <strong className="font-semibold text-accent">Lotus Sharm Travel</strong>. {t('footer.rights')}.</p>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-accent transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-accent transition-colors">Terms</Link>
-            <span>
-              Designed by <a href="https://barmagly.tech" target="_blank" rel="noopener" className="font-semibold hover:text-accent transition-colors">Barmagly</a>
-            </span>
+            <Link href="/privacy" className="hover:text-accent transition-colors">{L(locale, { ar: 'الخصوصية', en: 'Privacy', ru: 'Конфиденциальность', it: 'Privacy' })}</Link>
+            <Link href="/terms" className="hover:text-accent transition-colors">{L(locale, { ar: 'الشروط', en: 'Terms', ru: 'Условия', it: 'Termini' })}</Link>
           </div>
+        </div>
+      </div>
+
+      {/* Dedicated developer credit strip */}
+      <div className="relative bg-primary-950/80 border-t border-accent/15">
+        <div className="container py-3.5 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 text-[11px] text-cream/65">
+          <Code2 className="h-3.5 w-3.5 text-accent flex-shrink-0" />
+          <span>
+            {L(locale, {
+              ar: 'تم تطوير هذا الموقع بواسطة',
+              en: 'This website was developed by',
+              ru: 'Этот сайт разработан компанией',
+              it: 'Sito sviluppato da',
+            })}
+          </span>
+          <a
+            href="http://barmagly.tech/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 font-bold text-accent hover:text-accent-300 transition-colors group"
+          >
+            <span className="border-b border-accent/30 group-hover:border-accent/80 transition-colors">
+              {L(locale, { ar: 'شركة برمجلي', en: 'Barmagly', ru: 'Barmagly', it: 'Barmagly' })}
+            </span>
+            <span aria-hidden className="text-accent/70 group-hover:text-accent transition-colors">↗</span>
+          </a>
         </div>
       </div>
     </footer>

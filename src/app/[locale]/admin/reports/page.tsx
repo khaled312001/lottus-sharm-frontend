@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   FileText, Download, Loader2, TrendingUp, AlertCircle, Users, Map, CreditCard,
-  Calendar, Award, BarChart3, Percent, DollarSign, UserCheck,
+  Calendar, Award, BarChart3, Percent, DollarSign, UserCheck, Printer,
 } from 'lucide-react';
 import { AreaChart, BarChart, Donut, StackedBar } from '@/components/admin/charts';
 import { cn } from '@/lib/utils';
@@ -93,9 +93,37 @@ export default function ReportsPage() {
     URL.revokeObjectURL(link.href);
   }
 
+  function exportPdf() {
+    // Triggers the browser's print-to-PDF dialog. globals.css has @media print
+    // rules that hide chrome (sidebar/topbar/buttons) and lay the report out
+    // for paper. User can save as PDF from the dialog.
+    const original = document.title;
+    document.title = `Lotus Sharm — Report (${days}d) — ${new Date().toISOString().slice(0, 10)}`;
+    window.print();
+    setTimeout(() => { document.title = original; }, 1000);
+  }
+
+  const periodLabel = RANGE_OPTIONS.find((r) => r.days === days)?.label || `${days} يوم`;
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-start justify-between gap-3 flex-wrap">
+    <div className="space-y-5 print:bg-white">
+      {/* Print-only header */}
+      <div className="hidden print:block print:mb-6 print:border-b-2 print:border-amber-600 print:pb-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="text-amber-700 font-bold text-xs uppercase tracking-[0.3em] mb-1">Lotus Sharm Travel</div>
+            <h1 className="font-serif text-2xl font-bold text-slate-900">تقرير الأداء التفصيلي</h1>
+            <div className="text-sm text-slate-600 mt-1">الفترة: <strong>{periodLabel}</strong> · صادر بتاريخ {new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+          </div>
+          <div className="text-end text-xs text-slate-500">
+            <div>+20 109 076 7278</div>
+            <div>info@lotussharm.com</div>
+            <div>lotussharm.com</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-start justify-between gap-3 flex-wrap no-print">
         <div>
           <h1 className="text-2xl font-bold mb-1 flex items-center gap-2">
             <BarChart3 className="h-6 w-6 text-accent" />
@@ -103,7 +131,10 @@ export default function ReportsPage() {
           </h1>
           <p className="text-sm text-muted-foreground">تحليلات الأداء والإيرادات والعملاء عبر الفترات الزمنية</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 no-print">
+          <Button onClick={exportPdf} className="gap-1.5 text-sm bg-primary hover:bg-primary-800 text-cream shadow-md">
+            <Printer className="h-4 w-4" /> تحميل PDF
+          </Button>
           <Button onClick={() => exportCsv('bookings')} variant="outline" className="gap-1.5 text-sm">
             <Download className="h-4 w-4" /> الحجوزات CSV
           </Button>
