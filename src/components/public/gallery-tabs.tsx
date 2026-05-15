@@ -39,9 +39,9 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
       <div className="flex justify-center mb-8">
         <div className="inline-flex items-center bg-white rounded-full p-1 border border-accent/20 shadow-sm">
           {[
-            { k: 'all',    ar: 'الكل',     en: 'All',     count: photos.length + videos.length, icon: null },
-            { k: 'photos', ar: 'صور',      en: 'Photos',  count: photos.length, icon: Camera },
-            { k: 'videos', ar: 'فيديوهات', en: 'Videos',  count: videos.length, icon: Video },
+            { k: 'all',    ar: 'الكل',     en: 'All',     ru: 'Все',   it: 'Tutti', count: photos.length + videos.length, icon: null },
+            { k: 'photos', ar: 'صور',      en: 'Photos',  ru: 'Фото',  it: 'Foto',  count: photos.length, icon: Camera },
+            { k: 'videos', ar: 'فيديوهات', en: 'Videos',  ru: 'Видео', it: 'Video', count: videos.length, icon: Video },
           ].map((t) => (
             <button
               key={t.k}
@@ -52,7 +52,7 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
               )}
             >
               {t.icon && <t.icon className="h-4 w-4" />}
-              {L(locale, { ar: t.ar, en: t.en })}
+              {L(locale, { ar: t.ar, en: t.en, ru: t.ru, it: t.it })}
               <span className={cn('text-xs px-2 py-0.5 rounded-full', tab === t.k ? 'bg-accent text-primary' : 'bg-accent/15 text-accent-700')}>
                 {t.count}
               </span>

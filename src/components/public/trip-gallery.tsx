@@ -3,10 +3,13 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { Maximize2 } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { L } from '@/lib/utils';
 import type { MediaDTO } from '@/types/api';
 import { Lightbox, type LightboxItem } from './lightbox';
 
 export function TripGallery({ images, title }: { images: MediaDTO[]; title: string }) {
+  const locale = useLocale();
   const [open, setOpen] = useState<number | null>(null);
   // Accept both images and videos
   const all = images;
@@ -37,7 +40,7 @@ export function TripGallery({ images, title }: { images: MediaDTO[]; title: stri
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute bottom-3 start-3 px-2.5 py-1.5 rounded-md bg-black/60 backdrop-blur text-white text-xs font-medium inline-flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Maximize2 className="h-3.5 w-3.5" /> عرض الكل
+            <Maximize2 className="h-3.5 w-3.5" /> {L(locale, { ar: 'عرض الكل', en: 'View all', ru: 'Все фото', it: 'Vedi tutte' })}
           </div>
         </button>
         {all.slice(1, 5).map((img, i) => {

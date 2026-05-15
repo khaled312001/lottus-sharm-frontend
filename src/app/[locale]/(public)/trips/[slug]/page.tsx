@@ -185,7 +185,7 @@ export default async function TripDetailPage({ params }: PageProps) {
               <div>
                 <div className="text-accent uppercase tracking-[0.25em] text-[11px] font-bold mb-2">{L(locale, { ar: 'أبرز المعالم', en: 'Highlights', ru: 'Изюминки', it: 'Punti salienti' })}</div>
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-5">
-                  {L(locale, { ar: 'ما الذي سترونه', en: "What you'll experience" })}
+                  {L(locale, { ar: 'ما الذي سترونه', en: "What you'll experience", ru: 'Что вас ждёт', it: 'Cosa vivrai' })}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
                   {trip.highlights.map((h, i) => (
@@ -207,7 +207,7 @@ export default async function TripDetailPage({ params }: PageProps) {
               <div>
                 <div className="text-accent uppercase tracking-[0.25em] text-[11px] font-bold mb-2">{L(locale, { ar: 'الأسعار شفافة', en: 'Transparent pricing', ru: 'Прозрачные цены', it: 'Prezzi trasparenti' })}</div>
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-5">
-                  {L(locale, { ar: 'ما يشمله وما لا يشمله', en: "What's included & excluded" })}
+                  {L(locale, { ar: 'ما يشمله وما لا يشمله', en: "What's included & excluded", ru: 'Что включено и что нет', it: 'Cosa è incluso ed escluso' })}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4 md:gap-5">
                   {includes.length > 0 && (

@@ -24,7 +24,7 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
       <div className="container relative py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         <div>
           <Logo size={80} variant="light" />
-          <p className="text-sm opacity-80 leading-relaxed mt-6 max-w-xs">{settings.taglineAr}</p>
+          <p className="text-sm opacity-80 leading-relaxed mt-6 max-w-xs">{tagline}</p>
         </div>
 
         <div>

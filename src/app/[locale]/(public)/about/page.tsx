@@ -17,26 +17,54 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const isAr = locale === 'ar';
 
   const values = [
-    { icon: Award, ar: 'الجودة أولاً', en: 'Quality First', arDesc: 'كل تفصيلة في رحلاتنا مختارة بعناية لتقدم أفضل تجربة سياحية ممكنة.', enDesc: 'Every detail in our trips is carefully chosen to deliver the best experience.' },
-    { icon: Heart, ar: 'شغف الخدمة', en: 'Passion for Service', arDesc: 'نعشق ما نفعل ونرى السعادة في عيون عملائنا، وهذا وقودنا اليومي.', enDesc: 'We love what we do — the joy in our guests\' eyes is our daily fuel.' },
-    { icon: Compass, ar: 'الابتكار', en: 'Innovation', arDesc: 'نطور باستمرار وجهات ومسارات جديدة لتقديم تجارب مبتكرة وحصرية.', enDesc: 'We constantly develop new destinations and exclusive experiences.' },
-    { icon: Shield, ar: 'الأمان والثقة', en: 'Safety & Trust', arDesc: 'فريقنا مدرب ومرخص، ومعداتنا معتمدة بأعلى معايير السلامة الدولية.', enDesc: 'Trained, certified team and equipment meeting international standards.' },
+    { icon: Award,   ar: 'الجودة أولاً',  en: 'Quality First',       ru: 'Качество прежде всего', it: 'Qualità prima di tutto',
+      arDesc: 'كل تفصيلة في رحلاتنا مختارة بعناية لتقدم أفضل تجربة سياحية ممكنة.',
+      enDesc: 'Every detail in our trips is carefully chosen to deliver the best experience.',
+      ruDesc: 'Каждая деталь наших туров тщательно подобрана для лучшего впечатления.',
+      itDesc: 'Ogni dettaglio dei tour è scelto con cura per offrire la migliore esperienza.' },
+    { icon: Heart,   ar: 'شغف الخدمة',     en: 'Passion for Service', ru: 'Страсть к сервису',     it: 'Passione per il servizio',
+      arDesc: 'نعشق ما نفعل ونرى السعادة في عيون عملائنا، وهذا وقودنا اليومي.',
+      enDesc: "We love what we do — the joy in our guests' eyes is our daily fuel.",
+      ruDesc: 'Мы любим то, что делаем — радость в глазах гостей наше топливо.',
+      itDesc: 'Amiamo ciò che facciamo — la gioia negli occhi degli ospiti ci motiva.' },
+    { icon: Compass, ar: 'الابتكار',       en: 'Innovation',          ru: 'Инновации',             it: 'Innovazione',
+      arDesc: 'نطور باستمرار وجهات ومسارات جديدة لتقديم تجارب مبتكرة وحصرية.',
+      enDesc: 'We constantly develop new destinations and exclusive experiences.',
+      ruDesc: 'Постоянно создаём новые направления и эксклюзивные маршруты.',
+      itDesc: 'Sviluppiamo costantemente nuove destinazioni ed esperienze esclusive.' },
+    { icon: Shield,  ar: 'الأمان والثقة',  en: 'Safety & Trust',      ru: 'Безопасность',          it: 'Sicurezza e fiducia',
+      arDesc: 'فريقنا مدرب ومرخص، ومعداتنا معتمدة بأعلى معايير السلامة الدولية.',
+      enDesc: 'Trained, certified team and equipment meeting international standards.',
+      ruDesc: 'Сертифицированная команда и оборудование международных стандартов.',
+      itDesc: 'Team certificato e attrezzatura conforme agli standard internazionali.' },
   ];
 
   const timeline = [
-    { year: '2013', ar: 'تأسيس لوتس شرم — انطلاقتنا الأولى', en: 'Lotus Sharm founded — our first launch' },
-    { year: '2016', ar: 'توسيع الأسطول البحري وإضافة رحلات الغوص', en: 'Marine fleet expanded, diving trips added' },
-    { year: '2018', ar: 'تجاوزنا حاجز الـ 5,000 سائح سنوياً', en: 'Crossed 5,000 annual guests milestone' },
-    { year: '2020', ar: 'إطلاق رحلات السفاري الفاخرة', en: 'Launched luxury safari trips' },
-    { year: '2022', ar: 'شراكات مع أكبر فنادق الـ 5 نجوم', en: 'Partnerships with major 5-star hotels' },
-    { year: '2026', ar: 'إطلاق منصتنا الرقمية الجديدة بـ 4 لغات', en: 'Launched new digital platform in 4 languages' },
+    { year: '2013', ar: 'تأسيس لوتس شرم — انطلاقتنا الأولى',           en: 'Lotus Sharm founded — our first launch',
+      ru: 'Основание Lotus Sharm — наш первый запуск',
+      it: 'Fondazione di Lotus Sharm — il nostro primo lancio' },
+    { year: '2016', ar: 'توسيع الأسطول البحري وإضافة رحلات الغوص',      en: 'Marine fleet expanded, diving trips added',
+      ru: 'Расширение морского флота, добавлены дайв-туры',
+      it: 'Flotta marina ampliata, aggiunti tour di immersioni' },
+    { year: '2018', ar: 'تجاوزنا حاجز الـ 5,000 سائح سنوياً',          en: 'Crossed 5,000 annual guests milestone',
+      ru: 'Преодолели рубеж в 5 000 гостей в год',
+      it: 'Superati 5.000 ospiti annui' },
+    { year: '2020', ar: 'إطلاق رحلات السفاري الفاخرة',                  en: 'Launched luxury safari trips',
+      ru: 'Запуск премиальных сафари-туров',
+      it: 'Lancio dei safari di lusso' },
+    { year: '2022', ar: 'شراكات مع أكبر فنادق الـ 5 نجوم',              en: 'Partnerships with major 5-star hotels',
+      ru: 'Партнёрство с ведущими 5-звёздочными отелями',
+      it: 'Partnership con i principali hotel 5 stelle' },
+    { year: '2026', ar: 'إطلاق منصتنا الرقمية الجديدة بـ 4 لغات',       en: 'Launched new digital platform in 4 languages',
+      ru: 'Запуск новой цифровой платформы на 4 языках',
+      it: 'Lancio della nuova piattaforma digitale in 4 lingue' },
   ];
 
   const stats = [
-    { v: '13+', ar: 'سنة من الخبرة', en: 'Years' },
-    { v: '10k+', ar: 'سائح سعيد', en: 'Travelers' },
-    { v: '50+', ar: 'وجهة سياحية', en: 'Destinations' },
-    { v: '4.9★', ar: 'تقييم العملاء', en: 'Rating' },
+    { v: '13+',  ar: 'سنة من الخبرة', en: 'Years',        ru: 'Лет опыта',     it: 'Anni' },
+    { v: '10k+', ar: 'سائح سعيد',     en: 'Travelers',    ru: 'Путешественников', it: 'Viaggiatori' },
+    { v: '50+',  ar: 'وجهة سياحية',   en: 'Destinations', ru: 'Направлений',   it: 'Destinazioni' },
+    { v: '4.9★', ar: 'تقييم العملاء', en: 'Rating',       ru: 'Рейтинг',       it: 'Valutazione' },
   ];
 
   return (
@@ -64,7 +92,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <Reveal key={s.en} delay={i * 0.1}>
               <div>
                 <div className="font-serif text-3xl md:text-5xl font-bold leading-none">{s.v}</div>
-                <div className="text-xs md:text-sm font-semibold mt-2 uppercase tracking-wider">{L(locale, { ar: s.ar, en: s.en })}</div>
+                <div className="text-xs md:text-sm font-semibold mt-2 uppercase tracking-wider">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</div>
               </div>
             </Reveal>
           ))}
@@ -166,18 +194,34 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
-              { icon: Plane,     ar: 'تنظيم الرحلات السياحية', en: 'Tourism Trips',       arDesc: 'محميات، جزر، رحلات بحرية وصحراوية في شرم الشيخ ومصر كلها.', enDesc: 'Reserves, islands, sea and desert trips across Sharm and all Egypt.' },
-              { icon: Compass,   ar: 'الجولات الإرشادية',       en: 'Guided Tours',       arDesc: 'مرشدون معتمدون بـ 4 لغات، رحلات يومية ومسارات حصرية.', enDesc: 'Certified guides in 4 languages, daily tours and exclusive routes.' },
-              { icon: Sparkles,  ar: 'تنظيم الحفلات',           en: 'Event Planning',     arDesc: 'حفلات خاصة، أعياد ميلاد، حفلات زفاف على الشاطئ، حفلات شركات.', enDesc: 'Private parties, birthdays, beach weddings, corporate events.' },
-              { icon: Mic,       ar: 'المؤتمرات والفعاليات',    en: 'Conferences',        arDesc: 'تجهيز فعاليات كبرى مع باقات إقامة وضيافة كاملة وخدمات صوتية.', enDesc: 'Full conference setup with stay, hospitality and AV services.' },
+              { icon: Plane,    ar: 'تنظيم الرحلات السياحية', en: 'Tourism Trips',  ru: 'Туристические туры', it: 'Tour turistici',
+                arDesc: 'محميات، جزر، رحلات بحرية وصحراوية في شرم الشيخ ومصر كلها.',
+                enDesc: 'Reserves, islands, sea and desert trips across Sharm and all Egypt.',
+                ruDesc: 'Заповедники, острова, морские и пустынные туры в Шарме и по всему Египту.',
+                itDesc: 'Riserve, isole, tour marini e desertici a Sharm e in tutto l\'Egitto.' },
+              { icon: Compass,  ar: 'الجولات الإرشادية',       en: 'Guided Tours',   ru: 'Экскурсии с гидом',  it: 'Tour guidati',
+                arDesc: 'مرشدون معتمدون بـ 4 لغات، رحلات يومية ومسارات حصرية.',
+                enDesc: 'Certified guides in 4 languages, daily tours and exclusive routes.',
+                ruDesc: 'Сертифицированные гиды на 4 языках, ежедневные туры и эксклюзивные маршруты.',
+                itDesc: 'Guide certificate in 4 lingue, tour giornalieri e percorsi esclusivi.' },
+              { icon: Sparkles, ar: 'تنظيم الحفلات',           en: 'Event Planning', ru: 'Организация событий', it: 'Pianificazione eventi',
+                arDesc: 'حفلات خاصة، أعياد ميلاد، حفلات زفاف على الشاطئ، حفلات شركات.',
+                enDesc: 'Private parties, birthdays, beach weddings, corporate events.',
+                ruDesc: 'Частные мероприятия, дни рождения, свадьбы на пляже, корпоративы.',
+                itDesc: 'Feste private, compleanni, matrimoni sulla spiaggia, eventi aziendali.' },
+              { icon: Mic,      ar: 'المؤتمرات والفعاليات',    en: 'Conferences',    ru: 'Конференции',         it: 'Conferenze',
+                arDesc: 'تجهيز فعاليات كبرى مع باقات إقامة وضيافة كاملة وخدمات صوتية.',
+                enDesc: 'Full conference setup with stay, hospitality and AV services.',
+                ruDesc: 'Полная организация конференций с проживанием, кейтерингом и AV-оборудованием.',
+                itDesc: 'Allestimento completo di conferenze con soggiorno, ospitalità e servizi AV.' },
             ].map((s, i) => (
               <Reveal key={s.en} delay={i * 0.1}>
                 <div className="group bg-white rounded-2xl p-6 md:p-7 border border-accent/10 hover:border-accent hover:-translate-y-2 transition-all duration-500 card-shadow h-full">
                   <div className="w-14 h-14 rounded-xl bg-primary text-accent flex items-center justify-center mb-5 group-hover:bg-accent group-hover:text-primary transition-colors">
                     <s.icon className="h-7 w-7" />
                   </div>
-                  <h3 className="font-serif font-bold text-lg md:text-xl text-primary mb-2">{L(locale, { ar: s.ar, en: s.en })}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: s.arDesc, en: s.enDesc })}</p>
+                  <h3 className="font-serif font-bold text-lg md:text-xl text-primary mb-2">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: s.arDesc, en: s.enDesc, ru: s.ruDesc, it: s.itDesc })}</p>
                 </div>
               </Reveal>
             ))}
@@ -199,18 +243,18 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </Reveal>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 max-w-5xl mx-auto">
             {[
-              { ar: 'شرم الشيخ', en: 'Sharm El Sheikh', flag: '⭐', primary: true },
-              { ar: 'دهب', en: 'Dahab', flag: '🏖️' },
-              { ar: 'سانت كاترين', en: 'St. Catherine', flag: '⛰️' },
-              { ar: 'القاهرة', en: 'Cairo', flag: '🏛️' },
-              { ar: 'الأقصر', en: 'Luxor', flag: '🏺' },
-              { ar: 'أسوان', en: 'Aswan', flag: '🚢' },
-              { ar: 'الإسكندرية', en: 'Alexandria', flag: '🏛️' },
-              { ar: 'مرسى علم', en: 'Marsa Alam', flag: '🐠' },
-              { ar: 'الغردقة', en: 'Hurghada', flag: '🌊' },
-              { ar: 'سيوة', en: 'Siwa', flag: '🌴' },
-              { ar: 'الفيوم', en: 'Fayoum', flag: '🐪' },
-              { ar: 'العين السخنة', en: 'Ain Sokhna', flag: '🌅' },
+              { ar: 'شرم الشيخ',     en: 'Sharm El Sheikh', ru: 'Шарм-эль-Шейх', it: 'Sharm El Sheikh', flag: '⭐', primary: true },
+              { ar: 'دهب',           en: 'Dahab',           ru: 'Дахаб',          it: 'Dahab',           flag: '🏖️' },
+              { ar: 'سانت كاترين',  en: 'St. Catherine',   ru: 'Св. Екатерина',  it: 'S. Caterina',     flag: '⛰️' },
+              { ar: 'القاهرة',       en: 'Cairo',           ru: 'Каир',           it: 'Il Cairo',        flag: '🏛️' },
+              { ar: 'الأقصر',        en: 'Luxor',           ru: 'Луксор',         it: 'Luxor',           flag: '🏺' },
+              { ar: 'أسوان',         en: 'Aswan',           ru: 'Асуан',          it: 'Aswan',           flag: '🚢' },
+              { ar: 'الإسكندرية',    en: 'Alexandria',      ru: 'Александрия',    it: 'Alessandria',     flag: '🏛️' },
+              { ar: 'مرسى علم',      en: 'Marsa Alam',      ru: 'Марса-Алам',     it: 'Marsa Alam',      flag: '🐠' },
+              { ar: 'الغردقة',       en: 'Hurghada',        ru: 'Хургада',        it: 'Hurghada',        flag: '🌊' },
+              { ar: 'سيوة',          en: 'Siwa',            ru: 'Сива',           it: 'Siwa',            flag: '🌴' },
+              { ar: 'الفيوم',        en: 'Fayoum',          ru: 'Файюм',          it: 'Fayoum',          flag: '🐪' },
+              { ar: 'العين السخنة',  en: 'Ain Sokhna',      ru: 'Эйн-Сохна',      it: 'Ain Sokhna',      flag: '🌅' },
             ].map((d, i) => (
               <Reveal key={d.en} delay={i * 0.04}>
                 <div className={
@@ -221,7 +265,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 }>
                   <div className="text-2xl md:text-3xl mb-1">{d.flag}</div>
                   <div className={'font-serif font-bold text-sm md:text-base ' + (d.primary ? 'text-accent' : 'text-primary')}>
-                    {L(locale, { ar: d.ar, en: d.en })}
+                    {L(locale, { ar: d.ar, en: d.en, ru: d.ru, it: d.it })}
                   </div>
                 </div>
               </Reveal>
@@ -276,8 +320,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl gradient-gold flex items-center justify-center text-primary mb-4 group-hover:rotate-6 transition-transform">
                     <v.icon className="h-6 w-6 md:h-7 md:w-7" />
                   </div>
-                  <h3 className="font-serif font-bold text-base md:text-xl text-primary mb-2">{L(locale, { ar: v.ar, en: v.en })}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: v.arDesc, en: v.enDesc })}</p>
+                  <h3 className="font-serif font-bold text-base md:text-xl text-primary mb-2">{L(locale, { ar: v.ar, en: v.en, ru: v.ru, it: v.it })}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: v.arDesc, en: v.enDesc, ru: v.ruDesc, it: v.itDesc })}</p>
                 </div>
               </Reveal>
             ))}
@@ -300,7 +344,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     {t.year}
                   </div>
                   <div className="flex-1 bg-cream/5 backdrop-blur rounded-xl p-4 md:p-5 border border-accent/15">
-                    <p className="text-cream/90 leading-relaxed text-sm md:text-base">{L(locale, { ar: t.ar, en: t.en })}</p>
+                    <p className="text-cream/90 leading-relaxed text-sm md:text-base">{L(locale, { ar: t.ar, en: t.en, ru: t.ru, it: t.it })}</p>
                   </div>
                 </div>
               </Reveal>
@@ -326,7 +370,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   <Link href="/trips">{L(locale, { ar: 'تصفح رحلاتنا', en: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-cream/40 text-cream hover:bg-cream hover:text-primary">
-                  <Link href="/contact"><Phone className="h-4 w-4" /> {L(locale, { ar: 'تواصل معنا', en: 'Contact Us' })}</Link>
+                  <Link href="/contact"><Phone className="h-4 w-4" /> {L(locale, { ar: 'تواصل معنا', en: 'Contact Us', ru: 'Связаться с нами', it: 'Contattaci' })}</Link>
                 </Button>
               </div>
             </div>
