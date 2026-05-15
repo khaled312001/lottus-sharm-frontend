@@ -1,6 +1,8 @@
 // Lottus Sharm — combined server template.
 // scripts/post-build.js prepends this content to .next/standalone/server.js so
 // Express backend gets mounted alongside Next.js inside a single Node process.
+// Also exposes the Express app on globalThis.__lottus_express__ so the
+// Next.js SSR layer can call it directly (no HTTP loopback deadlock).
 // =====================================================================
 // >>> LOTUS COMBINED-SERVER PATCH BEGIN >>>
 (() => {
@@ -36,6 +38,8 @@
   try {
     const mod = require(path.join(BACKEND_DIST, 'app.js'));
     expressApp = (mod.buildApp || mod.default || (() => null))();
+    // Expose for direct SSR invocation (avoids loopback deadlock under Passenger)
+    globalThis.__lottus_express__ = expressApp;
     console.log('[combined] Express backend mounted (' + (expressApp ? 'OK' : 'NOT LOADED') + ')');
   } catch (e) {
     console.error('[combined] FAILED to load Express backend:', e && (e.stack || e.message || e));
