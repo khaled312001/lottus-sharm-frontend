@@ -166,7 +166,7 @@ export function BookingForm({ trip, locale, defaults }: Props) {
               <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-sm">
                 <p className="font-semibold mb-1">{t('manualInstructions')}</p>
                 {method === 'VODAFONE_CASH' && <p>فودافون كاش: <strong dir="ltr">01090767278</strong></p>}
-                {method === 'INSTAPAY' && <p>InstaPay: <strong>lottussharm</strong></p>}
+                {method === 'INSTAPAY' && <p>InstaPay: <strong>lotussharm</strong></p>}
                 {method === 'BANK_TRANSFER' && <p>بنك أبو ظبي الإسلامي — <strong dir="ltr">100001177381</strong></p>}
                 <p className="mt-1 text-xs">بعد الدفع، تواصل معنا على واتساب بصورة الإيصال + رقم الحجز.</p>
               </div>

@@ -40,7 +40,7 @@ export default function AdminNewsletterPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `lottus-newsletter-${Date.now()}.csv`;
+    a.download = `lotus-newsletter-${Date.now()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

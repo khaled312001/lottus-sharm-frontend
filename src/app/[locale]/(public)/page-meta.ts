@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getLocalizedName, getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lottussharm.com';
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lotussharm.com';
 const LOCALES = ['ar', 'en', 'ru', 'it'] as const;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

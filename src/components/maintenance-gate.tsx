@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-const BYPASS_KEY = 'lottus_preview';
+const BYPASS_KEY = 'lotus_preview';
 const BYPASS_VALUE = 'lotus2026';
 
 /**
@@ -79,7 +79,7 @@ function ComingSoon() {
         </div>
 
         <div className="border-t border-accent/20 pt-6 text-xs text-cream/50">
-          © 2026 Lotus Sharm Tourism · شركة لوتتس شرم للاستثمار والتسويق السياحي
+          © 2026 Lotus Sharm Tourism · شركة لوتس شرم للاستثمار والتسويق السياحي
         </div>
       </div>
     </div>

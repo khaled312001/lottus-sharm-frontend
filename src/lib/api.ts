@@ -1,6 +1,6 @@
 // Axios-style API client.
 // - On the SERVER inside the Hostinger combined Node process: invokes the
-//   Express handler in-process via globalThis.__lottus_express__ (avoids
+//   Express handler in-process via globalThis.__lotus_express__ (avoids
 //   HTTP loopback deadlock under Passenger).
 // - In the BROWSER: regular fetch to NEXT_PUBLIC_API_URL.
 
@@ -32,8 +32,8 @@ type ExpressHandler = (req: unknown, res: unknown) => void;
 
 function getInProcessExpress(): ExpressHandler | null {
   if (!isServer) return null;
-  const g = globalThis as unknown as { __lottus_express__?: ExpressHandler };
-  return g.__lottus_express__ || null;
+  const g = globalThis as unknown as { __lotus_express__?: ExpressHandler };
+  return g.__lotus_express__ || null;
 }
 
 interface MockResult {
@@ -54,7 +54,7 @@ function invokeExpress(method: string, path: string, body?: unknown, token?: str
     const headers: Record<string, string> = {
       host: 'lotussharm.com',
       'x-forwarded-proto': 'https',
-      'user-agent': 'LottusSSR/1.0',
+      'user-agent': 'LotusSSR/1.0',
       accept: 'application/json',
     };
     if (bodyStr) {

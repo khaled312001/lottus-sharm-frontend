@@ -28,7 +28,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const refreshUser = useCallback(async () => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('lottus_token') : null;
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('lotus_token') : null;
     if (!stored) {
       setLoading(false);
       return;
@@ -41,7 +41,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       setUser({ id: data.user.sub, email: data.user.email, name: data.user.email, role: data.user.role });
       setToken(stored);
     } catch {
-      localStorage.removeItem('lottus_token');
+      localStorage.removeItem('lotus_token');
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const data = await api.post<{ user: AdminUser; accessToken: string }>('/auth/login', { email, password });
-    localStorage.setItem('lottus_token', data.accessToken);
+    localStorage.setItem('lotus_token', data.accessToken);
     setToken(data.accessToken);
     setUser(data.user);
     router.push('/admin/dashboard');
@@ -63,7 +63,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await api.post('/auth/logout');
     } catch {}
-    localStorage.removeItem('lottus_token');
+    localStorage.removeItem('lotus_token');
     setUser(null);
     setToken(null);
     router.push('/admin/login');

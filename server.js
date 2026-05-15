@@ -27,6 +27,6 @@ app.prepare().then(() => {
       process.exit(1);
     })
     .listen(port, () => {
-      console.log(`> Lottus Sharm frontend ready on http://${hostname}:${port}`);
+      console.log(`> Lotus Sharm frontend ready on http://${hostname}:${port}`);
     });
 });

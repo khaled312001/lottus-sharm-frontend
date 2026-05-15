@@ -123,7 +123,7 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
         text: src,
         from: 'AR',
         to: targets,
-        context: 'Lottus Sharm tourism trip — Egyptian tourism marketing copy',
+        context: 'Lotus Sharm tourism trip — Egyptian tourism marketing copy',
       });
       setTranslations((prev) =>
         prev.map((t) => (t.locale !== 'AR' && out.translations[t.locale] ? { ...t, [field]: out.translations[t.locale] } : t)),

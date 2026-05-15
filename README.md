@@ -1,4 +1,4 @@
-# Lottus Sharm — Frontend
+# Lotus Sharm — Frontend
 
 Next.js 15 (App Router) + TypeScript + Tailwind + next-intl. Public site in 4 languages (AR/EN/RU/IT) and a full Arabic admin dashboard.
 
@@ -52,7 +52,7 @@ messages/{ar,en,ru,it}.json              # static UI strings
 
 ## Admin dashboard
 
-Reachable at `/{locale}/admin/login`. Once logged in, JWT is stored in `localStorage` as `lottus_token`. The shell redirects unauthenticated users back to `/admin/login`.
+Reachable at `/{locale}/admin/login`. Once logged in, JWT is stored in `localStorage` as `lotus_token`. The shell redirects unauthenticated users back to `/admin/login`.
 
 Admin features:
 - **Trips** (`/admin/trips`) — full CRUD with 4-language tabs and a one-click **"ترجم للباقي"** button that calls the backend AI translate endpoint to fill EN/RU/IT from the Arabic input. Highlights and bullet lists also support per-item translate.
@@ -68,19 +68,19 @@ Admin features:
 
 CI/CD via `.github/workflows/deploy.yml`. Required secrets:
 - `HOST`, `SSH_USER`, `SSH_PORT`, `SSH_KEY`
-- `PUBLIC_API_URL` — e.g. `https://lottussharm.com/api`
+- `PUBLIC_API_URL` — e.g. `https://lotussharm.com/api`
 - `API_INTERNAL_URL` — usually `http://127.0.0.1:4000/api` for SSR
-- `SITE_URL` — e.g. `https://lottussharm.com`
+- `SITE_URL` — e.g. `https://lotussharm.com`
 - `STRIPE_PUBLISHABLE_KEY`, `GA_ID`
 
 ### Nginx reverse proxy (sample)
 ```nginx
 server {
   listen 443 ssl http2;
-  server_name lottussharm.com www.lottussharm.com;
+  server_name lotussharm.com www.lotussharm.com;
 
-  ssl_certificate     /etc/letsencrypt/live/lottussharm.com/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/lottussharm.com/privkey.pem;
+  ssl_certificate     /etc/letsencrypt/live/lotussharm.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/lotussharm.com/privkey.pem;
 
   location /api/ {
     proxy_pass http://127.0.0.1:4000;

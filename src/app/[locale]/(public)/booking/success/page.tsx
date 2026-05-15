@@ -34,7 +34,7 @@ function SuccessClient({ reference, manual, method }: { reference?: string; manu
         <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-sm mb-6">
           <p className="font-semibold mb-2">{t('manualInstructions')}</p>
           {method === 'VODAFONE_CASH' && <p>فودافون كاش: <strong dir="ltr">01090767278</strong></p>}
-          {method === 'INSTAPAY' && <p>InstaPay: <strong>lottussharm</strong></p>}
+          {method === 'INSTAPAY' && <p>InstaPay: <strong>lotussharm</strong></p>}
           {method === 'BANK_TRANSFER' && <p>بنك أبو ظبي الإسلامي — <strong dir="ltr">100001177381</strong></p>}
         </div>
       )}

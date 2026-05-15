@@ -25,7 +25,7 @@ export async function getSiteSettings(): Promise<SiteSettingsDTO> {
       bankName: 'بنك أبو ظبي الإسلامي',
       bankAccount: '100001177381',
       vodafoneCash: '01090767278',
-      instaPay: 'lottussharm',
+      instaPay: 'lotussharm',
       logoUrl: null,
       primaryColor: '#0891b2',
       accentColor: '#f59e0b',
