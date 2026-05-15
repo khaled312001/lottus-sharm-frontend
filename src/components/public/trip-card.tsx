@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Clock, MapPin, Star, ArrowUpRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { TripDTO } from '@/types/api';
+import { L } from '@/lib/utils';
 
 export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: string; index?: number }) {
   const t = useTranslations();
@@ -46,7 +47,7 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
           {trip.isFeatured && (
             <div className="absolute top-4 start-4 flex items-center gap-1.5 rounded-full bg-accent/95 backdrop-blur px-3 py-1.5 text-xs font-bold text-primary shadow-lg">
               <Star className="h-3 w-3 fill-current" />
-              {isAr ? 'مميزة' : 'Featured'}
+              {L(locale, { ar: 'مميزة', en: 'Featured', ru: 'Популярный', it: 'In evidenza' })}
             </div>
           )}
 
@@ -66,7 +67,7 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
             <h3 className="font-serif text-2xl font-bold leading-tight mb-2 group-hover:text-accent-300 transition-colors duration-300">
               {tr?.title}
             </h3>
-            {trip.meetingPoint && (
+            {locale === 'ar' && trip.meetingPoint && (
               <div className="flex items-center gap-1.5 text-xs text-cream/75 mb-3">
                 <MapPin className="h-3 w-3" />
                 <span className="line-clamp-1">{trip.meetingPoint}</span>

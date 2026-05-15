@@ -6,7 +6,17 @@
     "gallery": "Galleria",
     "blog": "Blog",
     "contact": "Contatti",
-    "book": "Prenota"
+    "book": "Prenota",
+    "tagline": "✦ Turismo di lusso dal 2013",
+    "copyrightShort": "© Lottus Sharm Tourism · Turismo di lusso dal 2013",
+    "drawerMenu": "✦ Menu",
+    "drawerContact": "✦ Contatti",
+    "drawerFollow": "✦ Seguici",
+    "drawerCall": "Chiama",
+    "drawerEmail": "Email",
+    "drawerWhatsApp": "WhatsApp · Risposta immediata",
+    "drawerWhatsAppCta": "Scrivici ora",
+    "drawerWhatsAppPrefill": "Ciao! Ho una domanda sui vostri tour"
   },
   "common": {
     "bookNow": "Prenota ora",
@@ -30,6 +40,11 @@
     "available": "Disponibile"
   },
   "home": {
+    "heroTitleLine1": "Il tuo viaggio di lusso",
+    "heroTitleLine2": "a Sharm El Sheikh",
+    "yearsOfLuxury": "anni di esperienza di lusso",
+    "tagline": "✦ Turismo di lusso dal 2013",
+    "copyrightShort": "© Lottus Sharm Tourism · Turismo di lusso dal 2013",
     "heroTitle": "Scopri la bellezza di Sharm El Sheikh",
     "heroSubtitle": "Con Lottus Sharm — oltre 13 anni di esperienza in tour indimenticabili",
     "ctaPrimary": "I nostri tour",

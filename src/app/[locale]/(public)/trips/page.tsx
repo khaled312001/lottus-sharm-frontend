@@ -5,7 +5,7 @@ import { TripCard } from '@/components/public/trip-card';
 import { Reveal } from '@/components/public/motion';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
-import { localeToApiCode } from '@/lib/utils';
+import { localeToApiCode, L } from '@/lib/utils';
 import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { Compass, Sparkles, Calendar, MessageCircle, Waves, Mountain, Building2, Anchor, PartyPopper } from 'lucide-react';
@@ -63,13 +63,13 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
         <div className="absolute top-1/4 -end-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal>
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-4">{isAr ? 'استكشف الرحلات' : 'Explore trips'}</div>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-4">{L(locale, { ar: 'استكشف الرحلات', en: 'Explore trips', ru: 'Все туры', it: 'Esplora i tour' })}</div>
             <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1]">{t('trips.title')}</h1>
             <p className="text-lg md:text-xl opacity-90 max-w-2xl">{t('trips.subtitle')}</p>
             <div className="mt-6 flex flex-wrap gap-4 text-sm">
-              <span className="inline-flex items-center gap-1.5 text-accent"><Sparkles className="h-4 w-4" /> {totalCount}+ {isAr ? 'رحلة' : 'experiences'}</span>
-              <span className="inline-flex items-center gap-1.5 text-cream/70"><Compass className="h-4 w-4" /> {isAr ? 'كل فئات السياحة' : 'All tourism categories'}</span>
-              <span className="inline-flex items-center gap-1.5 text-cream/70"><Calendar className="h-4 w-4" /> {isAr ? 'يومياً' : 'Daily departures'}</span>
+              <span className="inline-flex items-center gap-1.5 text-accent"><Sparkles className="h-4 w-4" /> {totalCount}+ {L(locale, { ar: 'رحلة', en: 'experiences', ru: 'туров', it: 'esperienze' })}</span>
+              <span className="inline-flex items-center gap-1.5 text-cream/70"><Compass className="h-4 w-4" /> {L(locale, { ar: 'كل فئات السياحة', en: 'All tourism categories', ru: 'Все категории туризма', it: 'Tutte le categorie' })}</span>
+              <span className="inline-flex items-center gap-1.5 text-cream/70"><Calendar className="h-4 w-4" /> {L(locale, { ar: 'يومياً', en: 'Daily departures', ru: 'Ежедневные отправления', it: 'Partenze giornaliere' })}</span>
             </div>
           </Reveal>
         </div>
@@ -141,13 +141,18 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
           <Reveal className="text-center py-20">
             <Compass className="h-12 w-12 text-accent mx-auto mb-4 opacity-50" />
             <p className="font-serif text-2xl text-primary mb-2">{t('trips.noTrips')}</p>
-            <p className="text-muted-foreground">{isAr ? 'جرب تغيير الفئة أو تواصل معنا لرحلة مخصصة' : 'Try another category or contact us for a custom trip'}</p>
+            <p className="text-muted-foreground">{L(locale, { ar: 'جرب تغيير الفئة أو تواصل معنا لرحلة مخصصة', en: 'Try another category or contact us for a custom trip', ru: 'Попробуйте другую категорию или свяжитесь для индивидуального тура', it: 'Prova un\'altra categoria o contattaci per un tour su misura' })}</p>
           </Reveal>
         ) : (
           <Suspense>
             <Reveal className="mb-6 flex items-center justify-between flex-wrap gap-3">
               <p className="text-sm text-muted-foreground">
-                {isAr ? `عرض ${trips.items.length} من ${trips.total} رحلة` : `Showing ${trips.items.length} of ${trips.total} trips`}
+                {L(locale, {
+                  ar: `عرض ${trips.items.length} من ${trips.total} رحلة`,
+                  en: `Showing ${trips.items.length} of ${trips.total} trips`,
+                  ru: `Показано ${trips.items.length} из ${trips.total} туров`,
+                  it: `Visualizzati ${trips.items.length} di ${trips.total} tour`,
+                })}
                 {cat && <span className="ms-2 text-accent font-semibold">· {t(`trips.category.${cat}`)}</span>}
               </p>
             </Reveal>
@@ -185,15 +190,15 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
               <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-accent/15 blur-3xl" />
               <Sparkles className="h-10 w-10 text-accent mx-auto mb-4" />
               <h3 className="font-serif text-2xl md:text-3xl font-bold mb-3">
-                {isAr ? 'مش لاقي اللي بتدور عليه؟' : "Can't find what you're looking for?"}
+                {L(locale, { ar: 'مش لاقي اللي بتدور عليه؟', en: "Can't find what you're looking for?", ru: 'Не нашли то, что искали?', it: 'Non trovi quello che cerchi?' })}
               </h3>
               <p className="opacity-85 mb-6 max-w-xl mx-auto">
-                {isAr ? 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك' : 'WhatsApp us — we\'ll design a 100% custom trip for your interests and budget'}
+                {L(locale, { ar: 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك', en: "WhatsApp us — we'll design a 100% custom trip for your interests and budget" })}
               </p>
-              <a href={buildWhatsAppLink('201090767278', isAr ? 'مرحبا، أريد تصميم رحلة مخصصة' : 'Hi! I\'d like a custom trip design.')}
+              <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد تصميم رحلة مخصصة', en: "Hi! I'd like a custom trip design." }))}
                 target="_blank" rel="noopener"
                 className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-[#25D366]/30">
-                <MessageCircle className="h-5 w-5" /> {isAr ? 'تواصل واتساب' : 'WhatsApp us'}
+                <MessageCircle className="h-5 w-5" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp us', ru: 'Написать в WhatsApp', it: 'Scrivici su WhatsApp' })}
               </a>
             </div>
           </Reveal>

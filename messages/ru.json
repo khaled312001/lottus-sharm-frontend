@@ -6,7 +6,17 @@
     "gallery": "Галерея",
     "blog": "Блог",
     "contact": "Контакты",
-    "book": "Забронировать"
+    "book": "Забронировать",
+    "tagline": "✦ Премиум туризм с 2013 года",
+    "copyrightShort": "© Lottus Sharm Tourism · Премиум туризм с 2013 года",
+    "drawerMenu": "✦ Меню",
+    "drawerContact": "✦ Контакты",
+    "drawerFollow": "✦ Подписывайтесь",
+    "drawerCall": "Звонок",
+    "drawerEmail": "Email",
+    "drawerWhatsApp": "WhatsApp · Мгновенный ответ",
+    "drawerWhatsAppCta": "Связаться с нами",
+    "drawerWhatsAppPrefill": "Здравствуйте! У меня вопрос об экскурсиях"
   },
   "common": {
     "bookNow": "Забронировать",
@@ -30,6 +40,11 @@
     "available": "Доступно"
   },
   "home": {
+    "heroTitleLine1": "Ваше роскошное путешествие",
+    "heroTitleLine2": "в Шарм-эль-Шейхе",
+    "yearsOfLuxury": "лет премиум-опыта",
+    "tagline": "✦ Премиум туризм с 2013 года",
+    "copyrightShort": "© Lottus Sharm Tourism · Премиум туризм с 2013 года",
     "heroTitle": "Откройте для себя красоту Шарм-эль-Шейха",
     "heroSubtitle": "С Lottus Sharm — более 13 лет опыта в организации незабываемых туров",
     "ctaPrimary": "Наши туры",

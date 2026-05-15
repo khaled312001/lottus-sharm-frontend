@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Video, Play, Maximize2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, L } from '@/lib/utils';
 import { Lightbox, type LightboxItem } from './lightbox';
 
 interface MediaItem {
@@ -52,7 +52,7 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
               )}
             >
               {t.icon && <t.icon className="h-4 w-4" />}
-              {isAr ? t.ar : t.en}
+              {L(locale, { ar: t.ar, en: t.en })}
               <span className={cn('text-xs px-2 py-0.5 rounded-full', tab === t.k ? 'bg-accent text-primary' : 'bg-accent/15 text-accent-700')}>
                 {t.count}
               </span>
@@ -70,7 +70,7 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
           transition={{ duration: 0.3 }}
         >
           {items.length === 0 ? (
-            <p className="text-center text-muted-foreground py-16">{isAr ? 'لا يوجد محتوى' : 'No content yet'}</p>
+            <p className="text-center text-muted-foreground py-16">{L(locale, { ar: 'لا يوجد محتوى', en: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
           ) : (
             <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
               {items.slice(0, 80).map((m, i) => (

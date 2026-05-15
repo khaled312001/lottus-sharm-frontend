@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { L } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -28,7 +29,7 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
 
   if (reviews.length === 0) return null;
   const r = reviews[idx];
-  const tripTitle = r.trip?.translations.find((t) => t.locale === (isAr ? 'AR' : 'EN'))?.title
+  const tripTitle = r.trip?.translations.find((t) => t.locale === (L(locale, { ar: 'AR', en: 'EN' })))?.title
     || r.trip?.translations[0]?.title;
 
   return (
@@ -59,7 +60,7 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
             </div>
             {tripTitle && (
               <div className="text-xs text-cream/60 mt-1.5">
-                {isAr ? 'عن رحلة' : 'about'} <span className="text-accent/80">{tripTitle}</span>
+                {L(locale, { ar: 'عن رحلة', en: 'about', ru: 'о туре', it: 'su tour' })} <span className="text-accent/80">{tripTitle}</span>
               </div>
             )}
           </motion.div>

@@ -5,7 +5,7 @@ import { Reveal } from '@/components/public/motion';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import type { BlogPostDTO } from '@/types/api';
-import { localeToApiCode, buildWhatsAppLink } from '@/lib/utils';
+import { localeToApiCode, buildWhatsAppLink, L } from '@/lib/utils';
 import { Calendar, Clock, BookOpen, MessageCircle, ArrowRight } from 'lucide-react';
 
 export const revalidate = 60;
@@ -44,7 +44,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
         <div className="container relative">
           <Reveal>
             <BookOpen className="h-10 w-10 text-accent mb-4" />
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{isAr ? 'مدوّنة لوتس شرم' : 'Lotus Sharm Blog'}</div>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'مدوّنة لوتس شرم', en: 'Lotus Sharm Blog', ru: 'Блог Lotus Sharm', it: 'Blog Lotus Sharm' })}</div>
             <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1]">{t('blog.title')}</h1>
             <p className="text-lg opacity-90 max-w-2xl">{t('blog.subtitle')}</p>
           </Reveal>
@@ -64,7 +64,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                         <Image src={featured.coverImage.mediumUrl || featured.coverImage.url} alt={featured.tr?.title || ''} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       )}
                       <span className="absolute top-4 start-4 inline-block px-3 py-1 rounded-full bg-accent text-primary text-xs font-bold uppercase tracking-wider">
-                        {isAr ? 'مقال مميز' : 'Featured'}
+                        {L(locale, { ar: 'مقال مميز', en: 'Featured', ru: 'Популярный', it: 'In evidenza' })}
                       </span>
                     </div>
                     <div className="p-6 md:p-10 flex flex-col justify-center">
@@ -73,7 +73,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       </h2>
                       <p className="text-muted-foreground mb-6 line-clamp-3">{featured.tr?.excerpt}</p>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        {featured.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(featured.publishedAt).toLocaleDateString(isAr ? 'ar-EG' : 'en')}</span>}
+                        {featured.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(featured.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en' }))}</span>}
                         <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t('blog.readTime', { min: featured.readTime })}</span>
                       </div>
                     </div>
@@ -94,7 +94,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                         <h3 className="font-serif font-bold text-lg mb-2 line-clamp-2 text-primary group-hover:text-accent transition-colors">{p.tr?.title}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{p.tr?.excerpt}</p>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          {p.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(p.publishedAt).toLocaleDateString(isAr ? 'ar-EG' : 'en')}</span>}
+                          {p.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(p.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en' }))}</span>}
                           <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t('blog.readTime', { min: p.readTime })}</span>
                         </div>
                       </div>
@@ -109,13 +109,13 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
           <Reveal>
             <div className="text-center mb-12">
               <div className="inline-block px-4 py-2 rounded-full bg-accent/15 text-accent-700 font-bold text-xs uppercase tracking-wider mb-4">
-                {isAr ? 'قريباً' : 'Coming soon'}
+                {L(locale, { ar: 'قريباً', en: 'Coming soon', ru: 'Скоро', it: 'Presto' })}
               </div>
               <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3">
-                {isAr ? 'مقالات سفر وأدلة سياحية تُنشر قريباً' : 'Travel articles and guides launching soon'}
+                {L(locale, { ar: 'مقالات سفر وأدلة سياحية تُنشر قريباً', en: 'Travel articles and guides launching soon', ru: 'Скоро опубликуем статьи и гиды по путешествиям', it: 'Articoli di viaggio e guide in arrivo' })}
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                {isAr ? 'فريقنا يجهز محتوى ثرياً عن شرم الشيخ وأجمل وجهات مصر السياحية' : 'Our team is preparing rich content about Sharm El Sheikh and Egypt\'s top destinations'}
+                {L(locale, { ar: 'فريقنا يجهز محتوى ثرياً عن شرم الشيخ وأجمل وجهات مصر السياحية', en: "Our team is preparing rich content about Sharm El Sheikh and Egypt's top destinations" })}
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -126,14 +126,14 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       <Image src={p.img} alt="" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-primary-900/40" />
                       <span className="absolute top-3 start-3 inline-block px-2.5 py-1 rounded-full bg-cream/95 text-primary text-[10px] font-bold uppercase tracking-wider">
-                        {isAr ? p.cat_ar : p.cat_en}
+                        {L(locale, { ar: p.cat_ar, en: p.cat_en })}
                       </span>
                       <span className="absolute top-3 end-3 inline-block px-2 py-1 rounded-full bg-accent/95 text-primary text-[9px] font-bold uppercase">
-                        {isAr ? 'قريباً' : 'Soon'}
+                        {L(locale, { ar: 'قريباً', en: 'Soon', ru: 'Скоро', it: 'Presto' })}
                       </span>
                     </div>
                     <div className="p-5">
-                      <h3 className="font-serif font-bold text-lg leading-snug text-primary line-clamp-2">{isAr ? p.ar : p.en}</h3>
+                      <h3 className="font-serif font-bold text-lg leading-snug text-primary line-clamp-2">{L(locale, { ar: p.ar, en: p.en })}</h3>
                     </div>
                   </article>
                 </Reveal>
@@ -150,17 +150,17 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
               <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-accent/15 blur-3xl" />
               <MessageCircle className="h-10 w-10 text-accent mx-auto mb-4" />
               <h3 className="font-serif text-2xl md:text-3xl font-bold mb-3">
-                {isAr ? 'استفسارات سفر؟' : 'Travel questions?'}
+                {L(locale, { ar: 'استفسارات سفر؟', en: 'Travel questions?', ru: 'Вопросы о путешествии?', it: 'Domande di viaggio?' })}
               </h3>
               <p className="opacity-85 mb-6 max-w-xl mx-auto">
-                {isAr ? 'خبراءنا متاحون عبر واتساب للإجابة على كل أسئلتك عن السفر في مصر' : 'Our experts are on WhatsApp to answer all your Egypt travel questions'}
+                {L(locale, { ar: 'خبراءنا متاحون عبر واتساب للإجابة على كل أسئلتك عن السفر في مصر', en: 'Our experts are on WhatsApp to answer all your Egypt travel questions', ru: 'Наши эксперты в WhatsApp ответят на все ваши вопросы о Египте', it: 'I nostri esperti rispondono via WhatsApp a tutte le domande sull\'Egitto' })}
               </p>
               <div className="flex flex-wrap gap-3 justify-center">
                 <a href={buildWhatsAppLink('201090767278')} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-[#25D366]/30">
-                  <MessageCircle className="h-5 w-5" /> {isAr ? 'واتساب' : 'WhatsApp'}
+                  <MessageCircle className="h-5 w-5" /> {L(locale, { ar: 'واتساب', en: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}
                 </a>
                 <Button asChild size="lg" variant="outline" className="border-cream/40 text-cream hover:bg-cream hover:text-primary">
-                  <Link href="/trips">{isAr ? 'تصفح الرحلات' : 'Browse Trips'} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
+                  <Link href="/trips">{L(locale, { ar: 'تصفح الرحلات', en: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
                 </Button>
               </div>
             </div>

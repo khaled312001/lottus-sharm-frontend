@@ -92,7 +92,7 @@ export function Header() {
             </a>
             <span className="hidden lg:inline opacity-50">|</span>
             <span className="hidden lg:inline text-accent font-medium">
-              ✦ سياحة فاخرة منذ 2013
+              {t('tagline')}
             </span>
           </div>
           <a
@@ -188,9 +188,9 @@ export function Header() {
 
             {/* Side drawer — slides from the start side (right in RTL, left in LTR) */}
             <motion.aside
-              initial={{ x: isAr ? '100%' : '-100%' }}
+              initial={{ x: (isAr ? '100%' : '-100%') }}
               animate={{ x: 0 }}
-              exit={{ x: isAr ? '100%' : '-100%' }}
+              exit={{ x: (isAr ? '100%' : '-100%') }}
               transition={{ type: 'tween', ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
               className={cn(
                 'fixed top-0 bottom-0 z-[70] w-[88vw] max-w-[360px] flex flex-col bg-gradient-to-b from-primary-900 via-primary-900 to-primary-950 shadow-2xl',
@@ -226,7 +226,7 @@ export function Header() {
                 {/* Section label */}
                 <div className="space-y-1">
                   <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
-                    {isAr ? '✦ القائمة' : '✦ Menu'}
+                    {t('drawerMenu')}
                   </div>
 
                   {links.map((l, i) => {
@@ -270,7 +270,7 @@ export function Header() {
                 {/* Quick contact */}
                 <div className="space-y-2">
                   <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
-                    {isAr ? '✦ تواصل معنا' : '✦ Contact'}
+                    {t('drawerContact')}
                   </div>
 
                   <a
@@ -281,13 +281,13 @@ export function Header() {
                       <Phone className="h-[18px] w-[18px]" />
                     </span>
                     <span className="flex-1 min-w-0">
-                      <span className="block text-[11px] text-cream/60 leading-none mb-0.5">{isAr ? 'اتصل' : 'Call'}</span>
+                      <span className="block text-[11px] text-cream/60 leading-none mb-0.5">{t('drawerCall')}</span>
                       <span dir="ltr" className="block text-cream font-bold text-sm tabular-nums">+20 109 076 7278</span>
                     </span>
                   </a>
 
                   <a
-                    href={buildWhatsAppLink('201090767278', isAr ? 'مرحبا، أريد الاستفسار عن الرحلات' : 'Hi! I have a question about your trips')}
+                    href={buildWhatsAppLink('201090767278', t('drawerWhatsAppPrefill'))}
                     target="_blank"
                     rel="noopener"
                     className="flex items-center gap-3 px-3 py-3 rounded-xl bg-[#25D366]/12 hover:bg-[#25D366]/20 transition-colors"
@@ -296,8 +296,8 @@ export function Header() {
                       <MessageCircle className="h-[18px] w-[18px]" />
                     </span>
                     <span className="flex-1 min-w-0">
-                      <span className="block text-[11px] text-[#25D366]/80 leading-none mb-0.5 font-semibold">{isAr ? 'واتساب · رد فوري' : 'WhatsApp · Instant reply'}</span>
-                      <span className="block text-cream font-bold text-sm">{isAr ? 'تحدث معنا الآن' : 'Chat with us now'}</span>
+                      <span className="block text-[11px] text-[#25D366]/80 leading-none mb-0.5 font-semibold">{t('drawerWhatsApp')}</span>
+                      <span className="block text-cream font-bold text-sm">{t('drawerWhatsAppCta')}</span>
                     </span>
                   </a>
 
@@ -309,7 +309,7 @@ export function Header() {
                       <Mail className="h-[18px] w-[18px]" />
                     </span>
                     <span className="flex-1 min-w-0">
-                      <span className="block text-[11px] text-cream/60 leading-none mb-0.5">{isAr ? 'البريد' : 'Email'}</span>
+                      <span className="block text-[11px] text-cream/60 leading-none mb-0.5">{t('drawerEmail')}</span>
                       <span dir="ltr" className="block text-cream font-bold text-sm">info@lotussharm.com</span>
                     </span>
                   </a>
@@ -318,7 +318,7 @@ export function Header() {
                 {/* Socials */}
                 <div className="space-y-2">
                   <div className="text-[10px] uppercase tracking-[0.3em] text-accent/70 font-bold px-2 mb-1.5">
-                    {isAr ? '✦ تابعنا' : '✦ Follow us'}
+                    {t('drawerFollow')}
                   </div>
                   <div className="grid grid-cols-4 gap-2">
                     {SOCIALS.map(({ href, Icon, label, bg }) => (
@@ -350,7 +350,7 @@ export function Header() {
                   </Link>
                 </Button>
                 <p className="text-center text-[11px] text-cream/50 mt-2.5">
-                  {isAr ? '© لوتس شرم للسياحة · سياحة فاخرة منذ 2013' : '© Lottus Sharm · Luxury tourism since 2013'}
+                  {t('copyrightShort')}
                 </p>
               </div>
             </motion.aside>

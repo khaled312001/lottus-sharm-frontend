@@ -4,7 +4,7 @@ import { ContactForm } from '@/components/public/contact-form';
 import { Reveal } from '@/components/public/motion';
 import { getSiteSettings } from '@/lib/site-settings';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Facebook, Instagram, Youtube, Sparkles, HelpCircle } from 'lucide-react';
-import { buildWhatsAppLink } from '@/lib/utils';
+import { buildWhatsAppLink, L } from '@/lib/utils';
 
 export const revalidate = 120;
 
@@ -32,7 +32,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/80 via-primary-900/70 to-primary-900" />
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-4">{isAr ? 'اتصل بنا' : 'Get in touch'}</div>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-4">{L(locale, { ar: 'اتصل بنا', en: 'Get in touch', ru: 'Свяжитесь с нами', it: 'Contattaci' })}</div>
             <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4">{t('contact.title')}</h1>
             <p className="text-lg opacity-90">{t('contact.subtitle')}</p>
           </Reveal>
@@ -46,12 +46,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               { icon: Phone, ar: 'اتصل بنا', en: 'Call us', value: '+20 109 076 7278', href: 'tel:+201090767278', color: 'bg-primary text-cream' },
               { icon: MessageCircle, ar: 'واتساب', en: 'WhatsApp', value: '01090767278', href: buildWhatsAppLink('201090767278'), color: 'bg-[#25D366] text-white' },
               { icon: Mail, ar: 'البريد الإلكتروني', en: 'Email us', value: settings.email || 'info@lotussharm.com', href: `mailto:${settings.email || 'info@lotussharm.com'}`, color: 'bg-accent text-primary' },
-              { icon: MapPin, ar: 'موقعنا', en: 'Our location', value: isAr ? 'شرم الشيخ، مصر' : 'Sharm El Sheikh, Egypt', href: 'https://maps.google.com/?q=Sharm+El+Sheikh', color: 'bg-primary-800 text-cream' },
+              { icon: MapPin, ar: 'موقعنا', en: 'Our location', value: L(locale, { ar: 'شرم الشيخ، مصر', en: 'Sharm El Sheikh, Egypt', ru: 'Шарм-эль-Шейх, Египет', it: 'Sharm El Sheikh, Egitto' }), href: 'https://maps.google.com/?q=Sharm+El+Sheikh', color: 'bg-primary-800 text-cream' },
             ].map((c, i) => (
               <Reveal key={c.en} delay={i * 0.08}>
                 <a href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener" className={`group block rounded-2xl ${c.color} p-5 md:p-6 hover:-translate-y-1.5 transition-all duration-500 shadow-lg hover:shadow-2xl h-full`}>
                   <c.icon className="h-7 w-7 mb-3 opacity-90 group-hover:scale-110 transition-transform" />
-                  <div className="text-[10px] uppercase tracking-wider opacity-75 mb-1">{isAr ? c.ar : c.en}</div>
+                  <div className="text-[10px] uppercase tracking-wider opacity-75 mb-1">{L(locale, { ar: c.ar, en: c.en })}</div>
                   <div className="font-bold text-sm md:text-base break-words">{c.value}</div>
                 </a>
               </Reveal>
@@ -64,12 +64,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="container grid lg:grid-cols-5 gap-8 lg:gap-12">
           <div className="lg:col-span-3">
             <Reveal>
-              <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{isAr ? 'أرسل رسالة' : 'Send a message'}</div>
+              <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'أرسل رسالة', en: 'Send a message', ru: 'Отправить сообщение', it: 'Invia un messaggio' })}</div>
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">
-                {isAr ? 'كلمنا، ورد لك في دقائق' : 'Message us, hear back in minutes'}
+                {L(locale, { ar: 'كلمنا، ورد لك في دقائق', en: 'Message us, hear back in minutes', ru: 'Напишите — ответим в течение минут', it: 'Scrivici — rispondiamo in pochi minuti' })}
               </h2>
               <p className="text-muted-foreground mb-6">
-                {isAr ? 'فريقنا متاح 24/7 للإجابة على استفساراتك واقتراح أفضل الباقات لرحلتك.' : 'Our team is online 24/7 to answer questions and suggest the best packages.'}
+                {L(locale, { ar: 'فريقنا متاح 24/7 للإجابة على استفساراتك واقتراح أفضل الباقات لرحلتك.', en: 'Our team is online 24/7 to answer questions and suggest the best packages.', ru: 'Наша команда онлайн 24/7 — ответим на вопросы и подберём лучшие туры.', it: 'Il nostro team è online 24/7 per rispondere e suggerire i migliori pacchetti.' })}
               </p>
               <ContactForm />
             </Reveal>
@@ -80,12 +80,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <div className="bg-primary text-cream rounded-2xl p-6 relative overflow-hidden">
                 <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-accent/20 blur-2xl" />
                 <Sparkles className="h-8 w-8 text-accent mb-3" />
-                <h3 className="font-serif text-xl font-bold mb-2">{isAr ? 'استشارة مجانية' : 'Free consultation'}</h3>
+                <h3 className="font-serif text-xl font-bold mb-2">{L(locale, { ar: 'استشارة مجانية', en: 'Free consultation', ru: 'Бесплатная консультация', it: 'Consulenza gratuita' })}</h3>
                 <p className="text-sm opacity-90 mb-5">
-                  {isAr ? 'احصل على خطة رحلة مخصصة تناسب اهتماماتك وميزانيتك بدون أي التزام.' : 'Get a customized trip plan matching your interests and budget — no commitment.'}
+                  {L(locale, { ar: 'احصل على خطة رحلة مخصصة تناسب اهتماماتك وميزانيتك بدون أي التزام.', en: 'Get a customized trip plan matching your interests and budget — no commitment.', ru: 'Получите индивидуальный план тура под ваши интересы и бюджет — без обязательств.', it: 'Ricevi un piano di viaggio personalizzato per i tuoi interessi e budget — senza impegno.' })}
                 </p>
-                <a href={buildWhatsAppLink('201090767278', isAr ? 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ' : 'Hi! I\'d like a free trip consultation for Sharm El Sheikh')} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
-                  <MessageCircle className="h-4 w-4" /> {isAr ? 'تواصل واتساب' : 'WhatsApp Chat'}
+                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ', en: "Hi! I'd like a free trip consultation for Sharm El Sheikh" }))} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
+                  <MessageCircle className="h-4 w-4" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp Chat', ru: 'WhatsApp чат', it: 'Chat WhatsApp' })}
                 </a>
               </div>
             </Reveal>
@@ -94,19 +94,19 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <div className="bg-white rounded-2xl p-6 border border-accent/15">
                 <div className="flex items-center gap-2 mb-4 text-primary">
                   <Clock className="h-5 w-5 text-accent" />
-                  <h3 className="font-serif font-bold text-lg">{isAr ? 'ساعات العمل' : 'Working hours'}</h3>
+                  <h3 className="font-serif font-bold text-lg">{L(locale, { ar: 'ساعات العمل', en: 'Working hours', ru: 'Часы работы', it: 'Orari di lavoro' })}</h3>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex justify-between"><span className="text-muted-foreground">{isAr ? 'السبت — الخميس' : 'Sat — Thu'}</span><span className="font-semibold text-primary">{isAr ? '8 ص — 11 م' : '8 AM — 11 PM'}</span></li>
-                  <li className="flex justify-between"><span className="text-muted-foreground">{isAr ? 'الجمعة' : 'Friday'}</span><span className="font-semibold text-primary">{isAr ? '10 ص — 11 م' : '10 AM — 11 PM'}</span></li>
-                  <li className="flex justify-between pt-2 border-t border-accent/15"><span className="text-muted-foreground">{isAr ? 'واتساب' : 'WhatsApp'}</span><span className="font-bold text-accent-700">{isAr ? '24/7' : '24/7'}</span></li>
+                  <li className="flex justify-between"><span className="text-muted-foreground">{L(locale, { ar: 'السبت — الخميس', en: 'Sat — Thu', ru: 'Сб — Чт', it: 'Sab — Gio' })}</span><span className="font-semibold text-primary">{L(locale, { ar: '8 ص — 11 م', en: '8 AM — 11 PM', ru: '8:00 — 23:00', it: '8:00 — 23:00' })}</span></li>
+                  <li className="flex justify-between"><span className="text-muted-foreground">{L(locale, { ar: 'الجمعة', en: 'Friday', ru: 'Пятница', it: 'Venerdì' })}</span><span className="font-semibold text-primary">{L(locale, { ar: '10 ص — 11 م', en: '10 AM — 11 PM', ru: '10:00 — 23:00', it: '10:00 — 23:00' })}</span></li>
+                  <li className="flex justify-between pt-2 border-t border-accent/15"><span className="text-muted-foreground">{L(locale, { ar: 'واتساب', en: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}</span><span className="font-bold text-accent-700">{L(locale, { ar: '24/7', en: '24/7', ru: '24/7', it: '24/7' })}</span></li>
                 </ul>
               </div>
             </Reveal>
 
             <Reveal delay={0.35}>
               <div className="bg-white rounded-2xl p-6 border border-accent/15">
-                <h3 className="font-serif font-bold text-lg text-primary mb-4">{isAr ? 'تابعنا' : 'Follow us'}</h3>
+                <h3 className="font-serif font-bold text-lg text-primary mb-4">{L(locale, { ar: 'تابعنا', en: 'Follow us' })}</h3>
                 <div className="grid grid-cols-3 gap-2">
                   {settings.facebookUrl && (
                     <a href={settings.facebookUrl} target="_blank" rel="noopener" className="flex flex-col items-center gap-1.5 bg-[#1877F2] text-white py-3 rounded-lg hover:opacity-90 transition-opacity">
@@ -134,9 +134,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="container max-w-4xl">
           <Reveal className="text-center mb-12">
             <HelpCircle className="h-10 w-10 text-accent mx-auto mb-4" />
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{isAr ? 'الأسئلة الشائعة' : 'FAQ'}</div>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'الأسئلة الشائعة', en: 'FAQ', ru: 'Частые вопросы', it: 'FAQ' })}</div>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary">
-              {isAr ? 'كل ما تريد معرفته' : 'Everything you need to know'}
+              {L(locale, { ar: 'كل ما تريد معرفته', en: 'Everything you need to know', ru: 'Всё, что нужно знать', it: 'Tutto quello che devi sapere' })}
             </h2>
           </Reveal>
           <div className="space-y-3">
@@ -144,11 +144,11 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <Reveal key={f.q_en} delay={i * 0.05}>
                 <details className="group bg-white rounded-xl border border-accent/15 hover:border-accent/40 transition-colors overflow-hidden">
                   <summary className="flex items-center justify-between gap-4 p-5 md:p-6 cursor-pointer list-none">
-                    <span className="font-serif font-bold text-primary text-base md:text-lg">{isAr ? f.q_ar : f.q_en}</span>
+                    <span className="font-serif font-bold text-primary text-base md:text-lg">{L(locale, { ar: f.q_ar, en: f.q_en })}</span>
                     <span className="shrink-0 w-8 h-8 rounded-full bg-accent/15 text-accent flex items-center justify-center group-open:rotate-45 transition-transform">+</span>
                   </summary>
                   <div className="px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base text-foreground/75 leading-relaxed">
-                    {isAr ? f.a_ar : f.a_en}
+                    {L(locale, { ar: f.a_ar, en: f.a_en })}
                   </div>
                 </details>
               </Reveal>
@@ -160,8 +160,8 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       <section className="py-16 md:py-20 bg-cream">
         <div className="container">
           <Reveal className="text-center mb-8">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{isAr ? 'مكاننا' : 'Find us'}</div>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary">{isAr ? 'في قلب شرم الشيخ' : 'In the heart of Sharm El Sheikh'}</h2>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'مكاننا', en: 'Find us', ru: 'Найти нас', it: 'Trovarci' })}</div>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary">{L(locale, { ar: 'في قلب شرم الشيخ', en: 'In the heart of Sharm El Sheikh', ru: 'В самом сердце Шарм-эль-Шейха', it: 'Nel cuore di Sharm El Sheikh' })}</h2>
           </Reveal>
           <Reveal>
             <div className="rounded-2xl overflow-hidden border border-accent/15 card-shadow aspect-[16/9] md:aspect-[21/9] bg-muted">

@@ -8,7 +8,7 @@ import { ReviewsCarousel, type ReviewItem } from '@/components/public/reviews-ca
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
 import { Award, Shield, Compass, Clock, ArrowRight, Sparkles } from 'lucide-react';
-import { localeToApiCode } from '@/lib/utils';
+import { localeToApiCode, L } from '@/lib/utils';
 import { getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 
 export const dynamic = 'force-dynamic';
@@ -52,22 +52,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <Reveal delay={0.2}>
               <div className="inline-flex items-center gap-2 mb-5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-cream/10 backdrop-blur border border-accent/30 text-accent text-[11px] sm:text-sm font-semibold">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                {settings.yearsExperience}+ {isAr ? 'سنة من الخبرة الفاخرة' : 'years of luxury experience'}
+                {settings.yearsExperience}+ {t('home.yearsOfLuxury')}
               </div>
             </Reveal>
             <Reveal delay={0.3}>
               <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-5 sm:mb-6 leading-[1.05] text-balance">
-                {isAr ? (
-                  <>
-                    <span className="block">رحلتك الفاخرة</span>
-                    <span className="block text-gold-gradient">في شرم الشيخ</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="block">Your Luxury Journey</span>
-                    <span className="block text-gold-gradient">in Sharm El Sheikh</span>
-                  </>
-                )}
+                <span className="block">{t('home.heroTitleLine1')}</span>
+                <span className="block text-gold-gradient">{t('home.heroTitleLine2')}</span>
               </h1>
             </Reveal>
             <Reveal delay={0.4}>
@@ -94,10 +85,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="container pb-6 lg:pb-8">
             <div className="glass-dark rounded-2xl px-4 md:px-6 py-4 md:py-5 grid grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto border border-accent/20">
               {[
-                { v: `${settings.yearsExperience}+`, l: isAr ? 'سنة خبرة' : 'Years' },
-                { v: '5★', l: isAr ? 'تقييم العملاء' : 'Rating' },
-                { v: '10k+', l: isAr ? 'سائح سعيد' : 'Happy guests' },
-                { v: '24/7', l: isAr ? 'دعم متواصل' : 'Support' },
+                { v: `${settings.yearsExperience}+`, l: L(locale, { ar: 'سنة خبرة', en: 'Years', ru: 'Лет опыта', it: 'Anni' }) },
+                { v: '5★', l: L(locale, { ar: 'تقييم العملاء', en: 'Rating', ru: 'Рейтинг', it: 'Valutazione' }) },
+                { v: '10k+', l: L(locale, { ar: 'سائح سعيد', en: 'Happy guests', ru: 'Довольных гостей', it: 'Ospiti soddisfatti' }) },
+                { v: '24/7', l: L(locale, { ar: 'دعم متواصل', en: 'Support', ru: 'Поддержка', it: 'Supporto' }) },
               ].map((s) => (
                 <div key={s.l} className="text-center">
                   <div className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-accent leading-none">{s.v}</div>
@@ -114,10 +105,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container">
           <div className="grid grid-cols-4 gap-3">
             {[
-              { v: `${settings.yearsExperience}+`, l: isAr ? 'سنة' : 'Yrs' },
-              { v: '5★', l: isAr ? 'تقييم' : 'Rating' },
-              { v: '10k+', l: isAr ? 'سائح' : 'Guests' },
-              { v: '24/7', l: isAr ? 'دعم' : 'Support' },
+              { v: `${settings.yearsExperience}+`, l: L(locale, { ar: 'سنة', en: 'Yrs', ru: 'Лет', it: 'Anni' }) },
+              { v: '5★', l: L(locale, { ar: 'تقييم', en: 'Rating', ru: 'Рейтинг', it: 'Valutazione' }) },
+              { v: '10k+', l: L(locale, { ar: 'سائح', en: 'Guests', ru: 'Гостей', it: 'Ospiti' }) },
+              { v: '24/7', l: L(locale, { ar: 'دعم', en: 'Support', ru: 'Поддержка', it: 'Supporto' }) },
             ].map((s) => (
               <div key={s.l} className="text-center">
                 <div className="font-serif text-xl font-bold text-accent leading-none">{s.v}</div>
@@ -132,7 +123,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="py-16 md:py-24 bg-cream relative">
         <div className="container">
           <Reveal className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{isAr ? 'لماذا نحن' : 'Why choose us'}</div>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'لماذا نحن', en: 'Why choose us', ru: 'Почему выбирают нас', it: 'Perché sceglierci' })}</div>
             <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4 text-primary">{t('home.whyUs')}</h2>
             <div className="w-16 h-0.5 bg-accent mx-auto" />
           </Reveal>
@@ -164,7 +155,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container">
           <Reveal className="flex items-end justify-between flex-wrap gap-4 mb-10 md:mb-12">
             <div>
-              <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{isAr ? 'رحلاتنا المميزة' : 'Curated experiences'}</div>
+              <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'رحلاتنا المميزة', en: 'Curated experiences', ru: 'Лучшие туры', it: 'Esperienze selezionate' })}</div>
               <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-2">{t('home.featuredTrips')}</h2>
               <p className="text-sm md:text-base text-muted-foreground max-w-md">{t('home.featuredTripsDesc')}</p>
             </div>
@@ -196,10 +187,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="container relative">
             <Reveal className="text-center mb-10 md:mb-14">
               <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">
-                {isAr ? 'آراء عملائنا' : 'What our guests say'}
+                {L(locale, { ar: 'آراء عملائنا', en: 'What our guests say', ru: 'Что говорят наши гости', it: 'Cosa dicono i nostri ospiti' })}
               </div>
               <h2 className="font-serif text-3xl md:text-5xl font-bold mb-2">
-                {isAr ? 'تجارب حقيقية من رحلاتهم معنا' : 'Real stories from real travelers'}
+                {L(locale, { ar: 'تجارب حقيقية من رحلاتهم معنا', en: 'Real stories from real travelers', ru: 'Реальные отзывы реальных путешественников', it: 'Storie vere di veri viaggiatori' })}
               </h2>
               <p className="text-sm md:text-base opacity-75 max-w-xl mx-auto">
                 {isAr
@@ -225,12 +216,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
               <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-accent mx-auto mb-4 md:mb-6" />
               <h2 className="font-serif text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-balance">
-                {isAr ? 'جاهز لمغامرتك القادمة؟' : 'Ready for your next adventure?'}
+                {L(locale, { ar: 'جاهز لمغامرتك القادمة؟', en: 'Ready for your next adventure?', ru: 'Готовы к новому приключению?', it: 'Pronto per la prossima avventura?' })}
               </h2>
               <p className="text-sm md:text-lg opacity-90 mb-8 md:mb-10 max-w-2xl mx-auto">
-                {isAr
-                  ? 'احجز رحلتك اليوم واستمتع بتجربة سياحية فاخرة لا تُنسى في شرم الشيخ'
-                  : 'Book today and enjoy an unforgettable luxury experience in Sharm El Sheikh'}
+                {L(locale, { ar: 'احجز رحلتك اليوم واستمتع بتجربة سياحية فاخرة لا تُنسى في شرم الشيخ', en: 'Book today and enjoy an unforgettable luxury experience in Sharm El Sheikh' })}
               </p>
               <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-2xl shadow-accent/40 group">
                 <Link href="/trips">

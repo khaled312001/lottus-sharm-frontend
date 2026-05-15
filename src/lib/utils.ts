@@ -32,3 +32,13 @@ export function localeToApiCode(locale: string): 'AR' | 'EN' | 'RU' | 'IT' {
   const upper = locale.toUpperCase();
   return (['AR', 'EN', 'RU', 'IT'] as const).includes(upper as 'AR') ? (upper as 'AR') : 'AR';
 }
+
+// 4-language inline localizer. Use when you'd otherwise write `isAr ? X : Y`.
+// Provides RU + IT with English fallback if either is omitted.
+export type LocaleMap = { ar: string; en: string; ru?: string; it?: string };
+export function L(locale: string, m: LocaleMap): string {
+  if (locale === 'ar') return m.ar;
+  if (locale === 'ru' && m.ru) return m.ru;
+  if (locale === 'it' && m.it) return m.it;
+  return m.en;
+}

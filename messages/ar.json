@@ -6,7 +6,17 @@
     "gallery": "المعرض",
     "blog": "المدونة",
     "contact": "تواصل معنا",
-    "book": "احجز الآن"
+    "book": "احجز الآن",
+    "tagline": "✦ سياحة فاخرة منذ 2013",
+    "copyrightShort": "© لوتس شرم للسياحة · سياحة فاخرة منذ 2013",
+    "drawerMenu": "✦ القائمة",
+    "drawerContact": "✦ تواصل معنا",
+    "drawerFollow": "✦ تابعنا",
+    "drawerCall": "اتصل",
+    "drawerEmail": "البريد",
+    "drawerWhatsApp": "واتساب · رد فوري",
+    "drawerWhatsAppCta": "تحدث معنا الآن",
+    "drawerWhatsAppPrefill": "مرحبا، أريد الاستفسار عن الرحلات"
   },
   "common": {
     "bookNow": "احجز الآن",
@@ -30,6 +40,11 @@
     "available": "متاحة"
   },
   "home": {
+    "heroTitleLine1": "رحلتك الفاخرة",
+    "heroTitleLine2": "في شرم الشيخ",
+    "yearsOfLuxury": "سنة من الخبرة الفاخرة",
+    "tagline": "✦ سياحة فاخرة منذ 2013",
+    "copyrightShort": "© لوتس شرم للسياحة · سياحة فاخرة منذ 2013",
     "heroTitle": "اكتشف جمال شرم الشيخ",
     "heroSubtitle": "مع لوتتس شرم — أكثر من 13 عاماً من الخبرة في تنظيم الرحلات السياحية المميزة",
     "ctaPrimary": "تصفح رحلاتنا",

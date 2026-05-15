@@ -1,12 +1,15 @@
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { Facebook, Instagram, Youtube, Phone, Mail, MapPin } from 'lucide-react';
 import { NewsletterForm } from './newsletter-form';
 import { Logo } from './logo';
+import { getLocalizedTagline } from '@/lib/site-settings';
 import type { SiteSettingsDTO } from '@/types/api';
 
 export function Footer({ settings }: { settings: SiteSettingsDTO }) {
   const t = useTranslations();
+  const locale = useLocale();
+  const tagline = getLocalizedTagline(settings, locale);
   const year = new Date().getFullYear();
 
   return (
