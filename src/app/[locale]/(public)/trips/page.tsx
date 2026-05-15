@@ -8,7 +8,7 @@ import type { TripDTO } from '@/types/api';
 import { localeToApiCode } from '@/lib/utils';
 import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
-import { Compass, Sparkles, Calendar, MessageCircle } from 'lucide-react';
+import { Compass, Sparkles, Calendar, MessageCircle, Waves, Mountain, Building2, Anchor, PartyPopper } from 'lucide-react';
 import { buildWhatsAppLink } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +19,14 @@ interface PageProps {
 }
 
 const CATEGORIES = ['SEA', 'DESERT', 'CITY', 'DIVING', 'EVENTS', 'SAFARI'] as const;
-const CATEGORY_ICONS: Record<string, string> = { SEA: '🌊', DESERT: '🏜️', CITY: '🏛️', DIVING: '🤿', EVENTS: '🎉', SAFARI: '🐪' };
+const CATEGORY_ICON = {
+  SEA: Waves,
+  DESERT: Mountain,
+  CITY: Building2,
+  DIVING: Anchor,
+  EVENTS: PartyPopper,
+  SAFARI: Compass,
+} as const;
 
 export default async function TripsPage({ params, searchParams }: PageProps) {
   const { locale } = await params;
@@ -37,14 +44,15 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
     const qs = new URLSearchParams({ locale: localeToApiCode(locale), page: String(page), pageSize: '12' });
     if (cat) qs.set('category', cat);
     trips = await api.get(`/public/trips?${qs}`);
-    // Get all (for counts)
-    allTrips = await api.get(`/public/trips?locale=${localeToApiCode(locale)}&pageSize=100`);
+    // Get all (for counts) — backend caps pageSize at 50
+    allTrips = await api.get(`/public/trips?locale=${localeToApiCode(locale)}&pageSize=50`);
   } catch {
     /* ignore */
   }
 
   const counts: Record<string, number> = {};
   allTrips.items.forEach((tt) => { counts[tt.category] = (counts[tt.category] || 0) + 1; });
+  const totalCount = allTrips.items.length;
 
   return (
     <>
@@ -59,7 +67,7 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
             <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1]">{t('trips.title')}</h1>
             <p className="text-lg md:text-xl opacity-90 max-w-2xl">{t('trips.subtitle')}</p>
             <div className="mt-6 flex flex-wrap gap-4 text-sm">
-              <span className="inline-flex items-center gap-1.5 text-accent"><Sparkles className="h-4 w-4" /> {allTrips.items.length}+ {isAr ? 'رحلة' : 'experiences'}</span>
+              <span className="inline-flex items-center gap-1.5 text-accent"><Sparkles className="h-4 w-4" /> {totalCount}+ {isAr ? 'رحلة' : 'experiences'}</span>
               <span className="inline-flex items-center gap-1.5 text-cream/70"><Compass className="h-4 w-4" /> {isAr ? 'كل فئات السياحة' : 'All tourism categories'}</span>
               <span className="inline-flex items-center gap-1.5 text-cream/70"><Calendar className="h-4 w-4" /> {isAr ? 'يومياً' : 'Daily departures'}</span>
             </div>
@@ -67,26 +75,62 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
         </div>
       </section>
 
-      {/* FILTERS */}
-      <section className="sticky top-[88px] md:top-[116px] z-30 bg-cream border-b border-accent/15">
-        <div className="container py-4">
-          <div className="flex gap-2 overflow-x-auto pb-1 -mb-1 no-scrollbar">
-            <Link href={{ pathname: '/trips' }} className={cn(
-              'shrink-0 px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap',
-              !cat ? 'bg-primary text-cream border-primary shadow-md' : 'bg-white border-accent/20 hover:border-accent text-primary',
-            )}>
-              {t('trips.all')} <span className="opacity-60 ms-1">({allTrips.items.length})</span>
+      {/* FILTERS — sticky pill bar */}
+      <section className="sticky top-[88px] md:top-[116px] z-30 bg-cream/95 backdrop-blur-md border-b border-accent/15 shadow-sm">
+        <div className="container py-3.5 md:py-4">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
+            {/* All */}
+            <Link
+              href={{ pathname: '/trips' }}
+              className={cn(
+                'group shrink-0 inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap',
+                !cat
+                  ? 'bg-primary text-cream border-primary shadow-lg shadow-primary/20'
+                  : 'bg-white text-primary border-accent/25 hover:border-accent hover:bg-accent/5',
+              )}
+            >
+              <Sparkles className={cn('h-4 w-4', !cat ? 'text-accent' : 'text-accent/80')} />
+              <span>{t('trips.all')}</span>
+              <span
+                className={cn(
+                  'inline-flex items-center justify-center min-w-[26px] h-[22px] px-1.5 rounded-full text-[11px] font-bold leading-none',
+                  !cat ? 'bg-accent text-primary' : 'bg-primary/10 text-primary',
+                )}
+              >
+                {totalCount}
+              </span>
             </Link>
-            {CATEGORIES.map((c) => (
-              <Link key={c} href={{ pathname: '/trips', query: { category: c } }} className={cn(
-                'shrink-0 px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap inline-flex items-center gap-1.5',
-                cat === c ? 'bg-primary text-cream border-primary shadow-md' : 'bg-white border-accent/20 hover:border-accent text-primary',
-              )}>
-                <span>{CATEGORY_ICONS[c]}</span>
-                {t(`trips.category.${c}`)}
-                {counts[c] ? <span className="opacity-60">({counts[c]})</span> : null}
-              </Link>
-            ))}
+
+            {CATEGORIES.map((c) => {
+              const Icon = CATEGORY_ICON[c];
+              const n = counts[c] ?? 0;
+              const isActive = cat === c;
+              return (
+                <Link
+                  key={c}
+                  href={{ pathname: '/trips', query: { category: c } }}
+                  className={cn(
+                    'group shrink-0 inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap',
+                    isActive
+                      ? 'bg-primary text-cream border-primary shadow-lg shadow-primary/20'
+                      : 'bg-white text-primary border-accent/25 hover:border-accent hover:bg-accent/5',
+                    n === 0 && !isActive && 'opacity-50',
+                  )}
+                  aria-disabled={n === 0 && !isActive}
+                >
+                  <Icon className={cn('h-4 w-4', isActive ? 'text-accent' : 'text-accent/80')} />
+                  <span>{t(`trips.category.${c}`)}</span>
+                  <span
+                    className={cn(
+                      'inline-flex items-center justify-center min-w-[26px] h-[22px] px-1.5 rounded-full text-[11px] font-bold leading-none',
+                      isActive ? 'bg-accent text-primary' : 'bg-primary/10 text-primary',
+                    )}
+                  >
+                    {n}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

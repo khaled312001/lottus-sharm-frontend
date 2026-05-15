@@ -3,7 +3,7 @@
 import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
-  Settings, Star, Mail, MessageSquare, UserCog, Image as ImageIcon, X,
+  Settings, Star, Mail, MessageSquare, UserCog, Image as ImageIcon, X, Send,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +28,7 @@ const SECTIONS = [
   ]},
   { title: 'الإعدادات', items: [
     { href: '/admin/settings' as const, icon: Settings, label: 'إعدادات الموقع' },
+    { href: '/admin/email' as const, icon: Send, label: 'إعدادات البريد' },
     { href: '/admin/users' as const, icon: UserCog, label: 'المستخدمون' },
   ]},
 ];

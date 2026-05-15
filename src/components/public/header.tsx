@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
-import { Menu, X, Phone, MessageCircle } from 'lucide-react';
+import { Menu, X, Phone, MessageCircle, Home, Map, Info, Image as ImageIcon, BookOpen, Mail, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './language-switcher';
@@ -27,13 +27,14 @@ export function Header() {
   // Transparent only on Home AND not scrolled AND menu closed
   const transparent = isHome && !scrolled && !open;
 
-  const links: { href: '/' | '/trips' | '/about' | '/gallery' | '/blog' | '/contact'; label: string }[] = [
-    { href: '/', label: t('home') },
-    { href: '/trips', label: t('trips') },
-    { href: '/about', label: t('about') },
-    { href: '/gallery', label: t('gallery') },
-    { href: '/blog', label: t('blog') },
-    { href: '/contact', label: t('contact') },
+  type LinkHref = '/' | '/trips' | '/about' | '/gallery' | '/blog' | '/contact';
+  const links: { href: LinkHref; label: string; icon: typeof Home }[] = [
+    { href: '/',         label: t('home'),    icon: Home },
+    { href: '/trips',    label: t('trips'),   icon: Map },
+    { href: '/about',    label: t('about'),   icon: Info },
+    { href: '/gallery',  label: t('gallery'), icon: ImageIcon },
+    { href: '/blog',     label: t('blog'),    icon: BookOpen },
+    { href: '/contact',  label: t('contact'), icon: Mail },
   ];
 
   return (
@@ -129,10 +130,13 @@ export function Header() {
           <button
             onClick={() => setOpen(!open)}
             className={cn(
-              'lg:hidden p-2 rounded-md transition-colors',
-              'text-cream hover:bg-cream/10',
+              'lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all',
+              open
+                ? 'bg-accent text-primary shadow-lg shadow-accent/25'
+                : 'bg-cream/10 hover:bg-cream/15 text-cream border border-cream/15',
             )}
             aria-label="Toggle menu"
+            aria-expanded={open}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -141,52 +145,107 @@ export function Header() {
 
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden bg-primary-900 border-t border-accent/15 overflow-hidden"
-          >
-            <nav className="container flex flex-col py-4 gap-1">
-              {links.map((l, i) => {
-                const active = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href));
-                return (
-                  <motion.div
-                    key={l.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Link
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        'block px-3 py-3 rounded-md text-sm font-semibold transition-colors',
-                        active
-                          ? 'bg-accent/15 text-accent'
-                          : 'text-cream/85 hover:bg-accent/10 hover:text-accent',
-                      )}
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setOpen(false)}
+              className="lg:hidden fixed inset-0 top-16 md:top-20 bg-black/60 backdrop-blur-sm z-40"
+            />
+
+            {/* Drawer */}
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="lg:hidden bg-gradient-to-b from-primary-900 to-primary-950 border-t border-accent/20 overflow-hidden relative z-50 shadow-2xl"
+            >
+              <nav className="container py-5 space-y-1">
+                <div className="text-[10px] uppercase tracking-[0.25em] text-accent/80 font-bold px-3 mb-2">
+                  ✦ القائمة
+                </div>
+                {links.map((l, i) => {
+                  const active = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href));
+                  const Icon = l.icon;
+                  return (
+                    <motion.div
+                      key={l.href}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.04 }}
                     >
-                      {l.label}
-                    </Link>
-                  </motion.div>
-                );
-              })}
-              <a
-                href="tel:+201090767278"
-                className="flex items-center gap-2 px-3 py-3 mt-2 text-accent border border-accent/30 rounded-md text-sm font-semibold"
-              >
-                <Phone className="h-4 w-4" />
-                <span dir="ltr">+20 109 076 7278</span>
-              </a>
-              <Button asChild size="lg" className="mt-2 bg-accent text-primary font-bold">
-                <Link href="/trips" onClick={() => setOpen(false)}>
-                  {t('book')}
-                </Link>
-              </Button>
-            </nav>
-          </motion.div>
+                      <Link
+                        href={l.href}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          'flex items-center gap-3 px-3 py-3.5 rounded-xl text-[15px] font-bold transition-all',
+                          active
+                            ? 'bg-accent text-primary shadow-lg shadow-accent/25'
+                            : 'text-cream hover:bg-cream/10 hover:text-accent',
+                        )}
+                      >
+                        <span className={cn(
+                          'flex items-center justify-center w-9 h-9 rounded-lg transition-colors',
+                          active ? 'bg-primary/10 text-primary' : 'bg-accent/15 text-accent',
+                        )}>
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="flex-1">{l.label}</span>
+                        {active && <Sparkles className="h-4 w-4 opacity-80" />}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+
+                {/* Divider */}
+                <div className="my-3 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+
+                {/* Contact */}
+                <a
+                  href="tel:+201090767278"
+                  className="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-cream/5 hover:bg-cream/10 transition-colors group"
+                >
+                  <span className="flex items-center gap-3 text-cream">
+                    <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-accent/15 text-accent">
+                      <Phone className="h-4 w-4" />
+                    </span>
+                    <span className="text-sm font-semibold">اتصل بنا</span>
+                  </span>
+                  <span dir="ltr" className="text-accent text-sm font-bold tabular-nums">+20 109 076 7278</span>
+                </a>
+
+                <a
+                  href="https://wa.me/201090767278"
+                  target="_blank"
+                  rel="noopener"
+                  className="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-cream/5 hover:bg-cream/10 transition-colors"
+                >
+                  <span className="flex items-center gap-3 text-cream">
+                    <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#25D366]/20 text-[#25D366]">
+                      <MessageCircle className="h-4 w-4" />
+                    </span>
+                    <span className="text-sm font-semibold">واتساب</span>
+                  </span>
+                  <span className="text-[#25D366] text-xs font-bold opacity-80">رد فوري</span>
+                </a>
+
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full mt-3 bg-accent text-primary font-extrabold shadow-lg shadow-accent/25 h-12 text-base"
+                >
+                  <Link href="/trips" onClick={() => setOpen(false)}>
+                    <Sparkles className="h-4 w-4 me-1" />
+                    {t('book')}
+                  </Link>
+                </Button>
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.header>

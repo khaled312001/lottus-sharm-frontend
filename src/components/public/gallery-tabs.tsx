@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Link } from '@/i18n/routing';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Video, Play } from 'lucide-react';
+import { Camera, Video, Play, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Lightbox, type LightboxItem } from './lightbox';
 
 interface MediaItem {
   url: string;
@@ -18,12 +18,21 @@ interface MediaItem {
 
 export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; videos: MediaItem[]; locale: string }) {
   const [tab, setTab] = useState<'all' | 'photos' | 'videos'>('all');
+  const [open, setOpen] = useState<number | null>(null);
   const isAr = locale === 'ar';
 
-  const items =
+  const items = useMemo(() => (
     tab === 'photos' ? photos :
     tab === 'videos' ? videos :
-    [...photos, ...videos].sort(() => 0); // keep order
+    [...photos, ...videos]
+  ), [tab, photos, videos]);
+
+  const lightboxItems: LightboxItem[] = items.map((m) => ({
+    url: m.url,
+    thumb: m.thumb,
+    alt: m.alt,
+    type: m.type,
+  }));
 
   return (
     <div>
@@ -66,37 +75,58 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
             <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
               {items.slice(0, 80).map((m, i) => (
                 m.type === 'VIDEO' ? (
-                  <VideoTile key={`v-${i}`} m={m} />
+                  <VideoTile key={`v-${i}`} m={m} onOpen={() => setOpen(i)} />
                 ) : (
-                  <PhotoTile key={`p-${i}`} m={m} index={i} />
+                  <PhotoTile key={`p-${i}`} m={m} index={i} onOpen={() => setOpen(i)} />
                 )
               ))}
             </div>
           )}
         </motion.div>
       </AnimatePresence>
+
+      <Lightbox items={lightboxItems} startIndex={open} onClose={() => setOpen(null)} />
     </div>
   );
 }
 
-function PhotoTile({ m, index }: { m: MediaItem; index: number }) {
+function PhotoTile({ m, index, onOpen }: { m: MediaItem; index: number; onOpen: () => void }) {
   const aspect = index % 4 === 0 ? '3/4' : index % 5 === 0 ? '4/5' : index % 3 === 0 ? '4/3' : '1/1';
   return (
-    <Link href={`/trips/${m.tripSlug}`} className="group block relative overflow-hidden rounded-xl break-inside-avoid card-shadow hover:card-shadow-gold transition-shadow" style={{ aspectRatio: aspect }}>
-      <Image src={m.thumb || m.url} alt={m.alt} fill sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-700" />
+    <button
+      onClick={onOpen}
+      className="group block relative overflow-hidden rounded-xl break-inside-avoid card-shadow hover:card-shadow-gold transition-shadow w-full"
+      style={{ aspectRatio: aspect }}
+      aria-label={`عرض ${m.alt}`}
+    >
+      <Image
+        src={m.thumb || m.url}
+        alt={m.alt}
+        fill
+        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+        className="object-cover group-hover:scale-110 transition-transform duration-700"
+      />
       <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-        <div className="text-cream">
+        <div className="text-cream text-start">
           <div className="text-[10px] uppercase tracking-wider text-accent">{m.category}</div>
           <div className="font-serif font-bold text-sm leading-tight line-clamp-2">{m.alt}</div>
         </div>
       </div>
-    </Link>
+      <div className="absolute top-2 end-2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <Maximize2 className="h-3.5 w-3.5" />
+      </div>
+    </button>
   );
 }
 
-function VideoTile({ m }: { m: MediaItem }) {
+function VideoTile({ m, onOpen }: { m: MediaItem; onOpen: () => void }) {
   return (
-    <div className="group block relative overflow-hidden rounded-xl break-inside-avoid card-shadow hover:card-shadow-gold transition-shadow bg-primary-900" style={{ aspectRatio: '16/9' }}>
+    <button
+      onClick={onOpen}
+      className="group block relative overflow-hidden rounded-xl break-inside-avoid card-shadow hover:card-shadow-gold transition-shadow bg-primary-900 w-full"
+      style={{ aspectRatio: '16/9' }}
+      aria-label={`Play video`}
+    >
       <video
         src={m.url}
         muted
@@ -116,10 +146,10 @@ function VideoTile({ m }: { m: MediaItem }) {
           <Play className="h-6 w-6 fill-current ms-0.5" />
         </div>
       </div>
-      <Link href={`/trips/${m.tripSlug}`} className="absolute bottom-3 start-3 end-3 text-cream">
+      <div className="absolute bottom-3 start-3 end-3 text-cream text-start">
         <div className="text-[10px] uppercase tracking-wider text-accent opacity-90">{m.category}</div>
         <div className="font-serif font-bold text-sm leading-tight line-clamp-2">{m.alt}</div>
-      </Link>
-    </div>
+      </div>
+    </button>
   );
 }
