@@ -40,6 +40,14 @@ export interface TripGalleryItem {
   media: MediaDTO;
 }
 
+export interface TripTimelineStepDTO {
+  id: number;
+  order: number;
+  time?: string | null;
+  icon?: string | null;
+  translations: Array<{ locale: ApiLocale; title: string; desc?: string | null }>;
+}
+
 export interface TripDTO {
   id: number;
   slug: string;
@@ -58,7 +66,27 @@ export interface TripDTO {
   highlights: TripHighlightDTO[];
   bullets: TripBulletDTO[];
   gallery: TripGalleryItem[];
+  timeline?: TripTimelineStepDTO[];
+  ratingAverage?: number;
+  _count?: { likes: number; comments: number; reviews: number };
   tr?: TripTranslationDTO | null;
+}
+
+export interface TripReviewDTO {
+  id: number;
+  customerName: string;
+  rating: number;
+  comment: string;
+  locale: ApiLocale;
+  createdAt: string;
+}
+
+export interface TripCommentDTO {
+  id: number;
+  authorName: string;
+  content: string;
+  locale: ApiLocale;
+  createdAt: string;
 }
 
 export interface SiteSettingsDTO {

@@ -5,6 +5,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { api } from '@/lib/api';
 import type { BlogPostDTO } from '@/types/api';
 import { localeToApiCode } from '@/lib/utils';
+import { pickCoverImage, injectSectionImages, stripLeadMeta } from '@/lib/blog-images';
 import { Calendar, Clock } from 'lucide-react';
 
 async function fetchPost(slug: string, locale: string): Promise<BlogPostDTO | null> {
@@ -32,20 +33,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   const post = await fetchPost(slug, locale);
   if (!post) notFound();
 
+  const coverSrc = post.coverImage?.url || pickCoverImage(post.slug);
+  const content = injectSectionImages(stripLeadMeta(post.tr?.content || ''), post.slug);
+
   return (
     <article className="container py-10 max-w-3xl">
-      <h1 className="text-3xl md:text-5xl font-extrabold mb-4">{post.tr?.title}</h1>
+      <h1 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-4 leading-tight">{post.tr?.title}</h1>
       <div className="flex items-center gap-3 text-sm text-muted-foreground mb-6">
-        {post.author && <span>{post.author.name}</span>}
-        {post.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {new Date(post.publishedAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en')}</span>}
-        <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {post.readTime} min</span>
+        {post.author && <span className="font-medium">{post.author.name}</span>}
+        {post.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-accent" /> {new Date(post.publishedAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en')}</span>}
+        <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-accent" /> {post.readTime} min</span>
       </div>
-      {post.coverImage?.url && (
-        <div className="relative aspect-[16/9] mb-8 rounded-2xl overflow-hidden">
-          <Image src={post.coverImage.url} alt={post.tr?.title || ''} fill sizes="(max-width: 768px) 100vw, 768px" className="object-cover" priority />
-        </div>
-      )}
-      <div className="prose prose-lg max-w-none rtl:prose-rtl" dangerouslySetInnerHTML={{ __html: post.tr?.content || '' }} />
+      <div className="relative aspect-[16/9] mb-8 rounded-2xl overflow-hidden card-shadow">
+        <Image src={coverSrc} alt={post.tr?.title || ''} fill sizes="(max-width: 768px) 100vw, 768px" className="object-cover" priority />
+      </div>
+      <div className="prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
     </article>
   );
 }

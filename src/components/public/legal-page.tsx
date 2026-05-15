@@ -3,6 +3,7 @@ import { Reveal } from './motion';
 import { Link } from '@/i18n/routing';
 import { Phone, MessageCircle, Mail, ScrollText, Shield, FileText, ArrowLeft } from 'lucide-react';
 import { L, buildWhatsAppLink } from '@/lib/utils';
+import { stripLeadMeta } from '@/lib/blog-images';
 
 const ICONS = { privacy: Shield, terms: FileText, 'cancellation-policy': ScrollText } as const;
 type Slug = keyof typeof ICONS;
@@ -69,17 +70,11 @@ export function LegalPage({
           <Reveal>
             <article
               className={
-                'prose prose-slate max-w-none ' +
-                (isAr ? 'prose-rtl text-right' : '') +
-                ' prose-headings:font-serif prose-headings:text-primary prose-headings:tracking-tight' +
-                ' prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b-2 prose-h2:border-accent/30' +
-                ' prose-p:leading-relaxed prose-p:text-foreground/80' +
-                ' prose-ul:my-4 prose-li:my-1 prose-li:text-foreground/80 prose-li:leading-relaxed' +
-                ' prose-strong:text-primary prose-strong:font-semibold' +
-                ' prose-a:text-accent-700 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline' +
+                'prose max-w-none ' +
+                (isAr ? 'text-right' : '') +
                 ' [&_.lead]:text-sm [&_.lead]:text-muted-foreground [&_.lead]:bg-muted/40 [&_.lead]:px-4 [&_.lead]:py-2 [&_.lead]:rounded-lg [&_.lead]:inline-block [&_.lead]:mb-6 [&_.lead]:border [&_.lead]:border-accent/15'
               }
-              dangerouslySetInnerHTML={{ __html: content }}
+              dangerouslySetInnerHTML={{ __html: stripLeadMeta(content) }}
             />
           </Reveal>
 
