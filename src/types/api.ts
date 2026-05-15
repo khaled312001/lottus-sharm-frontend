@@ -74,6 +74,7 @@ export interface SiteSettingsDTO {
   whatsapp: string;
   email?: string | null;
   addressAr?: string | null;
+  addressEn?: string | null;
   facebookUrl?: string | null;
   instagramUrl?: string | null;
   tiktokUrl?: string | null;
@@ -83,6 +84,7 @@ export interface SiteSettingsDTO {
   vodafoneCash?: string | null;
   instaPay?: string | null;
   logoUrl?: string | null;
+  faviconUrl?: string | null;
   primaryColor: string;
   accentColor: string;
   yearsExperience: number;
