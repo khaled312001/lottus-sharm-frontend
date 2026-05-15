@@ -44,6 +44,31 @@
   html[dir='rtl'] body {
     font-family: var(--font-cairo), 'Cairo', system-ui, sans-serif;
   }
+
+  /* Arabic glyphs (Cairo / Tajawal) have tall diacritics + descenders.
+     Override tight line-heights so they don't get clipped on hero headings. */
+  html[dir='rtl'] h1,
+  html[dir='rtl'] h2,
+  html[dir='rtl'] h3,
+  html[dir='rtl'] h4 {
+    line-height: 1.45;
+    /* Reserve a tiny bit of vertical breathing room above caps for diacritics */
+    padding-block-start: 0.05em;
+  }
+  /* Loosen any explicit ultra-tight leading just for RTL hero typography */
+  html[dir='rtl'] .leading-none { line-height: 1.25 !important; }
+  html[dir='rtl'] .leading-tight { line-height: 1.4 !important; }
+  html[dir='rtl'] .leading-\[1\.1\] { line-height: 1.45 !important; }
+  html[dir='rtl'] .leading-\[1\.15\] { line-height: 1.45 !important; }
+  /* Common Tailwind variant for arbitrary 1.1 in font-serif blocks */
+  html[dir='rtl'] .font-serif {
+    line-height: 1.5;
+  }
+  /* Prevent hero text overflow clipping (some hero sections use overflow: hidden) */
+  html[dir='rtl'] section h1,
+  html[dir='rtl'] section h2 {
+    overflow: visible;
+  }
 }
 
 @layer components {
