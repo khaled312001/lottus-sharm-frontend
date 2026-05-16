@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ContactForm } from '@/components/public/contact-form';
 import { Reveal } from '@/components/public/motion';
 import { getSiteSettings } from '@/lib/site-settings';
-import { Phone, Mail, MapPin, MessageCircle, Clock, Facebook, Instagram, Youtube, Sparkles, HelpCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, MessageCircle, Clock, Facebook, Instagram, Youtube, Sparkles, HelpCircle, ArrowRight } from 'lucide-react';
 import { buildWhatsAppLink, L } from '@/lib/utils';
 
 export const revalidate = 120;
@@ -56,13 +56,16 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   return (
     <>
       <section className="relative bg-primary-900 text-cream py-16 md:py-24 overflow-hidden">
-        <Image src="/hero-slides/hero-12.jpg" alt="" fill className="object-cover opacity-30" sizes="100vw" priority />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/80 via-primary-900/70 to-primary-900" />
+        <Image src="/hero-slides/hero-12.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />
+        <div className="absolute top-1/4 -end-32 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-4">{L(locale, { ar: 'اتصل بنا', en: 'Get in touch', ru: 'Свяжитесь с нами', it: 'Contattaci' })}</div>
-            <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4">{t('contact.title')}</h1>
-            <p className="text-lg opacity-90">{t('contact.subtitle')}</p>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'اتصل بنا', en: 'Get in touch', ru: 'Свяжитесь с нами', it: 'Contattaci' })}</span>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-tight text-balance">{t('contact.title')}</h1>
+            <span className="rule-gold" />
+            <p className="text-base sm:text-lg opacity-90 leading-relaxed">{t('contact.subtitle')}</p>
           </Reveal>
         </div>
       </section>
@@ -81,10 +84,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 value: L(locale, { ar: 'شرم الشيخ، مصر', en: 'Sharm El Sheikh, Egypt', ru: 'Шарм-эль-Шейх, Египет', it: 'Sharm El Sheikh, Egitto' }), href: 'https://maps.google.com/?q=Sharm+El+Sheikh', color: 'bg-primary-800 text-cream' },
             ].map((c, i) => (
               <Reveal key={c.en} delay={i * 0.08}>
-                <a href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener" className={`group block rounded-2xl ${c.color} p-5 md:p-6 hover:-translate-y-1.5 transition-all duration-500 shadow-lg hover:shadow-2xl h-full`}>
-                  <c.icon className="h-7 w-7 mb-3 opacity-90 group-hover:scale-110 transition-transform" />
-                  <div className="text-[10px] uppercase tracking-wider opacity-75 mb-1">{L(locale, { ar: c.ar, en: c.en, ru: c.ru, it: c.it })}</div>
-                  <div className="font-bold text-sm md:text-base break-words">{c.value}</div>
+                <a href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener" className={`group relative block rounded-2xl ${c.color} p-5 md:p-6 hover:-translate-y-2 transition-all duration-500 shadow-lg hover:shadow-2xl h-full overflow-hidden`}>
+                  {/* Decorative ring on hover */}
+                  <span aria-hidden className="absolute -top-10 -end-10 w-32 h-32 rounded-full border border-current opacity-0 group-hover:opacity-20 group-hover:scale-110 transition-all duration-700" />
+                  <span aria-hidden className="absolute -top-16 -end-16 w-40 h-40 rounded-full border border-current opacity-0 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700" style={{ transitionDelay: '0.1s' }} />
+                  <c.icon className="relative h-7 w-7 mb-3 opacity-90 group-hover:scale-125 group-hover:rotate-[-6deg] transition-transform duration-300" />
+                  <div className="relative text-[10px] uppercase tracking-wider opacity-75 mb-1">{L(locale, { ar: c.ar, en: c.en, ru: c.ru, it: c.it })}</div>
+                  <div className="relative font-bold text-sm md:text-base break-words">{c.value}</div>
+                  <ArrowRight aria-hidden className="absolute bottom-4 end-4 h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-all duration-300 rtl:rotate-180" />
                 </a>
               </Reveal>
             ))}
@@ -96,11 +103,11 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="container grid lg:grid-cols-5 gap-8 lg:gap-12">
           <div className="lg:col-span-3">
             <Reveal>
-              <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'أرسل رسالة', en: 'Send a message', ru: 'Отправить сообщение', it: 'Invia un messaggio' })}</div>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">
+              <span className="eyebrow">{L(locale, { ar: 'أرسل رسالة', en: 'Send a message', ru: 'Отправить сообщение', it: 'Invia un messaggio' })}</span>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3 leading-tight text-balance">
                 {L(locale, { ar: 'كلمنا، ورد لك في دقائق', en: 'Message us, hear back in minutes', ru: 'Напишите — ответим в течение минут', it: 'Scrivici — rispondiamo in pochi minuti' })}
               </h2>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-6 leading-relaxed">
                 {L(locale, { ar: 'فريقنا متاح 24/7 للإجابة على استفساراتك واقتراح أفضل الباقات لرحلتك.', en: 'Our team is online 24/7 to answer questions and suggest the best packages.', ru: 'Наша команда онлайн 24/7 — ответим на вопросы и подберём лучшие туры.', it: 'Il nostro team è online 24/7 per rispondere e suggerire i migliori pacchetti.' })}
               </p>
               <ContactForm />
@@ -165,21 +172,24 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       <section className="py-16 md:py-24 bg-gradient-to-b from-cream to-muted/30">
         <div className="container max-w-4xl">
           <Reveal className="text-center mb-12">
-            <HelpCircle className="h-10 w-10 text-accent mx-auto mb-4" />
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'الأسئلة الشائعة', en: 'FAQ', ru: 'Частые вопросы', it: 'FAQ' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/15 border border-accent/30 mx-auto mb-4">
+              <HelpCircle className="h-7 w-7 text-accent" />
+            </div>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'الأسئلة الشائعة', en: 'FAQ', ru: 'Частые вопросы', it: 'FAQ' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
               {L(locale, { ar: 'كل ما تريد معرفته', en: 'Everything you need to know', ru: 'Всё, что нужно знать', it: 'Tutto quello che devi sapere' })}
             </h2>
+            <span className="rule-gold" />
           </Reveal>
           <div className="space-y-3">
             {faqs.map((f, i) => (
               <Reveal key={f.q_en} delay={i * 0.05}>
-                <details className="group bg-white rounded-xl border border-accent/15 hover:border-accent/40 transition-colors overflow-hidden">
+                <details className="group bg-white rounded-2xl border border-accent/15 hover:border-accent/40 hover:shadow-md transition-all overflow-hidden">
                   <summary className="flex items-center justify-between gap-4 p-5 md:p-6 cursor-pointer list-none">
-                    <span className="font-serif font-bold text-primary text-base md:text-lg">{L(locale, { ar: f.q_ar, en: f.q_en, ru: f.q_ru, it: f.q_it })}</span>
-                    <span className="shrink-0 w-8 h-8 rounded-full bg-accent/15 text-accent flex items-center justify-center group-open:rotate-45 transition-transform">+</span>
+                    <span className="font-serif font-bold text-primary text-base md:text-lg leading-snug">{L(locale, { ar: f.q_ar, en: f.q_en, ru: f.q_ru, it: f.q_it })}</span>
+                    <span className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 border border-accent/25 text-accent-700 font-bold flex items-center justify-center group-open:rotate-45 transition-transform duration-300">+</span>
                   </summary>
-                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base text-foreground/75 leading-relaxed">
+                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base text-foreground/80 leading-relaxed border-t border-accent/10 pt-4">
                     {L(locale, { ar: f.a_ar, en: f.a_en, ru: f.a_ru, it: f.a_it })}
                   </div>
                 </details>
@@ -192,8 +202,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       <section className="py-16 md:py-20 bg-cream">
         <div className="container">
           <Reveal className="text-center mb-8">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'مكاننا', en: 'Find us', ru: 'Найти нас', it: 'Trovarci' })}</div>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary">{L(locale, { ar: 'في قلب شرم الشيخ', en: 'In the heart of Sharm El Sheikh', ru: 'В самом сердце Шарм-эль-Шейха', it: 'Nel cuore di Sharm El Sheikh' })}</h2>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'مكاننا', en: 'Find us', ru: 'Найти нас', it: 'Trovarci' })}</span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'في قلب شرم الشيخ', en: 'In the heart of Sharm El Sheikh', ru: 'В самом сердце Шарм-эль-Шейха', it: 'Nel cuore di Sharm El Sheikh' })}</h2>
+            <span className="rule-gold" />
           </Reveal>
           <Reveal>
             <div className="rounded-2xl overflow-hidden border border-accent/15 card-shadow aspect-[16/9] md:aspect-[21/9] bg-muted">

@@ -69,29 +69,32 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   return (
     <>
-      <section className="relative bg-primary-900 text-cream py-20 md:py-28 overflow-hidden">
-        <Image src="/hero-slides/hero-05.jpg" alt="" fill className="object-cover opacity-30" sizes="100vw" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/80 via-primary-900/70 to-primary-900" />
+      <section className="relative bg-primary-900 text-cream py-16 md:py-28 overflow-hidden">
+        <Image src="/hero-slides/hero-05.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />
         <div className="absolute top-1/4 -end-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal>
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-4">{L(locale, { ar: 'تعرف علينا', en: 'Get to know us', ru: 'Познакомьтесь с нами', it: 'Conoscici' })}</div>
-            <h1 className="font-serif text-4xl md:text-6xl font-bold mb-5 max-w-3xl leading-[1.1]">
+            <span className="eyebrow">{L(locale, { ar: 'تعرف علينا', en: 'Get to know us', ru: 'Познакомьтесь с нами', it: 'Conoscici' })}</span>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 md:mb-5 max-w-3xl leading-[1.1] text-balance">
               {L(locale, { ar: 'قصتنا — من شغف بالسياحة إلى علامة فاخرة', en: 'Our story — from passion to a luxury brand', ru: 'Наша история — от страсти к люксовому бренду', it: 'La nostra storia — dalla passione a un brand di lusso' })}
             </h1>
-            <p className="text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">
+            <div className="w-16 h-0.5 gradient-gold rounded-full mb-5" />
+            <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">
               {L(locale, { ar: 'منذ 2013 ونحن نرسم خرائط السعادة لآلاف الزوار في شرم الشيخ. كل رحلة قصة، وكل عميل عائلة.', en: 'Since 2013 we have been crafting happiness for thousands of visitors. Every trip is a story, every guest family.' })}
             </p>
           </Reveal>
         </div>
       </section>
 
-      <section className="bg-accent py-8 md:py-10">
-        <div className="container grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-primary">
+      <section className="relative bg-accent py-8 md:py-12 overflow-hidden">
+        <div aria-hidden className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(13,58,58,0.4) 0%, transparent 40%), radial-gradient(circle at 80% 50%, rgba(13,58,58,0.3) 0%, transparent 40%)' }} />
+        <div className="container relative grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-primary">
           {stats.map((s, i) => (
             <Reveal key={s.en} delay={i * 0.1}>
-              <div>
-                <div className="font-serif text-3xl md:text-5xl font-bold leading-none">{s.v}</div>
+              <div className="group">
+                <div className="font-serif text-3xl md:text-5xl font-bold leading-none group-hover:scale-110 transition-transform duration-300 inline-block">{s.v}</div>
                 <div className="text-xs md:text-sm font-semibold mt-2 uppercase tracking-wider">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</div>
               </div>
             </Reveal>
@@ -101,16 +104,24 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
       {/* SLOGAN BANNER */}
       <section className="py-12 md:py-16 bg-cream relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none animate-spin-slow">
           <Image src="/logo.jpg" alt="" fill className="object-contain" sizes="100vw" />
         </div>
-        <div className="container relative text-center">
-          <Reveal>
-            <div className="text-accent uppercase tracking-[0.4em] text-xs font-bold mb-4">{L(locale, { ar: 'سلوجاننا', en: 'Our slogan', ru: 'Наш слоган', it: 'Il nostro slogan' })}</div>
-            <p className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-primary leading-tight italic">
-              {L(locale, { ar: '«لو جاى شرم متشلش هم»', en: '«Visiting Sharm? No worries with us»', ru: '«Едете в Шарм? С нами — никаких забот»', it: '«Vai a Sharm? Nessun problema con noi»' })}
+        {/* Decorative sparkles */}
+        <span aria-hidden className="sparkle delay-1" style={{ top: '20%', insetInlineStart: '15%' }} />
+        <span aria-hidden className="sparkle delay-2" style={{ top: '60%', insetInlineStart: '20%' }} />
+        <span aria-hidden className="sparkle delay-3" style={{ top: '30%', insetInlineEnd: '18%' }} />
+        <span aria-hidden className="sparkle delay-4" style={{ top: '70%', insetInlineEnd: '15%' }} />
+
+        <div className="container relative text-center flex flex-col items-center">
+          <Reveal className="flex flex-col items-center">
+            <span className="eyebrow">{L(locale, { ar: 'سلوجاننا', en: 'Our slogan', ru: 'Наш слоган', it: 'Il nostro slogan' })}</span>
+            <p className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-primary leading-tight italic text-balance">
+              <span className="inline-block animate-float">«</span>
+              {L(locale, { ar: 'لو جاى شرم متشلش هم', en: 'Visiting Sharm? No worries with us', ru: 'Едете в Шарм? С нами — никаких забот', it: 'Vai a Sharm? Nessun problema con noi' })}
+              <span className="inline-block animate-float" style={{ animationDelay: '1.5s' }}>»</span>
             </p>
-            <div className="w-24 h-0.5 bg-accent mx-auto mt-6" />
+            <span className="rule-gold mt-6" />
           </Reveal>
         </div>
       </section>
@@ -120,8 +131,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <div className="container max-w-4xl">
           <Reveal>
             <div className="bg-white rounded-2xl p-8 md:p-10 border border-accent/15 card-shadow text-center">
-              <Briefcase className="h-10 w-10 text-accent mx-auto mb-4" />
-              <div className="text-accent uppercase tracking-[0.3em] text-[11px] font-bold mb-3">{L(locale, { ar: 'التعريف القانوني', en: 'Legal identity', ru: 'Юридическое наименование', it: 'Denominazione legale' })}</div>
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/15 border border-accent/30 mx-auto mb-4">
+                <Briefcase className="h-7 w-7 text-accent" />
+              </div>
+              <span className="eyebrow eyebrow-center">{L(locale, { ar: 'التعريف القانوني', en: 'Legal identity', ru: 'Юридическое наименование', it: 'Denominazione legale' })}</span>
               <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3 leading-tight">
                 {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lotus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lotus Sharm Tourism Investment & Marketing»', it: 'Lotus Sharm Tourism Investment & Marketing S.r.l.' })}
               </h3>
@@ -142,8 +155,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <section className="py-16 md:py-24 bg-cream">
         <div className="container grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <Reveal>
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'قصتنا', en: 'Our story', ru: 'Наша история', it: 'La nostra storia' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-6 leading-tight">
+            <span className="eyebrow">{L(locale, { ar: 'قصتنا', en: 'Our story', ru: 'Наша история', it: 'La nostra storia' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-6 leading-tight text-balance">
               {L(locale, {
                 ar: 'من حلم صغير إلى أكبر مكتب سياحة في شرم',
                 en: "From small dream to Sharm's premier brand",
@@ -195,8 +208,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <section className="py-16 md:py-24 bg-gradient-to-b from-cream to-muted/30">
         <div className="container">
           <Reveal className="text-center mb-12">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'خدماتنا', en: 'Our services', ru: 'Наши услуги', it: 'I nostri servizi' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary">{L(locale, { ar: 'باقة متكاملة من الخدمات', en: 'A complete suite of services', ru: 'Полный комплекс услуг', it: 'Suite completa di servizi' })}</h2>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'خدماتنا', en: 'Our services', ru: 'Наши услуги', it: 'I nostri servizi' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'باقة متكاملة من الخدمات', en: 'A complete suite of services', ru: 'Полный комплекс услуг', it: 'Suite completa di servizi' })}</h2>
+            <span className="rule-gold" />
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
@@ -239,8 +253,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <section className="py-16 md:py-24 bg-cream">
         <div className="container">
           <Reveal className="text-center mb-12">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'نطاق تغطيتنا', en: 'Our coverage', ru: 'Наша зона покрытия', it: 'La nostra copertura' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-3">
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'نطاق تغطيتنا', en: 'Our coverage', ru: 'Наша зона покрытия', it: 'La nostra copertura' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-3 leading-tight text-balance">
               {L(locale, { ar: 'نغطي مصر كلها — بقلب في شرم الشيخ', en: 'We cover all Egypt — with our heart in Sharm El Sheikh', ru: 'Мы охватываем весь Египет — с сердцем в Шарм-эль-Шейхе', it: 'Copriamo tutto l\'Egitto — con il cuore a Sharm El Sheikh' })}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -283,8 +297,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <section className="py-16 md:py-24 bg-gradient-to-b from-cream to-muted/40">
         <div className="container">
           <Reveal className="text-center mb-12 md:mb-16">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'مهمتنا ورؤيتنا', en: 'Mission & Vision', ru: 'Миссия и видение', it: 'Missione e visione' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary">{L(locale, { ar: 'نحو سياحة فاخرة ومستدامة', en: 'Toward luxury & sustainable tourism', ru: 'К люксовому и устойчивому туризму', it: 'Verso un turismo di lusso e sostenibile' })}</h2>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'مهمتنا ورؤيتنا', en: 'Mission & Vision', ru: 'Миссия и видение', it: 'Missione e visione' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'نحو سياحة فاخرة ومستدامة', en: 'Toward luxury & sustainable tourism', ru: 'К люксовому и устойчивому туризму', it: 'Verso un turismo di lusso e sostenibile' })}</h2>
+            <span className="rule-gold" />
           </Reveal>
           <div className="grid md:grid-cols-2 gap-6">
             <Reveal delay={0.1}>
@@ -316,8 +331,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <section className="py-16 md:py-24 bg-cream">
         <div className="container">
           <Reveal className="text-center mb-12">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'قيمنا', en: 'Our values', ru: 'Наши ценности', it: 'I nostri valori' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary">{L(locale, { ar: 'ما نؤمن به', en: 'What we believe in', ru: 'Во что мы верим', it: 'In cosa crediamo' })}</h2>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'قيمنا', en: 'Our values', ru: 'Наши ценности', it: 'I nostri valori' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'ما نؤمن به', en: 'What we believe in', ru: 'Во что мы верим', it: 'In cosa crediamo' })}</h2>
+            <span className="rule-gold" />
           </Reveal>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {values.map((v, i) => (
@@ -336,48 +352,59 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       </section>
 
       <section className="py-16 md:py-24 bg-primary-900 text-cream relative overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl" />
+        <div aria-hidden className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl animate-blob" />
+        <div aria-hidden className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-accent/5 blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
         <div className="container relative">
-          <Reveal className="text-center mb-12">
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'رحلتنا', en: 'Our journey', ru: 'Наш путь', it: 'Il nostro viaggio' })}</div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold">{L(locale, { ar: 'محطات مهمة', en: 'Key milestones', ru: 'Ключевые вехи', it: 'Tappe principali' })}</h2>
+          <Reveal className="text-center mb-12 flex flex-col items-center">
+            <span className="eyebrow" style={{ background: 'linear-gradient(120deg, rgba(201,168,106,0.25), rgba(201,168,106,0.1))', borderColor: 'rgba(201,168,106,0.4)', color: '#f7f1e3' }}>{L(locale, { ar: 'رحلتنا', en: 'Our journey', ru: 'Наш путь', it: 'Il nostro viaggio' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold leading-tight text-balance">{L(locale, { ar: 'محطات مهمة', en: 'Key milestones', ru: 'Ключевые вехи', it: 'Tappe principali' })}</h2>
+            <span className="rule-gold" />
           </Reveal>
-          <div className="max-w-3xl mx-auto space-y-5 md:space-y-7">
+          <ol className="relative max-w-3xl mx-auto">
+            {/* Vertical rail */}
+            <span aria-hidden className="absolute inset-y-0 start-8 md:start-10 w-px bg-gradient-to-b from-accent/60 via-accent/30 to-accent/0" />
             {timeline.map((t, i) => (
               <Reveal key={t.year} delay={i * 0.08}>
-                <div className="flex items-center gap-4 md:gap-6 group">
-                  <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-accent text-primary font-serif font-bold text-base md:text-lg flex items-center justify-center shadow-lg shadow-accent/30 group-hover:scale-110 transition-transform">
+                <li className="relative ps-20 md:ps-24 pb-6 md:pb-8 group">
+                  <div className="absolute start-0 top-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-accent text-primary font-serif font-bold text-base md:text-lg flex items-center justify-center shadow-lg shadow-accent/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 z-10">
                     {t.year}
                   </div>
-                  <div className="flex-1 bg-cream/5 backdrop-blur rounded-xl p-4 md:p-5 border border-accent/15">
+                  <div className="bg-cream/5 backdrop-blur rounded-xl p-4 md:p-5 border border-accent/15 group-hover:border-accent/40 group-hover:bg-cream/10 transition-all duration-300">
                     <p className="text-cream/90 leading-relaxed text-sm md:text-base">{L(locale, { ar: t.ar, en: t.en, ru: t.ru, it: t.it })}</p>
                   </div>
-                </div>
+                </li>
               </Reveal>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
-      <section className="py-16 md:py-20 bg-cream">
+      <section className="py-14 md:py-20 bg-mesh-cream">
         <div className="container">
           <Reveal>
-            <div className="relative max-w-4xl mx-auto rounded-3xl gradient-luxury text-cream p-10 md:p-14 text-center overflow-hidden">
-              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
-              <Sparkles className="h-10 w-10 text-accent mx-auto mb-5" />
-              <h2 className="font-serif text-2xl md:text-4xl font-bold mb-4">
-                {L(locale, { ar: 'جاهز للانضمام لعائلتنا؟', en: 'Ready to join our family?', ru: 'Готовы стать частью нашей семьи?', it: 'Pronto a unirti alla nostra famiglia?' })}
-              </h2>
-              <p className="opacity-90 mb-8 max-w-xl mx-auto">
-                {L(locale, { ar: 'تواصل معنا اليوم ودعنا نخطط رحلتك المثالية', en: 'Contact us today — let us plan your perfect getaway', ru: 'Свяжитесь с нами — спланируем идеальный отдых', it: 'Contattaci — pianifichiamo la tua vacanza perfetta' })}
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold">
-                  <Link href="/trips">{L(locale, { ar: 'تصفح رحلاتنا', en: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-cream/40 text-cream hover:bg-cream hover:text-primary">
-                  <Link href="/contact"><Phone className="h-4 w-4" /> {L(locale, { ar: 'تواصل معنا', en: 'Contact Us', ru: 'Связаться с нами', it: 'Contattaci' })}</Link>
-                </Button>
+            <div className="relative max-w-4xl mx-auto rounded-2xl md:rounded-3xl gradient-luxury text-cream p-8 sm:p-10 md:p-14 text-center overflow-hidden border border-accent/20 shadow-2xl">
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+              <div className="absolute -top-32 -right-32 w-72 h-72 rounded-full bg-accent/15 blur-3xl" />
+              <div className="absolute -bottom-32 -left-32 w-72 h-72 rounded-full bg-accent/10 blur-3xl" />
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-accent/15 border border-accent/30 mx-auto mb-5 backdrop-blur">
+                  <Sparkles className="h-7 w-7 md:h-8 md:w-8 text-accent" />
+                </div>
+                <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight text-balance">
+                  {L(locale, { ar: 'جاهز للانضمام لعائلتنا؟', en: 'Ready to join our family?', ru: 'Готовы стать частью нашей семьи?', it: 'Pronto a unirti alla nostra famiglia?' })}
+                </h2>
+                <span className="rule-gold" />
+                <p className="opacity-90 mb-8 max-w-xl mx-auto leading-relaxed">
+                  {L(locale, { ar: 'تواصل معنا اليوم ودعنا نخطط رحلتك المثالية', en: 'Contact us today — let us plan your perfect getaway', ru: 'Свяжитесь с нами — спланируем идеальный отдых', it: 'Contattaci — pianifichiamo la tua vacanza perfetta' })}
+                </p>
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-lg shadow-accent/30 hover:-translate-y-0.5 transition-all group">
+                    <Link href="/trips">{L(locale, { ar: 'تصفح رحلاتنا', en: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /></Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-cream/40 text-cream hover:bg-cream hover:text-primary">
+                    <Link href="/contact"><Phone className="h-4 w-4" /> {L(locale, { ar: 'تواصل معنا', en: 'Contact Us', ru: 'Связаться с нами', it: 'Contattaci' })}</Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </Reveal>

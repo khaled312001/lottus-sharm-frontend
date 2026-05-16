@@ -5,12 +5,28 @@ import { useRouter } from '@/i18n/routing';
 import { Input, Textarea } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Trash2, Sparkles, Save, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, Trash2, Sparkles, Save, ChevronUp, ChevronDown, Clock } from 'lucide-react';
 import { useAdminApi } from '@/lib/admin-auth';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { MediaPicker } from './media-picker';
+import { RichTextEditor } from './rich-text-editor';
 import type { TripDTO, MediaDTO, ApiLocale } from '@/types/api';
+
+const TIMELINE_ICONS = [
+  { value: 'bus',       label: '🚌 أتوبيس' },
+  { value: 'map',       label: '🗺️ وصول' },
+  { value: 'compass',   label: '🧭 جولة' },
+  { value: 'fish',      label: '🐠 سنوركلينج' },
+  { value: 'anchor',    label: '⚓ بحر' },
+  { value: 'mountain',  label: '⛰️ جبل/صحراء' },
+  { value: 'tree',      label: '🌳 طبيعة' },
+  { value: 'camera',    label: '📷 تصوير' },
+  { value: 'utensils',  label: '🍽️ وجبة' },
+  { value: 'sun',       label: '☀️ نهار' },
+  { value: 'sunrise',   label: '🌅 شروق' },
+  { value: 'sparkles',  label: '✨ مفاجأة' },
+];
 
 const LOCALES: { code: ApiLocale; label: string }[] = [
   { code: 'AR', label: 'العربية' },
@@ -40,6 +56,13 @@ interface BulletForm {
   type: 'INCLUDE' | 'EXCLUDE' | 'BRING';
   order: number;
   translations: { locale: ApiLocale; text: string }[];
+}
+
+interface TimelineStepForm {
+  order: number;
+  time: string;
+  icon: string;
+  translations: { locale: ApiLocale; title: string; desc: string }[];
 }
 
 const emptyTranslations = (): TranslationForm[] =>
@@ -105,6 +128,19 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
     }));
   });
 
+  const [timeline, setTimeline] = useState<TimelineStepForm[]>(() => {
+    if (!initialTrip?.timeline) return [];
+    return initialTrip.timeline.map((s) => ({
+      order: s.order,
+      time: s.time || '',
+      icon: s.icon || 'sparkles',
+      translations: LOCALES.map((l) => {
+        const tr = s.translations.find((x) => x.locale === l.code);
+        return { locale: l.code, title: tr?.title || '', desc: tr?.desc || '' };
+      }),
+    }));
+  });
+
   const trIdx = (loc: ApiLocale) => translations.findIndex((t) => t.locale === loc);
   const setTrField = (loc: ApiLocale, field: keyof TranslationForm, value: string) => {
     setTranslations((prev) => prev.map((t) => (t.locale === loc ? { ...t, [field]: value } : t)));
@@ -153,6 +189,33 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
     }
   };
 
+  const translateTimelineStep = async (i: number, field: 'title' | 'desc') => {
+    const src = timeline[i].translations.find((x) => x.locale === 'AR')?.[field];
+    if (!src) return toast.error('املأ النص العربي');
+    try {
+      const out = await api.post<{ translations: Record<string, string> }>('/admin/translate', {
+        text: src, from: 'AR', to: ['EN', 'RU', 'IT'],
+      });
+      setTimeline((prev) =>
+        prev.map((s, idx) =>
+          idx === i
+            ? {
+                ...s,
+                translations: s.translations.map((tr) =>
+                  tr.locale !== 'AR' && out.translations[tr.locale]
+                    ? { ...tr, [field]: out.translations[tr.locale] }
+                    : tr,
+                ),
+              }
+            : s,
+        ),
+      );
+      toast.success('تم توليد الترجمات');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
+
   const translateBullet = async (i: number) => {
     const src = bullets[i].translations.find((x) => x.locale === 'AR')?.text;
     if (!src) return toast.error('املأ النص العربي');
@@ -192,6 +255,16 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
       translations: translations.filter((t) => t.title.trim()),
       highlights: highlights.filter((h) => h.translations.find((x) => x.locale === 'AR')?.text),
       bullets: bullets.filter((b) => b.translations.find((x) => x.locale === 'AR')?.text),
+      timeline: timeline
+        .filter((s) => s.translations.find((x) => x.locale === 'AR')?.title?.trim())
+        .map((s, i) => ({
+          order: i,
+          time: s.time || undefined,
+          icon: s.icon || undefined,
+          translations: s.translations
+            .filter((tr) => tr.title.trim())
+            .map((tr) => ({ locale: tr.locale, title: tr.title, desc: tr.desc || undefined })),
+        })),
     };
     start(async () => {
       try {
@@ -218,13 +291,15 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 max-w-5xl pb-28">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{initialTrip ? 'تعديل رحلة' : 'إضافة رحلة جديدة'}</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push('/admin/trips')}>إلغاء</Button>
-          <Button onClick={save} disabled={pending}><Save className="h-4 w-4" /> حفظ</Button>
-        </div>
+        {initialTrip && (
+          <span className="text-xs text-muted-foreground hidden md:inline-flex items-center gap-1.5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            استخدم زر الحفظ العائم بالأسفل
+          </span>
+        )}
       </div>
 
       {/* Locale tabs */}
@@ -284,18 +359,19 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
           </Field>
 
           <Field
-            label="الوصف الكامل (HTML مسموح)"
+            label="الوصف الكامل"
             translateBtn={activeLocale === 'AR' && (
               <Button size="sm" variant="outline" type="button" onClick={() => translateField('longDesc')}>
                 <Sparkles className="h-3.5 w-3.5" /> ترجم
               </Button>
             )}
           >
-            <Textarea
-              rows={10}
-              className="font-mono text-xs"
+            <RichTextEditor
               value={translations[trIdx(activeLocale)].longDesc}
-              onChange={(e) => setTrField(activeLocale, 'longDesc', e.target.value)}
+              onChange={(html) => setTrField(activeLocale, 'longDesc', html)}
+              rtl={activeLocale === 'AR'}
+              placeholder={activeLocale === 'AR' ? 'اكتب وصفاً تفصيلياً للرحلة...' : 'Write a detailed description...'}
+              minHeight={320}
             />
           </Field>
 
@@ -392,6 +468,141 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
         </CardContent>
       </Card>
 
+      {/* Timeline / Itinerary — ساعة بساعة طوال اليوم */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-accent" />
+            <span>سير الرحلة (ساعة بساعة)</span>
+            {timeline.length > 0 && (
+              <span className="text-xs font-normal text-muted-foreground">— {timeline.length} مرحلة</span>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {timeline.length === 0 && (
+            <p className="text-sm text-muted-foreground bg-muted/30 rounded-lg p-3 border border-dashed">
+              لم تُضف مراحل بعد. اضغط "أضف مرحلة" لإنشاء أول خطوة في برنامج الرحلة (مثلاً: <strong>08:00 — التقاط من الفندق</strong>).
+            </p>
+          )}
+
+          {timeline.map((step, i) => (
+            <div key={i} className="border rounded-xl p-4 bg-gradient-to-br from-muted/30 to-white space-y-3">
+              {/* Row 1: order indicator + time + icon + actions */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent text-primary font-bold text-sm shrink-0">
+                  {i + 1}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="time"
+                    className="w-32"
+                    value={step.time}
+                    onChange={(e) => setTimeline((p) => p.map((s, x) => x === i ? { ...s, time: e.target.value } : s))}
+                  />
+                </div>
+                <select
+                  className="h-11 rounded-lg border border-input bg-white px-3 text-sm"
+                  value={step.icon}
+                  onChange={(e) => setTimeline((p) => p.map((s, x) => x === i ? { ...s, icon: e.target.value } : s))}
+                >
+                  {TIMELINE_ICONS.map((ic) => (
+                    <option key={ic.value} value={ic.value}>{ic.label}</option>
+                  ))}
+                </select>
+                <div className="ms-auto flex items-center gap-1">
+                  <Button size="icon" variant="ghost" type="button" title="نقل لأعلى" onClick={() => moveItem(timeline, i, -1, setTimeline)}>
+                    <ChevronUp className="h-4 w-4" />
+                  </Button>
+                  <Button size="icon" variant="ghost" type="button" title="نقل لأسفل" onClick={() => moveItem(timeline, i, 1, setTimeline)}>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                  <Button size="icon" variant="ghost" type="button" title="حذف المرحلة" onClick={() => setTimeline((p) => p.filter((_, x) => x !== i))}>
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Row 2: AR title + AR desc + translate */}
+              <div className="grid md:grid-cols-[1fr_2fr_auto] gap-2 items-start">
+                <Input
+                  placeholder="العنوان بالعربية (مثلاً: التقاط من الفندق)"
+                  value={step.translations.find((t) => t.locale === 'AR')?.title || ''}
+                  onChange={(e) => setTimeline((p) => p.map((s, x) => x === i ? {
+                    ...s,
+                    translations: s.translations.map((tr) => tr.locale === 'AR' ? { ...tr, title: e.target.value } : tr),
+                  } : s))}
+                />
+                <Textarea
+                  rows={2}
+                  placeholder="الوصف بالعربية (اختياري)"
+                  value={step.translations.find((t) => t.locale === 'AR')?.desc || ''}
+                  onChange={(e) => setTimeline((p) => p.map((s, x) => x === i ? {
+                    ...s,
+                    translations: s.translations.map((tr) => tr.locale === 'AR' ? { ...tr, desc: e.target.value } : tr),
+                  } : s))}
+                />
+                <div className="flex flex-col gap-1">
+                  <Button size="sm" variant="outline" type="button" onClick={() => translateTimelineStep(i, 'title')}>
+                    <Sparkles className="h-3.5 w-3.5" /> ترجم العنوان
+                  </Button>
+                  <Button size="sm" variant="outline" type="button" onClick={() => translateTimelineStep(i, 'desc')}>
+                    <Sparkles className="h-3.5 w-3.5" /> ترجم الوصف
+                  </Button>
+                </div>
+              </div>
+
+              {/* Row 3: Other locales — collapsed by default */}
+              <details className="group">
+                <summary className="cursor-pointer text-xs font-semibold text-muted-foreground hover:text-primary inline-flex items-center gap-1.5">
+                  <ChevronDown className="h-3.5 w-3.5 group-open:rotate-180 transition-transform" />
+                  ترجمات EN / RU / IT
+                </summary>
+                <div className="mt-3 space-y-2">
+                  {step.translations.filter((tr) => tr.locale !== 'AR').map((tr) => (
+                    <div key={tr.locale} className="grid md:grid-cols-[80px_1fr_2fr] gap-2 items-start">
+                      <span className="text-xs font-bold uppercase text-muted-foreground self-center">{tr.locale}</span>
+                      <Input
+                        placeholder={`Title (${tr.locale})`}
+                        value={tr.title}
+                        onChange={(e) => setTimeline((p) => p.map((s, x) => x === i ? {
+                          ...s,
+                          translations: s.translations.map((ot) => ot.locale === tr.locale ? { ...ot, title: e.target.value } : ot),
+                        } : s))}
+                      />
+                      <Textarea
+                        rows={2}
+                        placeholder={`Description (${tr.locale}) — optional`}
+                        value={tr.desc}
+                        onChange={(e) => setTimeline((p) => p.map((s, x) => x === i ? {
+                          ...s,
+                          translations: s.translations.map((ot) => ot.locale === tr.locale ? { ...ot, desc: e.target.value } : ot),
+                        } : s))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </div>
+          ))}
+
+          <Button
+            variant="outline"
+            type="button"
+            className="w-full justify-center"
+            onClick={() => setTimeline((p) => [...p, {
+              order: p.length,
+              time: '',
+              icon: 'sparkles',
+              translations: LOCALES.map((l) => ({ locale: l.code, title: '', desc: '' })),
+            }])}
+          >
+            <Plus className="h-4 w-4" /> أضف مرحلة جديدة
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Bullets */}
       {BULLETS.map((bulletType) => {
         const label = bulletType === 'INCLUDE' ? 'ما يشمله السعر' : bulletType === 'EXCLUDE' ? 'ما لا يشمله السعر' : 'ما يجب إحضاره';
@@ -430,9 +641,23 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
         );
       })}
 
-      <div className="flex justify-end gap-2 sticky bottom-2 bg-white p-3 rounded-xl border shadow-lg">
-        <Button variant="outline" onClick={() => router.push('/admin/trips')}>إلغاء</Button>
-        <Button onClick={save} disabled={pending}><Save className="h-4 w-4" /> {pending ? 'جاري الحفظ...' : 'حفظ'}</Button>
+      {/* Floating action bar — always visible, regardless of scroll */}
+      <div className="fixed bottom-4 inset-x-4 md:inset-x-auto md:end-6 z-40 flex justify-end pointer-events-none">
+        <div className="pointer-events-auto inline-flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-2xl border border-accent/25 shadow-2xl shadow-primary-900/15">
+          {pending && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-accent-700 px-3">
+              <span className="inline-block w-2 h-2 rounded-full bg-accent animate-pulse" />
+              جاري الحفظ...
+            </span>
+          )}
+          <Button variant="outline" size="sm" onClick={() => router.push('/admin/trips')} disabled={pending}>
+            إلغاء
+          </Button>
+          <Button onClick={save} disabled={pending} className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-lg shadow-accent/30 px-5">
+            <Save className="h-4 w-4" />
+            <span className="ms-1">{pending ? 'جاري الحفظ...' : 'حفظ التعديلات'}</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { Save, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { MediaPicker } from './media-picker';
+import { RichTextEditor } from './rich-text-editor';
 import type { MediaDTO, ApiLocale } from '@/types/api';
 
 const LOCALES: { code: ApiLocale; label: string }[] = [
@@ -102,10 +103,15 @@ export function BlogForm({ initial }: { initial?: BlogPostShape }) {
   };
 
   return (
-    <div className="space-y-4 max-w-4xl">
+    <div className="space-y-4 max-w-4xl pb-28">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{initial?.id ? 'تعديل مقال' : 'مقال جديد'}</h2>
-        <Button onClick={save} disabled={pending}><Save className="h-4 w-4" /> حفظ</Button>
+        {initial?.id && (
+          <span className="text-xs text-muted-foreground hidden md:inline-flex items-center gap-1.5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            استخدم زر الحفظ العائم بالأسفل
+          </span>
+        )}
       </div>
 
       <Card>
@@ -149,13 +155,41 @@ export function BlogForm({ initial }: { initial?: BlogPostShape }) {
         <CardContent className="space-y-3">
           <div><label className="text-sm font-semibold mb-1.5 block">العنوان</label><Input value={tr.title} onChange={(e) => setField('title', e.target.value)} /></div>
           <div><label className="text-sm font-semibold mb-1.5 block">المقدمة</label><Textarea rows={3} value={tr.excerpt} onChange={(e) => setField('excerpt', e.target.value)} /></div>
-          <div><label className="text-sm font-semibold mb-1.5 block">المحتوى (HTML)</label><Textarea rows={14} className="font-mono text-xs" value={tr.content} onChange={(e) => setField('content', e.target.value)} /></div>
+          <div>
+            <label className="text-sm font-semibold mb-1.5 block">المحتوى</label>
+            <RichTextEditor
+              value={tr.content}
+              onChange={(html) => setField('content', html)}
+              rtl={activeLocale === 'AR'}
+              placeholder={activeLocale === 'AR' ? 'اكتب محتوى المقال...' : 'Write your article...'}
+              minHeight={420}
+            />
+          </div>
           <div className="grid md:grid-cols-2 gap-3">
             <div><label className="text-sm font-semibold mb-1.5 block">Meta Title</label><Input value={tr.metaTitle || ''} onChange={(e) => setField('metaTitle', e.target.value)} /></div>
             <div><label className="text-sm font-semibold mb-1.5 block">Meta Description</label><Input value={tr.metaDesc || ''} onChange={(e) => setField('metaDesc', e.target.value)} /></div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Floating action bar — always visible, regardless of scroll */}
+      <div className="fixed bottom-4 inset-x-4 md:inset-x-auto md:end-6 z-40 flex justify-end pointer-events-none">
+        <div className="pointer-events-auto inline-flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-2xl border border-accent/25 shadow-2xl shadow-primary-900/15">
+          {pending && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-accent-700 px-3">
+              <span className="inline-block w-2 h-2 rounded-full bg-accent animate-pulse" />
+              جاري الحفظ...
+            </span>
+          )}
+          <Button variant="outline" size="sm" onClick={() => router.push('/admin/blog')} disabled={pending}>
+            إلغاء
+          </Button>
+          <Button onClick={save} disabled={pending} className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-lg shadow-accent/30 px-5">
+            <Save className="h-4 w-4" />
+            <span className="ms-1">{pending ? 'جاري الحفظ...' : 'حفظ التعديلات'}</span>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

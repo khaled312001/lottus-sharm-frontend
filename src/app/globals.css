@@ -46,28 +46,63 @@
   }
 
   /* Arabic glyphs (Cairo / Tajawal) have tall diacritics + descenders.
-     Override tight line-heights so they don't get clipped on hero headings. */
+     Force the Arabic font + generous line-height + breathing room — ALL
+     marked !important so no Tailwind utility can override them. This is
+     the same principle as the hero's dedicated class, applied globally. */
   html[dir='rtl'] h1,
   html[dir='rtl'] h2,
   html[dir='rtl'] h3,
-  html[dir='rtl'] h4 {
-    line-height: 1.45;
-    /* Reserve a tiny bit of vertical breathing room above caps for diacritics */
-    padding-block-start: 0.05em;
-  }
-  /* Loosen any explicit ultra-tight leading just for RTL hero typography */
-  html[dir='rtl'] .leading-none { line-height: 1.25 !important; }
-  html[dir='rtl'] .leading-tight { line-height: 1.4 !important; }
-  html[dir='rtl'] .leading-\[1\.1\] { line-height: 1.45 !important; }
-  html[dir='rtl'] .leading-\[1\.15\] { line-height: 1.45 !important; }
-  /* Common Tailwind variant for arbitrary 1.1 in font-serif blocks */
+  html[dir='rtl'] h4,
   html[dir='rtl'] .font-serif {
-    line-height: 1.5;
+    font-family: var(--font-cairo), 'Cairo', 'Tajawal', system-ui, sans-serif !important;
+    line-height: 1.7 !important;
+    padding-block-start: 0.05em !important;
+    padding-block-end: 0.25em !important;
+    overflow: visible !important;
+  }
+  html[dir='rtl'] h1 {
+    line-height: 1.85 !important;
+    padding-block-end: 0.4em !important;
+  }
+  html[dir='rtl'] h2 {
+    line-height: 1.7 !important;
+    padding-block-end: 0.3em !important;
+  }
+  html[dir='rtl'] h3 {
+    line-height: 1.6 !important;
+    padding-block-end: 0.2em !important;
+  }
+  /* Override any explicit ultra-tight leading utility for RTL */
+  html[dir='rtl'] .leading-none,
+  html[dir='rtl'] .leading-tight,
+  html[dir='rtl'] .leading-snug,
+  html[dir='rtl'] [class*="leading-["] { line-height: 1.7 !important; }
+
+  /* Arabic shouldn't use negative letter-spacing — it makes diacritics overlap */
+  html[dir='rtl'] .tracking-tight,
+  html[dir='rtl'] .tracking-tighter { letter-spacing: 0 !important; }
+
+  /* Spans inside Arabic headings inherit the same breathing room */
+  html[dir='rtl'] h1 > span,
+  html[dir='rtl'] h2 > span,
+  html[dir='rtl'] h3 > span {
+    overflow: visible !important;
+    padding-block-end: 0.25em !important;
   }
   /* Prevent hero text overflow clipping (some hero sections use overflow: hidden) */
   html[dir='rtl'] section h1,
   html[dir='rtl'] section h2 {
     overflow: visible;
+  }
+  /* Gradient-clip text (background-clip:text) crops Arabic descenders
+     no matter how much padding/leading you give. Use a solid gold color
+     for RTL instead — keeps the visual without the clipping bug. */
+  html[dir='rtl'] .text-gold-gradient {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    color: #d9bf86 !important;
+    line-height: 1.7;
   }
 }
 
@@ -114,6 +149,310 @@
   .heading-serif {
     font-family: var(--font-serif), Georgia, serif;
     letter-spacing: -0.01em;
+  }
+
+  /* TipTap rich-text editor — content area styling */
+  .rt-editor-content {
+    color: hsl(var(--foreground));
+    font-size: 0.95rem;
+    line-height: 1.7;
+    overflow-y: auto;
+  }
+  .rt-editor-content p { margin: 0 0 0.75em; }
+  .rt-editor-content h2 { font-size: 1.5rem; font-weight: 700; margin: 1.1em 0 0.5em; color: hsl(var(--primary)); }
+  .rt-editor-content h3 { font-size: 1.2rem; font-weight: 700; margin: 1em 0 0.4em; color: hsl(var(--primary)); }
+  .rt-editor-content h4 { font-size: 1.05rem; font-weight: 700; margin: 0.8em 0 0.3em; color: hsl(var(--primary)); }
+  .rt-editor-content ul, .rt-editor-content ol {
+    margin: 0.6em 0 0.9em; padding-inline-start: 1.5em;
+  }
+  .rt-editor-content ul { list-style: disc; }
+  .rt-editor-content ol { list-style: decimal; }
+  .rt-editor-content li { margin: 0.25em 0; }
+  .rt-editor-content blockquote {
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    border-inline-start: 3px solid hsl(var(--accent));
+    background: rgba(201, 168, 106, 0.06);
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: hsl(var(--primary));
+    font-style: italic;
+  }
+  html[dir='rtl'] .rt-editor-content blockquote { border-radius: 0.5rem 0 0 0.5rem; }
+  .rt-editor-content code {
+    background: rgba(201, 168, 106, 0.12);
+    color: hsl(var(--primary));
+    padding: 0.1em 0.4em;
+    border-radius: 0.3rem;
+    font-size: 0.9em;
+  }
+  .rt-editor-content hr {
+    margin: 1.5em 0;
+    border: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 168, 106, 0.4), transparent);
+  }
+  .rt-editor-content strong { color: hsl(var(--primary)); font-weight: 700; }
+  .rt-editor-content a { color: hsl(var(--accent)); text-decoration: underline; }
+  /* TipTap placeholder */
+  .rt-editor-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: inline-start;
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+    height: 0;
+  }
+
+  /* =========================================================
+     Modern section eyebrow — pill-style with gold rule + uppercase label.
+     Auto-adapts contrast to dark vs light backgrounds.
+     ========================================================= */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.375rem 0.875rem 0.375rem 0.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(120deg, rgba(201, 168, 106, 0.2) 0%, rgba(201, 168, 106, 0.07) 100%);
+    border: 1px solid rgba(201, 168, 106, 0.32);
+    color: hsl(var(--primary));
+    font-size: 0.7rem;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.1rem;
+    box-shadow: 0 1px 2px rgba(201, 168, 106, 0.12);
+  }
+  .eyebrow::before {
+    content: '';
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #c9a86a 0%, #a88a52 100%);
+    box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.2);
+  }
+  html[dir='rtl'] .eyebrow {
+    padding: 0.375rem 0.5rem 0.375rem 0.875rem;
+    letter-spacing: 0.15em;
+  }
+  .eyebrow-center { align-self: center; }
+  .text-center > .eyebrow { align-self: center; }
+
+  /* Auto-contrast: eyebrow on dark-bg sections (any ancestor with .text-cream
+     OR a bg-primary* class) gets a brighter color so it's readable. */
+  .text-cream .eyebrow,
+  [class*="bg-primary"] .eyebrow,
+  [class*="text-cream"] .eyebrow,
+  .gradient-luxury .eyebrow,
+  .gradient-sea .eyebrow {
+    color: #f7f1e3 !important;
+    background: linear-gradient(120deg, rgba(201, 168, 106, 0.3) 0%, rgba(201, 168, 106, 0.1) 100%) !important;
+    border-color: rgba(201, 168, 106, 0.55) !important;
+  }
+
+  /* Gold gradient rule under a centered heading (decorative divider) */
+  .rule-gold {
+    display: block;
+    width: 5rem;
+    height: 3px;
+    margin: 1.25rem auto 0.25rem;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, transparent 0%, #c9a86a 25%, #d9bf86 50%, #c9a86a 75%, transparent 100%);
+    box-shadow: 0 1px 6px rgba(201, 168, 106, 0.4);
+  }
+
+  /* Soft hairline at the top of a section (subtle separator) */
+  .hairline-top { position: relative; }
+  .hairline-top::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(201, 168, 106, 0.35) 50%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Modern card style — soft elevation + lift on hover */
+  .card-modern {
+    background: #fff;
+    border: 1px solid rgba(201, 168, 106, 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px -4px rgba(10, 40, 40, 0.08);
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  }
+  .card-modern:hover {
+    border-color: rgba(201, 168, 106, 0.35);
+    box-shadow: 0 12px 36px -8px rgba(201, 168, 106, 0.18);
+    transform: translateY(-4px);
+  }
+
+  /* ===== Lotus design system — conflict-free named classes =====
+     Used to enforce consistent typography & spacing across every section,
+     immune to global Tailwind overrides. All RTL-aware. */
+
+  /* Section title (h2-level) — use on every section heading */
+  .lotus-section-title {
+    font-family: var(--font-serif), 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    color: hsl(var(--primary));
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    overflow: visible !important;
+    padding-block-end: 0.2em !important;
+    margin: 0;
+    text-wrap: balance;
+  }
+  html[dir='rtl'] .lotus-section-title {
+    font-family: var(--font-cairo), 'Cairo', 'Tajawal', system-ui, sans-serif !important;
+    line-height: 1.7 !important;
+    letter-spacing: 0 !important;
+    padding-block-end: 0.3em !important;
+  }
+  .text-cream .lotus-section-title,
+  [class*="bg-primary"] .lotus-section-title { color: #f7f1e3 !important; }
+
+  /* Section subtitle */
+  .lotus-section-subtitle {
+    color: hsl(var(--muted-foreground));
+    line-height: 1.7;
+    max-width: 42rem;
+    overflow: visible !important;
+  }
+  .text-cream .lotus-section-subtitle,
+  [class*="bg-primary"] .lotus-section-subtitle { color: rgba(247, 241, 227, 0.8) !important; }
+
+  /* Eyebrow pill (improved + isolated). Pair with .lotus-eyebrow--center. */
+  .lotus-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    background: linear-gradient(120deg, rgba(201, 168, 106, 0.2) 0%, rgba(201, 168, 106, 0.07) 100%);
+    border: 1px solid rgba(201, 168, 106, 0.32);
+    color: hsl(var(--primary));
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(201, 168, 106, 0.12);
+    overflow: visible !important;
+  }
+  .lotus-eyebrow::before {
+    content: '';
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #c9a86a, #a88a52);
+    box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.2);
+  }
+  html[dir='rtl'] .lotus-eyebrow {
+    letter-spacing: 0.15em !important;
+    font-family: var(--font-cairo), 'Cairo', system-ui, sans-serif !important;
+  }
+  /* On dark backgrounds */
+  .lotus-eyebrow--on-dark,
+  .text-cream .lotus-eyebrow,
+  [class*="bg-primary"] .lotus-eyebrow,
+  .gradient-luxury .lotus-eyebrow,
+  .gradient-sea .lotus-eyebrow {
+    background: linear-gradient(120deg, rgba(201, 168, 106, 0.3) 0%, rgba(201, 168, 106, 0.1) 100%) !important;
+    color: #f7f1e3 !important;
+    border-color: rgba(201, 168, 106, 0.55) !important;
+  }
+
+  /* Gold rule under a centered heading */
+  .lotus-rule {
+    display: block;
+    width: 5rem;
+    height: 3px;
+    margin: 1rem auto 0.25rem;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, transparent 0%, #c9a86a 25%, #d9bf86 50%, #c9a86a 75%, transparent 100%);
+    box-shadow: 0 1px 6px rgba(201, 168, 106, 0.35);
+  }
+  .lotus-rule--start { margin-inline: 0 auto 0 0; }
+
+  /* Card — soft elevation, lift on hover */
+  .lotus-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid rgba(201, 168, 106, 0.15);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px -4px rgba(10, 40, 40, 0.08);
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    overflow: hidden;
+  }
+  .lotus-card:hover {
+    border-color: rgba(201, 168, 106, 0.4);
+    box-shadow: 0 14px 38px -10px rgba(201, 168, 106, 0.2);
+    transform: translateY(-4px);
+  }
+
+  /* Section wrapper — vertical rhythm + relative positioning baked in */
+  .lotus-section {
+    position: relative;
+    padding: 3.5rem 0;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) { .lotus-section { padding: 5.5rem 0; } }
+
+  /* ===== Lotus Hero Heading — isolated, conflict-free =====
+     Apply to the hero <h1> with .lotus-hero-h1 (and each line with .lotus-hero-line).
+     No external rule can override these properties since every declaration is
+     marked !important and scoped specifically to this class. */
+  .lotus-hero-h1 {
+    overflow: visible !important;
+    padding-bottom: 0.6em !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0 !important;
+  }
+  .lotus-hero-h1 .lotus-hero-line {
+    display: block !important;
+    overflow: visible !important;
+    padding-bottom: 0.35em !important;
+    line-height: 1.25 !important;
+  }
+  html[dir='rtl'] .lotus-hero-h1,
+  html[dir='rtl'] .lotus-hero-h1 .lotus-hero-line {
+    font-family: var(--font-cairo), 'Cairo', 'Tajawal', system-ui, sans-serif !important;
+    line-height: 1.9 !important;
+    padding-bottom: 0.45em !important;
+  }
+  html[dir='rtl'] .lotus-hero-h1 { padding-bottom: 0.7em !important; }
+  /* Solid gold color for the highlighted line — no gradient clipping */
+  .lotus-hero-line--gold {
+    color: #d9bf86 !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+  }
+
+  /* Decorative blurred orb — drop into any relative section.
+     `position: absolute` is forced so the orb never affects layout if the
+     caller forgets to add the `absolute` utility. */
+  .orb-accent {
+    position: absolute !important;
+    width: 22rem;
+    height: 22rem;
+    border-radius: 9999px;
+    background: rgba(201, 168, 106, 0.10);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-accent-sm { width: 14rem !important; height: 14rem !important; background: rgba(201, 168, 106, 0.08); }
+
+  /* Gradient mesh background for empty/CTA sections */
+  .bg-mesh-cream {
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 0%, rgba(201, 168, 106, 0.08), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 20% 100%, rgba(13, 58, 58, 0.05), transparent 60%),
+      hsl(var(--background));
   }
 
   /* =========================================================
@@ -440,6 +779,10 @@
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-12px); }
 }
+@keyframes float-fast {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 0 30px -10px rgba(201, 168, 106, 0.3); }
   50% { box-shadow: 0 0 50px -5px rgba(201, 168, 106, 0.5); }
@@ -448,14 +791,137 @@
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
+@keyframes shimmer-text {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(10px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-rtl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(50%); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+@keyframes border-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes blob {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50%      { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+}
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.6) rotate(0deg); }
+  50%      { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .animate-float { animation: float-slow 6s ease-in-out infinite; }
+.animate-float-fast { animation: float-fast 3s ease-in-out infinite; }
 .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 24s linear infinite; }
+.animate-orbit { animation: orbit 10s linear infinite; }
+.animate-wiggle { animation: wiggle 0.6s ease-in-out; }
+.animate-blob { animation: blob 12s ease-in-out infinite; }
 .animate-shimmer {
   background: linear-gradient(90deg, transparent, rgba(201, 168, 106, 0.4), transparent);
   background-size: 200% 100%;
   animation: shimmer 3s linear infinite;
 }
+
+/* Marquee strip — pair the inner element with `.animate-marquee` and
+   double up your children for a seamless loop. */
+.animate-marquee { animation: marquee 30s linear infinite; }
+html[dir='rtl'] .animate-marquee { animation: marquee-rtl 30s linear infinite; }
+
+/* Sparkle dot — `.sparkle` with absolute positioning */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #d9bf86, #c9a86a);
+  box-shadow: 0 0 10px rgba(201, 168, 106, 0.6);
+  animation: sparkle-twinkle 3.6s ease-in-out infinite;
+}
+.sparkle.delay-1 { animation-delay: 0.6s; }
+.sparkle.delay-2 { animation-delay: 1.2s; }
+.sparkle.delay-3 { animation-delay: 1.8s; }
+.sparkle.delay-4 { animation-delay: 2.4s; }
+
+/* Shimmering gold text (use sparingly, e.g. for big stat numbers) */
+.text-shimmer-gold {
+  background: linear-gradient(90deg, #a88a52 0%, #d9bf86 25%, #c9a86a 50%, #d9bf86 75%, #a88a52 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-text 4s linear infinite;
+}
+
+/* Animated gradient border — wraps a card; the inner content needs a solid bg */
+.gradient-border-anim {
+  position: relative;
+  isolation: isolate;
+  border-radius: inherit;
+}
+.gradient-border-anim::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(120deg, #c9a86a 0%, #d9bf86 30%, transparent 50%, #c9a86a 80%, #a88a52 100%);
+  background-size: 250% 250%;
+  animation: border-flow 6s ease infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.gradient-border-anim:hover::before,
+.group:hover .gradient-border-anim::before { opacity: 1; }
+
+/* Tilt-on-hover (3D depth feel) */
+.tilt-card {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s;
+  transform-style: preserve-3d;
+}
+.tilt-card:hover { transform: perspective(900px) rotateX(2deg) rotateY(-3deg) translateY(-4px); }
+
+/* Underline that grows from start on hover */
+.link-underline-grow {
+  position: relative;
+  display: inline-block;
+}
+.link-underline-grow::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, #c9a86a, #d9bf86);
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transform-origin: inset-inline-start;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline-grow:hover::after { transform: scaleX(1); }
 
 /* Card hover micro-interaction (used by .card / [data-card]) */
 @keyframes card-pop-in {
