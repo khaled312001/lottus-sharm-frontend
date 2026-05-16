@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
-  Settings, Star, Mail, MessageSquare, UserCog, Image as ImageIcon, X, Send, BarChart3, Search,
+  Settings, Star, Mail, MessageSquare, MessagesSquare, UserCog, Image as ImageIcon, X, Send, BarChart3, Search,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +19,7 @@ const SECTIONS = [
     { href: '/admin/pages' as const, icon: FolderOpen, label: 'الصفحات' },
     { href: '/admin/media' as const, icon: ImageIcon, label: 'مكتبة الميديا' },
     { href: '/admin/reviews' as const, icon: Star, label: 'التقييمات' },
+    { href: '/admin/comments' as const, icon: MessagesSquare, label: 'التعليقات' },
   ]},
   { title: 'العمليات', items: [
     { href: '/admin/bookings' as const, icon: CalendarCheck, label: 'الحجوزات' },
