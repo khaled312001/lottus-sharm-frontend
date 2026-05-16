@@ -8,6 +8,7 @@ import type { BlogPostDTO } from '@/types/api';
 import { localeToApiCode, buildWhatsAppLink, L } from '@/lib/utils';
 import { pickCoverImage } from '@/lib/blog-images';
 import { Calendar, Clock, BookOpen, MessageCircle, ArrowRight } from 'lucide-react';
+import { fetchCMSPage } from '@/lib/cms';
 
 export const revalidate = 60;
 
@@ -37,10 +38,15 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
   const featured = posts[0];
   const rest = posts.slice(1);
 
+  const cms = await fetchCMSPage('blog', locale);
+  const heroTitle = cms?.tr?.title || t('blog.title');
+  const heroSubtitle = cms?.tr?.subtitle || t('blog.subtitle');
+  const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-09.jpg';
+
   return (
     <>
       <section className="relative bg-primary-900 text-cream py-16 md:py-28 overflow-hidden">
-        <Image src="/hero-slides/hero-09.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
+        <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />
         <div className="absolute top-1/4 -end-24 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
@@ -53,8 +59,8 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
               <span className="block w-7 h-px bg-accent" />
               <span className="text-accent uppercase tracking-[0.3em] text-[10px] sm:text-xs font-bold">{L(locale, { ar: 'مدوّنة لوتس شرم', en: 'Lotus Sharm Blog', ru: 'Блог Lotus Sharm', it: 'Blog Lotus Sharm' })}</span>
             </div>
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">{t('blog.title')}</h1>
-            <p className="text-base sm:text-lg opacity-90 max-w-2xl leading-relaxed">{t('blog.subtitle')}</p>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">{heroTitle}</h1>
+            <p className="text-base sm:text-lg opacity-90 max-w-2xl leading-relaxed">{heroSubtitle}</p>
           </Reveal>
         </div>
       </section>

@@ -11,6 +11,7 @@ import type { TripDTO } from '@/types/api';
 import { Award, Shield, Compass, Clock, ArrowRight, Sparkles, Star, Users, MessageCircle, ShieldCheck, ChevronDown, MapPin, Play } from 'lucide-react';
 import { localeToApiCode, L } from '@/lib/utils';
 import { getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
+import { fetchCMSPage } from '@/lib/cms';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const t = await getTranslations({ locale });
   const settings = await getSiteSettings();
-  const tagline = getLocalizedTagline(settings, locale);
+  const defaultTagline = getLocalizedTagline(settings, locale);
+  const cms = await fetchCMSPage('home', locale);
+  const tagline = cms?.tr?.subtitle || defaultTagline;
+  const heroOverrideTitle = cms?.tr?.title || null;
 
   let trips: TripDTO[] = [];
   try {
@@ -61,8 +65,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {/* Headline */}
             <Reveal delay={0.25}>
               <h1 className="lotus-hero-h1 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-lg">
-                <span className="lotus-hero-line">{t('home.heroTitleLine1')}</span>
-                <span className="lotus-hero-line lotus-hero-line--gold">{t('home.heroTitleLine2')}</span>
+                {heroOverrideTitle ? (
+                  <span className="lotus-hero-line lotus-hero-line--gold">{heroOverrideTitle}</span>
+                ) : (
+                  <>
+                    <span className="lotus-hero-line">{t('home.heroTitleLine1')}</span>
+                    <span className="lotus-hero-line lotus-hero-line--gold">{t('home.heroTitleLine2')}</span>
+                  </>
+                )}
               </h1>
             </Reveal>
 

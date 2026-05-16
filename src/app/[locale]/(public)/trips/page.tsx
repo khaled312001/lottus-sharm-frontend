@@ -10,6 +10,7 @@ import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { Compass, Sparkles, Calendar, MessageCircle, Waves, Mountain, Building2, Anchor, PartyPopper } from 'lucide-react';
 import { buildWhatsAppLink } from '@/lib/utils';
+import { fetchCMSPage } from '@/lib/cms';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,6 +51,11 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
     /* ignore */
   }
 
+  const cms = await fetchCMSPage('trips', locale);
+  const heroTitle = cms?.tr?.title || t('trips.title');
+  const heroSubtitle = cms?.tr?.subtitle || t('trips.subtitle');
+  const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-03.jpg';
+
   const counts: Record<string, number> = {};
   allTrips.items.forEach((tt) => { counts[tt.category] = (counts[tt.category] || 0) + 1; });
   const totalCount = allTrips.items.length;
@@ -58,16 +64,16 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
     <>
       {/* HERO */}
       <section className="relative bg-primary-900 text-cream py-16 md:py-28 overflow-hidden">
-        <Image src="/hero-slides/hero-03.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
+        <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />
         <div className="absolute top-1/4 -end-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal>
             <span className="eyebrow">{L(locale, { ar: 'استكشف الرحلات', en: 'Explore trips', ru: 'Все туры', it: 'Esplora i tour' })}</span>
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">{t('trips.title')}</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">{heroTitle}</h1>
             <div className="w-16 h-0.5 gradient-gold rounded-full mb-5" />
-            <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">{t('trips.subtitle')}</p>
+            <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">{heroSubtitle}</p>
             <div className="mt-6 md:mt-7 flex flex-wrap gap-2 sm:gap-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs sm:text-sm backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5" /> {totalCount}+ {L(locale, { ar: 'رحلة', en: 'experiences', ru: 'туров', it: 'esperienze' })}

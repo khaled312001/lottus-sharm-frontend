@@ -5,6 +5,7 @@ import { Reveal } from '@/components/public/motion';
 import { getSiteSettings } from '@/lib/site-settings';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Facebook, Instagram, Youtube, Sparkles, HelpCircle, ArrowRight } from 'lucide-react';
 import { buildWhatsAppLink, L } from '@/lib/utils';
+import { fetchCMSPage } from '@/lib/cms';
 
 export const revalidate = 120;
 
@@ -53,19 +54,24 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       a_it: 'Sì — copriamo tutto l\'Egitto: Cairo, Luxor, Aswan, Alessandria, Dahab e altri — con la maggiore esperienza a Sharm El Sheikh.' },
   ];
 
+  const cms = await fetchCMSPage('contact', locale);
+  const heroTitle = cms?.tr?.title || t('contact.title');
+  const heroSubtitle = cms?.tr?.subtitle || t('contact.subtitle');
+  const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-12.jpg';
+
   return (
     <>
       <section className="relative bg-primary-900 text-cream py-16 md:py-24 overflow-hidden">
-        <Image src="/hero-slides/hero-12.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
+        <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />
         <div className="absolute top-1/4 -end-32 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto">
             <span className="eyebrow eyebrow-center">{L(locale, { ar: 'اتصل بنا', en: 'Get in touch', ru: 'Свяжитесь с нами', it: 'Contattaci' })}</span>
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-tight text-balance">{t('contact.title')}</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-tight text-balance">{heroTitle}</h1>
             <span className="rule-gold" />
-            <p className="text-base sm:text-lg opacity-90 leading-relaxed">{t('contact.subtitle')}</p>
+            <p className="text-base sm:text-lg opacity-90 leading-relaxed">{heroSubtitle}</p>
           </Reveal>
         </div>
       </section>

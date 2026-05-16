@@ -8,6 +8,7 @@ import { GalleryTabs } from '@/components/public/gallery-tabs';
 import type { TripDTO } from '@/types/api';
 import { localeToApiCode, L } from '@/lib/utils';
 import { Camera, ArrowRight, Video } from 'lucide-react';
+import { fetchCMSPage } from '@/lib/cms';
 
 export const revalidate = 120;
 
@@ -41,17 +42,22 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
   const seenP = new Set<string>(); const dedPhotos = photos.filter((m) => seenP.has(m.url) ? false : seenP.add(m.url));
   const seenV = new Set<string>(); const dedVideos = videos.filter((m) => seenV.has(m.url) ? false : seenV.add(m.url));
 
+  const cms = await fetchCMSPage('gallery', locale);
+  const heroTitle = cms?.tr?.title || t('gallery.title');
+  const heroSubtitle = cms?.tr?.subtitle || t('gallery.subtitle');
+  const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-10.jpg';
+
   return (
     <>
       <section className="relative bg-primary-900 text-cream py-20 md:py-28 overflow-hidden">
-        <Image src="/hero-slides/hero-10.jpg" alt="" fill className="object-cover opacity-30" sizes="100vw" priority />
+        <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/80 via-primary-900/70 to-primary-900" />
         <div className="container relative">
           <Reveal>
             <Camera className="h-10 w-10 text-accent mb-4" />
             <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'لحظات لا تُنسى', en: 'Unforgettable moments', ru: 'Незабываемые моменты', it: 'Momenti indimenticabili' })}</div>
-            <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1]">{t('gallery.title')}</h1>
-            <p className="text-lg opacity-90 max-w-2xl">{t('gallery.subtitle')}</p>
+            <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1]">{heroTitle}</h1>
+            <p className="text-lg opacity-90 max-w-2xl">{heroSubtitle}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-cream/70">
               <span className="inline-flex items-center gap-1.5"><Camera className="h-4 w-4 text-accent" /> {dedPhotos.length} {L(locale, { ar: 'صورة', en: 'photos', ru: 'фото', it: 'foto' })}</span>
               <span>·</span>
