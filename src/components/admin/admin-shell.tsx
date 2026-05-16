@@ -6,6 +6,7 @@ import { usePathname, useRouter } from '@/i18n/routing';
 import { useAdminAuth } from '@/lib/admin-auth';
 import { AdminSidebar } from './admin-sidebar';
 import { AdminTopbar } from './admin-topbar';
+import { AdminNotificationsProvider } from './admin-notifications';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const drawerX = isAr ? '100%' : '-100%';
 
   return (
+    <AdminNotificationsProvider>
     <div dir={dir} lang={locale} className="min-h-screen bg-muted/20">
       <aside className="hidden lg:block fixed inset-y-0 start-0 w-64 bg-white border-e z-30 overflow-y-auto">
         <AdminSidebar />
@@ -66,5 +68,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1 p-4 md:p-6 overflow-x-auto">{children}</main>
       </div>
     </div>
+    </AdminNotificationsProvider>
   );
 }

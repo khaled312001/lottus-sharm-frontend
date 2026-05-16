@@ -936,6 +936,58 @@ html[dir='rtl'] .animate-marquee { animation: marquee-rtl 30s linear infinite; }
 .img-zoom:hover img,
 .img-zoom:hover > [data-image] { transform: scale(1.08); }
 
+/* =========================================================
+   Native scroll-driven section animations — "float in on scroll".
+   Uses CSS animation-timeline: view() (Chrome 115+, Edge, Opera).
+   Browsers without support simply show sections normally.
+   ========================================================= */
+@keyframes section-float-in {
+  from { opacity: 0; transform: translateY(40px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes card-float-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heading-float-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@supports (animation-timeline: view()) {
+  /* Every section floats in as it enters the viewport */
+  main section,
+  article section {
+    animation: section-float-in linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 25%;
+  }
+  /* But not the hero (first one) — it should be visible immediately */
+  main > section:first-of-type,
+  main > section:first-child,
+  article > section:first-of-type {
+    animation: none;
+  }
+
+  /* Cards inside sections also drift in (subtle) */
+  section [data-card],
+  section .card-modern,
+  section .lotus-card,
+  section article[class*="rounded-"] {
+    animation: card-float-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 20%;
+  }
+
+  /* Section headings get a quicker reveal */
+  main section h2,
+  main section h3 {
+    animation: heading-float-in linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
+  }
+}
+
 /* Reduced motion preference — disable non-essential animations */
 @media (prefers-reduced-motion: reduce) {
   *,

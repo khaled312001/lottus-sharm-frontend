@@ -4,6 +4,7 @@ import { useAdminAuth } from '@/lib/admin-auth';
 import { Button } from '@/components/ui/button';
 import { LogOut, ExternalLink, Menu } from 'lucide-react';
 import { Link } from '@/i18n/routing';
+import { NotificationBell } from './admin-notifications';
 
 export function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { user, logout } = useAdminAuth();
@@ -23,6 +24,7 @@ export function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void }) {
           <h1 className="font-bold text-base md:text-lg truncate">لوحة التحكم</h1>
         </div>
         <div className="flex items-center gap-1 md:gap-2">
+          <NotificationBell />
           <Link href="/" target="_blank" className="hidden sm:inline-flex items-center gap-1 text-xs md:text-sm text-primary hover:underline">
             <ExternalLink className="h-3.5 w-3.5 md:h-4 md:w-4" />
             <span className="hidden md:inline">الموقع</span>
