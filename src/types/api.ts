@@ -68,6 +68,7 @@ export interface TripDTO {
   gallery: TripGalleryItem[];
   timeline?: TripTimelineStepDTO[];
   ratingAverage?: number;
+  bookingsLast7Days?: number;
   _count?: { likes: number; comments: number; reviews: number };
   tr?: TripTranslationDTO | null;
 }
@@ -78,6 +79,7 @@ export interface TripReviewDTO {
   rating: number;
   comment: string;
   locale: ApiLocale;
+  images?: string[];
   createdAt: string;
 }
 

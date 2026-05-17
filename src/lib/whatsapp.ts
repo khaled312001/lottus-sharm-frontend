@@ -15,9 +15,11 @@ export function buildTripBookingMessage(opts: {
   isLocal?: boolean;
   fullName?: string;
   phone?: string;
+  nationality?: string;
+  age?: string | number;
   notes?: string;
 }): string {
-  const { trip, locale, date, adults = 0, children = 0, isLocal, fullName, phone, notes } = opts;
+  const { trip, locale, date, adults = 0, children = 0, isLocal, fullName, phone, nationality, age, notes } = opts;
   const isAr = locale === 'ar';
   const tr = trip.tr || trip.translations.find((x) => x.locale === 'AR') || trip.translations[0];
   const title = tr?.title || trip.slug;
@@ -44,6 +46,8 @@ export function buildTripBookingMessage(opts: {
     }
     if (fullName) lines.push(`الاسم: ${fullName}`);
     if (phone) lines.push(`الهاتف: ${phone}`);
+    if (nationality) lines.push(`الجنسية: ${nationality}`);
+    if (age) lines.push(`العمر: ${age}`);
     if (total > 0) lines.push(`الإجمالي التقريبي: ${total.toLocaleString('en')} ${symbol}`);
     if (notes) { lines.push(''); lines.push(`ملاحظات: ${notes}`); }
     lines.push('');
@@ -62,6 +66,8 @@ export function buildTripBookingMessage(opts: {
     }
     if (fullName) lines.push(`Name: ${fullName}`);
     if (phone) lines.push(`Phone: ${phone}`);
+    if (nationality) lines.push(`Nationality: ${nationality}`);
+    if (age) lines.push(`Age: ${age}`);
     if (total > 0) lines.push(`Estimated total: ${total.toLocaleString('en')} ${symbol}`);
     if (notes) { lines.push(''); lines.push(`Notes: ${notes}`); }
     lines.push('');

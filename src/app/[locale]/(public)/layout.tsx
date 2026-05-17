@@ -3,6 +3,8 @@ import { Footer } from '@/components/public/footer';
 import { WhatsAppFAB } from '@/components/public/whatsapp-fab';
 import { MainWrapper } from '@/components/public/main-wrapper';
 import { ScrollProgress } from '@/components/motion-kit';
+import { CommandPalette } from '@/components/public/command-palette';
+import { BackToTop } from '@/components/public/back-to-top';
 import { getSiteSettings } from '@/lib/site-settings';
 
 export default async function PublicLayout({
@@ -20,6 +22,8 @@ export default async function PublicLayout({
       <MainWrapper>{children}</MainWrapper>
       <Footer settings={settings} />
       <WhatsAppFAB phone={settings.whatsapp} />
+      <BackToTop />
+      <CommandPalette />
     </div>
   );
 }

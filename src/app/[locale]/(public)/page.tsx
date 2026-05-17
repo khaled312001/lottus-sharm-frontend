@@ -125,12 +125,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <Reveal delay={0.8} className="absolute bottom-6 inset-x-0 z-20 hidden md:flex justify-center pointer-events-none">
-          <div className="inline-flex flex-col items-center gap-1 text-cream/60 animate-float">
-            <ChevronDown className="h-5 w-5 text-accent" />
-          </div>
-        </Reveal>
       </section>
 
       {/* Mobile stats — separate band below hero (no overlap) */}

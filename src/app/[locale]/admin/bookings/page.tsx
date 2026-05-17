@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useAdminApi } from '@/lib/admin-auth';
+import { useEffect, useMemo, useState } from 'react';
+import { useAdminApi, useAdminAuth } from '@/lib/admin-auth';
+import { API_BASE } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Download, Calendar as CalIcon, List, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface BookingItem {
   id: number;
@@ -33,10 +36,32 @@ const STATUS_LABELS: Record<BookingItem['status'], string> = {
 
 export default function AdminBookingsPage() {
   const api = useAdminApi();
+  const { token } = useAdminAuth();
   const [items, setItems] = useState<BookingItem[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<BookingItem['status'] | 'ALL'>('ALL');
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'list' | 'calendar'>('list');
+  const [calMonth, setCalMonth] = useState(() => new Date());
+
+  const downloadCSV = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/admin/exports/bookings.csv`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error('Failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bookings-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('تم تصدير CSV');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -65,9 +90,41 @@ export default function AdminBookingsPage() {
     }
   };
 
+  // Group bookings by date for the calendar view
+  const byDate = useMemo(() => {
+    const map = new Map<string, BookingItem[]>();
+    items.forEach((b) => {
+      const key = new Date(b.bookingDate).toISOString().slice(0, 10);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(b);
+    });
+    return map;
+  }, [items]);
+
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">إدارة الحجوزات</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl font-bold">إدارة الحجوزات <span className="text-sm font-normal text-muted-foreground">({items.length})</span></h2>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-lg border bg-white overflow-hidden">
+            <button
+              onClick={() => setView('list')}
+              className={cn('px-3 py-2 text-xs font-semibold inline-flex items-center gap-1.5', view === 'list' ? 'bg-primary text-cream' : 'hover:bg-muted')}
+            >
+              <List className="h-3.5 w-3.5" /> قائمة
+            </button>
+            <button
+              onClick={() => setView('calendar')}
+              className={cn('px-3 py-2 text-xs font-semibold inline-flex items-center gap-1.5', view === 'calendar' ? 'bg-primary text-cream' : 'hover:bg-muted')}
+            >
+              <CalIcon className="h-3.5 w-3.5" /> تقويم
+            </button>
+          </div>
+          <Button variant="outline" onClick={downloadCSV} className="text-xs">
+            <Download className="h-3.5 w-3.5" /> تصدير CSV
+          </Button>
+        </div>
+      </div>
 
       <Card>
         <CardContent className="p-4 flex flex-wrap gap-2 items-center">
@@ -83,6 +140,16 @@ export default function AdminBookingsPage() {
         </CardContent>
       </Card>
 
+      {/* Calendar view */}
+      {view === 'calendar' && (
+        <Card>
+          <CardContent className="p-4">
+            <CalendarView month={calMonth} setMonth={setCalMonth} byDate={byDate} />
+          </CardContent>
+        </Card>
+      )}
+
+      {view === 'list' && (
       <Card>
         <CardContent className="p-0 overflow-x-auto">
           {loading ? (
@@ -141,6 +208,96 @@ export default function AdminBookingsPage() {
           )}
         </CardContent>
       </Card>
+      )}
+    </div>
+  );
+}
+
+// ============== Calendar View ==============
+function CalendarView({
+  month, setMonth, byDate,
+}: {
+  month: Date;
+  setMonth: (d: Date) => void;
+  byDate: Map<string, BookingItem[]>;
+}) {
+  const year = month.getFullYear();
+  const m = month.getMonth();
+  const firstDow = new Date(year, m, 1).getDay();
+  const days = new Date(year, m + 1, 0).getDate();
+  const cells: ({ day: number; date: string } | null)[] = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= days; d++) {
+    cells.push({ day: d, date: new Date(year, m, d).toISOString().slice(0, 10) });
+  }
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const monthName = month.toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
+
+  const statusColor: Record<BookingItem['status'], string> = {
+    PENDING:   'bg-amber-500',
+    CONFIRMED: 'bg-emerald-500',
+    CANCELLED: 'bg-rose-500',
+    COMPLETED: 'bg-sky-500',
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <button onClick={() => setMonth(new Date(year, m - 1, 1))} className="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-muted">
+          <ChevronRight className="h-4 w-4" />
+        </button>
+        <div className="font-serif font-bold text-lg text-primary">{monthName}</div>
+        <button onClick={() => setMonth(new Date(year, m + 1, 1))} className="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-muted">
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid grid-cols-7 gap-1 mb-1 text-center text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+        {['أحد','إثن','ثلا','أرب','خمي','جمع','سبت'].map((d) => <div key={d} className="py-1">{d}</div>)}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {cells.map((c, i) => {
+          if (!c) return <div key={i} />;
+          const list = byDate.get(c.date) || [];
+          const isToday = c.date === todayISO;
+          return (
+            <div
+              key={i}
+              className={cn(
+                'min-h-[88px] rounded-lg border p-1.5 flex flex-col text-start transition-colors',
+                isToday ? 'bg-accent/10 border-accent/40' : 'bg-white border-accent/15 hover:border-accent/30',
+              )}
+            >
+              <div className={cn('text-xs font-bold mb-1', isToday ? 'text-accent-700' : 'text-primary')}>{c.day}</div>
+              <div className="space-y-1 overflow-y-auto">
+                {list.slice(0, 3).map((b) => (
+                  <a
+                    key={b.id}
+                    href={`#booking-${b.id}`}
+                    title={`${b.customer.fullName} — ${b.trip.translations.find((t) => t.locale === 'AR')?.title || ''}`}
+                    className="block text-[10px] truncate px-1 py-0.5 rounded bg-muted/60 hover:bg-muted text-primary"
+                  >
+                    <span className={cn('inline-block w-1.5 h-1.5 rounded-full me-1 align-middle', statusColor[b.status])} />
+                    {b.customer.fullName}
+                  </a>
+                ))}
+                {list.length > 3 && (
+                  <div className="text-[10px] text-muted-foreground px-1">+{list.length - 3} {list.length - 3 === 1 ? 'حجز' : 'حجوزات'}</div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-3 text-[10px] text-muted-foreground">
+        {(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'] as BookingItem['status'][]).map((s) => (
+          <span key={s} className="inline-flex items-center gap-1.5">
+            <span className={cn('inline-block w-2 h-2 rounded-full', statusColor[s])} />
+            {STATUS_LABELS[s]}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useLocale } from 'next-intl';
 import { Search, X, Loader2, MapPin, BookOpen, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { L, localeToApiCode } from '@/lib/utils';
+import { API_BASE } from '@/lib/api';
 import type { TripDTO, BlogPostDTO } from '@/types/api';
 import { cn } from '@/lib/utils';
 
@@ -39,8 +40,8 @@ export function SearchBar({ variant = 'header' }: { variant?: 'header' | 'drawer
       try {
         const apiLocale = localeToApiCode(locale);
         const [tripsRes, postsRes] = await Promise.all([
-          fetch(`/api/public/trips?locale=${apiLocale}&pageSize=5&search=${encodeURIComponent(q)}`),
-          fetch(`/api/public/blog?locale=${apiLocale}&pageSize=5`),
+          fetch(`${API_BASE}/public/trips?locale=${apiLocale}&pageSize=5&search=${encodeURIComponent(q)}`),
+          fetch(`${API_BASE}/public/blog?locale=${apiLocale}&pageSize=20`),
         ]);
         const tripsData = await tripsRes.json();
         const postsData = await postsRes.json();
