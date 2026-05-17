@@ -82,6 +82,20 @@
   html[dir='rtl'] .tracking-tight,
   html[dir='rtl'] .tracking-tighter { letter-spacing: 0 !important; }
 
+  /* Phone numbers and emails must always render left-to-right even inside
+     RTL pages — without this, the BIDI algorithm reverses
+     "+20 109 076 7278" into "7278 076 109 20+" on Arabic pages.
+     NOTE: do NOT include wa.me / api.whatsapp.com here — those links are
+     icon buttons / FABs that depend on Tailwind's RTL-aware `start-*`/`end-*`
+     positioning, which flips when direction is overridden. */
+  a[href^="tel:"],
+  a[href^="mailto:"],
+  .ltr-num,
+  [data-ltr] {
+    unicode-bidi: isolate;
+    direction: ltr;
+  }
+
   /* Spans inside Arabic headings inherit the same breathing room */
   html[dir='rtl'] h1 > span,
   html[dir='rtl'] h2 > span,
