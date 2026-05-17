@@ -19,8 +19,14 @@ export function ImageLightbox({ images, startIndex = 0, open, onClose, caption }
   const [index, setIndex] = useState(startIndex);
   const [zoom, setZoom] = useState(1);
   const [mounted, setMounted] = useState(false);
+  const [rtl, setRtl] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    if (typeof document !== 'undefined') {
+      setRtl(document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl');
+    }
+  }, []);
   useEffect(() => { if (open) setIndex(startIndex); }, [open, startIndex]);
   useEffect(() => { setZoom(1); }, [index]);
 
@@ -91,16 +97,15 @@ export function ImageLightbox({ images, startIndex = 0, open, onClose, caption }
         </div>
       </div>
 
-      {/* Prev / next */}
+      {/* Prev / next — one arrow per side, matching the visual button position.
+          Visually-LEFT button always shows ←, visually-RIGHT always shows →. */}
       {images.length > 1 && (
         <>
           <NavBtn side="start" onClick={(e) => { e.stopPropagation(); prev(); }} aria-label="Previous">
-            <ChevronLeft className="h-6 w-6 rtl:hidden" />
-            <ChevronRight className="h-6 w-6 ltr:hidden" />
+            {rtl ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
           </NavBtn>
           <NavBtn side="end" onClick={(e) => { e.stopPropagation(); next(); }} aria-label="Next">
-            <ChevronRight className="h-6 w-6 rtl:hidden" />
-            <ChevronLeft className="h-6 w-6 ltr:hidden" />
+            {rtl ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
           </NavBtn>
         </>
       )}
