@@ -18,6 +18,16 @@ type Status = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 type Source = 'WEBSITE' | 'WHATSAPP' | 'PHONE' | 'MANUAL' | 'STRIPE';
 type PaymentStatus = 'UNPAID' | 'PARTIAL' | 'PAID' | 'REFUNDED';
 
+interface BookingPayment {
+  id: number;
+  method: string;
+  status: PaymentStatus;
+  screenshotUrl?: string | null;
+  amount: string;
+  currency: string;
+  confirmedAt?: string | null;
+}
+
 interface BookingItem {
   id: number;
   reference: string;
@@ -31,6 +41,7 @@ interface BookingItem {
   source: Source;
   customer: { fullName: string; email: string; phone: string };
   trip: { translations: Array<{ locale: string; title: string }> };
+  payments?: BookingPayment[];
   createdAt: string;
   notes?: string | null;
 }
@@ -248,9 +259,23 @@ export default function AdminBookingsPage() {
                           </select>
                         </td>
                         <td className="py-2 px-3">
-                          {b.customer.phone && !b.customer.phone.startsWith('wa-pending-') && (
-                            <a href={`https://wa.me/${b.customer.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener" className="text-xs text-primary hover:underline">WhatsApp</a>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {b.customer.phone && !b.customer.phone.startsWith('wa-pending-') && (
+                              <a href={`https://wa.me/${b.customer.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener" className="text-xs text-primary hover:underline">WhatsApp</a>
+                            )}
+                            {/* Receipt thumbnail — appears for self-service bookings */}
+                            {b.payments?.filter((p) => p.screenshotUrl).map((p) => (
+                              <a key={p.id} href={p.screenshotUrl!} target="_blank" rel="noopener" className="relative inline-block" title="عرض إيصال الدفع">
+                                {/\.(pdf)$/i.test(p.screenshotUrl!) ? (
+                                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-blue-500/15 border border-blue-500/40 text-blue-700 text-[10px] font-bold">PDF</span>
+                                ) : (
+                                  /* eslint-disable-next-line @next/next/no-img-element */
+                                  <img src={p.screenshotUrl!} alt="receipt" className="w-10 h-10 rounded-md object-cover border border-emerald-500/40 hover:border-emerald-500 transition-colors" />
+                                )}
+                                <span className="absolute -top-1 -end-1 w-3 h-3 rounded-full bg-emerald-500 border border-white" />
+                              </a>
+                            ))}
+                          </div>
                         </td>
                       </tr>
                     );

@@ -86,6 +86,9 @@ function printSingle(file: string, title: string) {
 }
 
 export default function AdminQRCodesPage() {
+  // Cache-bust on every page load so an updated PNG is fetched immediately
+  // (otherwise the browser sticks to whatever is cached for max-age=1y).
+  const buster = useMemo(() => Date.now(), []);
   return (
     <div className="space-y-5">
       <div>

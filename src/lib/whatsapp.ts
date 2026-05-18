@@ -14,12 +14,18 @@ export function buildTripBookingMessage(opts: {
   children?: number;
   isLocal?: boolean;
   fullName?: string;
+  email?: string;
   phone?: string;
   nationality?: string;
   age?: string | number;
+  travelerType?: 'ADULT' | 'GEN_Z';
+  isMarried?: boolean;
   notes?: string;
 }): string {
-  const { trip, locale, date, adults = 0, children = 0, isLocal, fullName, phone, nationality, age, notes } = opts;
+  const {
+    trip, locale, date, adults = 0, children = 0, isLocal,
+    fullName, email, phone, nationality, age, travelerType, isMarried, notes,
+  } = opts;
   const isAr = locale === 'ar';
   const tr = trip.tr || trip.translations.find((x) => x.locale === 'AR') || trip.translations[0];
   const title = tr?.title || trip.slug;
@@ -29,6 +35,9 @@ export function buildTripBookingMessage(opts: {
   const childPrice = unit * (1 - trip.childDiscount / 100);
   const total = adults * unit + children * childPrice;
   const link = `https://lotussharm.com/${locale}/trips/${trip.slug}`;
+
+  const travelerArLabel = travelerType === 'GEN_Z' ? 'شاب (Gen Z)' : 'بالغ';
+  const travelerEnLabel = travelerType === 'GEN_Z' ? 'Young adult (Gen Z)' : 'Adult';
 
   const lines: string[] = [];
 
@@ -40,12 +49,15 @@ export function buildTripBookingMessage(opts: {
     if (date) lines.push(`التاريخ: ${date}`);
     if (adults || children) {
       const parts: string[] = [];
-      if (adults) parts.push(`${adults} بالغ`);
+      if (adults) parts.push(`${adults} ${travelerArLabel}`);
       if (children) parts.push(`${children} طفل`);
       lines.push(`العدد: ${parts.join(' + ')}`);
     }
+    if (travelerType) lines.push(`الفئة العمرية: ${travelerArLabel}`);
+    if (isMarried !== undefined) lines.push(`الحالة: ${isMarried ? 'متزوج' : 'أعزب'}`);
     if (fullName) lines.push(`الاسم: ${fullName}`);
     if (phone) lines.push(`الهاتف: ${phone}`);
+    if (email) lines.push(`البريد: ${email}`);
     if (nationality) lines.push(`الجنسية: ${nationality}`);
     if (age) lines.push(`العمر: ${age}`);
     if (total > 0) lines.push(`الإجمالي التقريبي: ${total.toLocaleString('en')} ${symbol}`);
@@ -60,12 +72,15 @@ export function buildTripBookingMessage(opts: {
     if (date) lines.push(`Date: ${date}`);
     if (adults || children) {
       const parts: string[] = [];
-      if (adults) parts.push(`${adults} adult${adults !== 1 ? 's' : ''}`);
+      if (adults) parts.push(`${adults} ${travelerEnLabel.toLowerCase()}${adults !== 1 ? 's' : ''}`);
       if (children) parts.push(`${children} child${children !== 1 ? 'ren' : ''}`);
       lines.push(`Guests: ${parts.join(' + ')}`);
     }
+    if (travelerType) lines.push(`Age group: ${travelerEnLabel}`);
+    if (isMarried !== undefined) lines.push(`Status: ${isMarried ? 'Married' : 'Single'}`);
     if (fullName) lines.push(`Name: ${fullName}`);
     if (phone) lines.push(`Phone: ${phone}`);
+    if (email) lines.push(`Email: ${email}`);
     if (nationality) lines.push(`Nationality: ${nationality}`);
     if (age) lines.push(`Age: ${age}`);
     if (total > 0) lines.push(`Estimated total: ${total.toLocaleString('en')} ${symbol}`);
