@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, Code2 } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, Code2, Star, ArrowRight } from 'lucide-react';
 import { NewsletterForm } from './newsletter-form';
 import { Logo } from './logo';
 import { getLocalizedTagline } from '@/lib/site-settings';
@@ -74,6 +74,25 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
           <h3 className="font-serif text-lg mb-5 text-accent">{t('footer.newsletter')}</h3>
           <p className="text-sm opacity-80 mb-4 leading-relaxed">{t('footer.newsletterDesc')}</p>
           <NewsletterForm />
+
+          {/* Leave a review CTA — gold accent card so it stands out */}
+          <Link
+            href={'/review' as never}
+            className="mt-6 flex items-center gap-3 rounded-2xl p-4 bg-gradient-to-br from-accent via-accent-deep to-accent text-primary font-bold shadow-lg shadow-accent/30 hover:shadow-accent/50 hover:-translate-y-0.5 transition-all group"
+          >
+            <div className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-accent">
+              <Star className="h-5 w-5 fill-current" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs uppercase tracking-[0.15em] opacity-80">
+                {L(locale, { ar: 'سافرت معنا قبل كده؟', en: 'Travelled with us?', ru: 'Путешествовали?', it: 'Hai viaggiato con noi?' })}
+              </div>
+              <div className="text-sm leading-tight font-extrabold">
+                {L(locale, { ar: 'اترك تقييمك الآن', en: 'Leave your review', ru: 'Оставьте отзыв', it: 'Lascia una recensione' })}
+              </div>
+            </div>
+            <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+          </Link>
         </div>
       </div>
 
