@@ -20,8 +20,11 @@ export function QuickBookFab({ targetId = 'book' }: { targetId?: string }) {
     const target = document.getElementById(targetId);
     if (!target) return;
 
-    // Hide FAB while the booking widget is in view; otherwise show once user
-    // has scrolled past the hero (~280px).
+    // Hide the FAB whenever ANY part of the booking widget enters the viewport,
+    // so the gold pill never sits on top of the form. The negative bottom
+    // rootMargin (200px) means we start hiding 200px BEFORE the widget reaches
+    // the viewport edge — gives the user a smooth handoff instead of an abrupt
+    // overlap on mobile.
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
@@ -31,27 +34,12 @@ export function QuickBookFab({ targetId = 'book' }: { targetId?: string }) {
           setVisible(window.scrollY > 280);
         }
       },
-      { threshold: 0.15 },
+      { threshold: 0, rootMargin: '0px 0px -200px 0px' },
     );
     observer.observe(target);
 
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        // Only flip when not in view; observer handles the in-view case.
-        const rect = target.getBoundingClientRect();
-        const inView = rect.top < window.innerHeight * 0.85 && rect.bottom > window.innerHeight * 0.15;
-        if (!inView) setVisible(window.scrollY > 280);
-        raf = 0;
-      });
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-
     return () => {
       observer.disconnect();
-      if (raf) cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', onScroll);
     };
   }, [targetId]);
 

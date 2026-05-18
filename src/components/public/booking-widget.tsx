@@ -110,7 +110,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         <Counter
           icon={Users}
           label={t('adults')}
-          sublabel={isAr ? '12+ سنة' : '12+ yrs'}
+          sublabel={isAr ? 'بالغ' : 'Adult'}
           value={adults}
           setValue={setAdults}
           min={1}
@@ -119,7 +119,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         <Counter
           icon={Baby}
           label={t('children')}
-          sublabel={trip.childDiscount > 0 ? (isAr ? `خصم ${trip.childDiscount}%` : `${trip.childDiscount}% off`) : (isAr ? '2-11 سنة' : '2-11 yrs')}
+          sublabel={trip.childDiscount > 0 ? (isAr ? `خصم ${trip.childDiscount}%` : `${trip.childDiscount}% off`) : (isAr ? 'كل الأعمار' : 'All ages')}
           value={children}
           setValue={setChildren}
           min={0}

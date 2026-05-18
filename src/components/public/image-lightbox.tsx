@@ -110,14 +110,22 @@ export function ImageLightbox({ images, startIndex = 0, open, onClose, caption }
         </>
       )}
 
-      {/* The image */}
-      <div className="relative max-w-full max-h-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      {/* The image — uses the full viewport. Pinch-zoom is enabled via
+          touch-action when zoom is at 1× so mobile users can spread to zoom. */}
+      <div className="relative w-full h-full flex items-center justify-center overflow-auto" onClick={(e) => e.stopPropagation()}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={images[index]}
           alt=""
-          className="max-w-[90vw] max-h-[80vh] object-contain rounded-xl shadow-2xl select-none"
-          style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s ease-out', cursor: zoom > 1 ? 'grab' : 'default' }}
+          className="max-w-full max-h-full object-contain rounded-xl shadow-2xl select-none"
+          style={{
+            transform: `scale(${zoom})`,
+            transition: 'transform 0.2s ease-out',
+            touchAction: zoom === 1 ? 'pinch-zoom' : 'auto',
+            cursor: zoom > 1 ? 'grab' : 'default',
+            maxWidth: '95vw',
+            maxHeight: '88vh',
+          }}
           draggable={false}
         />
       </div>

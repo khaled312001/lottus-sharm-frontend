@@ -163,7 +163,11 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
       isActive,
       heroImageId: heroImage?.id || undefined,
       galleryMediaIds: gallery.map((g) => g.id),
+      // Only send locales that actually have content. AR is required; others
+      // can be left empty and the admin can add them later.
       translations: translations.filter((t) => t.title.trim()),
+      // Strip out empty SEO fields so we don't overwrite existing ones with ''
+      // (the field is hidden under a details element so it's easy to ignore)
       highlights: highlights.filter((h) => h.translations.find((x) => x.locale === 'AR')?.text),
       bullets: bullets.filter((b) => b.translations.find((x) => x.locale === 'AR')?.text),
       timeline: timeline
@@ -213,37 +217,47 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
         )}
       </div>
 
-      {/* Locale tabs */}
-      <div className="flex gap-1 bg-white border rounded-lg p-1 w-fit">
-        {LOCALES.map((l) => (
-          <button
-            key={l.code}
-            onClick={() => setActiveLocale(l.code)}
-            className={cn(
-              'px-4 py-1.5 rounded-md text-sm font-semibold transition-colors',
-              activeLocale === l.code ? 'bg-primary text-white' : 'hover:bg-muted',
-            )}
-          >
-            {l.label}
-          </button>
-        ))}
+      {/* Locale tabs — AR is required, others are optional */}
+      <div className="flex gap-1 bg-white border rounded-lg p-1 w-fit flex-wrap">
+        {LOCALES.map((l) => {
+          const hasContent = !!translations[trIdx(l.code)]?.title?.trim();
+          return (
+            <button
+              key={l.code}
+              onClick={() => setActiveLocale(l.code)}
+              className={cn(
+                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors',
+                activeLocale === l.code ? 'bg-primary text-white' : 'hover:bg-muted',
+              )}
+            >
+              <span>{l.label}</span>
+              {l.code === 'AR'
+                ? <span className="text-[9px] uppercase tracking-wider opacity-70">إلزامي</span>
+                : !hasContent && <span className="text-[9px] uppercase tracking-wider opacity-60">اختياري</span>}
+              {hasContent && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+            </button>
+          );
+        })}
       </div>
 
       {/* Translation content */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between flex-wrap gap-2">
             <span>المحتوى ({LOCALES.find((l) => l.code === activeLocale)?.label})</span>
-            {activeLocale === 'AR' && (
-              <span className="text-xs text-muted-foreground font-normal">سيظهر زر الترجمة في حقول AR لتوليد باقي اللغات</span>
+            {activeLocale !== 'AR' && (
+              <span className="text-xs text-muted-foreground font-normal">
+                اختياري — اتركها فارغة لو هتنشر بالعربي فقط
+              </span>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Field label="عنوان الرحلة">
+          <Field label={activeLocale === 'AR' ? 'عنوان الرحلة *' : 'عنوان الرحلة'}>
             <Input
               value={translations[trIdx(activeLocale)].title}
               onChange={(e) => setTrField(activeLocale, 'title', e.target.value)}
+              placeholder={activeLocale === 'AR' ? 'مثال: رحلة راس محمد بري بالباص' : ''}
             />
           </Field>
 
@@ -265,20 +279,29 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
             />
           </Field>
 
-          <div className="grid md:grid-cols-2 gap-3">
-            <Field label="Meta Title (SEO)">
-              <Input
-                value={translations[trIdx(activeLocale)].metaTitle}
-                onChange={(e) => setTrField(activeLocale, 'metaTitle', e.target.value)}
-              />
-            </Field>
-            <Field label="Meta Description (SEO)">
-              <Input
-                value={translations[trIdx(activeLocale)].metaDesc}
-                onChange={(e) => setTrField(activeLocale, 'metaDesc', e.target.value)}
-              />
-            </Field>
-          </div>
+          {/* SEO fields — collapsed by default to keep the form clean */}
+          <details className="group">
+            <summary className="cursor-pointer text-sm font-semibold text-muted-foreground hover:text-foreground select-none inline-flex items-center gap-1.5">
+              <ChevronDown className="h-3.5 w-3.5 group-open:rotate-180 transition-transform" />
+              إعدادات SEO المتقدمة (اختياري)
+            </summary>
+            <div className="grid md:grid-cols-2 gap-3 mt-3">
+              <Field label="Meta Title (SEO)">
+                <Input
+                  value={translations[trIdx(activeLocale)].metaTitle}
+                  onChange={(e) => setTrField(activeLocale, 'metaTitle', e.target.value)}
+                  maxLength={60}
+                />
+              </Field>
+              <Field label="Meta Description (SEO)">
+                <Input
+                  value={translations[trIdx(activeLocale)].metaDesc}
+                  onChange={(e) => setTrField(activeLocale, 'metaDesc', e.target.value)}
+                  maxLength={160}
+                />
+              </Field>
+            </div>
+          </details>
         </CardContent>
       </Card>
 

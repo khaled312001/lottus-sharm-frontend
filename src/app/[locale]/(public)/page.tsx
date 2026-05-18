@@ -37,8 +37,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   let reviews: ReviewItem[] = [];
   try {
-    const r = await api.get<{ items: ReviewItem[] }>('/public/reviews?limit=12');
-    reviews = r.items;
+    // Show company-wide reviews first (left via /review). Fall back to trip-level
+    // reviews if we don't have enough company ones yet.
+    const company = await api.get<{ items: ReviewItem[] }>('/public/reviews/company?limit=24');
+    reviews = company.items;
+    if (reviews.length < 6) {
+      const tripWide = await api.get<{ items: ReviewItem[] }>('/public/reviews?limit=12');
+      reviews = [...reviews, ...tripWide.items];
+    }
   } catch { reviews = []; }
 
   const isAr = locale === 'ar';
@@ -291,7 +297,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </h2>
                 <span className="rule-gold" />
                 <p className="text-sm md:text-lg opacity-90 mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed">
-                  {L(locale, { ar: 'احجز رحلتك اليوم واستمتع بتجربة سياحية فاخرة لا تُنسى في شرم الشيخ', en: 'Book today and enjoy an unforgettable luxury experience in Sharm El Sheikh' })}
+                  {L(locale, { ar: 'احجز رحلتك اليوم واستمتع بتجربة سياحية لا تُنسى في شرم الشيخ', en: 'Book today and enjoy an unforgettable experience in Sharm El Sheikh', ru: 'Забронируйте сегодня и получите незабываемые впечатления в Шарм-эль-Шейхе', it: 'Prenota oggi e goditi un\'esperienza indimenticabile a Sharm El Sheikh' })}
                 </p>
                 <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-2xl shadow-accent/40 group hover:-translate-y-0.5 transition-all animate-glow-pulse">
                   <Link href="/trips">
