@@ -116,7 +116,7 @@ export default function AdminQRCodesPage() {
                 <div className="relative bg-gradient-to-br from-primary-900 via-primary to-primary-900 rounded-xl p-3 flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={q.file}
+                    src={`${q.file}?v=${buster}`}
                     alt={q.title}
                     className="w-full max-w-[280px] h-auto rounded-lg"
                     loading="lazy"
