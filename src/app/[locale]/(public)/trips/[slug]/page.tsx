@@ -13,6 +13,9 @@ import { TripTimeline } from '@/components/public/trip/trip-timeline';
 import { TripLikeButton } from '@/components/public/trip/trip-like-button';
 import { TripReviews } from '@/components/public/trip/trip-reviews';
 import { TripComments } from '@/components/public/trip/trip-comments';
+import { TripSocialProof } from '@/components/public/trip/trip-social-proof';
+import { TripTrackView } from '@/components/public/trip/trip-track-view';
+import { RecentlyViewedStrip } from '@/components/public/recently-viewed-strip';
 import { Link } from '@/i18n/routing';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
@@ -124,8 +127,9 @@ export default async function TripDetailPage({ params }: PageProps) {
             <div className="w-16 h-0.5 gradient-gold rounded-full mb-5 md:mb-6" />
             <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-3xl leading-relaxed">{tr?.shortDesc}</p>
 
-            {/* Rating + Like + comment count */}
+            {/* Rating + Like + comment count + social proof */}
             <div className="mt-6 md:mt-7 flex flex-wrap items-center gap-3 sm:gap-4">
+              <TripSocialProof tripId={trip.id} bookingsLast7Days={trip.bookingsLast7Days} locale={locale} />
               {(trip.ratingAverage ?? 0) > 0 && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cream/10 backdrop-blur border border-accent/30 text-cream">
                   <Star className="h-4 w-4 fill-accent text-accent" />
@@ -426,6 +430,16 @@ export default async function TripDetailPage({ params }: PageProps) {
           </div>
         </section>
       )}
+
+      {/* Recently viewed strip + tracker for this trip */}
+      <TripTrackView
+        id={trip.id}
+        slug={trip.slug}
+        title={tr?.title || trip.slug}
+        image={trip.heroImage?.mediumUrl || trip.heroImage?.url || ''}
+        price={isAr ? `${Number(trip.priceLocalEGP)} ج.م` : `$${Number(trip.priceForeignUSD)}`}
+      />
+      <RecentlyViewedStrip excludeSlug={trip.slug} />
 
       {/* JSON-LD */}
       <script

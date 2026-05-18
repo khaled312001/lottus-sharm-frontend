@@ -1,10 +1,12 @@
 'use client';
-import { useEffect, useState, useTransition } from 'react';
-import { Star, Send, Quote } from 'lucide-react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { Star, Send, Quote, Camera, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
+import { API_BASE } from '@/lib/api';
 import { L, localeToApiCode } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { ImageLightbox } from '../image-lightbox';
 import type { TripReviewDTO, ApiLocale } from '@/types/api';
 
 function relativeTime(iso: string, locale: string): string {
@@ -59,6 +61,36 @@ export function TripReviews({
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [pending, startTransition] = useTransition();
+  // Image uploads
+  const [images, setImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadFiles = async (files: FileList | File[]) => {
+    const list = Array.from(files);
+    if (!list.length) return;
+    if (images.length + list.length > 6) {
+      toast.error(L(locale, { ar: 'الحد الأقصى 6 صور', en: 'Max 6 images', ru: 'Максимум 6 фото', it: 'Massimo 6 foto' }));
+      return;
+    }
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      list.forEach((f) => fd.append('files', f));
+      const res = await fetch(`${API_BASE}/public/trips/${slug}/reviews/upload`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok || !data?.ok) throw new Error(data?.error || 'Upload failed');
+      setImages((prev) => [...prev, ...(data.data.urls as string[])]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Upload error');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = (url: string) => setImages((prev) => prev.filter((u) => u !== url));
 
   const load = () => {
     api.get<{ items: TripReviewDTO[]; total: number; average: number }>(`/public/trips/${slug}/reviews`)
@@ -75,7 +107,13 @@ export function TripReviews({
       return;
     }
     startTransition(() => {
-      api.post(`/public/trips/${slug}/reviews`, { customerName: name.trim(), rating, comment: comment.trim(), locale: apiLocale })
+      api.post(`/public/trips/${slug}/reviews`, {
+        customerName: name.trim(),
+        rating,
+        comment: comment.trim(),
+        locale: apiLocale,
+        images: images.length > 0 ? images : undefined,
+      })
         .then(() => {
           toast.success(L(locale, {
             ar: 'شكراً! تقييمك قيد المراجعة',
@@ -83,7 +121,7 @@ export function TripReviews({
             ru: 'Спасибо! Отзыв на модерации',
             it: 'Grazie! La recensione è in revisione',
           }));
-          setName(''); setComment(''); setRating(5); setShowForm(false);
+          setName(''); setComment(''); setRating(5); setImages([]); setShowForm(false);
         })
         .catch((e) => toast.error(e.message || 'Error'));
     });
@@ -170,7 +208,68 @@ export function TripReviews({
             className="w-full px-3 py-2.5 rounded-lg border border-accent/30 bg-white focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y leading-relaxed"
             required
           />
-          <Button type="submit" disabled={pending} className="gradient-gold text-primary font-bold hover:opacity-90">
+
+          {/* Image upload */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-bold text-primary/70 uppercase tracking-wider">
+                {L(locale, { ar: 'صور من الرحلة (اختياري)', en: 'Trip photos (optional)', ru: 'Фото поездки (опционально)', it: 'Foto del viaggio (opzionale)' })}
+              </label>
+              <span className="text-[10px] text-muted-foreground">
+                {images.length}/6
+              </span>
+            </div>
+
+            {/* Thumbnails grid */}
+            {images.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-2">
+                {images.map((url) => (
+                  <div key={url} className="relative group aspect-square rounded-lg overflow-hidden bg-muted border border-accent/20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(url)}
+                      aria-label="Remove image"
+                      className="absolute top-1 end-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-600 text-white shadow-md opacity-0 group-hover:opacity-100 hover:bg-rose-700 transition-opacity"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Upload button */}
+            {images.length < 6 && (
+              <label className={`relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-all ${uploading ? 'border-accent bg-accent/10' : 'border-accent/30 hover:border-accent/60 hover:bg-accent/5'}`}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="sr-only"
+                  onChange={(e) => e.target.files && uploadFiles(e.target.files)}
+                />
+                {uploading ? <Loader2 className="h-4 w-4 animate-spin text-accent" /> : <Camera className="h-4 w-4 text-accent-700" />}
+                <span className="text-sm font-bold text-primary">
+                  {uploading
+                    ? L(locale, { ar: 'جاري الرفع...', en: 'Uploading...', ru: 'Загрузка...', it: 'Caricamento...' })
+                    : L(locale, { ar: 'أضف صور للرحلة', en: 'Add trip photos', ru: 'Добавить фото', it: 'Aggiungi foto' })}
+                </span>
+              </label>
+            )}
+            <p className="text-[10px] text-muted-foreground mt-1.5">
+              {L(locale, {
+                ar: 'JPG / PNG / WebP، حتى 10 ميجابايت لكل صورة',
+                en: 'JPG / PNG / WebP, up to 10 MB each',
+                ru: 'JPG / PNG / WebP, до 10 МБ каждое',
+                it: 'JPG / PNG / WebP, fino a 10 MB ciascuna',
+              })}
+            </p>
+          </div>
+
+          <Button type="submit" disabled={pending || uploading} className="gradient-gold text-primary font-bold hover:opacity-90">
             <Send className="h-4 w-4 me-1.5 rtl:rotate-180" />
             {pending
               ? L(locale, { ar: 'جاري الإرسال…', en: 'Sending…', ru: 'Отправка…', it: 'Invio…' })
@@ -196,6 +295,26 @@ export function TripReviews({
               </div>
               <Stars value={r.rating} size="sm" />
               <p className="mt-2 text-foreground/85 leading-relaxed text-sm md:text-[15px]">{r.comment}</p>
+              {r.images && r.images.length > 0 && (
+                <div className="mt-3 grid grid-cols-4 gap-1.5">
+                  {r.images.slice(0, 4).map((url, idx) => (
+                    <button
+                      key={url}
+                      type="button"
+                      onClick={() => setLightbox({ images: r.images!, index: idx })}
+                      className="relative aspect-square rounded-lg overflow-hidden bg-muted group/img"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt="" loading="lazy" className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-300" />
+                      {idx === 3 && r.images!.length > 4 && (
+                        <div className="absolute inset-0 bg-primary-900/70 flex items-center justify-center text-cream text-sm font-bold">
+                          +{r.images!.length - 4}
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </article>
           ))}
         </div>
@@ -204,6 +323,14 @@ export function TripReviews({
           {L(locale, { ar: 'لا توجد تقييمات بعد — كن أول من يقيّم!', en: 'No reviews yet — be the first to leave one!', ru: 'Пока нет отзывов — оставьте первый!', it: 'Ancora nessuna recensione — lascia la prima!' })}
         </div>
       )}
+
+      {/* Image lightbox */}
+      <ImageLightbox
+        open={!!lightbox}
+        images={lightbox?.images || []}
+        startIndex={lightbox?.index || 0}
+        onClose={() => setLightbox(null)}
+      />
     </div>
   );
 }

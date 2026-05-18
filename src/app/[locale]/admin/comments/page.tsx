@@ -5,8 +5,9 @@ import { useAdminApi } from '@/lib/admin-auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, Trash2, MessageSquare, Mail, Search } from 'lucide-react';
+import { Check, X, Trash2, MessageSquare, Mail, Search, CheckSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { BulkActionBar, BulkActionButton } from '@/components/admin/bulk-action-bar';
 
 interface CommentRow {
   id: number;
@@ -28,6 +29,40 @@ export default function AdminCommentsPage() {
   const [filter, setFilter] = useState<Filter>('all');
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  const toggleSelect = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const clearSel = () => setSelected(new Set());
+
+  const bulkSet = async (isApproved: boolean) => {
+    const ids = Array.from(selected);
+    try {
+      await Promise.all(ids.map((id) => api.patch(`/admin/comments/${id}`, { isApproved })));
+      setItems((p) => p.map((c) => (selected.has(c.id) ? { ...c, isApproved } : c)));
+      toast.success(`تم ${isApproved ? 'قبول' : 'تعليق'} ${ids.length}`);
+      clearSel();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
+  const bulkDelete = async () => {
+    const ids = Array.from(selected);
+    if (!confirm(`حذف ${ids.length} تعليق نهائياً؟`)) return;
+    try {
+      await Promise.all(ids.map((id) => api.delete(`/admin/comments/${id}`)));
+      setItems((p) => p.filter((c) => !selected.has(c.id)));
+      toast.success(`تم حذف ${ids.length}`);
+      clearSel();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
 
   const load = async () => {
     try {
@@ -148,11 +183,18 @@ export default function AdminCommentsPage() {
                 key={c.id}
                 className={
                   'border rounded-lg p-4 transition-colors ' +
-                  (c.isApproved ? 'bg-white' : 'bg-amber-50/50 border-amber-200/70')
+                  (selected.has(c.id) ? 'ring-2 ring-accent bg-accent/5 border-accent/40' : c.isApproved ? 'bg-white' : 'bg-amber-50/50 border-amber-200/70')
                 }
               >
                 <div className="flex items-start justify-between gap-3 flex-wrap mb-2">
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      className="mt-1 w-4 h-4 accent-accent cursor-pointer"
+                      checked={selected.has(c.id)}
+                      onChange={() => toggleSelect(c.id)}
+                    />
+                    <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-primary">{c.authorName}</span>
                       <span className="text-xs text-muted-foreground">({c.locale})</span>
@@ -171,6 +213,7 @@ export default function AdminCommentsPage() {
                         على رحلة: <a href={`/ar/trips/${c.trip.slug}`} target="_blank" rel="noopener" className="font-semibold text-primary hover:underline">{c.trip.slug}</a>
                       </div>
                     )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
@@ -195,6 +238,12 @@ export default function AdminCommentsPage() {
           )}
         </CardContent>
       </Card>
+
+      <BulkActionBar count={selected.size} onClear={clearSel}>
+        <BulkActionButton variant="success" onClick={() => void bulkSet(true)}><Check className="h-3.5 w-3.5" /> قبول</BulkActionButton>
+        <BulkActionButton onClick={() => void bulkSet(false)}><X className="h-3.5 w-3.5" /> إخفاء</BulkActionButton>
+        <BulkActionButton variant="danger" onClick={() => void bulkDelete()}><Trash2 className="h-3.5 w-3.5" /> حذف</BulkActionButton>
+      </BulkActionBar>
     </div>
   );
 }

@@ -3,10 +3,11 @@
 import { useMemo, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import {
   Plus, Minus, Calendar as CalendarIcon, MessageCircle, Users, Baby,
-  ShieldCheck, Sparkles, BadgeCheck, Phone,
+  ShieldCheck, Sparkles, BadgeCheck, Phone, User, ChevronDown,
 } from 'lucide-react';
 import type { TripDTO } from '@/types/api';
 import { bookingWhatsAppLink } from '@/lib/whatsapp';
@@ -14,6 +15,9 @@ import { DatePicker } from './date-picker';
 import { API_BASE } from '@/lib/api';
 import { Price } from './price';
 import { useCurrency } from '@/lib/currency';
+import { CountryPicker } from './country-picker';
+import { countryName, getCountry } from '@/lib/countries';
+import { L } from '@/lib/utils';
 
 export function BookingWidget({ trip }: { trip: TripDTO }) {
   const t = useTranslations('booking');
@@ -24,6 +28,12 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [isLocal, setIsLocal] = useState(locale === 'ar');
+  // Tourist details
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [age, setAge] = useState('');
+  const [nationality, setNationality] = useState(locale === 'ar' ? 'EG' : '');
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const unit = isLocal ? Number(trip.priceLocalEGP) : Number(trip.priceForeignUSD);
   const fromCurrency = (isLocal ? 'EGP' : 'USD') as 'EGP' | 'USD';
@@ -36,8 +46,21 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   // amounts via <Price/> below so they convert live.
   const symbol = isLocal ? 'ج.م' : '$';
 
-  const waLink = bookingWhatsAppLink({ trip, locale, date, adults, children, isLocal });
+  const country = nationality ? getCountry(nationality) : undefined;
+  const nationalityLabel = nationality ? `${country?.flag || ''} ${countryName(nationality, locale)}` : undefined;
+  const phoneWithDial = phone && country?.dial && !phone.startsWith('+')
+    ? `${country.dial} ${phone}`
+    : phone;
+
+  const waLink = bookingWhatsAppLink({
+    trip, locale, date, adults, children, isLocal,
+    fullName: fullName.trim() || undefined,
+    phone: phoneWithDial.trim() || undefined,
+    nationality: nationalityLabel,
+    age: age.trim() || undefined,
+  });
   const isAr = locale === 'ar';
+  const detailsFilled = [fullName, phone, age, nationality].filter(Boolean).length;
 
   return (
     <motion.div
@@ -110,6 +133,108 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
           </span>
           <ToggleSwitch checked={isLocal} onChange={setIsLocal} />
         </label>
+
+        {/* Tourist details — collapsible */}
+        <div className="rounded-xl border border-accent/20 overflow-hidden bg-gradient-to-br from-muted/30 to-white">
+          <button
+            type="button"
+            onClick={() => setDetailsOpen((o) => !o)}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-start hover:bg-muted/30 transition-colors"
+          >
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-accent/15 text-accent-700">
+                <User className="h-3.5 w-3.5" />
+              </span>
+              <span className="text-sm font-bold text-primary">
+                {L(locale, { ar: 'بيانات السائح', en: 'Tourist details', ru: 'Данные туриста', it: 'Dati turista' })}
+              </span>
+              {detailsFilled > 0 && (
+                <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-primary text-[10px] font-bold tabular-nums">
+                  {detailsFilled}
+                </span>
+              )}
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+              {!detailsOpen && detailsFilled === 0 && (
+                <span className="text-[10px] text-muted-foreground/80">
+                  {L(locale, { ar: 'اختياري', en: 'optional', ru: 'опционально', it: 'opzionale' })}
+                </span>
+              )}
+              <ChevronDown className={`h-4 w-4 transition-transform ${detailsOpen ? 'rotate-180' : ''}`} />
+            </span>
+          </button>
+
+          {detailsOpen && (
+            <div className="p-3 space-y-2.5 border-t border-accent/15">
+              <div>
+                <label className="text-[10px] font-bold text-primary/70 uppercase tracking-wider mb-1 block">
+                  {L(locale, { ar: 'الاسم الكامل', en: 'Full name', ru: 'Полное имя', it: 'Nome completo' })}
+                </label>
+                <Input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder={L(locale, { ar: 'مثلاً: أحمد محمد', en: 'e.g. John Smith', ru: 'Напр.: Иван Иванов', it: 'Es. Mario Rossi' }) as string}
+                  className="h-10 text-sm"
+                  maxLength={120}
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-primary/70 uppercase tracking-wider mb-1 block">
+                  {L(locale, { ar: 'الجنسية', en: 'Nationality', ru: 'Гражданство', it: 'Nazionalità' })}
+                </label>
+                <CountryPicker value={nationality} onChange={setNationality} locale={locale} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] font-bold text-primary/70 uppercase tracking-wider mb-1 block">
+                    {L(locale, { ar: 'رقم الهاتف', en: 'Phone', ru: 'Телефон', it: 'Telefono' })}
+                  </label>
+                  <div className="relative">
+                    {country?.dial && (
+                      <span className="absolute start-2 top-1/2 -translate-y-1/2 text-[11px] font-bold text-muted-foreground tabular-nums pointer-events-none" dir="ltr">
+                        {country.dial}
+                      </span>
+                    )}
+                    <Input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/[^\d+\-\s()]/g, ''))}
+                      placeholder="123 456 7890"
+                      dir="ltr"
+                      className={`h-10 text-sm tabular-nums ${country?.dial ? 'ps-12' : ''}`}
+                      maxLength={20}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-primary/70 uppercase tracking-wider mb-1 block">
+                    {L(locale, { ar: 'العمر', en: 'Age', ru: 'Возраст', it: 'Età' })}
+                  </label>
+                  <Input
+                    type="number"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="—"
+                    min={1}
+                    max={120}
+                    className="h-10 text-sm tabular-nums"
+                  />
+                </div>
+              </div>
+
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                {L(locale, {
+                  ar: '✓ ستُرسل هذه البيانات تلقائياً مع رسالة واتساب لتسهيل الحجز.',
+                  en: '✓ These details auto-fill the WhatsApp message to speed up booking.',
+                  ru: '✓ Данные автоматически добавятся в WhatsApp-сообщение.',
+                  it: '✓ Questi dati vengono inseriti nel messaggio WhatsApp.',
+                })}
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Price total */}
         <div className="flex justify-between items-end pt-3 border-t border-dashed border-accent/25">

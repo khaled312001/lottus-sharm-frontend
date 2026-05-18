@@ -6,14 +6,17 @@ import { useAdminApi } from '@/lib/admin-auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Copy } from 'lucide-react';
+import { useRouter } from '@/i18n/routing';
 import { toast } from 'sonner';
 import type { TripDTO } from '@/types/api';
 
 export default function AdminTripsPage() {
   const api = useAdminApi();
+  const router = useRouter();
   const [trips, setTrips] = useState<TripDTO[]>([]);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<number | null>(null);
 
   const load = async () => {
     try {
@@ -40,6 +43,18 @@ export default function AdminTripsPage() {
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
     }
+  };
+
+  const duplicate = async (id: number, title: string) => {
+    if (!confirm(`نسخ "${title}" كرحلة جديدة (غير منشورة)؟`)) return;
+    setBusy(id);
+    try {
+      const created = await api.post<{ id: number }>(`/admin/trips/${id}/duplicate`);
+      toast.success('تم النسخ — افتح الرحلة الجديدة للتعديل');
+      router.push(`/admin/trips/${created.id}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    } finally { setBusy(null); }
   };
 
   return (
@@ -87,9 +102,12 @@ export default function AdminTripsPage() {
                     </td>
                     <td className="py-2 px-4">
                       <div className="flex gap-1">
-                        <Button asChild size="icon" variant="ghost"><Link href={`/admin/trips/${t.id}`}><Edit className="h-4 w-4" /></Link></Button>
-                        <Button asChild size="icon" variant="ghost"><a href={`/${'ar'}/trips/${t.slug}`} target="_blank" rel="noopener"><Eye className="h-4 w-4" /></a></Button>
-                        <Button size="icon" variant="ghost" onClick={() => del(t.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
+                        <Button asChild size="icon" variant="ghost" title="تعديل"><Link href={`/admin/trips/${t.id}`}><Edit className="h-4 w-4" /></Link></Button>
+                        <Button asChild size="icon" variant="ghost" title="معاينة عامة"><a href={`/${'ar'}/trips/${t.slug}`} target="_blank" rel="noopener"><Eye className="h-4 w-4" /></a></Button>
+                        <Button size="icon" variant="ghost" title="نسخ" disabled={busy === t.id} onClick={() => duplicate(t.id, t.translations.find((x) => x.locale === 'AR')?.title || t.slug)}>
+                          <Copy className={`h-4 w-4 ${busy === t.id ? 'animate-pulse text-accent' : 'text-accent-700'}`} />
+                        </Button>
+                        <Button size="icon" variant="ghost" title="حذف" onClick={() => del(t.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                       </div>
                     </td>
                   </tr>

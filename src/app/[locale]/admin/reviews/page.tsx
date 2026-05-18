@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input, Textarea } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, Check, X, Trash2, Plus } from 'lucide-react';
+import { Star, Check, X, Trash2, Plus, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { ImageLightbox } from '@/components/public/image-lightbox';
 
 interface Review {
   id: number;
@@ -17,6 +18,7 @@ interface Review {
   comment: string;
   locale: string;
   isApproved: boolean;
+  images?: string[];
   createdAt: string;
   trip?: { id: number; slug: string; translations?: Array<{ locale: string; title: string }> };
 }
@@ -28,6 +30,21 @@ export default function AdminReviewsPage() {
   const [items, setItems] = useState<Review[]>([]);
   const [trips, setTrips] = useState<TripOption[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number; caption?: string } | null>(null);
+
+  const deleteImage = async (reviewId: number, urlToRemove: string) => {
+    if (!confirm('حذف هذه الصورة من التقييم؟')) return;
+    const review = items.find((r) => r.id === reviewId);
+    if (!review || !review.images) return;
+    const next = review.images.filter((u) => u !== urlToRemove);
+    try {
+      await api.patch(`/admin/reviews/${reviewId}/images`, { images: next });
+      setItems((prev) => prev.map((r) => (r.id === reviewId ? { ...r, images: next } : r)));
+      toast.success('تم حذف الصورة');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
   const [form, setForm] = useState({
     tripId: 0,
     customerName: '',
@@ -182,10 +199,59 @@ export default function AdminReviewsPage() {
                 </div>
               </div>
               <p className="text-sm text-foreground/90 mt-2">{r.comment}</p>
+              {r.images && r.images.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-amber-200/60">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="inline-flex items-center gap-1.5">
+                      <ImageIcon className="h-3.5 w-3.5 text-accent-700" />
+                      <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+                        صور أرفقها العميل ({r.images.length})
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground/70">
+                      مرّر فوق الصورة لحذفها · انقر للتكبير
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5">
+                    {r.images.map((url, idx) => (
+                      <div key={url} className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-accent/20 hover:border-accent transition-colors group">
+                        <button
+                          type="button"
+                          onClick={() => setLightbox({ images: r.images!, index: idx, caption: `${r.customerName} — ${tripTitle(r)}` })}
+                          className="absolute inset-0 w-full h-full"
+                          aria-label="View image"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={url} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                        </button>
+                        {/* Per-image delete overlay */}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); deleteImage(r.id, url); }}
+                          aria-label="Delete image"
+                          title="حذف الصورة"
+                          className="absolute top-1 end-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-600/95 text-white shadow-md opacity-0 group-hover:opacity-100 hover:bg-rose-700 hover:scale-110 transition-all z-10"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </CardContent>
       </Card>
+
+      {/* Image lightbox */}
+      <ImageLightbox
+        open={!!lightbox}
+        images={lightbox?.images || []}
+        startIndex={lightbox?.index || 0}
+        caption={lightbox?.caption}
+        onClose={() => setLightbox(null)}
+      />
     </div>
   );
 }

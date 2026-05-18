@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/public/motion';
-import { Award, Heart, Compass, Shield, Sparkles, Target, Eye, ArrowRight, Phone, MapPin, Users, Calendar, Briefcase, Mic, Plane } from 'lucide-react';
+import { Award, Heart, Compass, Shield, Sparkles, Target, Eye, ArrowRight, Phone, MapPin, Users, Calendar, Briefcase, Mic, Plane, Star, Quote, MapPinned, MessageCircle, Search, ClipboardCheck, BadgeCheck, Trophy, Globe2 } from 'lucide-react';
 import { getSiteSettings, getLocalizedName } from '@/lib/site-settings';
 import { L } from '@/lib/utils';
 
@@ -61,10 +61,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   ];
 
   const stats = [
-    { v: '13+',  ar: 'سنة من الخبرة', en: 'Years',        ru: 'Лет опыта',     it: 'Anni' },
-    { v: '10k+', ar: 'سائح سعيد',     en: 'Travelers',    ru: 'Путешественников', it: 'Viaggiatori' },
-    { v: '50+',  ar: 'وجهة سياحية',   en: 'Destinations', ru: 'Направлений',   it: 'Destinazioni' },
-    { v: '4.9★', ar: 'تقييم العملاء', en: 'Rating',       ru: 'Рейтинг',       it: 'Valutazione' },
+    { v: '13+',  icon: Calendar, ar: 'سنة من الخبرة', en: 'Years',        ru: 'Лет опыта',     it: 'Anni' },
+    { v: '10k+', icon: Users,    ar: 'سائح سعيد',     en: 'Travelers',    ru: 'Путешественников', it: 'Viaggiatori' },
+    { v: '50+',  icon: MapPinned, ar: 'وجهة سياحية',   en: 'Destinations', ru: 'Направлений',   it: 'Destinazioni' },
+    { v: '4.9',  icon: Star,     ar: 'تقييم العملاء', en: 'Rating',       ru: 'Рейтинг',       it: 'Valutazione' },
   ];
 
   return (
@@ -88,64 +88,107 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         </div>
       </section>
 
-      <section className="relative bg-accent py-8 md:py-12 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-accent via-accent to-accent-600 py-10 md:py-14 overflow-hidden">
         <div aria-hidden className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(13,58,58,0.4) 0%, transparent 40%), radial-gradient(circle at 80% 50%, rgba(13,58,58,0.3) 0%, transparent 40%)' }} />
-        <div className="container relative grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-primary">
+        <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        <div aria-hidden className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        <div className="container relative grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-primary">
           {stats.map((s, i) => (
             <Reveal key={s.en} delay={i * 0.1}>
-              <div className="group">
-                <div className="font-serif text-3xl md:text-5xl font-bold leading-none group-hover:scale-110 transition-transform duration-300 inline-block">{s.v}</div>
-                <div className="text-xs md:text-sm font-semibold mt-2 uppercase tracking-wider">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</div>
+              <div className="group flex flex-col items-center text-center">
+                <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 border border-primary/15 mb-2.5 group-hover:bg-primary/20 group-hover:rotate-6 transition-all duration-300">
+                  <s.icon className="h-5 w-5 md:h-6 md:w-6" />
+                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="font-serif text-3xl md:text-5xl font-bold leading-none group-hover:scale-110 transition-transform duration-300 inline-block tabular-nums">{s.v}</span>
+                  {s.v === '4.9' && <Star className="h-4 w-4 md:h-5 md:w-5 fill-primary text-primary" />}
+                </div>
+                <div className="text-[10px] md:text-xs font-bold mt-1.5 uppercase tracking-[0.18em] opacity-85">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</div>
               </div>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* SLOGAN BANNER */}
-      <section className="py-12 md:py-16 bg-cream relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none animate-spin-slow">
-          <Image src="/logo.jpg" alt="" fill className="object-contain" sizes="100vw" />
-        </div>
-        {/* Decorative sparkles */}
-        <span aria-hidden className="sparkle delay-1" style={{ top: '20%', insetInlineStart: '15%' }} />
-        <span aria-hidden className="sparkle delay-2" style={{ top: '60%', insetInlineStart: '20%' }} />
-        <span aria-hidden className="sparkle delay-3" style={{ top: '30%', insetInlineEnd: '18%' }} />
-        <span aria-hidden className="sparkle delay-4" style={{ top: '70%', insetInlineEnd: '15%' }} />
+      {/* PULL QUOTE — editorial slogan */}
+      <section className="relative py-16 md:py-24 bg-cream overflow-hidden">
+        <div aria-hidden className="absolute -top-20 -end-20 w-[28rem] h-[28rem] rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute -bottom-32 -start-20 w-[28rem] h-[28rem] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
 
-        <div className="container relative text-center flex flex-col items-center">
-          <Reveal className="flex flex-col items-center">
-            <span className="eyebrow">{L(locale, { ar: 'سلوجاننا', en: 'Our slogan', ru: 'Наш слоган', it: 'Il nostro slogan' })}</span>
-            <p className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-primary leading-tight italic text-balance">
-              <span className="inline-block animate-float">«</span>
-              {L(locale, { ar: 'لو جاى شرم متشلش هم', en: 'Visiting Sharm? No worries with us', ru: 'Едете в Шарм? С нами — никаких забот', it: 'Vai a Sharm? Nessun problema con noi' })}
-              <span className="inline-block animate-float" style={{ animationDelay: '1.5s' }}>»</span>
-            </p>
-            <span className="rule-gold mt-6" />
+        <div className="container relative max-w-4xl">
+          <Reveal>
+            <figure className="relative">
+              {/* Decorative oversized quote mark */}
+              <Quote
+                aria-hidden
+                className="absolute -top-6 -start-2 md:-top-10 md:-start-6 h-20 w-20 md:h-32 md:w-32 text-accent/25 rtl:scale-x-[-1]"
+                strokeWidth={1}
+              />
+              <blockquote className="relative ps-12 md:ps-20 border-s-[3px] border-accent">
+                <p className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary leading-tight italic text-balance">
+                  {L(locale, {
+                    ar: 'لو جاى شرم متشلش هم — كل رحلة قصة، وكل عميل عائلة.',
+                    en: "Visiting Sharm? No worries with us — every trip is a story, every guest is family.",
+                    ru: 'Едете в Шарм? Не переживайте — каждое путешествие это история, каждый гость — семья.',
+                    it: 'Vai a Sharm? Niente pensieri — ogni viaggio è una storia, ogni ospite è famiglia.',
+                  })}
+                </p>
+                <figcaption className="mt-6 flex items-center gap-3 text-sm">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-serif font-bold">L</span>
+                  <div>
+                    <div className="font-bold text-primary">{brand}</div>
+                    <div className="text-xs text-muted-foreground">{L(locale, { ar: 'فلسفتنا منذ 2013', en: 'Our philosophy since 2013', ru: 'Наша философия с 2013', it: 'La nostra filosofia dal 2013' })}</div>
+                  </div>
+                </figcaption>
+              </blockquote>
+            </figure>
           </Reveal>
         </div>
       </section>
 
-      {/* LEGAL IDENTITY */}
-      <section className="py-12 md:py-16 bg-gradient-to-b from-cream to-muted/30 border-y border-accent/15">
-        <div className="container max-w-4xl">
+      {/* LEGAL IDENTITY — premium credential card */}
+      <section className="py-12 md:py-16 bg-gradient-to-b from-cream to-muted/30">
+        <div className="container max-w-5xl">
           <Reveal>
-            <div className="bg-white rounded-2xl p-8 md:p-10 border border-accent/15 card-shadow text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/15 border border-accent/30 mx-auto mb-4">
-                <Briefcase className="h-7 w-7 text-accent" />
-              </div>
-              <span className="eyebrow eyebrow-center">{L(locale, { ar: 'التعريف القانوني', en: 'Legal identity', ru: 'Юридическое наименование', it: 'Denominazione legale' })}</span>
-              <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3 leading-tight">
-                {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lotus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lotus Sharm Tourism Investment & Marketing»', it: 'Lotus Sharm Tourism Investment & Marketing S.r.l.' })}
-              </h3>
-              <p className="text-sm md:text-base text-foreground/75 leading-relaxed mb-5">
-                {L(locale, { ar: 'الاسم التجاري المعتمد: "لوتس شرم — Lotus Sharm" · مرخّصة قانونياً بمصر · مقرها شرم الشيخ، محافظة جنوب سيناء', en: 'Trade name: "Lotus Sharm" · Legally licensed in Egypt · Based in Sharm El Sheikh, South Sinai Governorate' })}
-              </p>
-              <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 rounded-xl bg-accent/10 border border-accent/30 text-sm">
-                <span className="text-foreground/70">
-                  {L(locale, { ar: 'سجل تجاري رقم', en: 'Commercial Registration', ru: 'Регистрационный номер', it: 'Reg. commerciale n.' })}
-                </span>
-                <span className="font-mono font-bold tracking-wider text-accent-700">269494</span>
+            <div className="relative bg-gradient-to-br from-primary via-primary to-primary-900 text-cream rounded-2xl md:rounded-3xl border border-accent/25 shadow-2xl overflow-hidden">
+              <div aria-hidden className="absolute -top-32 -end-32 w-80 h-80 rounded-full bg-accent/15 blur-3xl" />
+              <div aria-hidden className="absolute -bottom-32 -start-32 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
+              <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+
+              <div className="relative grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center p-6 md:p-10">
+                {/* Left: official seal */}
+                <div className="flex md:flex-col items-center gap-3 md:gap-2">
+                  <div className="relative inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-accent/15 border-2 border-accent/40 backdrop-blur shrink-0">
+                    <Briefcase className="h-10 w-10 md:h-11 md:w-11 text-accent" />
+                    <BadgeCheck aria-hidden className="absolute -bottom-2 -end-2 h-7 w-7 text-emerald-400 fill-primary-900 bg-primary-900 rounded-full" />
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold whitespace-nowrap md:text-center">
+                    {L(locale, { ar: 'مرخصة قانونياً', en: 'Licensed entity', ru: 'Лицензировано', it: 'Concessionato' })}
+                  </div>
+                </div>
+
+                {/* Middle: company info */}
+                <div className="text-center md:text-start">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-accent font-bold mb-2">
+                    {L(locale, { ar: 'الكيان القانوني', en: 'Legal identity', ru: 'Юридическое лицо', it: 'Entità legale' })}
+                  </div>
+                  <h3 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold mb-2 leading-tight text-balance">
+                    {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lotus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lotus Sharm Tourism Investment & Marketing»', it: 'Lotus Sharm Tourism Investment & Marketing S.r.l.' })}
+                  </h3>
+                  <p className="text-sm text-cream/75 leading-relaxed">
+                    {L(locale, { ar: 'الاسم التجاري المعتمد: «لوتس شرم — Lotus Sharm» · شرم الشيخ، جنوب سيناء، مصر', en: 'Trade name: "Lotus Sharm" · Sharm El Sheikh, South Sinai, Egypt' })}
+                  </p>
+                </div>
+
+                {/* Right: registration number plate */}
+                <div className="flex md:flex-col items-center justify-center gap-2 md:min-w-[160px]">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-cream/65 font-bold whitespace-nowrap">
+                    {L(locale, { ar: 'سجل تجاري', en: 'Comm. Reg.', ru: 'Рег. №', it: 'Reg. n.' })}
+                  </div>
+                  <div className="font-mono font-bold text-2xl md:text-3xl tabular-nums text-accent px-4 py-2 rounded-xl bg-cream/10 border border-accent/30">
+                    269494
+                  </div>
+                </div>
               </div>
             </div>
           </Reveal>
@@ -193,11 +236,38 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </div>
           </Reveal>
           <Reveal delay={0.2}>
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden card-shadow-gold">
-              <Image src="/hero-slides/hero-08.jpg" alt={brand} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-              <div className="absolute bottom-4 start-4 right-4 glass-dark rounded-xl p-4 text-cream">
-                <div className="font-serif text-2xl font-bold text-accent">{brand}</div>
-                <div className="text-xs opacity-80 mt-1">{L(locale, { ar: 'منذ 2013 — شرم الشيخ', en: 'Since 2013 — Sharm El Sheikh', ru: 'С 2013 — Шарм-эль-Шейх', it: 'Dal 2013 — Sharm El Sheikh' })}</div>
+            <div className="relative">
+              {/* Floating decorative gold frame behind */}
+              <div aria-hidden className="absolute -top-4 -end-4 md:-top-5 md:-end-5 inset-0 rounded-2xl border-2 border-accent/40 pointer-events-none" />
+              {/* Floating decorative dot grid */}
+              <div aria-hidden className="absolute -bottom-6 -start-6 w-24 h-24 opacity-30 pointer-events-none" style={{
+                backgroundImage: 'radial-gradient(circle, #c9a86a 1.5px, transparent 1.5px)',
+                backgroundSize: '12px 12px',
+              }} />
+              {/* Main image */}
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden card-shadow-gold group">
+                <Image src="/hero-slides/hero-08.jpg" alt={brand} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/70 via-primary-900/10 to-transparent" />
+
+                {/* Floating year badge top */}
+                <div className="absolute top-4 end-4 inline-flex flex-col items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-accent text-primary font-serif font-bold shadow-2xl shadow-accent/40 animate-float">
+                  <span className="text-2xl md:text-3xl leading-none">13</span>
+                  <span className="text-[8px] md:text-[9px] uppercase tracking-wider opacity-90 mt-0.5">{L(locale, { ar: 'سنة', en: 'years', ru: 'лет', it: 'anni' })}</span>
+                </div>
+
+                {/* Brand info card bottom */}
+                <div className="absolute bottom-4 start-4 end-4 glass-dark rounded-xl p-4 text-cream border border-accent/25">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-accent/20 border border-accent/30">
+                      <Sparkles className="h-3.5 w-3.5 text-accent" />
+                    </span>
+                    <div className="font-serif text-xl font-bold text-accent">{brand}</div>
+                  </div>
+                  <div className="text-xs opacity-85 flex items-center gap-1.5">
+                    <MapPin className="h-3 w-3 text-accent" />
+                    {L(locale, { ar: 'منذ 2013 — شرم الشيخ', en: 'Since 2013 — Sharm El Sheikh', ru: 'С 2013 — Шарм-эль-Шейх', it: 'Dal 2013 — Sharm El Sheikh' })}
+                  </div>
+                </div>
               </div>
             </div>
           </Reveal>
@@ -236,15 +306,100 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 itDesc: 'Allestimento completo di conferenze con soggiorno, ospitalità e servizi AV.' },
             ].map((s, i) => (
               <Reveal key={s.en} delay={i * 0.1}>
-                <div className="group bg-white rounded-2xl p-6 md:p-7 border border-accent/10 hover:border-accent hover:-translate-y-2 transition-all duration-500 card-shadow h-full">
-                  <div className="w-14 h-14 rounded-xl bg-primary text-accent flex items-center justify-center mb-5 group-hover:bg-accent group-hover:text-primary transition-colors">
+                <div className="group relative bg-white rounded-2xl p-6 md:p-7 border border-accent/10 hover:border-accent/50 hover:-translate-y-2 transition-all duration-500 card-shadow hover:card-shadow-gold h-full overflow-hidden">
+                  {/* Gradient bloom on hover */}
+                  <div aria-hidden className="absolute -top-16 -end-16 w-40 h-40 bg-gradient-to-bl from-accent/20 via-accent/5 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Faded index number */}
+                  <span aria-hidden className="absolute -top-2 end-3 font-serif text-7xl font-bold text-accent/5 group-hover:text-accent/15 transition-colors duration-500 select-none leading-none">
+                    0{i + 1}
+                  </span>
+                  <div className="relative w-14 h-14 rounded-xl bg-primary text-accent flex items-center justify-center mb-5 group-hover:bg-accent group-hover:text-primary group-hover:rotate-6 transition-all duration-500 shadow-md shadow-primary/20">
                     <s.icon className="h-7 w-7" />
                   </div>
-                  <h3 className="font-serif font-bold text-lg md:text-xl text-primary mb-2">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: s.arDesc, en: s.enDesc, ru: s.ruDesc, it: s.itDesc })}</p>
+                  <h3 className="relative font-serif font-bold text-lg md:text-xl text-primary mb-2 group-hover:text-accent-700 transition-colors">{L(locale, { ar: s.ar, en: s.en, ru: s.ru, it: s.it })}</h3>
+                  <p className="relative text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: s.arDesc, en: s.enDesc, ru: s.ruDesc, it: s.itDesc })}</p>
+                  {/* Bottom gold rule that grows on hover */}
+                  <span aria-hidden className="absolute bottom-0 inset-x-6 md:inset-x-7 h-0.5 gradient-gold rounded-full scale-x-0 group-hover:scale-x-100 origin-start transition-transform duration-500" />
                 </div>
               </Reveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW WE WORK — 3-step process */}
+      <section className="relative py-16 md:py-24 bg-white overflow-hidden">
+        <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        <div aria-hidden className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        <div aria-hidden className="absolute -top-32 -end-32 w-96 h-96 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+
+        <div className="container relative">
+          <Reveal className="text-center mb-12 md:mb-16 flex flex-col items-center">
+            <span className="eyebrow">{L(locale, { ar: 'كيف نعمل', en: 'How we work', ru: 'Как мы работаем', it: 'Come lavoriamo' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
+              {L(locale, { ar: 'ثلاث خطوات لرحلة لا تُنسى', en: 'Three steps to an unforgettable trip', ru: 'Три шага к незабываемому путешествию', it: 'Tre passi per un viaggio indimenticabile' })}
+            </h2>
+            <span className="rule-gold" />
+            <p className="text-muted-foreground max-w-xl mx-auto mt-2 leading-relaxed">
+              {L(locale, {
+                ar: 'عملية بسيطة وشفافة من اللحظة التي تتواصل فيها معنا حتى عودتك للفندق',
+                en: 'A simple, transparent process from the moment you reach out until you return to your hotel',
+                ru: 'Простой и прозрачный процесс — от первого сообщения до возвращения в отель',
+                it: 'Un processo semplice e trasparente dal primo contatto al rientro in hotel',
+              })}
+            </p>
+          </Reveal>
+
+          <div className="relative max-w-5xl mx-auto">
+            {/* Connecting line (desktop) */}
+            <div aria-hidden className="hidden md:block absolute top-12 inset-x-12 h-0.5 bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+            <div className="relative grid md:grid-cols-3 gap-6 md:gap-8">
+              {[
+                {
+                  icon: MessageCircle,
+                  ar: 'تواصل معنا', en: 'Reach out', ru: 'Свяжитесь', it: 'Contattaci',
+                  arDesc: 'كلمنا على واتساب أو من نموذج الحجز — رد فوري من فريق متعدد اللغات.',
+                  enDesc: 'Message us on WhatsApp or via the booking form — instant reply from our multilingual team.',
+                  ruDesc: 'Напишите в WhatsApp или через форму бронирования — мгновенный ответ от многоязычной команды.',
+                  itDesc: 'Scrivici su WhatsApp o dal form di prenotazione — risposta immediata dal nostro team multilingue.',
+                },
+                {
+                  icon: ClipboardCheck,
+                  ar: 'صمم رحلتك', en: 'Plan together', ru: 'Спланируем вместе', it: 'Pianifichiamo insieme',
+                  arDesc: 'نقترح المسار الأنسب لاهتماماتك وميزانيتك — مع كل التفاصيل واضحة من البداية.',
+                  enDesc: "We suggest the right route for your interests and budget — every detail clear from the start.",
+                  ruDesc: 'Подберём маршрут под ваши интересы и бюджет — все детали ясны с самого начала.',
+                  itDesc: 'Suggeriamo il percorso giusto per i tuoi interessi e budget — ogni dettaglio chiaro dall’inizio.',
+                },
+                {
+                  icon: Sparkles,
+                  ar: 'استمتع', en: 'Enjoy', ru: 'Наслаждайтесь', it: 'Goditela',
+                  arDesc: 'الالتقاط من الفندق، مرشد مرخص، معدات معتمدة — ركّز على المتعة، نحن نتولى الباقي.',
+                  enDesc: 'Hotel pickup, licensed guide, certified equipment — focus on enjoying; we handle the rest.',
+                  ruDesc: 'Трансфер из отеля, лицензированный гид, сертифицированное оборудование — наслаждайтесь, остальное за нами.',
+                  itDesc: 'Pick-up in hotel, guida autorizzata, attrezzatura certificata — pensa solo a divertirti.',
+                },
+              ].map((step, i) => (
+                <Reveal key={step.en} delay={i * 0.12}>
+                  <div className="relative text-center">
+                    {/* Number badge */}
+                    <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-white border-2 border-accent shadow-xl shadow-accent/20 mb-5 group-hover:rotate-6 transition-transform">
+                      <step.icon className="h-9 w-9 text-accent-700" />
+                      <span className="absolute -top-1 -end-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-accent font-serif font-bold text-sm shadow-md">
+                        {i + 1}
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-xl md:text-2xl font-bold text-primary mb-2">
+                      {L(locale, { ar: step.ar, en: step.en, ru: step.ru, it: step.it })}
+                    </h3>
+                    <p className="text-sm md:text-base text-foreground/75 leading-relaxed max-w-xs mx-auto">
+                      {L(locale, { ar: step.arDesc, en: step.enDesc, ru: step.ruDesc, it: step.itDesc })}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -302,28 +457,38 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <span className="rule-gold" />
           </Reveal>
           <div className="grid md:grid-cols-2 gap-6">
-            <Reveal delay={0.1}>
-              <div className="bg-white rounded-2xl p-8 border border-accent/10 hover:border-accent/40 transition-colors card-shadow h-full">
-                <div className="w-14 h-14 rounded-xl gradient-gold flex items-center justify-center mb-5">
-                  <Target className="h-7 w-7 text-primary" />
+            {[
+              { icon: Target, ar: 'مهمتنا', en: 'Our Mission', ru: 'Наша миссия', it: 'La nostra missione',
+                arDesc: 'تقديم تجارب سياحية فاخرة وأصيلة في شرم الشيخ وسيناء، بأعلى معايير الجودة والأمان، وبأسعار شفافة وعادلة.',
+                enDesc: 'Deliver luxury, authentic tourism experiences in Sharm El Sheikh with the highest quality and transparent pricing.',
+                ruDesc: 'Предоставлять подлинные роскошные туристические впечатления в Шарм-эль-Шейхе с высочайшим качеством и прозрачными ценами.',
+                itDesc: 'Offrire esperienze turistiche autentiche e di lusso a Sharm El Sheikh con la massima qualità e prezzi trasparenti.' },
+              { icon: Eye, ar: 'رؤيتنا', en: 'Our Vision', ru: 'Наше видение', it: 'La nostra visione',
+                arDesc: 'أن نكون العلامة السياحية الأولى المختارة في شرم الشيخ، ومنصة عربية تنافس الشركات العالمية.',
+                enDesc: 'To be the #1 chosen tourism brand in Sharm, an Egyptian platform competing globally.',
+                ruDesc: 'Стать туристическим брендом №1 в Шарме — египетской платформой, конкурирующей на мировом уровне.',
+                itDesc: 'Essere il brand turistico #1 a Sharm — una piattaforma egiziana che compete a livello globale.' },
+            ].map((item, i) => (
+              <Reveal key={item.en} delay={(i + 1) * 0.1}>
+                <div className="group relative bg-white rounded-2xl p-8 md:p-9 border border-accent/15 hover:border-accent/50 hover:-translate-y-1 transition-all duration-500 card-shadow hover:card-shadow-gold h-full overflow-hidden">
+                  {/* Faded large quote mark */}
+                  <Quote aria-hidden className="absolute top-4 end-4 h-16 w-16 text-accent/8 group-hover:text-accent/20 transition-colors duration-500 rtl:scale-x-[-1]" />
+                  {/* Gradient bloom on hover */}
+                  <div aria-hidden className="absolute -bottom-20 -start-20 w-56 h-56 rounded-full bg-gradient-to-tr from-accent/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-xl gradient-gold flex items-center justify-center mb-5 shadow-md shadow-accent/30 group-hover:rotate-6 group-hover:scale-110 transition-transform duration-500">
+                      <item.icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3 leading-tight">{L(locale, { ar: item.ar, en: item.en, ru: item.ru, it: item.it })}</h3>
+                    <span aria-hidden className="block w-10 h-0.5 bg-accent mb-4" />
+                    <p className="text-foreground/80 leading-relaxed text-base">
+                      {L(locale, { ar: item.arDesc, en: item.enDesc, ru: item.ruDesc, it: item.itDesc })}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-primary mb-3">{L(locale, { ar: 'مهمتنا', en: 'Our Mission', ru: 'Наша миссия', it: 'La nostra missione' })}</h3>
-                <p className="text-foreground/80 leading-relaxed">
-                  {L(locale, { ar: 'تقديم تجارب سياحية فاخرة وأصيلة في شرم الشيخ وسيناء، بأعلى معايير الجودة والأمان، وبأسعار شفافة وعادلة.', en: 'Deliver luxury, authentic tourism experiences in Sharm El Sheikh with the highest quality and transparent pricing.' })}
-                </p>
-              </div>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="bg-white rounded-2xl p-8 border border-accent/10 hover:border-accent/40 transition-colors card-shadow h-full">
-                <div className="w-14 h-14 rounded-xl gradient-gold flex items-center justify-center mb-5">
-                  <Eye className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="font-serif text-2xl font-bold text-primary mb-3">{L(locale, { ar: 'رؤيتنا', en: 'Our Vision', ru: 'Наше видение', it: 'La nostra visione' })}</h3>
-                <p className="text-foreground/80 leading-relaxed">
-                  {L(locale, { ar: 'أن نكون العلامة السياحية الأولى المختارة في شرم الشيخ، ومنصة عربية تنافس الشركات العالمية.', en: 'To be the #1 chosen tourism brand in Sharm, an Egyptian platform competing globally.' })}
-                </p>
-              </div>
-            </Reveal>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -335,19 +500,93 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'ما نؤمن به', en: 'What we believe in', ru: 'Во что мы верим', it: 'In cosa crediamo' })}</h2>
             <span className="rule-gold" />
           </Reveal>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {values.map((v, i) => (
               <Reveal key={v.en} delay={i * 0.1}>
-                <div className="group bg-white rounded-2xl p-5 md:p-7 border border-accent/10 hover:border-accent hover:-translate-y-2 transition-all duration-500 card-shadow h-full">
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl gradient-gold flex items-center justify-center text-primary mb-4 group-hover:rotate-6 transition-transform">
+                <div className="group relative bg-white rounded-2xl p-5 md:p-7 border border-accent/10 hover:border-accent/50 hover:-translate-y-2 transition-all duration-500 card-shadow hover:card-shadow-gold h-full overflow-hidden">
+                  {/* Decorative gold corner */}
+                  <div aria-hidden className="absolute -top-12 -end-12 w-24 h-24 bg-gradient-to-bl from-accent/20 via-accent/5 to-transparent rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                  <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl gradient-gold flex items-center justify-center text-primary mb-4 group-hover:rotate-[-6deg] group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-accent/30">
                     <v.icon className="h-6 w-6 md:h-7 md:w-7" />
                   </div>
-                  <h3 className="font-serif font-bold text-base md:text-xl text-primary mb-2">{L(locale, { ar: v.ar, en: v.en, ru: v.ru, it: v.it })}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: v.arDesc, en: v.enDesc, ru: v.ruDesc, it: v.itDesc })}</p>
+                  <h3 className="relative font-serif font-bold text-base md:text-xl text-primary mb-2 group-hover:text-accent-700 transition-colors">{L(locale, { ar: v.ar, en: v.en, ru: v.ru, it: v.it })}</h3>
+                  <p className="relative text-xs md:text-sm text-muted-foreground leading-relaxed">{L(locale, { ar: v.arDesc, en: v.enDesc, ru: v.ruDesc, it: v.itDesc })}</p>
+                  <span aria-hidden className="absolute bottom-0 inset-x-5 md:inset-x-7 h-0.5 gradient-gold rounded-full scale-x-0 group-hover:scale-x-100 origin-start transition-transform duration-500" />
                 </div>
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* AWARDS & CERTIFICATIONS */}
+      <section className="relative py-16 md:py-24 bg-gradient-to-b from-muted/20 to-cream overflow-hidden">
+        <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+
+        <div className="container relative">
+          <Reveal className="text-center mb-12 md:mb-14 flex flex-col items-center">
+            <span className="eyebrow">{L(locale, { ar: 'ضمانات الجودة', en: 'Quality assurance', ru: 'Гарантии качества', it: 'Garanzie di qualità' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
+              {L(locale, { ar: 'شهادات وتراخيص نفخر بها', en: 'Certifications & credentials', ru: 'Сертификаты и лицензии', it: 'Certificazioni e licenze' })}
+            </h2>
+            <span className="rule-gold" />
+          </Reveal>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 max-w-5xl mx-auto">
+            {[
+              { icon: BadgeCheck, color: 'emerald',
+                ar_t: 'مرخصة في مصر', en_t: 'Egypt licensed', ru_t: 'Лицензия Египта', it_t: 'Licenza Egitto',
+                ar_s: 'وزارة السياحة', en_s: 'Ministry of Tourism', ru_s: 'Минтуризма', it_s: 'Min. Turismo' },
+              { icon: Shield, color: 'sky',
+                ar_t: 'تأمين شامل', en_t: 'Fully insured', ru_t: 'Полная страховка', it_t: 'Assicurato',
+                ar_s: 'لكل المسافرين', en_s: 'For all travelers', ru_s: 'Для всех гостей', it_s: 'Per tutti gli ospiti' },
+              { icon: Trophy, color: 'amber',
+                ar_t: 'تقييم 5★', en_t: '5★ Rated', ru_t: 'Рейтинг 5★', it_t: 'Valutazione 5★',
+                ar_s: '500+ مراجعة', en_s: '500+ reviews', ru_s: '500+ отзывов', it_s: '500+ recensioni' },
+              { icon: Globe2, color: 'violet',
+                ar_t: '4 لغات', en_t: '4 Languages', ru_t: '4 языка', it_t: '4 lingue',
+                ar_s: 'مرشدون معتمدون', en_s: 'Certified guides', ru_s: 'Сертифицированные гиды', it_s: 'Guide certificate' },
+            ].map((cred, i) => {
+              const ring = {
+                emerald: 'from-emerald-500/15 to-emerald-500/0 text-emerald-700 border-emerald-300/50',
+                sky:     'from-sky-500/15 to-sky-500/0 text-sky-700 border-sky-300/50',
+                amber:   'from-amber-500/15 to-amber-500/0 text-amber-700 border-amber-300/50',
+                violet:  'from-violet-500/15 to-violet-500/0 text-violet-700 border-violet-300/50',
+              }[cred.color] as string;
+              return (
+                <Reveal key={cred.en_t} delay={i * 0.08}>
+                  <div className="group relative bg-white rounded-2xl p-5 border border-accent/15 hover:border-accent/40 hover:-translate-y-1 transition-all duration-300 card-shadow hover:card-shadow-gold h-full text-center">
+                    <div className={`absolute -top-px inset-x-3 h-0.5 bg-gradient-to-r from-transparent via-current to-transparent ${ring.split(' ')[2]}`} />
+                    <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${ring} border mb-3 group-hover:rotate-6 group-hover:scale-110 transition-transform duration-300`}>
+                      <cred.icon className="h-7 w-7" />
+                    </div>
+                    <div className="font-serif font-bold text-base md:text-lg text-primary leading-tight">
+                      {L(locale, { ar: cred.ar_t, en: cred.en_t, ru: cred.ru_t, it: cred.it_t })}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {L(locale, { ar: cred.ar_s, en: cred.en_s, ru: cred.ru_s, it: cred.it_s })}
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          {/* "Featured in / partnered with" strip */}
+          <Reveal delay={0.2} className="mt-12 md:mt-14">
+            <div className="text-center mb-5">
+              <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground font-bold">
+                {L(locale, { ar: 'شركاؤنا في الضيافة', en: 'Hospitality partners', ru: 'Партнёры гостеприимства', it: 'Partner ospitalità' })}
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-12 opacity-60 hover:opacity-100 transition-opacity">
+              {['Hilton', 'Marriott', 'Four Seasons', 'Rixos', 'Hyatt', 'Movenpick'].map((h) => (
+                <span key={h} className="font-serif font-bold text-lg md:text-xl text-primary/70 hover:text-primary transition-colors tracking-wider">
+                  {h}
+                </span>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
