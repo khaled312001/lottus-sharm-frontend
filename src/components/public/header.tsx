@@ -12,6 +12,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './language-switcher';
+import { CurrencySwitcher } from './currency-switcher';
 import { SearchBar } from './search-bar';
 import { Logo } from './logo';
 import { cn, buildWhatsAppLink } from '@/lib/utils';
@@ -152,6 +153,7 @@ export function Header() {
           <div className="hidden lg:block">
             <SearchBar variant="header" />
           </div>
+          <CurrencySwitcher />
           <LanguageSwitcher transparent={transparent} compact />
           <Button
             asChild

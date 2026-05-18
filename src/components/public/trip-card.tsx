@@ -7,6 +7,7 @@ import { Clock, MapPin, Star, ArrowUpRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { TripDTO } from '@/types/api';
 import { L } from '@/lib/utils';
+import { Price } from './price';
 
 export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: string; index?: number }) {
   const t = useTranslations();
@@ -77,7 +78,7 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
               <div>
                 <div className="text-[10px] uppercase tracking-wider text-cream/60">{t('common.from')}</div>
                 <div className="font-serif text-2xl font-bold text-accent">
-                  {isAr ? `${price} ج.م` : `$${Number(trip.priceForeignUSD)}`}
+                  <Price amount={price} from="EGP" />
                 </div>
                 <div className="text-[10px] text-cream/60">{t('common.perPerson')}</div>
               </div>

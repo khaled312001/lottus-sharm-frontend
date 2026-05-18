@@ -11,6 +11,9 @@ import {
 import type { TripDTO } from '@/types/api';
 import { bookingWhatsAppLink } from '@/lib/whatsapp';
 import { DatePicker } from './date-picker';
+import { API_BASE } from '@/lib/api';
+import { Price } from './price';
+import { useCurrency } from '@/lib/currency';
 
 export function BookingWidget({ trip }: { trip: TripDTO }) {
   const t = useTranslations('booking');
@@ -23,9 +26,15 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const [isLocal, setIsLocal] = useState(locale === 'ar');
 
   const unit = isLocal ? Number(trip.priceLocalEGP) : Number(trip.priceForeignUSD);
-  const symbol = isLocal ? 'ج.م' : '$';
+  const fromCurrency = (isLocal ? 'EGP' : 'USD') as 'EGP' | 'USD';
   const childPrice = unit * (1 - trip.childDiscount / 100);
   const total = adults * unit + children * childPrice;
+  // Display symbol comes from the user-selected currency, not the trip's currency.
+  const { currency: displayCurrency } = useCurrency();
+  void displayCurrency;
+  // Legacy: keep symbol for inline price-formula text. We render the actual
+  // amounts via <Price/> below so they convert live.
+  const symbol = isLocal ? 'ج.م' : '$';
 
   const waLink = bookingWhatsAppLink({ trip, locale, date, adults, children, isLocal });
   const isAr = locale === 'ar';
@@ -48,10 +57,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
           <div>
             <div className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold">{tCommon('from')}</div>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="font-serif text-3xl font-bold text-shimmer-gold leading-none tabular-nums">
-                {unit.toLocaleString()}
+              <span className="font-serif text-3xl font-bold text-shimmer-gold leading-none">
+                <Price amount={unit} from={fromCurrency} />
               </span>
-              <span className="text-lg font-bold text-accent">{symbol}</span>
               <span className="text-[11px] text-cream/65 ms-1">/ {tCommon('perPerson')}</span>
             </div>
           </div>
@@ -107,12 +115,13 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         <div className="flex justify-between items-end pt-3 border-t border-dashed border-accent/25">
           <div>
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{t('total')}</div>
-            <div className="text-[10px] text-muted-foreground">
-              {adults} × {symbol}{unit}{children > 0 && ` + ${children} × ${symbol}${childPrice.toFixed(0)}`}
+            <div className="text-[10px] text-muted-foreground flex items-center gap-1 flex-wrap">
+              <span>{adults} × <Price amount={unit} from={fromCurrency} /></span>
+              {children > 0 && <span>+ {children} × <Price amount={childPrice} from={fromCurrency} /></span>}
             </div>
           </div>
-          <div className="font-serif text-2xl font-bold text-accent-700 leading-none tabular-nums">
-            {symbol}{total.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          <div className="font-serif text-2xl font-bold text-accent-700 leading-none">
+            <Price amount={total} from={fromCurrency} />
           </div>
         </div>
 
@@ -123,7 +132,36 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
             size="lg"
             className="w-full h-12 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-sm shadow-lg shadow-[#25D366]/30 hover:shadow-[#25D366]/50 hover:-translate-y-0.5 transition-all group rounded-xl"
           >
-            <a href={waLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                // Track WhatsApp click as a lead — fire and forget
+                try {
+                  const payload = JSON.stringify({
+                    tripId: trip.id,
+                    adultsCount: adults,
+                    childrenCount: children,
+                    customerType: isLocal ? 'LOCAL' : 'FOREIGN',
+                    customer: { language: locale.toUpperCase() },
+                    notes: `Date: ${date} — ${total} ${symbol}`,
+                    referrer: typeof window !== 'undefined' ? window.location.pathname : '',
+                  });
+                  if (navigator.sendBeacon) {
+                    navigator.sendBeacon(`${API_BASE}/public/bookings/whatsapp-lead`, new Blob([payload], { type: 'application/json' }));
+                  } else {
+                    fetch(`${API_BASE}/public/bookings/whatsapp-lead`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: payload,
+                      keepalive: true,
+                    }).catch(() => {});
+                  }
+                } catch {/* ignore */}
+              }}
+              className="inline-flex items-center justify-center gap-2"
+            >
               <MessageCircle className="h-4 w-4 group-hover:scale-110 transition-transform" />
               {isAr ? 'احجز عبر واتساب' : 'Book via WhatsApp'}
             </a>
