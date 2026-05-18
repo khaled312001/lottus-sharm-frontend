@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './language-switcher';
 import { CurrencySwitcher } from './currency-switcher';
+import { AccountPill } from './account-pill';
 import { SearchBar } from './search-bar';
 import { Logo } from './logo';
 import { cn, buildWhatsAppLink } from '@/lib/utils';
@@ -155,6 +156,7 @@ export function Header() {
           </div>
           <CurrencySwitcher />
           <LanguageSwitcher transparent={transparent} compact />
+          <AccountPill />
           <Button
             asChild
             size="sm"

@@ -5,6 +5,7 @@ import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
   Settings, Star, Mail, MessageSquare, MessagesSquare, UserCog, Image as ImageIcon, X, Send, BarChart3, Search,
+  QrCode,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +27,7 @@ const SECTIONS = [
   ]},
   { title: 'التواصل', items: [
     { href: '/admin/inquiries' as const, icon: MessageSquare, label: 'الرسائل' },
+    { href: '/admin/qr-codes' as const, icon: QrCode, label: 'رموز QR' },
   ]},
   { title: 'الإعدادات', items: [
     { href: '/admin/settings' as const, icon: Settings, label: 'إعدادات الموقع' },

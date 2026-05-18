@@ -213,29 +213,42 @@ export default function AdminReviewsPage() {
                     </span>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5">
-                    {r.images.map((url, idx) => (
-                      <div key={url} className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-accent/20 hover:border-accent transition-colors group">
-                        <button
-                          type="button"
-                          onClick={() => setLightbox({ images: r.images!, index: idx, caption: `${r.customerName} — ${tripTitle(r)}` })}
-                          className="absolute inset-0 w-full h-full"
-                          aria-label="View image"
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={url} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
-                        </button>
-                        {/* Per-image delete overlay */}
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); deleteImage(r.id, url); }}
-                          aria-label="Delete image"
-                          title="حذف الصورة"
-                          className="absolute top-1 end-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-600/95 text-white shadow-md opacity-0 group-hover:opacity-100 hover:bg-rose-700 hover:scale-110 transition-all z-10"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
+                    {r.images.map((url, idx) => {
+                      const isVideo = /\.(mp4|mov|webm|mkv|avi)(\?|$)/i.test(url);
+                      return (
+                        <div key={url} className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-accent/20 hover:border-accent transition-colors group">
+                          <button
+                            type="button"
+                            onClick={() => setLightbox({ images: r.images!, index: idx, caption: `${r.customerName} — ${tripTitle(r)}` })}
+                            className="absolute inset-0 w-full h-full"
+                            aria-label="View"
+                          >
+                            {isVideo ? (
+                              <>
+                                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                                <video src={url} muted playsInline preload="metadata" className="w-full h-full object-cover bg-black" />
+                                <span className="absolute top-1 start-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-black/70 text-white tracking-wider">VIDEO</span>
+                                <span className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
+                                  <span className="w-8 h-8 rounded-full bg-white/95 text-primary flex items-center justify-center">▶</span>
+                                </span>
+                              </>
+                            ) : (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={url} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); deleteImage(r.id, url); }}
+                            aria-label="Delete media"
+                            title="حذف"
+                            className="absolute top-1 end-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-600/95 text-white shadow-md opacity-0 group-hover:opacity-100 hover:bg-rose-700 hover:scale-110 transition-all z-10"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}

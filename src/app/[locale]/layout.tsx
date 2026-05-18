@@ -7,6 +7,7 @@ import { Toaster } from 'sonner';
 import { getLocalizedName, getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 import { MaintenanceGate } from '@/components/maintenance-gate';
 import { CurrencyProvider } from '@/lib/currency';
+import { CustomerAuthProvider } from '@/lib/customer-auth';
 
 // The site is live. The maintenance gate is opt-in via NEXT_PUBLIC_MAINTENANCE=on
 // so Google can index real content. Re-enable temporarily by setting the env var.
@@ -74,12 +75,14 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <CurrencyProvider locale={locale}>
-        <div dir={dir} lang={locale} className="min-h-screen bg-background">
-          {MAINTENANCE_FORCED ? <MaintenanceGate>{children}</MaintenanceGate> : children}
-          <Toaster position={locale === 'ar' ? 'top-left' : 'top-right'} richColors />
-        </div>
-      </CurrencyProvider>
+      <CustomerAuthProvider>
+        <CurrencyProvider locale={locale}>
+          <div dir={dir} lang={locale} className="min-h-screen bg-background">
+            {MAINTENANCE_FORCED ? <MaintenanceGate>{children}</MaintenanceGate> : children}
+            <Toaster position={locale === 'ar' ? 'top-left' : 'top-right'} richColors />
+          </div>
+        </CurrencyProvider>
+      </CustomerAuthProvider>
     </NextIntlClientProvider>
   );
 }
