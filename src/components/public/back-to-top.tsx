@@ -8,10 +8,28 @@ export function BackToTop() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 600);
-    onScroll();
+    // Avoid setState on every scroll frame — only flip when crossing the
+    // threshold. Mobile scroll jank otherwise.
+    let raf = 0;
+    let last = false;
+    const check = () => {
+      const v = window.scrollY > 600;
+      if (v !== last) {
+        last = v;
+        setVisible(v);
+      }
+      raf = 0;
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(check);
+    };
+    check();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (

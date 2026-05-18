@@ -32,6 +32,17 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        // www → bare domain (301) so Google sees one canonical host
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.lotussharm.com' }],
+        destination: 'https://lotussharm.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

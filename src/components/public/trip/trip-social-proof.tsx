@@ -20,17 +20,33 @@ export function TripSocialProof({
 }) {
   const [viewers, setViewers] = useState<number | null>(null);
 
-  // Pseudo-random viewer count per trip (12-48, drifts ±1-2 every 8s).
+  // Pseudo-random viewer count per trip (12-48, drifts ±1-2 every 12s).
+  // Pause the timer when the tab is hidden to avoid background work on mobile.
   useEffect(() => {
     const seed = (tripId * 17) % 36;
     let n = 12 + seed; // 12-47
     setViewers(n);
-    const id = setInterval(() => {
-      const drift = Math.random() > 0.5 ? (Math.random() > 0.7 ? 2 : 1) : (Math.random() > 0.7 ? -2 : -1);
-      n = Math.max(8, Math.min(60, n + drift));
-      setViewers(n);
-    }, 8000);
-    return () => clearInterval(id);
+
+    let id: ReturnType<typeof setInterval> | null = null;
+    const start = () => {
+      if (id || typeof document === 'undefined') return;
+      id = setInterval(() => {
+        const drift = Math.random() > 0.5 ? (Math.random() > 0.7 ? 2 : 1) : (Math.random() > 0.7 ? -2 : -1);
+        n = Math.max(8, Math.min(60, n + drift));
+        setViewers(n);
+      }, 12000);
+    };
+    const stop = () => {
+      if (id) { clearInterval(id); id = null; }
+    };
+    const onVisibility = () => (document.hidden ? stop() : start());
+
+    start();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      stop();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, [tripId]);
 
   if (!bookingsLast7Days && !viewers) return null;

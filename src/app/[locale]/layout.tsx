@@ -8,6 +8,10 @@ import { getLocalizedName, getLocalizedTagline, getSiteSettings } from '@/lib/si
 import { MaintenanceGate } from '@/components/maintenance-gate';
 import { CurrencyProvider } from '@/lib/currency';
 
+// The site is live. The maintenance gate is opt-in via NEXT_PUBLIC_MAINTENANCE=on
+// so Google can index real content. Re-enable temporarily by setting the env var.
+const MAINTENANCE_FORCED = process.env.NEXT_PUBLIC_MAINTENANCE === 'on';
+
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lotussharm.com';
 const ALL_LOCALES = ['ar', 'en', 'ru', 'it'] as const;
 
@@ -72,9 +76,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <CurrencyProvider locale={locale}>
         <div dir={dir} lang={locale} className="min-h-screen bg-background">
-          <MaintenanceGate>
-            {children}
-          </MaintenanceGate>
+          {MAINTENANCE_FORCED ? <MaintenanceGate>{children}</MaintenanceGate> : children}
           <Toaster position={locale === 'ar' ? 'top-left' : 'top-right'} richColors />
         </div>
       </CurrencyProvider>

@@ -67,7 +67,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="relative bg-white rounded-3xl card-shadow border border-accent/15 sticky top-32 overflow-hidden"
+      className="relative bg-white rounded-3xl card-shadow border border-accent/15 lg:sticky lg:top-32 overflow-hidden"
     >
       {/* Gold ribbon accent */}
       <div className="absolute top-0 inset-x-0 h-1 gradient-gold z-10" />
