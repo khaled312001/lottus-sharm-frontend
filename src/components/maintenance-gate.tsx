@@ -307,7 +307,7 @@ function ComingSoon() {
               transition={{ delay: 1.2 }}
               className="mt-8 pt-6 border-t border-accent/15 text-[11px] text-cream/45 leading-relaxed"
             >
-              <p>© 2026 Lotus Sharm Tourism · شركة لوتس شرم للاستثمار والتسويق السياحي</p>
+              <p>© 2026 Lotus Sharm Tourism · شركة لوتتس شرم للإستثمار والتسويق السياحي</p>
               <p className="mt-1 text-[10px] text-cream/40">
                 <span className="inline-flex items-center gap-1.5">
                   <span className="opacity-60">سجل تجاري رقم</span>

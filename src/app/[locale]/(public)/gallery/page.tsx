@@ -22,23 +22,52 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
   const photos: Item[] = [];
   const videos: Item[] = [];
   let trips: TripDTO[] = [];
+
+  // Map media URL → owning trip (so untagged media inherits a context if we
+  // recognise it later).
+  const mediaTrip = new Map<string, { slug: string; title: string; category: string }>();
+
   try {
     const list = await api.get<{ items: TripDTO[] }>(`/public/trips?locale=${localeToApiCode(locale)}&pageSize=50`);
     trips = list.items;
     list.items.forEach((trip) => {
-      if (trip.heroImage?.type === 'IMAGE') {
-        photos.unshift({ url: trip.heroImage.url, thumb: trip.heroImage.mediumUrl || trip.heroImage.thumbnailUrl || trip.heroImage.url, alt: trip.tr?.title || '', tripSlug: trip.slug, category: trip.category, type: 'IMAGE' });
-      }
-      trip.gallery.forEach((g) => {
-        if (g.media.type === 'IMAGE') {
-          photos.push({ url: g.media.url, thumb: g.media.mediumUrl || g.media.thumbnailUrl || g.media.url, alt: trip.tr?.title || '', tripSlug: trip.slug, category: trip.category, type: 'IMAGE' });
-        } else if (g.media.type === 'VIDEO') {
-          videos.push({ url: g.media.url, thumb: g.media.thumbnailUrl || undefined, alt: trip.tr?.title || '', tripSlug: trip.slug, category: trip.category, type: 'VIDEO' });
-        }
-      });
+      const ctx = { slug: trip.slug, title: trip.tr?.title || '', category: trip.category };
+      if (trip.heroImage?.url) mediaTrip.set(trip.heroImage.url, ctx);
+      trip.gallery.forEach((g) => { if (g.media?.url) mediaTrip.set(g.media.url, ctx); });
     });
   } catch { /* ignore */ }
 
+  // Pull EVERY approved media row from the library so the gallery reflects the
+  // real number shown in admin (not just trip-linked assets).
+  try {
+    interface MediaRow {
+      id: number; type: 'IMAGE' | 'VIDEO';
+      url: string; thumbnailUrl?: string | null; mediumUrl?: string | null;
+      altAr?: string | null; altEn?: string | null;
+    }
+    const all = await api.get<{ items: MediaRow[]; total: number }>(`/public/media?pageSize=500`);
+    for (const m of all.items) {
+      const ctx = mediaTrip.get(m.url);
+      const alt = (locale === 'ar' ? m.altAr : m.altEn) || ctx?.title || 'Lotus Sharm';
+      const category = ctx?.category || 'GENERAL';
+      const tripSlug = ctx?.slug || '';
+      if (m.type === 'IMAGE') {
+        photos.push({
+          url: m.url,
+          thumb: m.mediumUrl || m.thumbnailUrl || m.url,
+          alt, tripSlug, category, type: 'IMAGE',
+        });
+      } else {
+        videos.push({
+          url: m.url,
+          thumb: m.thumbnailUrl || undefined,
+          alt, tripSlug, category, type: 'VIDEO',
+        });
+      }
+    }
+  } catch { /* ignore */ }
+
+  // Dedupe by URL (same image may sit in multiple trip galleries)
   const seenP = new Set<string>(); const dedPhotos = photos.filter((m) => seenP.has(m.url) ? false : seenP.add(m.url));
   const seenV = new Set<string>(); const dedVideos = videos.filter((m) => seenV.has(m.url) ? false : seenV.add(m.url));
 

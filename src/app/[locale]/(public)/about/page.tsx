@@ -173,7 +173,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     {L(locale, { ar: 'الكيان القانوني', en: 'Legal identity', ru: 'Юридическое лицо', it: 'Entità legale' })}
                   </div>
                   <h3 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold mb-2 leading-tight text-balance">
-                    {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lotus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lotus Sharm Tourism Investment & Marketing»', it: 'Lotus Sharm Tourism Investment & Marketing S.r.l.' })}
+                    {L(locale, { ar: 'شركة لوتتس شرم للإستثمار والتسويق السياحي', en: 'Lottus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lottus Sharm Tourism Investment & Marketing»', it: 'Lottus Sharm Tourism Investment & Marketing S.r.l.' })}
                   </h3>
                   <p className="text-sm text-cream/75 leading-relaxed">
                     {L(locale, { ar: 'الاسم التجاري المعتمد: «لوتس شرم — Lotus Sharm» · شرم الشيخ، جنوب سيناء، مصر', en: 'Trade name: "Lotus Sharm" · Sharm El Sheikh, South Sinai, Egypt' })}
