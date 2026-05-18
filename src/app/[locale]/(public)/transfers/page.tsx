@@ -22,24 +22,28 @@ interface TransferDTO {
   tr?: { name: string; shortDesc: string };
 }
 
-const VEHICLE_META: Record<string, { icon: React.ComponentType<{ className?: string }>; ar: string; en: string; color: string }> = {
-  SEDAN:    { icon: Car,        ar: 'سيارة ملاكي',  en: 'Private sedan', color: 'from-blue-500 to-blue-700' },
-  MICROBUS: { icon: Bus,        ar: 'ميكروباص',      en: 'Microbus',      color: 'from-emerald-500 to-emerald-700' },
-  MINIBUS:  { icon: Bus,        ar: 'ميني باص',      en: 'Minibus',       color: 'from-teal-500 to-teal-700' },
-  COACH:    { icon: Bus,        ar: 'أوتوبيس كبير', en: 'Coach',         color: 'from-amber-500 to-amber-700' },
-  FLIGHT:   { icon: Plane,      ar: 'طيران داخلي',  en: 'Flight',        color: 'from-rose-500 to-rose-700' },
+const VEHICLE_META: Record<string, { icon: React.ComponentType<{ className?: string }>; ar: string; en: string; ru: string; it: string; color: string }> = {
+  SEDAN:    { icon: Car,    ar: 'سيارة ملاكي',  en: 'Private sedan', ru: 'Седан',        it: 'Berlina',  color: 'from-blue-500 to-blue-700' },
+  MICROBUS: { icon: Bus,    ar: 'ميكروباص',      en: 'Microbus',      ru: 'Микроавтобус', it: 'Microbus', color: 'from-emerald-500 to-emerald-700' },
+  MINIBUS:  { icon: Bus,    ar: 'ميني باص',      en: 'Minibus',       ru: 'Минибус',      it: 'Minibus',  color: 'from-teal-500 to-teal-700' },
+  COACH:    { icon: Bus,    ar: 'أوتوبيس كبير', en: 'Coach',         ru: 'Автобус',      it: 'Pullman',  color: 'from-amber-500 to-amber-700' },
+  FLIGHT:   { icon: Plane,  ar: 'طيران داخلي',  en: 'Flight',        ru: 'Авиаперелёт',  it: 'Volo',     color: 'from-rose-500 to-rose-700' },
 };
 
-const ROUTE_META: Record<string, { ar: string; en: string }> = {
-  AIRPORT_TO_HOTEL:     { ar: 'من المطار للفندق',         en: 'Airport → Hotel' },
-  HOTEL_TO_AIRPORT:     { ar: 'من الفندق للمطار',         en: 'Hotel → Airport' },
-  STATION_TO_HOTEL:     { ar: 'من المحطة للفندق',         en: 'Station → Hotel' },
-  HOTEL_TO_STATION:     { ar: 'من الفندق للمحطة',         en: 'Hotel → Station' },
-  CAIRO_SHARM_FLIGHT:   { ar: 'القاهرة → شرم الشيخ',     en: 'Cairo → Sharm El Sheikh' },
-  SHARM_CAIRO_FLIGHT:   { ar: 'شرم الشيخ → القاهرة',     en: 'Sharm El Sheikh → Cairo' },
-  INTRA_CITY:           { ar: 'تنقلات داخل المدينة',       en: 'In-town transfers' },
-  CUSTOM:               { ar: 'خدمة مخصصة',                en: 'Custom service' },
+const ROUTE_META: Record<string, { ar: string; en: string; ru: string; it: string }> = {
+  AIRPORT_TO_HOTEL:     { ar: 'من المطار للفندق',         en: 'Airport → Hotel',        ru: 'Аэропорт → Отель',         it: 'Aeroporto → Hotel' },
+  HOTEL_TO_AIRPORT:     { ar: 'من الفندق للمطار',         en: 'Hotel → Airport',        ru: 'Отель → Аэропорт',         it: 'Hotel → Aeroporto' },
+  STATION_TO_HOTEL:     { ar: 'من المحطة للفندق',         en: 'Station → Hotel',        ru: 'Вокзал → Отель',           it: 'Stazione → Hotel' },
+  HOTEL_TO_STATION:     { ar: 'من الفندق للمحطة',         en: 'Hotel → Station',        ru: 'Отель → Вокзал',           it: 'Hotel → Stazione' },
+  CAIRO_SHARM_FLIGHT:   { ar: 'القاهرة → شرم الشيخ',     en: 'Cairo → Sharm El Sheikh',ru: 'Каир → Шарм-эль-Шейх',     it: 'Cairo → Sharm El Sheikh' },
+  SHARM_CAIRO_FLIGHT:   { ar: 'شرم الشيخ → القاهرة',     en: 'Sharm El Sheikh → Cairo',ru: 'Шарм-эль-Шейх → Каир',     it: 'Sharm El Sheikh → Cairo' },
+  INTRA_CITY:           { ar: 'تنقلات داخل المدينة',       en: 'In-town transfers',      ru: 'Городские трансферы',      it: 'Trasferimenti in città' },
+  CUSTOM:               { ar: 'خدمة مخصصة',                en: 'Custom service',         ru: 'Индивидуальный',           it: 'Servizio personalizzato' },
 };
+
+function pickT<T extends { ar: string; en: string; ru: string; it: string }>(o: T, locale: string): string {
+  return (o[locale as 'ar' | 'en' | 'ru' | 'it']) || o.en;
+}
 
 const ROUTE_GROUP_ORDER = [
   ['AIRPORT_TO_HOTEL', 'HOTEL_TO_AIRPORT'],
@@ -48,11 +52,11 @@ const ROUTE_GROUP_ORDER = [
   ['INTRA_CITY'],
 ];
 
-const GROUP_TITLES: Array<{ ar: string; en: string; icon: React.ComponentType<{ className?: string }> }> = [
-  { ar: 'استقبال وتوصيل المطار',  en: 'Airport pickup & drop-off',  icon: Car },
-  { ar: 'طيران داخلي القاهرة / شرم', en: 'Domestic flights (Cairo / Sharm)', icon: Plane },
-  { ar: 'محطات وموانئ',              en: 'Bus stations & ports',         icon: Building2 },
-  { ar: 'تنقلات داخلية',              en: 'In-town transfers',            icon: MapPin },
+const GROUP_TITLES: Array<{ ar: string; en: string; ru: string; it: string; icon: React.ComponentType<{ className?: string }> }> = [
+  { ar: 'استقبال وتوصيل المطار',       en: 'Airport pickup & drop-off',        ru: 'Встреча и проводы в аэропорту', it: 'Pickup e drop-off aeroporto', icon: Car },
+  { ar: 'طيران داخلي القاهرة / شرم',  en: 'Domestic flights (Cairo / Sharm)', ru: 'Внутренние рейсы Каир / Шарм',  it: 'Voli interni Cairo / Sharm',  icon: Plane },
+  { ar: 'محطات وموانئ',                en: 'Bus stations & ports',             ru: 'Автостанции и порты',           it: 'Stazioni e porti',            icon: Building2 },
+  { ar: 'تنقلات داخلية',                en: 'In-town transfers',                ru: 'Городские перемещения',         it: 'Trasferimenti in città',      icon: MapPin },
 ];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -127,7 +131,7 @@ export default async function TransfersPage({ params }: { params: Promise<{ loca
                 </span>
                 <div>
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary leading-tight">
-                    {isAr ? t.ar : t.en}
+                    {pickT(t, locale)}
                   </h2>
                   <p className="text-xs text-muted-foreground tabular-nums">
                     {g.length} {L(locale, { ar: 'خيار متاح', en: 'options', ru: 'вариантов', it: 'opzioni' })}
@@ -158,22 +162,26 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
   const name = t.tr?.name || t.slug;
   const desc = t.tr?.shortDesc || '';
   const Icon = meta.icon;
-  const wa = buildWhatsAppLink('201090767278', isAr
-    ? `مرحبا، أود الحجز: ${name}`
-    : `Hello, I'd like to book: ${name}`);
+  const waMsg = L(locale, {
+    ar: `مرحبا، أود الحجز: ${name}`,
+    en: `Hello, I'd like to book: ${name}`,
+    ru: `Здравствуйте, хочу заказать: ${name}`,
+    it: `Salve, vorrei prenotare: ${name}`,
+  });
+  const wa = buildWhatsAppLink('201090767278', waMsg as string);
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-accent/15 hover:border-accent/40 card-shadow hover:card-shadow-gold hover:-translate-y-1 transition-all flex flex-col">
       <div className={`relative h-32 bg-gradient-to-br ${meta.color} text-white flex items-center justify-center overflow-hidden`}>
         <Icon className="h-16 w-16 opacity-40 group-hover:scale-110 transition-transform duration-500" />
         <span className="absolute top-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/35 backdrop-blur text-[10px] font-bold uppercase tracking-wider">
-          {isAr ? meta.ar : meta.en}
+          {pickT(meta, locale)}
         </span>
         <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/15 backdrop-blur text-[10px] font-semibold">
           <Users className="h-3 w-3" /> {t.capacity}
         </span>
         <span className="absolute bottom-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/15 backdrop-blur text-[10px]">
-          <ArrowRight className="h-3 w-3 rtl:rotate-180" /> {isAr ? route.ar : route.en}
+          <ArrowRight className="h-3 w-3 rtl:rotate-180" /> {pickT(route, locale)}
         </span>
       </div>
 
@@ -182,8 +190,8 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
         <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">{desc}</p>
 
         <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-3">
-          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t.durationMinutes} {isAr ? 'دقيقة' : 'min'}</span>
-          <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {isAr ? `حتى ${t.capacity}` : `up to ${t.capacity}`}</span>
+          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t.durationMinutes} {L(locale, { ar: 'دقيقة', en: 'min', ru: 'мин', it: 'min' })}</span>
+          <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {L(locale, { ar: `حتى ${t.capacity}`, en: `up to ${t.capacity}`, ru: `до ${t.capacity}`, it: `fino a ${t.capacity}` })}</span>
         </div>
 
         <div className="flex items-end justify-between gap-2 pt-3 border-t border-accent/10">
@@ -192,14 +200,14 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
           <div className="text-xs text-muted-foreground leading-snug">
             <div className="inline-flex items-center gap-1 font-semibold text-accent-700">
               <MessageCircle className="h-3.5 w-3.5" />
-              {isAr ? 'السعر حسب العدد والمسافة' : 'Price on request'}
+              {L(locale, { ar: 'السعر حسب العدد والمسافة', en: 'Price on request', ru: 'Цена по запросу', it: 'Prezzo su richiesta' })}
             </div>
             <div className="text-[10px] mt-0.5 opacity-80">
-              {isAr ? 'تواصل معنا للتسعير الفوري' : 'Contact us for an instant quote'}
+              {L(locale, { ar: 'تواصل معنا للتسعير الفوري', en: 'Contact us for an instant quote', ru: 'Свяжитесь для точной цены', it: 'Contattaci per il preventivo' })}
             </div>
           </div>
           <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors shrink-0">
-            {isAr ? 'استفسار' : 'Get quote'}
+            {L(locale, { ar: 'استفسار', en: 'Get quote', ru: 'Запрос', it: 'Richiedi' })}
           </a>
         </div>
       </div>

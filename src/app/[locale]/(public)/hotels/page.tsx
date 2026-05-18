@@ -27,23 +27,27 @@ interface HotelDTO {
   tr?: { name: string; features: string; shortDesc?: string };
 }
 
-const AREA_LABEL: Record<string, { ar: string; en: string }> = {
-  NAMA_BAY:    { ar: 'خليج نعمة',    en: 'Naama Bay' },
-  HADABA:      { ar: 'الهضبة',       en: 'Hadaba' },
-  SOHO_SQUARE: { ar: 'سوهو',         en: 'Soho Square' },
-  NABQ:        { ar: 'خليج نبق',     en: 'Nabq Bay' },
-  PASHA_BAY:   { ar: 'خليج الباشا',  en: 'Pasha Bay' },
-  QUEEN_BAY:   { ar: 'خليج القرش',   en: 'Queen / Sharks Bay' },
-  OTHER:       { ar: 'منطقة أخرى',   en: 'Other area' },
+const AREA_LABEL: Record<string, { ar: string; en: string; ru: string; it: string }> = {
+  NAMA_BAY:    { ar: 'خليج نعمة',    en: 'Naama Bay',           ru: 'Наама Бэй',           it: 'Naama Bay' },
+  HADABA:      { ar: 'الهضبة',       en: 'Hadaba',              ru: 'Хадаба',              it: 'Hadaba' },
+  SOHO_SQUARE: { ar: 'سوهو',         en: 'Soho Square',         ru: 'Сохо-сквер',          it: 'Soho Square' },
+  NABQ:        { ar: 'خليج نبق',     en: 'Nabq Bay',            ru: 'Набк Бэй',            it: 'Nabq Bay' },
+  PASHA_BAY:   { ar: 'خليج الباشا',  en: 'Pasha Bay',           ru: 'Паша Бэй',            it: 'Pasha Bay' },
+  QUEEN_BAY:   { ar: 'خليج القرش',   en: 'Queen / Sharks Bay',  ru: 'Куин / Шаркс-Бэй',    it: 'Queen / Sharks Bay' },
+  OTHER:       { ar: 'منطقة أخرى',   en: 'Other area',          ru: 'Другой район',        it: 'Altra zona' },
 };
 
-const BOARD_LABEL: Record<string, { ar: string; en: string; color: string }> = {
-  BB:            { ar: 'إفطار فقط',          en: 'Bed & Breakfast', color: 'bg-blue-500/15 text-blue-700 border-blue-500/30' },
-  HB:            { ar: 'فطار وعشاء',         en: 'Half-Board',      color: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' },
-  FB:            { ar: 'إقامة كاملة',        en: 'Full-Board',      color: 'bg-amber-500/15 text-amber-700 border-amber-500/30' },
-  ALL_INCLUSIVE: { ar: 'All-Inclusive',     en: 'All-Inclusive',   color: 'bg-rose-500/15 text-rose-700 border-rose-500/30' },
-  HB_DRINKS:     { ar: 'فطار وعشاء + مشروبات', en: 'HB + drinks',     color: 'bg-purple-500/15 text-purple-700 border-purple-500/30' },
+const BOARD_LABEL: Record<string, { ar: string; en: string; ru: string; it: string; color: string }> = {
+  BB:            { ar: 'إفطار فقط',           en: 'Bed & Breakfast',   ru: 'Завтрак',               it: 'B&B',                color: 'bg-blue-500/15 text-blue-700 border-blue-500/30' },
+  HB:            { ar: 'فطار وعشاء',          en: 'Half-Board',        ru: 'Полупансион',           it: 'Mezza pensione',     color: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' },
+  FB:            { ar: 'إقامة كاملة',         en: 'Full-Board',        ru: 'Полный пансион',        it: 'Pensione completa',  color: 'bg-amber-500/15 text-amber-700 border-amber-500/30' },
+  ALL_INCLUSIVE: { ar: 'إقامة شاملة',          en: 'All-Inclusive',     ru: 'Всё включено',          it: 'All-Inclusive',      color: 'bg-rose-500/15 text-rose-700 border-rose-500/30' },
+  HB_DRINKS:     { ar: 'فطار وعشاء + مشروبات', en: 'HB + drinks',       ru: 'Полупансион + напитки', it: 'HB + bevande',       color: 'bg-purple-500/15 text-purple-700 border-purple-500/30' },
 };
+
+function pick(o: { ar: string; en: string; ru: string; it: string }, locale: string) {
+  return (o[locale as 'ar' | 'en' | 'ru' | 'it']) || o.en;
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -198,9 +202,13 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
   const features = h.tr?.features || '';
   const priceEGP = Number(h.priceLocalEGP);
   const soldOut = !h.isActive || priceEGP === 0;
-  const wa = buildWhatsAppLink('201090767278', isAr
-    ? `مرحبا، أود الاستفسار عن حجز فندق "${name}" (${h.stars} نجوم).`
-    : `Hello, I'd like to book hotel "${name}" (${h.stars}★).`);
+  const waMsg = L(locale, {
+    ar: `مرحبا، أود الاستفسار عن حجز فندق "${name}" (${h.stars} نجوم).`,
+    en: `Hello, I'd like to book hotel "${name}" (${h.stars}★).`,
+    ru: `Здравствуйте, хочу забронировать отель "${name}" (${h.stars}★).`,
+    it: `Salve, vorrei prenotare l'hotel "${name}" (${h.stars}★).`,
+  });
+  const wa = buildWhatsAppLink('201090767278', waMsg as string);
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-accent/15 hover:border-accent/40 card-shadow hover:card-shadow-gold hover:-translate-y-1 transition-all">
@@ -219,12 +227,12 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
         </div>
         {h.isFeatured && (
           <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent text-primary text-[10px] font-bold uppercase tracking-wider">
-            <Sparkles className="h-3 w-3" /> {isAr ? 'مميز' : 'Featured'}
+            <Sparkles className="h-3 w-3" /> {L(locale, { ar: 'مميز', en: 'Featured', ru: 'Топ', it: 'Top' })}
           </span>
         )}
         {soldOut && (
           <span className="absolute bottom-3 start-3 inline-flex items-center px-2 py-1 rounded-full bg-red-600 text-white text-[10px] font-bold uppercase">
-            {isAr ? 'مكتمل / للاستعلام' : 'On request'}
+            {L(locale, { ar: 'مكتمل / للاستعلام', en: 'On request', ru: 'По запросу', it: 'Su richiesta' })}
           </span>
         )}
       </div>
@@ -234,7 +242,7 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
           <h3 className="font-serif text-lg font-bold leading-tight text-primary">{name}</h3>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
             <MapPin className="h-3.5 w-3.5 text-accent" />
-            <span>{isAr ? area.ar : area.en}</span>
+            <span>{pick(area, locale)}</span>
           </div>
         </div>
 
@@ -243,21 +251,21 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
         <div className="flex items-center justify-between pt-1">
           <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold border ${board.color}`}>
             <Utensils className="h-3 w-3" />
-            {isAr ? board.ar : board.en}
+            {pick(board, locale)}
           </span>
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-            {h.nights} {isAr ? 'ليالي' : 'nights'}
+            {h.nights} {L(locale, { ar: 'ليالي', en: 'nights', ru: 'ночей', it: 'notti' })}
           </span>
         </div>
 
         <div className="flex items-end justify-between pt-3 border-t border-accent/10">
           <div>
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-              {isAr ? 'سعر الفرد' : 'Per person'}
+              {L(locale, { ar: 'سعر الفرد', en: 'Per person', ru: 'За человека', it: 'A persona' })}
             </div>
             <div className="font-serif text-xl font-bold text-accent-700">
               {soldOut
-                ? <span className="text-muted-foreground text-sm">{isAr ? 'استفسر' : 'Ask us'}</span>
+                ? <span className="text-muted-foreground text-sm">{L(locale, { ar: 'استفسر', en: 'Ask us', ru: 'Уточнить', it: 'Chiedi' })}</span>
                 : <Price amount={priceEGP} from="EGP" />}
             </div>
           </div>
@@ -267,7 +275,7 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors"
           >
-            {isAr ? 'احجز' : 'Book'}
+            {L(locale, { ar: 'احجز', en: 'Book', ru: 'Забронировать', it: 'Prenota' })}
           </a>
         </div>
       </div>
