@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { L, localeToApiCode } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { AuthGate } from '../auth-gate';
+import { useCustomer } from '@/lib/customer-auth';
 import type { TripCommentDTO, ApiLocale } from '@/types/api';
 
 function relativeTime(iso: string, locale: string): string {
@@ -29,12 +31,22 @@ function relativeTime(iso: string, locale: string): string {
 
 export function TripComments({ slug, locale, initialCount = 0 }: { slug: string; locale: string; initialCount?: number }) {
   const apiLocale = localeToApiCode(locale) as ApiLocale;
+  const { customer } = useCustomer();
   const [items, setItems] = useState<TripCommentDTO[]>([]);
   const [total, setTotal] = useState(initialCount);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [content, setContent] = useState('');
   const [pending, startTransition] = useTransition();
+
+  // Auto-fill name + email from Google profile
+  useEffect(() => {
+    if (customer) {
+      const fromEmail = customer.email ? customer.email.split('@')[0].replace(/[._-]+/g, ' ') : '';
+      setName(customer.name || fromEmail);
+      setEmail(customer.email || '');
+    }
+  }, [customer]);
 
   const load = () => {
     api.get<{ items: TripCommentDTO[]; total: number }>(`/public/trips/${slug}/comments`)
@@ -84,53 +96,51 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
         })}
       </h2>
 
-      {/* Composer */}
-      <form onSubmit={submit} className="bg-white border border-accent/15 rounded-2xl p-5 md:p-6 card-shadow space-y-3">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <input
-            type="text"
-            placeholder={L(locale, { ar: 'اسمك', en: 'Your name', ru: 'Ваше имя', it: 'Il tuo nome' })}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={120}
-            className="px-3 py-2.5 rounded-lg border border-accent/30 bg-white focus:outline-none focus:ring-2 focus:ring-accent/40"
+      {/* Composer — gated behind sign-in */}
+      <AuthGate reason="comments">
+        <form onSubmit={submit} className="bg-white border border-accent/15 rounded-2xl p-5 md:p-6 card-shadow space-y-3">
+          {/* Profile chip — name + email auto from Google */}
+          <div className="inline-flex items-center gap-2.5 px-3 py-2 rounded-full bg-accent/8 border border-accent/25">
+            {customer?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={customer.avatarUrl} alt="" className="w-7 h-7 rounded-full object-cover" />
+            ) : (
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full gradient-gold text-primary font-bold text-xs">
+                {(customer?.name || name || '?').trim().charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div className="leading-tight">
+              <div className="text-xs font-bold text-primary">{customer?.name || name}</div>
+              {customer?.email && <div className="text-[10px] text-muted-foreground" dir="ltr">{customer.email}</div>}
+            </div>
+          </div>
+          <textarea
+            placeholder={L(locale, { ar: 'اكتب سؤالك أو تعليقك هنا…', en: 'Write your question or comment…', ru: 'Ваш вопрос или комментарий…', it: 'Scrivi qui domanda o commento…' })}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={3}
+            maxLength={2000}
+            className="w-full px-3 py-2.5 rounded-lg border border-accent/30 bg-white focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y leading-relaxed"
             required
           />
-          <input
-            type="email"
-            placeholder={L(locale, { ar: 'بريد إلكتروني (اختياري)', en: 'Email (optional)', ru: 'Email (необязательно)', it: 'Email (opzionale)' })}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            maxLength={255}
-            className="px-3 py-2.5 rounded-lg border border-accent/30 bg-white focus:outline-none focus:ring-2 focus:ring-accent/40"
-          />
-        </div>
-        <textarea
-          placeholder={L(locale, { ar: 'اكتب سؤالك أو تعليقك هنا…', en: 'Write your question or comment…', ru: 'Ваш вопрос или комментарий…', it: 'Scrivi qui domanda o commento…' })}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows={3}
-          maxLength={2000}
-          className="w-full px-3 py-2.5 rounded-lg border border-accent/30 bg-white focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y leading-relaxed"
-          required
-        />
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <p className="text-[11px] text-muted-foreground">
-            {L(locale, {
-              ar: 'تظهر التعليقات فور إرسالها وفق سياسة المراجعة',
-              en: 'Comments appear instantly, subject to moderation',
-              ru: 'Комментарии появляются сразу, при модерации',
-              it: 'I commenti appaiono subito, soggetti a moderazione',
-            })}
-          </p>
-          <Button type="submit" disabled={pending} className="gradient-gold text-primary font-bold hover:opacity-90">
-            <Send className="h-4 w-4 me-1.5 rtl:rotate-180" />
-            {pending
-              ? L(locale, { ar: 'جاري النشر…', en: 'Posting…', ru: 'Отправка…', it: 'Invio…' })
-              : L(locale, { ar: 'نشر التعليق', en: 'Post comment', ru: 'Отправить', it: 'Pubblica' })}
-          </Button>
-        </div>
-      </form>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <p className="text-[11px] text-muted-foreground">
+              {L(locale, {
+                ar: 'تظهر التعليقات فور إرسالها وفق سياسة المراجعة',
+                en: 'Comments appear instantly, subject to moderation',
+                ru: 'Комментарии появляются сразу, при модерации',
+                it: 'I commenti appaiono subito, soggetti a moderazione',
+              })}
+            </p>
+            <Button type="submit" disabled={pending} className="gradient-gold text-primary font-bold hover:opacity-90">
+              <Send className="h-4 w-4 me-1.5 rtl:rotate-180" />
+              {pending
+                ? L(locale, { ar: 'جاري النشر…', en: 'Posting…', ru: 'Отправка…', it: 'Invio…' })
+                : L(locale, { ar: 'نشر التعليق', en: 'Post comment', ru: 'Отправить', it: 'Pubblica' })}
+            </Button>
+          </div>
+        </form>
+      </AuthGate>
 
       {/* List */}
       {items.length === 0 ? (

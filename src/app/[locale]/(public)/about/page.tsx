@@ -17,54 +17,74 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const isAr = locale === 'ar';
 
   const values = [
-    { icon: Award,   ar: 'الجودة أولاً',  en: 'Quality First',       ru: 'Качество прежде всего', it: 'Qualità prima di tutto',
+    {
+      icon: Award, ar: 'الجودة أولاً', en: 'Quality First', ru: 'Качество прежде всего', it: 'Qualità prima di tutto',
       arDesc: 'كل تفصيلة في رحلاتنا مختارة بعناية لتقدم أفضل تجربة سياحية ممكنة.',
       enDesc: 'Every detail in our trips is carefully chosen to deliver the best experience.',
       ruDesc: 'Каждая деталь наших туров тщательно подобрана для лучшего впечатления.',
-      itDesc: 'Ogni dettaglio dei tour è scelto con cura per offrire la migliore esperienza.' },
-    { icon: Heart,   ar: 'شغف الخدمة',     en: 'Passion for Service', ru: 'Страсть к сервису',     it: 'Passione per il servizio',
+      itDesc: 'Ogni dettaglio dei tour è scelto con cura per offrire la migliore esperienza.'
+    },
+    {
+      icon: Heart, ar: 'شغف الخدمة', en: 'Passion for Service', ru: 'Страсть к сервису', it: 'Passione per il servizio',
       arDesc: 'نعشق ما نفعل ونرى السعادة في عيون عملائنا، وهذا وقودنا اليومي.',
       enDesc: "We love what we do — the joy in our guests' eyes is our daily fuel.",
       ruDesc: 'Мы любим то, что делаем — радость в глазах гостей наше топливо.',
-      itDesc: 'Amiamo ciò che facciamo — la gioia negli occhi degli ospiti ci motiva.' },
-    { icon: Compass, ar: 'الابتكار',       en: 'Innovation',          ru: 'Инновации',             it: 'Innovazione',
+      itDesc: 'Amiamo ciò che facciamo — la gioia negli occhi degli ospiti ci motiva.'
+    },
+    {
+      icon: Compass, ar: 'الابتكار', en: 'Innovation', ru: 'Инновации', it: 'Innovazione',
       arDesc: 'نطور باستمرار وجهات ومسارات جديدة لتقديم تجارب مبتكرة وحصرية.',
       enDesc: 'We constantly develop new destinations and exclusive experiences.',
       ruDesc: 'Постоянно создаём новые направления и эксклюзивные маршруты.',
-      itDesc: 'Sviluppiamo costantemente nuove destinazioni ed esperienze esclusive.' },
-    { icon: Shield,  ar: 'الأمان والثقة',  en: 'Safety & Trust',      ru: 'Безопасность',          it: 'Sicurezza e fiducia',
+      itDesc: 'Sviluppiamo costantemente nuove destinazioni ed esperienze esclusive.'
+    },
+    {
+      icon: Shield, ar: 'الأمان والثقة', en: 'Safety & Trust', ru: 'Безопасность', it: 'Sicurezza e fiducia',
       arDesc: 'فريقنا مدرب ومرخص، ومعداتنا معتمدة بأعلى معايير السلامة الدولية.',
       enDesc: 'Trained, certified team and equipment meeting international standards.',
       ruDesc: 'Сертифицированная команда и оборудование международных стандартов.',
-      itDesc: 'Team certificato e attrezzatura conforme agli standard internazionali.' },
+      itDesc: 'Team certificato e attrezzatura conforme agli standard internazionali.'
+    },
   ];
 
   const timeline = [
-    { year: '2013', ar: 'تأسيس لوتس شرم — انطلاقتنا الأولى',           en: 'Lotus Sharm founded — our first launch',
+    {
+      year: '2013', ar: 'تأسيس لوتس شرم — انطلاقتنا الأولى', en: 'Lotus Sharm founded — our first launch',
       ru: 'Основание Lotus Sharm — наш первый запуск',
-      it: 'Fondazione di Lotus Sharm — il nostro primo lancio' },
-    { year: '2016', ar: 'توسيع الأسطول البحري وإضافة رحلات الغوص',      en: 'Marine fleet expanded, diving trips added',
+      it: 'Fondazione di Lotus Sharm — il nostro primo lancio'
+    },
+    {
+      year: '2016', ar: 'توسيع الأسطول البحري وإضافة رحلات الغوص', en: 'Marine fleet expanded, diving trips added',
       ru: 'Расширение морского флота, добавлены дайв-туры',
-      it: 'Flotta marina ampliata, aggiunti tour di immersioni' },
-    { year: '2018', ar: 'تجاوزنا حاجز الـ 5,000 سائح سنوياً',          en: 'Crossed 5,000 annual guests milestone',
+      it: 'Flotta marina ampliata, aggiunti tour di immersioni'
+    },
+    {
+      year: '2018', ar: 'تجاوزنا حاجز الـ 5,000 سائح سنوياً', en: 'Crossed 5,000 annual guests milestone',
       ru: 'Преодолели рубеж в 5 000 гостей в год',
-      it: 'Superati 5.000 ospiti annui' },
-    { year: '2020', ar: 'إطلاق رحلات السفاري الفاخرة',                  en: 'Launched luxury safari trips',
+      it: 'Superati 5.000 ospiti annui'
+    },
+    {
+      year: '2020', ar: 'إطلاق رحلات السفاري الفاخرة', en: 'Launched luxury safari trips',
       ru: 'Запуск премиальных сафари-туров',
-      it: 'Lancio dei safari di lusso' },
-    { year: '2022', ar: 'شراكات مع أكبر فنادق الـ 5 نجوم',              en: 'Partnerships with major 5-star hotels',
+      it: 'Lancio dei safari di lusso'
+    },
+    {
+      year: '2022', ar: 'شراكات مع أكبر فنادق الـ 5 نجوم', en: 'Partnerships with major 5-star hotels',
       ru: 'Партнёрство с ведущими 5-звёздочными отелями',
-      it: 'Partnership con i principali hotel 5 stelle' },
-    { year: '2026', ar: 'إطلاق منصتنا الرقمية الجديدة بـ 4 لغات',       en: 'Launched new digital platform in 4 languages',
+      it: 'Partnership con i principali hotel 5 stelle'
+    },
+    {
+      year: '2026', ar: 'إطلاق منصتنا الرقمية الجديدة بـ 4 لغات', en: 'Launched new digital platform in 4 languages',
       ru: 'Запуск новой цифровой платформы на 4 языках',
-      it: 'Lancio della nuova piattaforma digitale in 4 lingue' },
+      it: 'Lancio della nuova piattaforma digitale in 4 lingue'
+    },
   ];
 
   const stats = [
-    { v: '13+',  icon: Calendar, ar: 'سنة من الخبرة', en: 'Years',        ru: 'Лет опыта',     it: 'Anni' },
-    { v: '10k+', icon: Users,    ar: 'سائح سعيد',     en: 'Travelers',    ru: 'Путешественников', it: 'Viaggiatori' },
-    { v: '50+',  icon: MapPinned, ar: 'وجهة سياحية',   en: 'Destinations', ru: 'Направлений',   it: 'Destinazioni' },
-    { v: '4.9',  icon: Star,     ar: 'تقييم العملاء', en: 'Rating',       ru: 'Рейтинг',       it: 'Valutazione' },
+    { v: '13+', icon: Calendar, ar: 'سنة من الخبرة', en: 'Years', ru: 'Лет опыта', it: 'Anni' },
+    { v: '10k+', icon: Users, ar: 'سائح سعيد', en: 'Travelers', ru: 'Путешественников', it: 'Viaggiatori' },
+    { v: '50+', icon: MapPinned, ar: 'وجهة سياحية', en: 'Destinations', ru: 'Направлений', it: 'Destinazioni' },
+    { v: '4.9', icon: Star, ar: 'تقييم العملاء', en: 'Rating', ru: 'Рейтинг', it: 'Valutazione' },
   ];
 
   return (
@@ -173,7 +193,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     {L(locale, { ar: 'الكيان القانوني', en: 'Legal identity', ru: 'Юридическое лицо', it: 'Entità legale' })}
                   </div>
                   <h3 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold mb-2 leading-tight text-balance">
-                    {L(locale, { ar: 'شركة لوتتس شرم للإستثمار والتسويق السياحي', en: 'Lottus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lottus Sharm Tourism Investment & Marketing»', it: 'Lottus Sharm Tourism Investment & Marketing S.r.l.' })}
+                    {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lottus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lottus Sharm Tourism Investment & Marketing»', it: 'Lottus Sharm Tourism Investment & Marketing S.r.l.' })}
                   </h3>
                   <p className="text-sm text-cream/75 leading-relaxed">
                     {L(locale, { ar: 'الاسم التجاري المعتمد: «لوتس شرم — Lotus Sharm» · شرم الشيخ، جنوب سيناء، مصر', en: 'Trade name: "Lotus Sharm" · Sharm El Sheikh, South Sinai, Egypt' })}
@@ -284,26 +304,34 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
-              { icon: Plane,    ar: 'تنظيم الرحلات السياحية', en: 'Tourism Trips',  ru: 'Туристические туры', it: 'Tour turistici',
+              {
+                icon: Plane, ar: 'تنظيم الرحلات السياحية', en: 'Tourism Trips', ru: 'Туристические туры', it: 'Tour turistici',
                 arDesc: 'محميات، جزر، رحلات بحرية وصحراوية في شرم الشيخ ومصر كلها.',
                 enDesc: 'Reserves, islands, sea and desert trips across Sharm and all Egypt.',
                 ruDesc: 'Заповедники, острова, морские и пустынные туры в Шарме и по всему Египту.',
-                itDesc: 'Riserve, isole, tour marini e desertici a Sharm e in tutto l\'Egitto.' },
-              { icon: Compass,  ar: 'الجولات الإرشادية',       en: 'Guided Tours',   ru: 'Экскурсии с гидом',  it: 'Tour guidati',
+                itDesc: 'Riserve, isole, tour marini e desertici a Sharm e in tutto l\'Egitto.'
+              },
+              {
+                icon: Compass, ar: 'الجولات الإرشادية', en: 'Guided Tours', ru: 'Экскурсии с гидом', it: 'Tour guidati',
                 arDesc: 'مرشدون معتمدون بـ 4 لغات، رحلات يومية ومسارات حصرية.',
                 enDesc: 'Certified guides in 4 languages, daily tours and exclusive routes.',
                 ruDesc: 'Сертифицированные гиды на 4 языках, ежедневные туры и эксклюзивные маршруты.',
-                itDesc: 'Guide certificate in 4 lingue, tour giornalieri e percorsi esclusivi.' },
-              { icon: Sparkles, ar: 'تنظيم الحفلات',           en: 'Event Planning', ru: 'Организация событий', it: 'Pianificazione eventi',
+                itDesc: 'Guide certificate in 4 lingue, tour giornalieri e percorsi esclusivi.'
+              },
+              {
+                icon: Sparkles, ar: 'تنظيم الحفلات', en: 'Event Planning', ru: 'Организация событий', it: 'Pianificazione eventi',
                 arDesc: 'حفلات خاصة، أعياد ميلاد، حفلات زفاف على الشاطئ، حفلات شركات.',
                 enDesc: 'Private parties, birthdays, beach weddings, corporate events.',
                 ruDesc: 'Частные мероприятия, дни рождения, свадьбы на пляже, корпоративы.',
-                itDesc: 'Feste private, compleanni, matrimoni sulla spiaggia, eventi aziendali.' },
-              { icon: Mic,      ar: 'المؤتمرات والفعاليات',    en: 'Conferences',    ru: 'Конференции',         it: 'Conferenze',
+                itDesc: 'Feste private, compleanni, matrimoni sulla spiaggia, eventi aziendali.'
+              },
+              {
+                icon: Mic, ar: 'المؤتمرات والفعاليات', en: 'Conferences', ru: 'Конференции', it: 'Conferenze',
                 arDesc: 'تجهيز فعاليات كبرى مع باقات إقامة وضيافة كاملة وخدمات صوتية.',
                 enDesc: 'Full conference setup with stay, hospitality and AV services.',
                 ruDesc: 'Полная организация конференций с проживанием, кейтерингом и AV-оборудованием.',
-                itDesc: 'Allestimento completo di conferenze con soggiorno, ospitalità e servizi AV.' },
+                itDesc: 'Allestimento completo di conferenze con soggiorno, ospitalità e servizi AV.'
+              },
             ].map((s, i) => (
               <Reveal key={s.en} delay={i * 0.1}>
                 <div className="group relative bg-white rounded-2xl p-6 md:p-7 border border-accent/10 hover:border-accent/50 hover:-translate-y-2 transition-all duration-500 card-shadow hover:card-shadow-gold h-full overflow-hidden">
@@ -418,18 +446,18 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </Reveal>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 max-w-5xl mx-auto">
             {[
-              { ar: 'شرم الشيخ',     en: 'Sharm El Sheikh', ru: 'Шарм-эль-Шейх', it: 'Sharm El Sheikh', flag: '⭐', primary: true },
-              { ar: 'دهب',           en: 'Dahab',           ru: 'Дахаб',          it: 'Dahab',           flag: '🏖️' },
-              { ar: 'سانت كاترين',  en: 'St. Catherine',   ru: 'Св. Екатерина',  it: 'S. Caterina',     flag: '⛰️' },
-              { ar: 'القاهرة',       en: 'Cairo',           ru: 'Каир',           it: 'Il Cairo',        flag: '🏛️' },
-              { ar: 'الأقصر',        en: 'Luxor',           ru: 'Луксор',         it: 'Luxor',           flag: '🏺' },
-              { ar: 'أسوان',         en: 'Aswan',           ru: 'Асуан',          it: 'Aswan',           flag: '🚢' },
-              { ar: 'الإسكندرية',    en: 'Alexandria',      ru: 'Александрия',    it: 'Alessandria',     flag: '🏛️' },
-              { ar: 'مرسى علم',      en: 'Marsa Alam',      ru: 'Марса-Алам',     it: 'Marsa Alam',      flag: '🐠' },
-              { ar: 'الغردقة',       en: 'Hurghada',        ru: 'Хургада',        it: 'Hurghada',        flag: '🌊' },
-              { ar: 'سيوة',          en: 'Siwa',            ru: 'Сива',           it: 'Siwa',            flag: '🌴' },
-              { ar: 'الفيوم',        en: 'Fayoum',          ru: 'Файюм',          it: 'Fayoum',          flag: '🐪' },
-              { ar: 'العين السخنة',  en: 'Ain Sokhna',      ru: 'Эйн-Сохна',      it: 'Ain Sokhna',      flag: '🌅' },
+              { ar: 'شرم الشيخ', en: 'Sharm El Sheikh', ru: 'Шарм-эль-Шейх', it: 'Sharm El Sheikh', flag: '⭐', primary: true },
+              { ar: 'دهب', en: 'Dahab', ru: 'Дахаб', it: 'Dahab', flag: '🏖️' },
+              { ar: 'سانت كاترين', en: 'St. Catherine', ru: 'Св. Екатерина', it: 'S. Caterina', flag: '⛰️' },
+              { ar: 'القاهرة', en: 'Cairo', ru: 'Каир', it: 'Il Cairo', flag: '🏛️' },
+              { ar: 'الأقصر', en: 'Luxor', ru: 'Луксор', it: 'Luxor', flag: '🏺' },
+              { ar: 'أسوان', en: 'Aswan', ru: 'Асуан', it: 'Aswan', flag: '🚢' },
+              { ar: 'الإسكندرية', en: 'Alexandria', ru: 'Александрия', it: 'Alessandria', flag: '🏛️' },
+              { ar: 'مرسى علم', en: 'Marsa Alam', ru: 'Марса-Алам', it: 'Marsa Alam', flag: '🐠' },
+              { ar: 'الغردقة', en: 'Hurghada', ru: 'Хургада', it: 'Hurghada', flag: '🌊' },
+              { ar: 'سيوة', en: 'Siwa', ru: 'Сива', it: 'Siwa', flag: '🌴' },
+              { ar: 'الفيوم', en: 'Fayoum', ru: 'Файюм', it: 'Fayoum', flag: '🐪' },
+              { ar: 'العين السخنة', en: 'Ain Sokhna', ru: 'Эйн-Сохна', it: 'Ain Sokhna', flag: '🌅' },
             ].map((d, i) => (
               <Reveal key={d.en} delay={i * 0.04}>
                 <div className={
@@ -458,16 +486,20 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </Reveal>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { icon: Target, ar: 'مهمتنا', en: 'Our Mission', ru: 'Наша миссия', it: 'La nostra missione',
+              {
+                icon: Target, ar: 'مهمتنا', en: 'Our Mission', ru: 'Наша миссия', it: 'La nostra missione',
                 arDesc: 'تقديم تجارب سياحية فاخرة وأصيلة في شرم الشيخ وسيناء، بأعلى معايير الجودة والأمان، وبأسعار شفافة وعادلة.',
                 enDesc: 'Deliver luxury, authentic tourism experiences in Sharm El Sheikh with the highest quality and transparent pricing.',
                 ruDesc: 'Предоставлять подлинные роскошные туристические впечатления в Шарм-эль-Шейхе с высочайшим качеством и прозрачными ценами.',
-                itDesc: 'Offrire esperienze turistiche autentiche e di lusso a Sharm El Sheikh con la massima qualità e prezzi trasparenti.' },
-              { icon: Eye, ar: 'رؤيتنا', en: 'Our Vision', ru: 'Наше видение', it: 'La nostra visione',
+                itDesc: 'Offrire esperienze turistiche autentiche e di lusso a Sharm El Sheikh con la massima qualità e prezzi trasparenti.'
+              },
+              {
+                icon: Eye, ar: 'رؤيتنا', en: 'Our Vision', ru: 'Наше видение', it: 'La nostra visione',
                 arDesc: 'أن نكون العلامة السياحية الأولى المختارة في شرم الشيخ، ومنصة عربية تنافس الشركات العالمية.',
                 enDesc: 'To be the #1 chosen tourism brand in Sharm, an Egyptian platform competing globally.',
                 ruDesc: 'Стать туристическим брендом №1 в Шарме — египетской платформой, конкурирующей на мировом уровне.',
-                itDesc: 'Essere il brand turistico #1 a Sharm — una piattaforma egiziana che compete a livello globale.' },
+                itDesc: 'Essere il brand turistico #1 a Sharm — una piattaforma egiziana che compete a livello globale.'
+              },
             ].map((item, i) => (
               <Reveal key={item.en} delay={(i + 1) * 0.1}>
                 <div className="group relative bg-white rounded-2xl p-8 md:p-9 border border-accent/15 hover:border-accent/50 hover:-translate-y-1 transition-all duration-500 card-shadow hover:card-shadow-gold h-full overflow-hidden">
@@ -534,24 +566,32 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 max-w-5xl mx-auto">
             {[
-              { icon: BadgeCheck, color: 'emerald',
+              {
+                icon: BadgeCheck, color: 'emerald',
                 ar_t: 'مرخصة في مصر', en_t: 'Egypt licensed', ru_t: 'Лицензия Египта', it_t: 'Licenza Egitto',
-                ar_s: 'وزارة السياحة', en_s: 'Ministry of Tourism', ru_s: 'Минтуризма', it_s: 'Min. Turismo' },
-              { icon: Shield, color: 'sky',
+                ar_s: 'وزارة السياحة', en_s: 'Ministry of Tourism', ru_s: 'Минтуризма', it_s: 'Min. Turismo'
+              },
+              {
+                icon: Shield, color: 'sky',
                 ar_t: 'تأمين شامل', en_t: 'Fully insured', ru_t: 'Полная страховка', it_t: 'Assicurato',
-                ar_s: 'لكل المسافرين', en_s: 'For all travelers', ru_s: 'Для всех гостей', it_s: 'Per tutti gli ospiti' },
-              { icon: Trophy, color: 'amber',
+                ar_s: 'لكل المسافرين', en_s: 'For all travelers', ru_s: 'Для всех гостей', it_s: 'Per tutti gli ospiti'
+              },
+              {
+                icon: Trophy, color: 'amber',
                 ar_t: 'تقييم 5★', en_t: '5★ Rated', ru_t: 'Рейтинг 5★', it_t: 'Valutazione 5★',
-                ar_s: '500+ مراجعة', en_s: '500+ reviews', ru_s: '500+ отзывов', it_s: '500+ recensioni' },
-              { icon: Globe2, color: 'violet',
+                ar_s: '500+ مراجعة', en_s: '500+ reviews', ru_s: '500+ отзывов', it_s: '500+ recensioni'
+              },
+              {
+                icon: Globe2, color: 'violet',
                 ar_t: '4 لغات', en_t: '4 Languages', ru_t: '4 языка', it_t: '4 lingue',
-                ar_s: 'مرشدون معتمدون', en_s: 'Certified guides', ru_s: 'Сертифицированные гиды', it_s: 'Guide certificate' },
+                ar_s: 'مرشدون معتمدون', en_s: 'Certified guides', ru_s: 'Сертифицированные гиды', it_s: 'Guide certificate'
+              },
             ].map((cred, i) => {
               const ring = {
                 emerald: 'from-emerald-500/15 to-emerald-500/0 text-emerald-700 border-emerald-300/50',
-                sky:     'from-sky-500/15 to-sky-500/0 text-sky-700 border-sky-300/50',
-                amber:   'from-amber-500/15 to-amber-500/0 text-amber-700 border-amber-300/50',
-                violet:  'from-violet-500/15 to-violet-500/0 text-violet-700 border-violet-300/50',
+                sky: 'from-sky-500/15 to-sky-500/0 text-sky-700 border-sky-300/50',
+                amber: 'from-amber-500/15 to-amber-500/0 text-amber-700 border-amber-300/50',
+                violet: 'from-violet-500/15 to-violet-500/0 text-violet-700 border-violet-300/50',
               }[cred.color] as string;
               return (
                 <Reveal key={cred.en_t} delay={i * 0.08}>

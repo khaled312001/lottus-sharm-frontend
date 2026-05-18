@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, ShieldCheck, Sparkles } from 'lucide-react';
+import { Loader2, ShieldCheck, Sparkles, BadgeCheck, Heart, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { L } from '@/lib/utils';
 import { API_BASE } from '@/lib/api';
 import { useCustomer } from '@/lib/customer-auth';
+import { GoogleSignInButton } from '@/components/public/google-sign-in';
 
 export function LoginClient({ locale }: { locale: string }) {
   const router = useRouter();
@@ -56,35 +57,43 @@ export function LoginClient({ locale }: { locale: string }) {
   }, [customer, locale, router]);
 
   const startGoogle = () => {
-    window.location.href = `${API_BASE}/auth/customer/google`;
+    const next = sp?.get('next') || `/${locale}/account`;
+    window.location.href = `${API_BASE}/auth/customer/google?next=${encodeURIComponent(next)}`;
   };
 
   return (
     <main className="relative min-h-screen bg-gradient-to-b from-primary-900 via-primary to-primary-900 text-cream flex items-center justify-center py-16 px-4 overflow-hidden">
-      <div className="absolute top-1/4 -end-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+      <div aria-hidden className="absolute top-1/4 -end-32 w-[28rem] h-[28rem] rounded-full bg-accent/12 blur-3xl pointer-events-none animate-blob" />
+      <div aria-hidden className="absolute -bottom-32 -start-20 w-[24rem] h-[24rem] rounded-full bg-accent/8 blur-3xl pointer-events-none animate-blob" style={{ animationDelay: '4s' }} />
+      <span aria-hidden className="sparkle delay-1" style={{ top: '15%', insetInlineStart: '12%' }} />
+      <span aria-hidden className="sparkle delay-3" style={{ top: '70%', insetInlineEnd: '15%' }} />
 
       <div className="relative w-full max-w-md">
-        <div className="bg-cream/5 backdrop-blur-md border border-accent/30 rounded-3xl p-7 md:p-9 shadow-2xl shadow-primary-900/40">
+        <div className="relative bg-cream/5 backdrop-blur-md border border-accent/30 rounded-3xl p-7 md:p-9 shadow-2xl shadow-primary-900/50 overflow-hidden">
+          {/* Gold top ribbon */}
+          <div aria-hidden className="absolute top-0 inset-x-0 h-0.5 gradient-gold" />
+
           <div className="text-center mb-7">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/15 border border-accent/40 mb-4">
-              <ShieldCheck className="h-7 w-7 text-accent" />
+            <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/25 to-accent/10 border border-accent/40 mb-4 backdrop-blur shadow-lg shadow-accent/20">
+              <ShieldCheck className="h-8 w-8 text-accent" />
+              <BadgeCheck aria-hidden className="absolute -bottom-1 -end-1 h-5 w-5 text-emerald-400 fill-primary-900 bg-primary-900 rounded-full" />
             </div>
             <h1 className="font-serif text-2xl md:text-3xl font-bold mb-2">
               {L(locale, { ar: 'تسجيل الدخول', en: 'Sign in', ru: 'Вход', it: 'Accedi' })}
             </h1>
-            <p className="text-sm text-cream/70 leading-relaxed">
+            <span aria-hidden className="block w-10 h-0.5 gradient-gold rounded-full mx-auto mb-3" />
+            <p className="text-sm text-cream/75 leading-relaxed max-w-xs mx-auto">
               {L(locale, {
-                ar: 'سجّل دخولك بحساب جوجل لإدارة حجوزاتك ومفضلاتك',
-                en: 'Sign in with Google to manage your bookings and favourites',
-                ru: 'Войдите через Google, чтобы управлять бронированиями',
-                it: 'Accedi con Google per gestire le prenotazioni',
+                ar: 'سجّل دخولك بحساب جوجل لإدارة حجوزاتك ومفضلاتك ولترك تقييمات',
+                en: 'Sign in with Google to manage your bookings, favourites & reviews',
+                ru: 'Войдите через Google для управления бронированиями и отзывами',
+                it: 'Accedi con Google per gestire prenotazioni, preferiti e recensioni',
               })}
             </p>
           </div>
 
           {exchanging ? (
-            <div className="text-center py-6">
+            <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-3" />
               <p className="text-sm text-cream/75">
                 {L(locale, { ar: 'جاري تسجيل الدخول...', en: 'Signing you in...', ru: 'Входим...', it: 'Accesso in corso...' })}
@@ -101,16 +110,26 @@ export function LoginClient({ locale }: { locale: string }) {
               </Button>
             </div>
           ) : (
-            <button
-              onClick={startGoogle}
-              className="w-full inline-flex items-center justify-center gap-3 h-13 px-5 rounded-xl bg-white text-gray-800 font-semibold text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
-            >
-              <GoogleIcon className="h-5 w-5" />
-              <span>{L(locale, { ar: 'الدخول باستخدام Google', en: 'Continue with Google', ru: 'Войти через Google', it: 'Continua con Google' })}</span>
-            </button>
+            <GoogleSignInButton variant="primary" />
           )}
 
-          <div className="mt-6 pt-6 border-t border-cream/15 text-center text-xs text-cream/55 leading-relaxed">
+          {/* Benefits row */}
+          <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+            {[
+              { icon: BadgeCheck, ar: 'إدارة الحجوزات', en: 'Manage bookings', ru: 'Брони', it: 'Prenotazioni' },
+              { icon: Heart, ar: 'حفظ مفضلاتك', en: 'Save favourites', ru: 'Избранное', it: 'Preferiti' },
+              { icon: MessageSquare, ar: 'تقييمات سريعة', en: 'Quick reviews', ru: 'Отзывы', it: 'Recensioni' },
+            ].map((b) => (
+              <div key={b.en} className="flex flex-col items-center gap-1 p-2 rounded-lg bg-cream/5 border border-cream/10">
+                <b.icon className="h-3.5 w-3.5 text-accent" />
+                <span className="text-[10px] text-cream/80 font-semibold leading-tight">
+                  {L(locale, { ar: b.ar, en: b.en, ru: b.ru, it: b.it })}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 pt-5 border-t border-cream/15 text-center text-[11px] text-cream/60 leading-relaxed">
             <p className="inline-flex items-center justify-center gap-1.5">
               <Sparkles className="h-3 w-3 text-accent" />
               {L(locale, {
@@ -124,16 +143,5 @@ export function LoginClient({ locale }: { locale: string }) {
         </div>
       </div>
     </main>
-  );
-}
-
-function GoogleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.07 5.07 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.23 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
-      <path fill="#FBBC04" d="M5.84 14.11A6.59 6.59 0 0 1 5.48 12c0-.73.13-1.44.36-2.11V7.05H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.95l3.66-2.84z"/>
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.65l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
-    </svg>
   );
 }

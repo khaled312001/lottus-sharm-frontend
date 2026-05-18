@@ -1,13 +1,15 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { api, API_BASE } from '@/lib/api';
 import { L, localeToApiCode } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Input, Textarea } from '@/components/ui/input';
-import { Star, Loader2, CheckCircle2, Image as ImageIcon, Video as VideoIcon, X, Plus } from 'lucide-react';
+import { Textarea } from '@/components/ui/input';
+import { Star, Loader2, CheckCircle2, Image as ImageIcon, Video as VideoIcon, X, Plus, Send, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AuthGate } from './auth-gate';
+import { useCustomer } from '@/lib/customer-auth';
 
 interface UploadedMedia {
   url: string;
@@ -18,6 +20,7 @@ const MAX_FILES = 6;
 
 export function ReviewForm({ locale }: { locale: string }) {
   const isAr = locale === 'ar';
+  const { customer } = useCustomer();
   const [name, setName] = useState('');
   const [rating, setRating] = useState(5);
   const [hover, setHover] = useState(0);
@@ -27,6 +30,14 @@ export function ReviewForm({ locale }: { locale: string }) {
   const [pending, setPending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Auto-fill name from Google profile
+  useEffect(() => {
+    if (customer) {
+      const fromEmail = customer.email ? customer.email.split('@')[0].replace(/[._-]+/g, ' ') : '';
+      setName(customer.name || fromEmail);
+    }
+  }, [customer]);
 
   const uploadFiles = async (files: FileList | File[]) => {
     const list = Array.from(files);
@@ -109,6 +120,7 @@ export function ReviewForm({ locale }: { locale: string }) {
   }
 
   return (
+    <AuthGate reason="reviews">
     <form onSubmit={submit} className="space-y-5">
       {/* Star rating */}
       <div>
@@ -140,19 +152,29 @@ export function ReviewForm({ locale }: { locale: string }) {
         <p className="text-center text-xs text-cream/55 mt-2 tabular-nums">{rating}/5</p>
       </div>
 
-      {/* Name */}
+      {/* Signed-in profile chip (replaces the editable name field) */}
       <div>
         <label className="block text-sm font-bold text-cream mb-1.5">
-          {L(locale, { ar: 'اسمك', en: 'Your name', ru: 'Ваше имя', it: 'Il tuo nome' })}
-          <span className="text-accent ms-1">*</span>
+          {L(locale, { ar: 'باسمك على جوجل', en: 'Posting as', ru: 'Публикуете как', it: 'Pubblichi come' })}
         </label>
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          dir={isAr ? 'rtl' : 'ltr'}
-          placeholder={L(locale, { ar: 'مثال: أحمد محمد', en: 'e.g. John Smith', ru: 'Например: Иван Петров', it: 'Es: Marco Rossi' })}
-          className="bg-cream/8 border-cream/20 text-cream placeholder:text-cream/40 h-12"
-        />
+        <div className="inline-flex items-center gap-3 px-3 py-2 rounded-xl bg-cream/8 border border-cream/20 backdrop-blur w-full">
+          {customer?.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={customer.avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover ring-2 ring-accent/40" />
+          ) : (
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full gradient-gold text-primary font-bold ring-2 ring-accent/40">
+              {(customer?.name || name || '?').trim().charAt(0).toUpperCase()}
+            </span>
+          )}
+          <div className="leading-tight min-w-0 flex-1">
+            <div className="text-sm font-bold text-cream truncate">{customer?.name || name}</div>
+            {customer?.email && <div className="text-[11px] text-cream/60 truncate" dir="ltr">{customer.email}</div>}
+          </div>
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-1 rounded-full shrink-0">
+            <svg className="h-3 w-3" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2l-3.5-3.5a1 1 0 1 0-1.4 1.4l4.2 4.2c.4.4 1 .4 1.4 0l9-9a1 1 0 1 0-1.4-1.4L9 16.2z"/></svg>
+            {L(locale, { ar: 'موثق', en: 'verified', ru: 'подтв.', it: 'verificato' })}
+          </span>
+        </div>
       </div>
 
       {/* Comment */}
@@ -239,21 +261,41 @@ export function ReviewForm({ locale }: { locale: string }) {
         )}
       </div>
 
-      <Button
+      <button
         type="submit"
-        size="lg"
         disabled={pending || uploading}
-        className="w-full h-13 bg-accent text-primary hover:bg-accent-400 font-bold text-base shadow-2xl shadow-accent/30 hover:shadow-accent/50 hover:-translate-y-0.5 transition-all"
-      >
-        {pending ? (
-          <>
-            <Loader2 className="h-5 w-5 animate-spin" />
-            {L(locale, { ar: 'جاري الإرسال...', en: 'Sending...', ru: 'Отправка...', it: 'Invio in corso...' })}
-          </>
-        ) : (
-          L(locale, { ar: 'أرسل تقييمي', en: 'Submit my review', ru: 'Отправить отзыв', it: 'Invia recensione' })
+        className={cn(
+          'group relative w-full h-14 rounded-xl overflow-hidden font-bold text-base',
+          'bg-gradient-to-br from-amber-300 via-accent to-accent-600',
+          'text-primary shadow-2xl shadow-accent/40',
+          'hover:shadow-accent/60 hover:-translate-y-0.5 active:translate-y-0',
+          'border border-accent-400/60',
+          'transition-all duration-200',
+          (pending || uploading) && 'opacity-70 cursor-not-allowed hover:translate-y-0',
         )}
-      </Button>
+      >
+        {/* Shimmer sweep */}
+        <span aria-hidden className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700">
+          <span className="block h-full w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+        </span>
+        <span className="relative inline-flex items-center justify-center gap-2.5">
+          {pending ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              {L(locale, { ar: 'جاري الإرسال...', en: 'Sending...', ru: 'Отправка...', it: 'Invio in corso...' })}
+            </>
+          ) : (
+            <>
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/15 group-hover:bg-primary/25 transition-colors">
+                <Send className="h-3.5 w-3.5 rtl:rotate-180" />
+              </span>
+              <span>{L(locale, { ar: 'أرسل تقييمي', en: 'Submit my review', ru: 'Отправить отзыв', it: 'Invia recensione' })}</span>
+              <Sparkles className="h-4 w-4 opacity-60 group-hover:opacity-100 group-hover:rotate-12 transition-all" />
+            </>
+          )}
+        </span>
+      </button>
     </form>
+    </AuthGate>
   );
 }

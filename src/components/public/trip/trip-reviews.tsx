@@ -7,6 +7,8 @@ import { API_BASE } from '@/lib/api';
 import { L, localeToApiCode } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ImageLightbox } from '../image-lightbox';
+import { AuthGate } from '../auth-gate';
+import { useCustomer } from '@/lib/customer-auth';
 import type { TripReviewDTO, ApiLocale } from '@/types/api';
 
 function relativeTime(iso: string, locale: string): string {
@@ -53,6 +55,7 @@ export function TripReviews({
   initialCount?: number;
 }) {
   const apiLocale = localeToApiCode(locale) as ApiLocale;
+  const { customer } = useCustomer();
   const [items, setItems] = useState<TripReviewDTO[]>([]);
   const [total, setTotal] = useState(initialCount);
   const [average, setAverage] = useState(initialAverage);
@@ -61,6 +64,15 @@ export function TripReviews({
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [pending, startTransition] = useTransition();
+
+  // Auto-fill name from Google profile (kept editable as a fallback display)
+  useEffect(() => {
+    if (customer && !name) {
+      // Prefer the Google display name; fall back to the local-part of the email
+      const fromEmail = customer.email ? customer.email.split('@')[0].replace(/[._-]+/g, ' ') : '';
+      setName(customer.name || fromEmail);
+    }
+  }, [customer, name]);
   // Image uploads
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -184,19 +196,27 @@ export function TripReviews({
         </div>
       </div>
 
-      {/* Form */}
+      {/* Form — gated behind sign-in */}
       {showForm && (
-        <form onSubmit={submit} className="mt-4 bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/25 rounded-2xl p-5 md:p-6 space-y-4">
-          <div className="grid sm:grid-cols-[1fr_auto] gap-3 sm:items-center">
-            <input
-              type="text"
-              placeholder={L(locale, { ar: 'اسمك', en: 'Your name', ru: 'Ваше имя', it: 'Il tuo nome' })}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="px-3 py-2.5 rounded-lg border border-accent/30 bg-white focus:outline-none focus:ring-2 focus:ring-accent/40"
-              maxLength={120}
-              required
-            />
+        <div className="mt-4">
+        <AuthGate reason="reviews">
+        <form onSubmit={submit} className="bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/25 rounded-2xl p-5 md:p-6 space-y-4">
+          {/* Signed-in profile chip + rating */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="inline-flex items-center gap-2.5 px-3 py-2 rounded-full bg-white border border-accent/30 shadow-sm">
+              {customer?.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={customer.avatarUrl} alt="" className="w-7 h-7 rounded-full object-cover" />
+              ) : (
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full gradient-gold text-primary font-bold text-xs">
+                  {(customer?.name || name || '?').trim().charAt(0).toUpperCase()}
+                </span>
+              )}
+              <div className="leading-tight">
+                <div className="text-xs font-bold text-primary">{customer?.name || name}</div>
+                {customer?.email && <div className="text-[10px] text-muted-foreground" dir="ltr">{customer.email}</div>}
+              </div>
+            </div>
             <Stars value={rating} onChange={setRating} interactive size="md" />
           </div>
           <textarea
@@ -276,6 +296,8 @@ export function TripReviews({
               : L(locale, { ar: 'إرسال التقييم', en: 'Submit review', ru: 'Отправить', it: 'Invia recensione' })}
           </Button>
         </form>
+        </AuthGate>
+        </div>
       )}
 
       {/* Reviews list */}
