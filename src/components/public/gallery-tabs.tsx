@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Video, Play, Maximize2 } from 'lucide-react';
+import { Camera, Video, Play, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn, L } from '@/lib/utils';
 import { Lightbox, type LightboxItem } from './lightbox';
+
+const PAGE_SIZE = 20;
 
 interface MediaItem {
   url: string;
@@ -19,6 +21,7 @@ interface MediaItem {
 export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; videos: MediaItem[]; locale: string }) {
   const [tab, setTab] = useState<'all' | 'photos' | 'videos'>('all');
   const [open, setOpen] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
   const isAr = locale === 'ar';
 
   const items = useMemo(() => (
@@ -27,12 +30,29 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
     [...photos, ...videos]
   ), [tab, photos, videos]);
 
+  // Reset to first page whenever the tab changes
+  useEffect(() => { setPage(1); }, [tab]);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageStart = (safePage - 1) * PAGE_SIZE;
+  const pageItems = items.slice(pageStart, pageStart + PAGE_SIZE);
+
+  // Lightbox indices are relative to the FULL list so swiping inside the
+  // lightbox can walk across pages without needing to navigate.
   const lightboxItems: LightboxItem[] = items.map((m) => ({
     url: m.url,
     thumb: m.thumb,
     alt: m.alt,
     type: m.type,
   }));
+
+  const goTo = (p: number) => {
+    setPage(p);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: window.scrollY > 400 ? 200 : 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div>
@@ -72,21 +92,111 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
           {items.length === 0 ? (
             <p className="text-center text-muted-foreground py-16">{L(locale, { ar: 'لا يوجد محتوى', en: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
           ) : (
-            <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
-              {items.slice(0, 80).map((m, i) => (
-                m.type === 'VIDEO' ? (
-                  <VideoTile key={`v-${i}`} m={m} onOpen={() => setOpen(i)} />
-                ) : (
-                  <PhotoTile key={`p-${i}`} m={m} index={i} onOpen={() => setOpen(i)} />
-                )
-              ))}
-            </div>
+            <>
+              <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
+                {pageItems.map((m, i) => {
+                  const absIndex = pageStart + i;
+                  return m.type === 'VIDEO' ? (
+                    <VideoTile key={`v-${absIndex}`} m={m} onOpen={() => setOpen(absIndex)} />
+                  ) : (
+                    <PhotoTile key={`p-${absIndex}`} m={m} index={absIndex} onOpen={() => setOpen(absIndex)} />
+                  );
+                })}
+              </div>
+
+              {totalPages > 1 && (
+                <Pagination
+                  page={safePage}
+                  totalPages={totalPages}
+                  total={items.length}
+                  pageSize={PAGE_SIZE}
+                  pageStart={pageStart}
+                  onGo={goTo}
+                  locale={locale}
+                />
+              )}
+            </>
           )}
         </motion.div>
       </AnimatePresence>
 
       <Lightbox items={lightboxItems} startIndex={open} onClose={() => setOpen(null)} />
     </div>
+  );
+}
+
+function Pagination({
+  page, totalPages, total, pageSize, pageStart, onGo, locale,
+}: {
+  page: number; totalPages: number; total: number; pageSize: number; pageStart: number;
+  onGo: (p: number) => void; locale: string;
+}) {
+  const isAr = locale === 'ar';
+  const first = pageStart + 1;
+  const last = Math.min(pageStart + pageSize, total);
+
+  // Build a windowed list of page numbers around the current page.
+  const windowed: (number | 'gap')[] = [];
+  const push = (v: number | 'gap') => { if (windowed[windowed.length - 1] !== v) windowed.push(v); };
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || Math.abs(p - page) <= 1) push(p);
+    else if (p === 2 || p === totalPages - 1) push('gap');
+  }
+
+  // In RTL, the "previous page" icon should still point at the LEFT of the
+  // reading order (i.e. towards older pages). Lucide's ChevronRight is the
+  // logical "previous" arrow in RTL.
+  const PrevIcon = isAr ? ChevronRight : ChevronLeft;
+  const NextIcon = isAr ? ChevronLeft : ChevronRight;
+
+  return (
+    <nav className="mt-10 flex flex-col items-center gap-3" aria-label={isAr ? 'تنقل بين الصفحات' : 'Pagination'}>
+      <div className="text-xs text-muted-foreground tabular-nums">
+        {isAr ? `يعرض ${first}–${last} من ${total}` : `Showing ${first}–${last} of ${total}`}
+      </div>
+      <div className="inline-flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onGo(Math.max(1, page - 1))}
+          disabled={page === 1}
+          aria-label={isAr ? 'الصفحة السابقة' : 'Previous page'}
+          className="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-accent/25 text-primary bg-white hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <PrevIcon className="h-4 w-4" />
+        </button>
+
+        {windowed.map((p, i) => (
+          p === 'gap' ? (
+            <span key={`gap-${i}`} className="w-10 text-center text-muted-foreground">…</span>
+          ) : (
+            <button
+              key={p}
+              type="button"
+              onClick={() => onGo(p)}
+              aria-current={p === page ? 'page' : undefined}
+              className={cn(
+                'inline-flex items-center justify-center min-w-10 h-10 px-3 rounded-lg text-sm font-semibold tabular-nums transition-colors border',
+                p === page
+                  ? 'bg-primary text-cream border-primary shadow'
+                  : 'bg-white text-primary/80 border-accent/20 hover:bg-accent/10 hover:text-primary',
+              )}
+            >
+              {p}
+            </button>
+          )
+        ))}
+
+        <button
+          type="button"
+          onClick={() => onGo(Math.min(totalPages, page + 1))}
+          disabled={page === totalPages}
+          aria-label={isAr ? 'الصفحة التالية' : 'Next page'}
+          className="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-accent/25 text-primary bg-white hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <NextIcon className="h-4 w-4" />
+        </button>
+      </div>
+    </nav>
   );
 }
 

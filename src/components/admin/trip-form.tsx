@@ -5,7 +5,7 @@ import { useRouter } from '@/i18n/routing';
 import { Input, Textarea } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Trash2, Sparkles, Save, ChevronUp, ChevronDown, Clock } from 'lucide-react';
+import { Plus, Trash2, Save, ChevronUp, ChevronDown, Clock } from 'lucide-react';
 import { useAdminApi } from '@/lib/admin-auth';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -146,95 +146,6 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
     setTranslations((prev) => prev.map((t) => (t.locale === loc ? { ...t, [field]: value } : t)));
   };
 
-  // === AI translate ===
-  const translateField = async (field: 'title' | 'shortDesc' | 'longDesc') => {
-    const src = translations.find((t) => t.locale === 'AR')?.[field];
-    if (!src || src.trim().length < 2) {
-      toast.error('املأ النص العربي أولاً');
-      return;
-    }
-    const targets: ApiLocale[] = ['EN', 'RU', 'IT'];
-    try {
-      const out = await api.post<{ translations: Record<string, string> }>('/admin/translate', {
-        text: src,
-        from: 'AR',
-        to: targets,
-        context: 'Lotus Sharm tourism trip — Egyptian tourism marketing copy',
-      });
-      setTranslations((prev) =>
-        prev.map((t) => (t.locale !== 'AR' && out.translations[t.locale] ? { ...t, [field]: out.translations[t.locale] } : t)),
-      );
-      toast.success('تم توليد الترجمات');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'فشلت الترجمة');
-    }
-  };
-
-  const translateHighlight = async (i: number) => {
-    const src = highlights[i].translations.find((x) => x.locale === 'AR')?.text;
-    if (!src) return toast.error('املأ النص العربي');
-    try {
-      const out = await api.post<{ translations: Record<string, string> }>('/admin/translate', {
-        text: src, from: 'AR', to: ['EN', 'RU', 'IT'],
-      });
-      setHighlights((prev) =>
-        prev.map((h, idx) =>
-          idx === i
-            ? { ...h, translations: h.translations.map((tr) => (tr.locale !== 'AR' && out.translations[tr.locale] ? { ...tr, text: out.translations[tr.locale] } : tr)) }
-            : h,
-        ),
-      );
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    }
-  };
-
-  const translateTimelineStep = async (i: number, field: 'title' | 'desc') => {
-    const src = timeline[i].translations.find((x) => x.locale === 'AR')?.[field];
-    if (!src) return toast.error('املأ النص العربي');
-    try {
-      const out = await api.post<{ translations: Record<string, string> }>('/admin/translate', {
-        text: src, from: 'AR', to: ['EN', 'RU', 'IT'],
-      });
-      setTimeline((prev) =>
-        prev.map((s, idx) =>
-          idx === i
-            ? {
-                ...s,
-                translations: s.translations.map((tr) =>
-                  tr.locale !== 'AR' && out.translations[tr.locale]
-                    ? { ...tr, [field]: out.translations[tr.locale] }
-                    : tr,
-                ),
-              }
-            : s,
-        ),
-      );
-      toast.success('تم توليد الترجمات');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    }
-  };
-
-  const translateBullet = async (i: number) => {
-    const src = bullets[i].translations.find((x) => x.locale === 'AR')?.text;
-    if (!src) return toast.error('املأ النص العربي');
-    try {
-      const out = await api.post<{ translations: Record<string, string> }>('/admin/translate', {
-        text: src, from: 'AR', to: ['EN', 'RU', 'IT'],
-      });
-      setBullets((prev) =>
-        prev.map((b, idx) =>
-          idx === i
-            ? { ...b, translations: b.translations.map((tr) => (tr.locale !== 'AR' && out.translations[tr.locale] ? { ...tr, text: out.translations[tr.locale] } : tr)) }
-            : b,
-        ),
-      );
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    }
-  };
-
   const save = () => {
     if (!translations.find((t) => t.locale === 'AR')?.title) {
       toast.error('عنوان الرحلة بالعربي إلزامي');
@@ -329,28 +240,14 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Field
-            label="عنوان الرحلة"
-            translateBtn={activeLocale === 'AR' && (
-              <Button size="sm" variant="outline" type="button" onClick={() => translateField('title')}>
-                <Sparkles className="h-3.5 w-3.5" /> ترجم للباقي
-              </Button>
-            )}
-          >
+          <Field label="عنوان الرحلة">
             <Input
               value={translations[trIdx(activeLocale)].title}
               onChange={(e) => setTrField(activeLocale, 'title', e.target.value)}
             />
           </Field>
 
-          <Field
-            label="وصف قصير"
-            translateBtn={activeLocale === 'AR' && (
-              <Button size="sm" variant="outline" type="button" onClick={() => translateField('shortDesc')}>
-                <Sparkles className="h-3.5 w-3.5" /> ترجم
-              </Button>
-            )}
-          >
+          <Field label="وصف قصير">
             <Textarea
               rows={3}
               value={translations[trIdx(activeLocale)].shortDesc}
@@ -358,14 +255,7 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
             />
           </Field>
 
-          <Field
-            label="الوصف الكامل"
-            translateBtn={activeLocale === 'AR' && (
-              <Button size="sm" variant="outline" type="button" onClick={() => translateField('longDesc')}>
-                <Sparkles className="h-3.5 w-3.5" /> ترجم
-              </Button>
-            )}
-          >
+          <Field label="الوصف الكامل">
             <RichTextEditor
               value={translations[trIdx(activeLocale)].longDesc}
               onChange={(html) => setTrField(activeLocale, 'longDesc', html)}
@@ -443,9 +333,6 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
                 <span className="font-bold text-primary text-sm">#{i + 1}</span>
                 <Button size="icon" variant="ghost" type="button" onClick={() => moveItem(highlights, i, -1, setHighlights)}><ChevronUp className="h-4 w-4" /></Button>
                 <Button size="icon" variant="ghost" type="button" onClick={() => moveItem(highlights, i, 1, setHighlights)}><ChevronDown className="h-4 w-4" /></Button>
-                <Button size="sm" variant="outline" type="button" onClick={() => translateHighlight(i)}>
-                  <Sparkles className="h-3.5 w-3.5" /> ترجم
-                </Button>
                 <Button size="icon" variant="ghost" type="button" onClick={() => setHighlights((p) => p.filter((_, x) => x !== i))}>
                   <Trash2 className="h-4 w-4 text-red-600" />
                 </Button>
@@ -543,14 +430,6 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
                     translations: s.translations.map((tr) => tr.locale === 'AR' ? { ...tr, desc: e.target.value } : tr),
                   } : s))}
                 />
-                <div className="flex flex-col gap-1">
-                  <Button size="sm" variant="outline" type="button" onClick={() => translateTimelineStep(i, 'title')}>
-                    <Sparkles className="h-3.5 w-3.5" /> ترجم العنوان
-                  </Button>
-                  <Button size="sm" variant="outline" type="button" onClick={() => translateTimelineStep(i, 'desc')}>
-                    <Sparkles className="h-3.5 w-3.5" /> ترجم الوصف
-                  </Button>
-                </div>
               </div>
 
               {/* Row 3: Other locales — collapsed by default */}
@@ -614,9 +493,6 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
               {list.map(({ b, i }) => (
                 <div key={i} className="border rounded-lg p-3 bg-muted/20">
                   <div className="flex items-center gap-2 mb-2">
-                    <Button size="sm" variant="outline" type="button" onClick={() => translateBullet(i)}>
-                      <Sparkles className="h-3.5 w-3.5" /> ترجم
-                    </Button>
                     <Button size="icon" variant="ghost" type="button" onClick={() => setBullets((p) => p.filter((_, x) => x !== i))}>
                       <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
@@ -663,13 +539,10 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
   );
 }
 
-function Field({ label, children, translateBtn }: { label: string; children: React.ReactNode; translateBtn?: React.ReactNode | false }) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <label className="block text-sm font-semibold">{label}</label>
-        {translateBtn}
-      </div>
+      <label className="block text-sm font-semibold mb-1.5">{label}</label>
       {children}
     </div>
   );

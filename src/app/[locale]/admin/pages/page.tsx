@@ -114,38 +114,6 @@ export default function AdminPagesPage() {
     });
   };
 
-  const translateFields = async () => {
-    const src = page?.translations.find((t) => t.locale === 'AR');
-    if (!src?.title || !src?.content) return toast.error('املأ العنوان والمحتوى بالعربي أولاً');
-    setTranslating(true);
-    try {
-      const tasks: Array<Promise<{ field: keyof StaticPageTr; translations: Record<string, string> }>> = [];
-      tasks.push(api.post<{ translations: Record<string, string> }>('/admin/translate', { text: src.title,    from: 'AR', to: ['EN','RU','IT'] }).then((r) => ({ field: 'title' as const, translations: r.translations })));
-      tasks.push(api.post<{ translations: Record<string, string> }>('/admin/translate', { text: src.content,  from: 'AR', to: ['EN','RU','IT'] }).then((r) => ({ field: 'content' as const, translations: r.translations })));
-      if (src.subtitle) tasks.push(api.post<{ translations: Record<string, string> }>('/admin/translate', { text: src.subtitle, from: 'AR', to: ['EN','RU','IT'] }).then((r) => ({ field: 'subtitle' as const, translations: r.translations })));
-      const results = await Promise.all(tasks);
-      setPages((prev) => {
-        const p = prev[activeSlug];
-        if (!p) return prev;
-        const newTranslations = p.translations.map((t) => {
-          if (t.locale === 'AR') return t;
-          const patched = { ...t };
-          for (const r of results) {
-            const v = r.translations[t.locale];
-            if (v) (patched as Record<string, unknown>)[r.field] = v;
-          }
-          return patched;
-        });
-        return { ...prev, [activeSlug]: { ...p, translations: newTranslations } };
-      });
-      toast.success('تمت الترجمة لكل اللغات');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    } finally {
-      setTranslating(false);
-    }
-  };
-
   const save = () => {
     if (!page) return;
     const valid = page.translations.filter((t) => t.title.trim() && t.content.trim());
@@ -324,9 +292,6 @@ export default function AdminPagesPage() {
                 );
               })}
             </div>
-            {activeLocale !== 'AR' && (
-              <span className="text-xs text-muted-foreground">يمكن استخدام زر "ترجم للباقي" من تبويب العربية</span>
-            )}
           </div>
 
           {/* Content */}
@@ -334,11 +299,6 @@ export default function AdminPagesPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between flex-wrap gap-2">
                 <span>المحتوى — {LABELS[activeLocale]}</span>
-                {activeLocale === 'AR' && (
-                  <Button size="sm" variant="outline" onClick={translateFields} disabled={translating}>
-                    <Sparkles className="h-3.5 w-3.5" /> {translating ? 'جاري الترجمة...' : 'ترجم تلقائياً للباقي'}
-                  </Button>
-                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

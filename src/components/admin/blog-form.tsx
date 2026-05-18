@@ -51,35 +51,6 @@ export function BlogForm({ initial }: { initial?: BlogPostShape }) {
     setTranslations((prev) => prev.map((t) => (t.locale === activeLocale ? { ...t, [field]: value } : t)));
   };
 
-  const translateAll = async () => {
-    const arTr = translations.find((t) => t.locale === 'AR');
-    if (!arTr || !arTr.title || !arTr.excerpt || !arTr.content) {
-      return toast.error('املأ كل حقول العربي أولاً');
-    }
-    try {
-      const [titleOut, excerptOut, contentOut] = await Promise.all([
-        api.post<{ translations: Record<string, string> }>('/admin/translate', { text: arTr.title, from: 'AR', to: ['EN', 'RU', 'IT'] }),
-        api.post<{ translations: Record<string, string> }>('/admin/translate', { text: arTr.excerpt, from: 'AR', to: ['EN', 'RU', 'IT'] }),
-        api.post<{ translations: Record<string, string> }>('/admin/translate', { text: arTr.content, from: 'AR', to: ['EN', 'RU', 'IT'] }),
-      ]);
-      setTranslations((prev) =>
-        prev.map((t) =>
-          t.locale === 'AR'
-            ? t
-            : {
-                ...t,
-                title: titleOut.translations[t.locale] || t.title,
-                excerpt: excerptOut.translations[t.locale] || t.excerpt,
-                content: contentOut.translations[t.locale] || t.content,
-              },
-        ),
-      );
-      toast.success('تمت الترجمة');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error');
-    }
-  };
-
   const save = () => {
     const payload = {
       status,
@@ -147,10 +118,7 @@ export function BlogForm({ initial }: { initial?: BlogPostShape }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>المحتوى</span>
-            {activeLocale === 'AR' && <Button size="sm" variant="outline" onClick={translateAll}><Sparkles className="h-3.5 w-3.5" /> ترجم للباقي</Button>}
-          </CardTitle>
+          <CardTitle>المحتوى</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div><label className="text-sm font-semibold mb-1.5 block">العنوان</label><Input value={tr.title} onChange={(e) => setField('title', e.target.value)} /></div>
