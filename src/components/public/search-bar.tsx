@@ -134,47 +134,44 @@ export function SearchBar({ variant = 'header' }: { variant?: 'header' | 'drawer
     );
   }
 
-  // Header variant — pill button that expands into input
+  // Header variant — icon-only button that expands to a wide input on click.
+  // Saves horizontal space in the crowded header. Closes on outside click.
   return (
     <div ref={containerRef} className="relative">
-      <form onSubmit={onSubmit} className={cn('relative transition-all duration-300', open ? 'w-72' : 'w-10 lg:w-44')}>
+      {!open ? (
         <button
-          type={open ? 'submit' : 'button'}
-          onClick={() => {
-            if (!open) {
-              setOpen(true);
-              setTimeout(() => inputRef.current?.focus(), 50);
-            }
-          }}
-          aria-label="Search"
-          className="absolute start-0 top-0 h-10 w-10 rounded-lg flex items-center justify-center text-cream hover:text-accent transition-colors z-10"
+          type="button"
+          onClick={() => { setOpen(true); setTimeout(() => inputRef.current?.focus(), 50); }}
+          aria-label={placeholder as string}
+          title={placeholder as string}
+          className={cn(
+            'inline-flex items-center justify-center w-10 h-10 rounded-lg border transition-all',
+            'text-cream hover:text-accent border-cream/20 hover:border-accent/60 bg-cream/5 hover:bg-cream/10',
+          )}
         >
           <Search className="h-4 w-4" />
         </button>
-        <input
-          ref={inputRef}
-          type="search"
-          value={q}
-          onChange={(e) => { setQ(e.target.value); setOpen(true); }}
-          onFocus={() => setOpen(true)}
-          placeholder={placeholder}
-          className={cn(
-            'h-10 w-full ps-10 pe-9 rounded-lg bg-cream/10 border border-cream/15 hover:border-cream/30 focus:border-accent/60 focus:bg-cream/15 text-cream placeholder:text-cream/45 text-sm outline-none transition-all',
-            !open && 'lg:cursor-pointer',
-            !open && 'cursor-pointer',
-          )}
-        />
-        {q && (
+      ) : (
+        <form onSubmit={onSubmit} className="relative w-64 md:w-80 animate-in slide-in-from-end-2 fade-in duration-200">
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cream/60 pointer-events-none" />
+          <input
+            ref={inputRef}
+            type="search"
+            value={q}
+            onChange={(e) => { setQ(e.target.value); }}
+            placeholder={placeholder}
+            className="h-10 w-full ps-10 pe-9 rounded-lg bg-cream/10 border border-accent/40 focus:border-accent text-cream placeholder:text-cream/45 text-sm outline-none transition-all"
+          />
           <button
             type="button"
-            onClick={() => { setQ(''); inputRef.current?.focus(); }}
+            onClick={() => { setQ(''); setOpen(false); }}
             className="absolute end-2 top-1/2 -translate-y-1/2 p-1 rounded text-cream/60 hover:text-cream hover:bg-cream/10"
-            aria-label="Clear"
+            aria-label="Close search"
           >
             <X className="h-3.5 w-3.5" />
           </button>
-        )}
-      </form>
+        </form>
+      )}
       <SearchResultsDropdown
         open={open && q.length >= 2}
         loading={loading}

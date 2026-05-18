@@ -2,8 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Reveal } from '@/components/public/motion';
-import { Car, Bus, Plane, Building2, MapPin, Users, Clock, ArrowRight } from 'lucide-react';
-import { Price } from '@/components/public/price';
+import { Car, Bus, Plane, Building2, MapPin, Users, Clock, ArrowRight, MessageCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { L, localeToApiCode, buildWhatsAppLink } from '@/lib/utils';
 
@@ -187,17 +186,20 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
           <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {isAr ? `حتى ${t.capacity}` : `up to ${t.capacity}`}</span>
         </div>
 
-        <div className="flex items-end justify-between pt-3 border-t border-accent/10">
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-              {isAr ? 'السعر' : 'Price'}
+        <div className="flex items-end justify-between gap-2 pt-3 border-t border-accent/10">
+          {/* Prices for transfers are quote-on-request — depends on group size,
+              distance, and timing. The customer messages us on WhatsApp. */}
+          <div className="text-xs text-muted-foreground leading-snug">
+            <div className="inline-flex items-center gap-1 font-semibold text-accent-700">
+              <MessageCircle className="h-3.5 w-3.5" />
+              {isAr ? 'السعر حسب العدد والمسافة' : 'Price on request'}
             </div>
-            <div className="font-serif text-lg font-bold text-accent-700">
-              <Price amount={Number(t.priceLocalEGP)} from="EGP" />
+            <div className="text-[10px] mt-0.5 opacity-80">
+              {isAr ? 'تواصل معنا للتسعير الفوري' : 'Contact us for an instant quote'}
             </div>
           </div>
-          <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors">
-            {isAr ? 'احجز' : 'Book'}
+          <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors shrink-0">
+            {isAr ? 'استفسار' : 'Get quote'}
           </a>
         </div>
       </div>
