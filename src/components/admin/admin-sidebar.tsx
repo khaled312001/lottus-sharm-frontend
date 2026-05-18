@@ -8,6 +8,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Phase-2 features (bookings/payments/coupons/customers/newsletter/email)
+// are hidden from the client for now — they ship after the content phase
+// is signed off. Routes still exist; we just don't link them in the sidebar.
 const SECTIONS = [
   { title: 'الرئيسية', items: [
     { href: '/admin/dashboard' as const, icon: LayoutDashboard, label: 'لوحة التحكم' },
@@ -21,19 +24,11 @@ const SECTIONS = [
     { href: '/admin/reviews' as const, icon: Star, label: 'التقييمات' },
     { href: '/admin/comments' as const, icon: MessagesSquare, label: 'التعليقات' },
   ]},
-  { title: 'العمليات', items: [
-    { href: '/admin/bookings' as const, icon: CalendarCheck, label: 'الحجوزات' },
-    { href: '/admin/payments' as const, icon: CreditCard, label: 'المدفوعات' },
-    { href: '/admin/coupons' as const, icon: Tag, label: 'كوبونات الخصم' },
-    { href: '/admin/customers' as const, icon: Users, label: 'العملاء' },
-  ]},
   { title: 'التواصل', items: [
     { href: '/admin/inquiries' as const, icon: MessageSquare, label: 'الرسائل' },
-    { href: '/admin/newsletter' as const, icon: Mail, label: 'النشرة البريدية' },
   ]},
   { title: 'الإعدادات', items: [
     { href: '/admin/settings' as const, icon: Settings, label: 'إعدادات الموقع' },
-    { href: '/admin/email' as const, icon: Send, label: 'إعدادات البريد' },
     { href: '/admin/users' as const, icon: UserCog, label: 'المستخدمون' },
   ]},
 ];

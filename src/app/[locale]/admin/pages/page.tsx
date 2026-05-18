@@ -194,9 +194,9 @@ export default function AdminPagesPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[280px_1fr] gap-5">
+      <div className="grid lg:grid-cols-[280px_1fr] gap-4 lg:gap-5">
         {/* Sidebar — Page list */}
-        <aside className="space-y-3">
+        <aside className="space-y-3 min-w-0">
           <div className="relative">
             <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="بحث عن صفحة..." value={search} onChange={(e) => setSearch(e.target.value)} className="ps-9" />
@@ -272,24 +272,22 @@ export default function AdminPagesPage() {
 
         {/* Editor */}
         <div className="space-y-4 min-w-0">
-          {/* Page meta strip */}
+          {/* Page meta strip — stacks on mobile so nothing overlaps */}
           <Card>
-            <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <CardContent className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <currentDef.icon className="h-5 w-5" />
                 </div>
-                <div>
-                  <div className="font-bold">{currentDef.labelAr}</div>
-                  <div className="text-xs text-muted-foreground">{currentDef.descAr}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold truncate">{currentDef.labelAr}</div>
+                  <div className="text-xs text-muted-foreground line-clamp-2">{currentDef.descAr}</div>
                 </div>
               </div>
-              <div className="text-xs text-muted-foreground font-mono">
-                المسار: <span className="text-foreground">{currentDef.publicPath}</span>
-                <span className="mx-2">·</span>
-                المُعرّف: <span className="text-foreground">{currentDef.slug}</span>
-                <span className="mx-2">·</span>
-                لغات مكتملة: <span className="text-foreground font-semibold">{filledCount}/4</span>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground font-mono">
+                <span>المسار: <span className="text-foreground">{currentDef.publicPath}</span></span>
+                <span>المُعرّف: <span className="text-foreground">{currentDef.slug}</span></span>
+                <span>لغات مكتملة: <span className="text-foreground font-semibold">{filledCount}/4</span></span>
               </div>
             </CardContent>
           </Card>
