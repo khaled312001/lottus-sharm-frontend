@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
+    // CloudLinux LVE on Hostinger throttles concurrent CPU — Next.js's image
+    // optimization proxy was returning ERR_HTTP2_SERVER_REFUSED_STREAM / 504
+    // under load. We already generate 3 size variants at upload time
+    // (thumb 400 / medium 1024 / original) and the hero slides are static
+    // assets, so serving them directly is correct and much faster.
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost' },
       { protocol: 'https', hostname: 'lotussharm.com' },

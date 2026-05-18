@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useAdminApi, useAdminAuth } from '@/lib/admin-auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, Trash2, Loader2, Play, X, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
+import { Upload, Trash2, Loader2, Play, X, Image as ImageIcon, Video as VideoIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { API_BASE } from '@/lib/api';
 import type { MediaDTO } from '@/types/api';
@@ -19,11 +19,15 @@ export default function AdminMediaPage() {
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<'ALL' | 'IMAGE' | 'VIDEO'>('ALL');
   const [preview, setPreview] = useState<MediaDTO | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 24;
 
   const load = async () => {
     setLoading(true);
     try {
-      const res = await api.get<{ items: MediaDTO[] }>('/admin/media?pageSize=200');
+      // Backend caps pageSize at 500 — fetch the max in one shot so the
+      // client-side filter/pagination here sees the full library.
+      const res = await api.get<{ items: MediaDTO[]; total: number }>('/admin/media?pageSize=500');
       setItems(res.items);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
@@ -70,6 +74,19 @@ export default function AdminMediaPage() {
   const filtered = items.filter((m) => filter === 'ALL' || m.type === filter);
   const imageCount = items.filter((m) => m.type === 'IMAGE').length;
   const videoCount = items.filter((m) => m.type === 'VIDEO').length;
+
+  // Reset to page 1 whenever the filter changes
+  useEffect(() => { setPage(1); }, [filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pageStart = (safePage - 1) * pageSize;
+  const pageItems = filtered.slice(pageStart, pageStart + pageSize);
+
+  const gotoPage = (p: number) => {
+    setPage(p);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="space-y-4">
@@ -119,7 +136,7 @@ export default function AdminMediaPage() {
             <div className="py-12 text-center text-muted-foreground">لا توجد ملفات</div>
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2">
-              {filtered.map((m) => (
+              {pageItems.map((m) => (
                 <div key={m.id} className="relative aspect-square rounded-lg overflow-hidden border group cursor-pointer" onClick={() => setPreview(m)}>
                   {m.type === 'IMAGE' ? (
                     <Image src={m.thumbnailUrl || m.url} alt={m.altAr || m.altEn || ''} fill sizes="120px" className="object-cover" />
@@ -156,6 +173,18 @@ export default function AdminMediaPage() {
                 </div>
               ))}
             </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && filtered.length > pageSize && (
+            <MediaPagination
+              page={safePage}
+              totalPages={totalPages}
+              total={filtered.length}
+              pageStart={pageStart}
+              pageSize={pageSize}
+              onGo={gotoPage}
+            />
           )}
         </CardContent>
       </Card>
@@ -199,5 +228,73 @@ export default function AdminMediaPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function MediaPagination({
+  page, totalPages, total, pageStart, pageSize, onGo,
+}: {
+  page: number; totalPages: number; total: number; pageStart: number; pageSize: number;
+  onGo: (p: number) => void;
+}) {
+  const first = pageStart + 1;
+  const last = Math.min(pageStart + pageSize, total);
+
+  // Windowed list around the current page
+  const windowed: (number | 'gap')[] = [];
+  const push = (v: number | 'gap') => { if (windowed[windowed.length - 1] !== v) windowed.push(v); };
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || Math.abs(p - page) <= 1) push(p);
+    else if (p === 2 || p === totalPages - 1) push('gap');
+  }
+
+  return (
+    <nav className="mt-6 flex flex-col items-center gap-3" aria-label="Pagination">
+      <div className="text-xs text-muted-foreground tabular-nums">
+        يعرض {first}–{last} من {total}
+      </div>
+      <div className="inline-flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onGo(Math.max(1, page - 1))}
+          disabled={page === 1}
+          className="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-accent/25 text-primary bg-white hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          aria-label="الصفحة السابقة"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+
+        {windowed.map((p, i) => (
+          p === 'gap' ? (
+            <span key={`gap-${i}`} className="w-10 text-center text-muted-foreground">…</span>
+          ) : (
+            <button
+              key={p}
+              type="button"
+              onClick={() => onGo(p)}
+              aria-current={p === page ? 'page' : undefined}
+              className={cn(
+                'inline-flex items-center justify-center min-w-10 h-10 px-3 rounded-lg text-sm font-semibold tabular-nums transition-colors border',
+                p === page
+                  ? 'bg-primary text-white border-primary shadow'
+                  : 'bg-white text-primary/80 border-accent/20 hover:bg-accent/10 hover:text-primary',
+              )}
+            >
+              {p}
+            </button>
+          )
+        ))}
+
+        <button
+          type="button"
+          onClick={() => onGo(Math.min(totalPages, page + 1))}
+          disabled={page === totalPages}
+          className="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-accent/25 text-primary bg-white hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          aria-label="الصفحة التالية"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+      </div>
+    </nav>
   );
 }

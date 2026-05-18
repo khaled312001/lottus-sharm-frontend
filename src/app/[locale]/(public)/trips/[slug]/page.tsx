@@ -16,6 +16,7 @@ import { TripComments } from '@/components/public/trip/trip-comments';
 import { TripSocialProof } from '@/components/public/trip/trip-social-proof';
 import { TripTrackView } from '@/components/public/trip/trip-track-view';
 import { RecentlyViewedStrip } from '@/components/public/recently-viewed-strip';
+import { QuickBookFab } from '@/components/public/quick-book-fab';
 import { Link } from '@/i18n/routing';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
@@ -395,7 +396,7 @@ export default async function TripDetailPage({ params }: PageProps) {
         </div>
 
         {/* Sticky booking sidebar */}
-        <aside className="lg:col-span-1">
+        <aside id="book" className="lg:col-span-1 scroll-mt-24">
           <BookingWidget trip={trip} />
           <div className="mt-4 text-center">
             <a href={inquiryHref} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 text-sm text-primary/70 hover:text-primary font-semibold">
@@ -430,6 +431,9 @@ export default async function TripDetailPage({ params }: PageProps) {
           </div>
         </section>
       )}
+
+      {/* Quick-book FAB — appears when the booking widget is off-screen */}
+      <QuickBookFab targetId="book" />
 
       {/* Recently viewed strip + tracker for this trip */}
       <TripTrackView
