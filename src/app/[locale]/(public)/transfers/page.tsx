@@ -1,0 +1,206 @@
+import { setRequestLocale } from 'next-intl/server';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import { Reveal } from '@/components/public/motion';
+import { Car, Bus, Plane, Building2, MapPin, Users, Clock, ArrowRight } from 'lucide-react';
+import { Price } from '@/components/public/price';
+import { api } from '@/lib/api';
+import { L, localeToApiCode, buildWhatsAppLink } from '@/lib/utils';
+
+export const revalidate = 60;
+
+interface TransferDTO {
+  id: number;
+  slug: string;
+  route: string;
+  vehicleType: 'SEDAN' | 'MICROBUS' | 'MINIBUS' | 'COACH' | 'FLIGHT';
+  capacity: number;
+  durationMinutes: number;
+  priceLocalEGP: string;
+  priceForeignUSD: string;
+  isFeatured: boolean;
+  heroImage?: { url: string; mediumUrl?: string | null } | null;
+  tr?: { name: string; shortDesc: string };
+}
+
+const VEHICLE_META: Record<string, { icon: React.ComponentType<{ className?: string }>; ar: string; en: string; color: string }> = {
+  SEDAN:    { icon: Car,        ar: 'سيارة ملاكي',  en: 'Private sedan', color: 'from-blue-500 to-blue-700' },
+  MICROBUS: { icon: Bus,        ar: 'ميكروباص',      en: 'Microbus',      color: 'from-emerald-500 to-emerald-700' },
+  MINIBUS:  { icon: Bus,        ar: 'ميني باص',      en: 'Minibus',       color: 'from-teal-500 to-teal-700' },
+  COACH:    { icon: Bus,        ar: 'أوتوبيس كبير', en: 'Coach',         color: 'from-amber-500 to-amber-700' },
+  FLIGHT:   { icon: Plane,      ar: 'طيران داخلي',  en: 'Flight',        color: 'from-rose-500 to-rose-700' },
+};
+
+const ROUTE_META: Record<string, { ar: string; en: string }> = {
+  AIRPORT_TO_HOTEL:     { ar: 'من المطار للفندق',         en: 'Airport → Hotel' },
+  HOTEL_TO_AIRPORT:     { ar: 'من الفندق للمطار',         en: 'Hotel → Airport' },
+  STATION_TO_HOTEL:     { ar: 'من المحطة للفندق',         en: 'Station → Hotel' },
+  HOTEL_TO_STATION:     { ar: 'من الفندق للمحطة',         en: 'Hotel → Station' },
+  CAIRO_SHARM_FLIGHT:   { ar: 'القاهرة → شرم الشيخ',     en: 'Cairo → Sharm El Sheikh' },
+  SHARM_CAIRO_FLIGHT:   { ar: 'شرم الشيخ → القاهرة',     en: 'Sharm El Sheikh → Cairo' },
+  INTRA_CITY:           { ar: 'تنقلات داخل المدينة',       en: 'In-town transfers' },
+  CUSTOM:               { ar: 'خدمة مخصصة',                en: 'Custom service' },
+};
+
+const ROUTE_GROUP_ORDER = [
+  ['AIRPORT_TO_HOTEL', 'HOTEL_TO_AIRPORT'],
+  ['CAIRO_SHARM_FLIGHT', 'SHARM_CAIRO_FLIGHT'],
+  ['STATION_TO_HOTEL', 'HOTEL_TO_STATION'],
+  ['INTRA_CITY'],
+];
+
+const GROUP_TITLES: Array<{ ar: string; en: string; icon: React.ComponentType<{ className?: string }> }> = [
+  { ar: 'استقبال وتوصيل المطار',  en: 'Airport pickup & drop-off',  icon: Car },
+  { ar: 'طيران داخلي القاهرة / شرم', en: 'Domestic flights (Cairo / Sharm)', icon: Plane },
+  { ar: 'محطات وموانئ',              en: 'Bus stations & ports',         icon: Building2 },
+  { ar: 'تنقلات داخلية',              en: 'In-town transfers',            icon: MapPin },
+];
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: L(locale, { ar: 'خدمات النقل والاستقبال — لوتس شرم', en: 'Transfers & airport pickups — Lotus Sharm', ru: 'Трансферы — Lotus Sharm', it: 'Trasferimenti — Lotus Sharm' }),
+    description: L(locale, {
+      ar: 'استقبال المطار، توصيل الفندق، طيران داخلي، تنقلات بين المحطات. سيارات، ميكروباص، أوتوبيس، طيران.',
+      en: 'Airport pickup, hotel drop-off, domestic flights, station transfers. Sedans, microbuses, coaches, flights.',
+      ru: 'Трансфер из аэропорта, отель, домашние рейсы.',
+      it: 'Trasferimenti aeroporto, hotel, voli interni.',
+    }),
+  };
+}
+
+export default async function TransfersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const isAr = locale === 'ar';
+
+  let items: TransferDTO[] = [];
+  try {
+    const res = await api.get<{ items: TransferDTO[] }>(`/public/transfers?locale=${localeToApiCode(locale)}`);
+    items = res.items;
+  } catch { /* ignore */ }
+
+  // Group by route order
+  const groups = ROUTE_GROUP_ORDER.map((routes) => items.filter((t) => routes.includes(t.route)));
+
+  return (
+    <main>
+      <section className="relative bg-primary-900 text-cream py-16 md:py-24 overflow-hidden">
+        <Image src="/hero-slides/hero-13.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />
+        <div className="container relative">
+          <Reveal>
+            <div className="inline-flex items-center gap-2 mb-4 px-3.5 py-1.5 rounded-full bg-accent/15 border border-accent/40 text-accent text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]">
+              <Car className="h-3.5 w-3.5" />
+              {L(locale, { ar: 'خدمات النقل', en: 'Transfers', ru: 'Трансферы', it: 'Trasferimenti' })}
+            </div>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">
+              {L(locale, {
+                ar: 'الاستقبال والتوصيل والتنقلات',
+                en: 'Pickups, drop-offs & transfers',
+                ru: 'Встречи, трансферы и перемещения',
+                it: 'Pickup, drop-off e trasferimenti',
+              })}
+            </h1>
+            <div className="w-16 h-0.5 gradient-gold rounded-full mb-5" />
+            <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">
+              {L(locale, {
+                ar: 'سيارة خاصة، ميكروباص، أوتوبيس كبير، أو طيران داخلي — الأسعار تعتمد على العدد والمسافة.',
+                en: 'Private car, microbus, coach, or domestic flight — prices vary by group size and route.',
+                ru: 'Машина, микроавтобус, автобус или внутренний рейс.',
+                it: 'Auto, microbus, pullman o volo interno — prezzi per gruppo e tratta.',
+              })}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="container py-12 md:py-16 space-y-12">
+        {groups.map((g, idx) => {
+          if (g.length === 0) return null;
+          const t = GROUP_TITLES[idx];
+          const Icon = t.icon;
+          return (
+            <Reveal key={idx}>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent/15 border border-accent/30 text-accent-700">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary leading-tight">
+                    {isAr ? t.ar : t.en}
+                  </h2>
+                  <p className="text-xs text-muted-foreground tabular-nums">
+                    {g.length} {L(locale, { ar: 'خيار متاح', en: 'options', ru: 'вариантов', it: 'opzioni' })}
+                  </p>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {g.map((tr) => <TransferCard key={tr.id} t={tr} locale={locale} />)}
+              </div>
+            </Reveal>
+          );
+        })}
+
+        {items.length === 0 && (
+          <div className="text-center py-20 text-muted-foreground">
+            {L(locale, { ar: 'لا توجد خدمات متاحة', en: 'No services available', ru: 'Нет услуг', it: 'Nessun servizio' })}
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
+
+function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
+  const isAr = locale === 'ar';
+  const meta = VEHICLE_META[t.vehicleType] || VEHICLE_META.SEDAN;
+  const route = ROUTE_META[t.route] || ROUTE_META.CUSTOM;
+  const name = t.tr?.name || t.slug;
+  const desc = t.tr?.shortDesc || '';
+  const Icon = meta.icon;
+  const wa = buildWhatsAppLink('201090767278', isAr
+    ? `مرحبا، أود الحجز: ${name}`
+    : `Hello, I'd like to book: ${name}`);
+
+  return (
+    <div className="group bg-white rounded-2xl overflow-hidden border border-accent/15 hover:border-accent/40 card-shadow hover:card-shadow-gold hover:-translate-y-1 transition-all flex flex-col">
+      <div className={`relative h-32 bg-gradient-to-br ${meta.color} text-white flex items-center justify-center overflow-hidden`}>
+        <Icon className="h-16 w-16 opacity-40 group-hover:scale-110 transition-transform duration-500" />
+        <span className="absolute top-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/35 backdrop-blur text-[10px] font-bold uppercase tracking-wider">
+          {isAr ? meta.ar : meta.en}
+        </span>
+        <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/15 backdrop-blur text-[10px] font-semibold">
+          <Users className="h-3 w-3" /> {t.capacity}
+        </span>
+        <span className="absolute bottom-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/15 backdrop-blur text-[10px]">
+          <ArrowRight className="h-3 w-3 rtl:rotate-180" /> {isAr ? route.ar : route.en}
+        </span>
+      </div>
+
+      <div className="p-4 flex-1 flex flex-col">
+        <h3 className="font-bold leading-tight text-primary mb-1">{name}</h3>
+        <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">{desc}</p>
+
+        <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-3">
+          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t.durationMinutes} {isAr ? 'دقيقة' : 'min'}</span>
+          <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {isAr ? `حتى ${t.capacity}` : `up to ${t.capacity}`}</span>
+        </div>
+
+        <div className="flex items-end justify-between pt-3 border-t border-accent/10">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+              {isAr ? 'السعر' : 'Price'}
+            </div>
+            <div className="font-serif text-lg font-bold text-accent-700">
+              <Price amount={Number(t.priceLocalEGP)} from="EGP" />
+            </div>
+          </div>
+          <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors">
+            {isAr ? 'احجز' : 'Book'}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}

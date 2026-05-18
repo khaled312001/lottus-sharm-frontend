@@ -8,6 +8,7 @@ import { Link, usePathname } from '@/i18n/routing';
 import {
   Menu, X, Phone, MessageCircle, Home, Map, Info, Image as ImageIcon, BookOpen, Mail, Sparkles,
   Facebook, Instagram, Youtube, ChevronLeft,
+  BedDouble, Car,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -58,14 +59,16 @@ export function Header() {
   // Transparent only on Home AND not scrolled AND menu closed
   const transparent = isHome && !scrolled && !open;
 
-  type LinkHref = '/' | '/trips' | '/about' | '/gallery' | '/blog' | '/contact';
+  type LinkHref = '/' | '/trips' | '/hotels' | '/transfers' | '/about' | '/gallery' | '/blog' | '/contact';
   const links: { href: LinkHref; label: string; icon: typeof Home }[] = [
-    { href: '/',         label: t('home'),    icon: Home },
-    { href: '/trips',    label: t('trips'),   icon: Map },
-    { href: '/about',    label: t('about'),   icon: Info },
-    { href: '/gallery',  label: t('gallery'), icon: ImageIcon },
-    { href: '/blog',     label: t('blog'),    icon: BookOpen },
-    { href: '/contact',  label: t('contact'), icon: Mail },
+    { href: '/',          label: t('home'),    icon: Home },
+    { href: '/trips',     label: t('trips'),   icon: Map },
+    { href: '/hotels',    label: isAr ? 'الفنادق' : 'Hotels',     icon: BedDouble },
+    { href: '/transfers', label: isAr ? 'النقل'   : 'Transfers',  icon: Car },
+    { href: '/about',     label: t('about'),   icon: Info },
+    { href: '/gallery',   label: t('gallery'), icon: ImageIcon },
+    { href: '/blog',      label: t('blog'),    icon: BookOpen },
+    { href: '/contact',   label: t('contact'), icon: Mail },
   ];
 
   return (

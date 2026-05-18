@@ -5,7 +5,7 @@ import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
   Settings, Star, Mail, MessageSquare, MessagesSquare, UserCog, Image as ImageIcon, X, Send, BarChart3, Search,
-  QrCode,
+  QrCode, BedDouble, Car,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +19,8 @@ const SECTIONS = [
   ]},
   { title: 'المحتوى', items: [
     { href: '/admin/trips' as const, icon: Map, label: 'الرحلات' },
+    { href: '/admin/hotels' as const, icon: BedDouble, label: 'الفنادق' },
+    { href: '/admin/transfers' as const, icon: Car, label: 'خدمات النقل' },
     { href: '/admin/blog' as const, icon: FileText, label: 'المدونة' },
     { href: '/admin/pages' as const, icon: FolderOpen, label: 'الصفحات' },
     { href: '/admin/media' as const, icon: ImageIcon, label: 'مكتبة الميديا' },
