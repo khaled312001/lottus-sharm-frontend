@@ -2,92 +2,175 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ReviewForm } from '@/components/public/review-form';
 import { L } from '@/lib/utils';
-import { Star, Quote } from 'lucide-react';
+import { Star, Quote, MessageCircle } from 'lucide-react';
+import { api } from '@/lib/api';
+import { Reveal } from '@/components/public/motion';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
+interface ReviewItem {
+  id: number;
+  customerName: string;
+  rating: number;
+  comment: string;
+  locale: 'AR' | 'EN' | 'RU' | 'IT';
+  createdAt: string;
+  trip?: { slug: string; translations: Array<{ locale: string; title: string }> } | null;
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const title = L(locale, {
-    ar: 'شاركنا تجربتك — لوتس شرم للسياحة',
-    en: 'Share your experience — Lotus Sharm Tourism',
-    ru: 'Поделитесь впечатлениями — Lotus Sharm',
-    it: 'Condividi la tua esperienza — Lotus Sharm',
+    ar: 'تقييمات العملاء واترك تقييمك — لوتس شرم',
+    en: 'Customer reviews — Lotus Sharm Tourism',
+    ru: 'Отзывы клиентов — Lotus Sharm',
+    it: 'Recensioni clienti — Lotus Sharm',
   });
   const description = L(locale, {
-    ar: 'ساعدنا في تحسين خدمتنا بتقييم تجربتك مع لوتس شرم للسياحة.',
-    en: 'Help us improve by sharing your Lotus Sharm experience.',
-    ru: 'Помогите нам стать лучше — оставьте отзыв о вашем опыте с Lotus Sharm.',
-    it: 'Aiutaci a migliorare — condividi la tua esperienza con Lotus Sharm.',
+    ar: 'اقرأ تقييمات حقيقية من ضيوف لوتس شرم — أو شاركنا تجربتك في دقيقة واحدة.',
+    en: 'Read verified Lotus Sharm guest reviews — or share your own in a minute.',
+    ru: 'Реальные отзывы гостей Lotus Sharm — или поделитесь своим за минуту.',
+    it: 'Recensioni verificate degli ospiti Lotus Sharm — o condividi la tua.',
   });
-  return { title, description, robots: { index: false, follow: true } };
+  return { title, description };
 }
 
 export default async function ReviewPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return (
-    <main className="relative min-h-screen bg-gradient-to-b from-primary-900 via-primary to-primary-900 text-cream py-12 md:py-20 overflow-hidden">
-      {/* Decorative gold accents */}
-      <div className="absolute top-1/4 -end-32 w-96 h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+  let reviews: ReviewItem[] = [];
+  let avg = 0;
+  let total = 0;
+  try {
+    const c = await api.get<{ items: ReviewItem[]; total: number; average: number }>('/public/reviews/company?limit=60');
+    reviews = c.items || [];
+    avg = c.average || 0;
+    total = c.total || 0;
+    if (reviews.length < 12) {
+      const tripWide = await api.get<{ items: ReviewItem[] }>('/public/reviews?limit=40');
+      reviews = [...reviews, ...(tripWide.items || [])];
+      total = Math.max(total, reviews.length);
+      if (avg === 0 && reviews.length > 0) avg = reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+    }
+  } catch { /* ignore */ }
 
-      <div className="container relative">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10 md:mb-14">
-            <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-accent/15 border border-accent/40 mb-5 backdrop-blur">
-              <Quote className="h-8 w-8 md:h-10 md:w-10 text-accent" />
-            </div>
-            <div className="inline-flex items-center gap-2.5 mb-3 justify-center">
-              <span className="block w-7 h-px bg-accent" />
-              <span className="text-accent uppercase tracking-[0.3em] text-[10px] sm:text-xs font-bold">
-                {L(locale, { ar: 'تقييم العملاء', en: 'Customer review', ru: 'Отзыв клиента', it: 'Recensione cliente' })}
-              </span>
-              <span className="block w-7 h-px bg-accent" />
-            </div>
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-balance leading-tight">
+  return (
+    <main className="min-h-screen bg-cream">
+      {/* Hero */}
+      <section className="relative bg-gradient-to-br from-primary-900 via-primary to-primary-900 text-cream py-12 md:py-16 overflow-hidden">
+        <div aria-hidden className="absolute -top-32 -end-32 w-96 h-96 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
+        <div className="container relative text-center max-w-3xl mx-auto">
+          <Reveal>
+            <span className="eyebrow eyebrow-center">
+              {L(locale, { ar: 'تقييمات الضيوف', en: 'Guest reviews', ru: 'Отзывы гостей', it: 'Recensioni' })}
+            </span>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight">
               {L(locale, {
-                ar: 'شاركنا تجربتك مع لوتس شرم',
-                en: 'Share your Lotus Sharm experience',
-                ru: 'Поделитесь впечатлениями',
-                it: 'Condividi la tua esperienza',
+                ar: 'تجارب حقيقية من ضيوفنا',
+                en: 'Real stories from real travelers',
+                ru: 'Реальные истории от реальных путешественников',
+                it: 'Storie vere di veri viaggiatori',
               })}
             </h1>
-            <p className="text-sm sm:text-base opacity-85 max-w-lg mx-auto leading-relaxed">
+            <div className="w-16 h-0.5 gradient-gold rounded-full mx-auto mb-5" />
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-cream/10 backdrop-blur border border-accent/30">
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className={`h-5 w-5 ${i < Math.round(avg) ? 'fill-accent text-accent' : 'text-cream/30'}`} />
+                ))}
+              </div>
+              <span className="font-serif text-2xl font-bold text-accent">{avg.toFixed(1)}</span>
+              <span className="text-xs uppercase tracking-wider text-cream/60 ms-1 ps-2 border-s border-cream/20">
+                <strong className="text-accent">{total}+</strong>{' '}
+                {L(locale, { ar: 'تقييم موثّق', en: 'verified reviews', ru: 'проверенных отзывов', it: 'recensioni verificate' })}
+              </span>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="container py-10 md:py-14 grid lg:grid-cols-[1fr_400px] gap-6 md:gap-8">
+        {/* === LEFT: All reviews list === */}
+        <div>
+          <div className="flex items-baseline justify-between gap-3 mb-5">
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary">
+              {L(locale, { ar: 'كل التقييمات', en: 'All reviews', ru: 'Все отзывы', it: 'Tutte le recensioni' })}
+            </h2>
+            <span className="text-sm text-muted-foreground tabular-nums">{reviews.length}</span>
+          </div>
+
+          {reviews.length === 0 ? (
+            <div className="bg-white rounded-2xl border-2 border-dashed border-accent/25 p-10 text-center">
+              <Quote className="h-10 w-10 text-accent/30 mx-auto mb-3" />
+              <p className="text-muted-foreground">
+                {L(locale, { ar: 'كن أول من يقيّمنا!', en: 'Be the first to review us!', ru: 'Будьте первым!', it: 'Sii il primo!' })}
+              </p>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
+              {reviews.map((r, i) => {
+                const tripTitle = r.trip?.translations.find((t) => t.locale === locale.toUpperCase())?.title || r.trip?.translations[0]?.title;
+                return (
+                  <Reveal key={r.id} delay={(i % 6) * 0.04}>
+                    <article className="bg-white rounded-xl border border-accent/15 p-4 hover:border-accent/40 hover:shadow-md transition-all h-full flex flex-col">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-0.5">
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <Star key={idx} className={`h-3.5 w-3.5 ${idx < r.rating ? 'fill-accent text-accent' : 'text-muted-foreground/30'}`} />
+                          ))}
+                        </div>
+                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{r.locale}</span>
+                      </div>
+                      <p className="text-[13px] text-foreground/85 leading-relaxed mb-3 flex-1 line-clamp-6" dir="auto">{r.comment}</p>
+                      <div className="pt-2 border-t border-accent/10 flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-bold text-primary text-xs truncate">{r.customerName}</div>
+                          {tripTitle && <div className="text-[10px] text-muted-foreground truncate">{tripTitle}</div>}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                          {new Date(r.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : locale, { year: 'numeric', month: 'short' })}
+                        </span>
+                      </div>
+                    </article>
+                  </Reveal>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* === RIGHT: Sticky leave-a-review form === */}
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <div className="bg-gradient-to-br from-primary-900 via-primary to-primary-900 text-cream rounded-3xl p-5 md:p-6 shadow-xl border border-accent/30">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent/20 border border-accent/40 backdrop-blur">
+                <MessageCircle className="h-6 w-6 text-accent" />
+              </span>
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold">
+                  {L(locale, { ar: 'سافرت معنا؟', en: 'Travelled with us?', ru: 'Путешествовали?', it: 'Hai viaggiato con noi?' })}
+                </div>
+                <h2 className="font-serif text-xl font-bold leading-tight">
+                  {L(locale, { ar: 'اترك تقييمك', en: 'Leave a review', ru: 'Оставьте отзыв', it: 'Lascia una recensione' })}
+                </h2>
+              </div>
+            </div>
+            <p className="text-xs text-cream/75 leading-relaxed mb-4">
               {L(locale, {
-                ar: 'رأيك يهمنا. اكتب لنا عن رحلتك معنا في دقيقة واحدة، وسيظهر تقييمك على الصفحة الرئيسية بعد المراجعة.',
-                en: 'Your feedback matters. Tell us about your trip in a minute — once approved, your review will appear on our homepage.',
-                ru: 'Ваше мнение важно. Поделитесь впечатлениями — после одобрения отзыв появится на главной странице.',
-                it: 'Il tuo feedback conta. Raccontaci del tuo viaggio — dopo l\'approvazione, la recensione apparirà in homepage.',
+                ar: 'رأيك يهمنا. اكتب عن رحلتك في دقيقة، وهيظهر بعد المراجعة.',
+                en: 'Your feedback matters. Write in a minute — appears after review.',
+                ru: 'Поделитесь впечатлениями за минуту — появится после модерации.',
+                it: 'Scrivi in un minuto — apparirà dopo la moderazione.',
               })}
             </p>
-
-            {/* Stars decoration */}
-            <div className="mt-6 inline-flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-accent text-accent" />
-              ))}
+            <div className="bg-cream/5 backdrop-blur border border-accent/20 rounded-2xl p-4">
+              <ReviewForm locale={locale} />
             </div>
           </div>
-
-          {/* Review form card */}
-          <div className="bg-cream/5 backdrop-blur-md border border-accent/30 rounded-3xl p-6 md:p-8 shadow-2xl shadow-primary-900/40">
-            <ReviewForm locale={locale} />
-          </div>
-
-          {/* Trust note */}
-          <p className="text-center text-xs text-cream/60 mt-6 leading-relaxed">
-            {L(locale, {
-              ar: 'تقييمك مجاني ولن نستخدم بياناتك في أي شيء آخر. شكراً لثقتك في لوتس شرم.',
-              en: 'Free to leave, your details stay private. Thanks for trusting Lotus Sharm.',
-              ru: 'Отзыв бесплатный, ваши данные останутся конфиденциальными. Спасибо за доверие к Lotus Sharm.',
-              it: 'Lasciarci una recensione è gratuito e i tuoi dati restano privati. Grazie per la fiducia in Lotus Sharm.',
-            })}
-          </p>
-        </div>
-      </div>
+        </aside>
+      </section>
     </main>
   );
 }

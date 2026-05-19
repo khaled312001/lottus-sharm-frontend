@@ -6,6 +6,7 @@ import { TripCard } from '@/components/public/trip-card';
 import { Reveal } from '@/components/public/motion';
 import { HeroSlider } from '@/components/public/hero-slider';
 import { ReviewsCarousel, type ReviewItem } from '@/components/public/reviews-carousel';
+import { FbReviewsStrip } from '@/components/public/fb-reviews-strip';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
 import {
@@ -113,10 +114,23 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {/* Trust strip */}
             <Reveal delay={0.6}>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:text-sm text-cream/75">
-                <span className="inline-flex items-center gap-1.5">
-                  <Star className="h-4 w-4 fill-accent text-accent" />
-                  <strong className="text-cream">5.0</strong> <span className="opacity-70">· 10k+ {L(locale, { ar: 'سائح', en: 'guests', ru: 'гостей', it: 'ospiti' })}</span>
-                </span>
+                <Link
+                  href="/review"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 hover:bg-accent/25 border border-accent/40 hover:border-accent/70 transition-colors group"
+                  title={L(locale, { ar: 'عرض كل التقييمات', en: 'See all reviews', ru: 'Все отзывы', it: 'Vedi tutte' }) as string}
+                >
+                  <span className="inline-flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(reviewsAvg || 5) ? 'fill-accent text-accent' : 'text-cream/30'}`} />
+                    ))}
+                  </span>
+                  <strong className="text-cream">{(reviewsAvg || 5).toFixed(1)}</strong>
+                  <span className="opacity-70 group-hover:opacity-100 transition-opacity">
+                    · <strong className="text-accent">{reviewsTotal || 0}</strong>{' '}
+                    {L(locale, { ar: 'تقييم', en: 'reviews', ru: 'отзывов', it: 'recensioni' })}
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-accent rtl:rotate-180 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-all" />
+                </Link>
                 <span className="w-px h-4 bg-cream/20" />
                 <span className="inline-flex items-center gap-1.5">
                   <ShieldCheck className="h-4 w-4 text-accent" />
@@ -541,6 +555,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
       </section>
+
+      {/* ============ FACEBOOK REVIEWS STRIP — auto-scrolling marquee (above site reviews) ============ */}
+      <FbReviewsStrip locale={locale} />
 
       {/* ============ REVIEWS CAROUSEL ============ */}
       {reviews.length > 0 && (
