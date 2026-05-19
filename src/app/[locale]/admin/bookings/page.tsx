@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import {
   Plus, X, MessageCircle, Globe, Phone as PhoneIcon, Hand, CreditCard, Loader2,
   Download, Calendar as CalIcon, List, ChevronLeft, ChevronRight,
-  Clock, Receipt, FileCheck2, AlertCircle,
+  Clock, Receipt, FileCheck2, AlertCircle, CheckCircle2, Send, Banknote, Smartphone, Building2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ImageLightbox } from '@/components/public/image-lightbox';
@@ -19,6 +19,15 @@ import { ImageLightbox } from '@/components/public/image-lightbox';
 type Status = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 type Source = 'WEBSITE' | 'WHATSAPP' | 'PHONE' | 'MANUAL' | 'STRIPE';
 type PaymentStatus = 'UNPAID' | 'PARTIAL' | 'PAID' | 'REFUNDED';
+
+const PAYMENT_METHOD_META: Record<string, { label: string; icon: typeof Smartphone; color: string }> = {
+  VODAFONE_CASH: { label: 'فودافون كاش', icon: Smartphone, color: 'bg-red-500/12 text-red-700 border-red-500/30' },
+  INSTAPAY:      { label: 'إنستا باي',   icon: Send,       color: 'bg-purple-500/12 text-purple-700 border-purple-500/30' },
+  BANK_TRANSFER: { label: 'تحويل بنكي',  icon: Building2,  color: 'bg-blue-500/12 text-blue-700 border-blue-500/30' },
+  CASH:          { label: 'نقدي عند الوصول', icon: Banknote, color: 'bg-emerald-500/12 text-emerald-700 border-emerald-500/30' },
+  STRIPE:        { label: 'بطاقة (Stripe)', icon: CreditCard, color: 'bg-indigo-500/12 text-indigo-700 border-indigo-500/30' },
+  OTHER:         { label: 'غير محدد', icon: CreditCard, color: 'bg-muted text-muted-foreground border-muted-foreground/30' },
+};
 
 interface BookingPayment {
   id: number;
@@ -129,6 +138,17 @@ export default function AdminBookingsPage() {
       void load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
+
+  const confirmPayment = async (paymentId: number, bookingRef: string) => {
+    if (!confirm(`تأكيد دفع الحجز ${bookingRef}؟ هتتولّد الفاتورة وتترسل للعميل تلقائياً.`)) return;
+    try {
+      await api.post(`/admin/payments/${paymentId}/confirm`, {});
+      toast.success(`تم تأكيد الدفع — الفاتورة اتبعتت للعميل (${bookingRef})`);
+      void load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'فشل التأكيد');
     }
   };
 
@@ -322,12 +342,39 @@ export default function AdminBookingsPage() {
                           </select>
                         </td>
                         <td className="py-2 px-3">
-                          <div className="flex items-center gap-2">
-                            {b.customer.phone && !b.customer.phone.startsWith('wa-pending-') && (
-                              <a href={`https://wa.me/${b.customer.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener" className="text-xs text-primary hover:underline">WhatsApp</a>
-                            )}
-                            {/* Receipt thumbnails — appears for self-service bookings.
-                                Images open in the shared lightbox; PDFs open in new tab. */}
+                          <div className="flex items-center gap-1.5 flex-wrap min-w-[200px]">
+                            {/* Payment method badges (one per Payment row) */}
+                            {(b.payments || []).map((p) => {
+                              const meta = PAYMENT_METHOD_META[p.method] || PAYMENT_METHOD_META.OTHER;
+                              const MIcon = meta.icon;
+                              const isPaid = p.status === 'PAID';
+                              return (
+                                <div key={`pm-${p.id}`} className="inline-flex items-center gap-1">
+                                  <span className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border', meta.color)} title={`${meta.label} · ${p.amount} ${p.currency}`}>
+                                    <MIcon className="h-3 w-3" />
+                                    {meta.label}
+                                  </span>
+                                  {!isPaid && p.screenshotUrl && (
+                                    <button
+                                      type="button"
+                                      onClick={() => confirmPayment(p.id, b.reference)}
+                                      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-sm"
+                                      title="تأكيد الدفع → ترسل الفاتورة للعميل تلقائياً"
+                                    >
+                                      <CheckCircle2 className="h-3 w-3" />
+                                      تأكيد
+                                    </button>
+                                  )}
+                                  {isPaid && (
+                                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold">
+                                      <CheckCircle2 className="h-3 w-3" />
+                                      مدفوع
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                            {/* Receipt thumbnails (images + PDFs) */}
                             {(() => {
                               const imageReceipts = (b.payments || []).filter((p) => p.screenshotUrl && !/\.pdf$/i.test(p.screenshotUrl!));
                               const pdfReceipts   = (b.payments || []).filter((p) => p.screenshotUrl && /\.pdf$/i.test(p.screenshotUrl!));
@@ -343,7 +390,7 @@ export default function AdminBookingsPage() {
                                       title="عرض إيصال الدفع"
                                     >
                                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                                      <img src={p.screenshotUrl!} alt="receipt" className="w-10 h-10 rounded-md object-cover border border-emerald-500/40 group-hover:border-emerald-500 group-hover:scale-110 transition-all" />
+                                      <img src={p.screenshotUrl!} alt="receipt" className="w-9 h-9 rounded-md object-cover border border-emerald-500/40 group-hover:border-emerald-500 group-hover:scale-110 transition-all" />
                                       <span className="absolute -top-1 -end-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 border-2 border-white text-white shadow">
                                         <FileCheck2 className="h-2.5 w-2.5" />
                                       </span>
@@ -351,7 +398,7 @@ export default function AdminBookingsPage() {
                                   ))}
                                   {pdfReceipts.map((p) => (
                                     <a key={p.id} href={p.screenshotUrl!} target="_blank" rel="noopener" className="relative inline-block group" title="عرض PDF">
-                                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-blue-500/15 border border-blue-500/40 text-blue-700 text-[10px] font-bold group-hover:bg-blue-500/25 transition-colors">PDF</span>
+                                      <span className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-blue-500/15 border border-blue-500/40 text-blue-700 text-[10px] font-bold group-hover:bg-blue-500/25 transition-colors">PDF</span>
                                       <span className="absolute -top-1 -end-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 border-2 border-white text-white shadow">
                                         <FileCheck2 className="h-2.5 w-2.5" />
                                       </span>
@@ -359,6 +406,33 @@ export default function AdminBookingsPage() {
                                   ))}
                                 </>
                               );
+                            })()}
+                            {/* WhatsApp button (icon only) */}
+                            {b.customer.phone && !b.customer.phone.startsWith('wa-pending-') && (
+                              <a
+                                href={`https://wa.me/${b.customer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`مرحبا ${b.customer.fullName}، بخصوص حجزك ${b.reference}`)}`}
+                                target="_blank"
+                                rel="noopener"
+                                title="افتح محادثة واتساب"
+                                className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-[#25D366]/15 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors"
+                              >
+                                <MessageCircle className="h-3.5 w-3.5" />
+                              </a>
+                            )}
+                            {/* Invoice link if generated */}
+                            {(() => {
+                              const bWithInv = b as BookingItem & { invoiceUrl?: string | null };
+                              return bWithInv.invoiceUrl ? (
+                                <a
+                                  href={bWithInv.invoiceUrl}
+                                  target="_blank"
+                                  rel="noopener"
+                                  title="عرض الفاتورة PDF"
+                                  className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-amber-500/15 text-amber-700 hover:bg-amber-500 hover:text-white transition-colors"
+                                >
+                                  <Receipt className="h-3.5 w-3.5" />
+                                </a>
+                              ) : null;
                             })()}
                           </div>
                         </td>
