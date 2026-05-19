@@ -176,10 +176,10 @@ export default function AdminReviewsPage() {
           {items.length === 0 ? (
             <p className="text-center text-muted-foreground py-12">لا توجد تقييمات</p>
           ) : items.map((r) => (
-            <div key={r.id} className={`border rounded-lg p-4 ${r.isApproved ? 'bg-white' : 'bg-amber-50/40 border-amber-200/60'}`}>
+            <div key={r.id} className={`border rounded-lg p-4 overflow-hidden ${r.isApproved ? 'bg-white' : 'bg-amber-50/40 border-amber-200/60'}`}>
               <div className="flex items-start justify-between gap-3 mb-2 flex-wrap">
-                <div>
-                  <div className="font-semibold">{r.customerName} <span className="text-xs text-muted-foreground font-normal">({r.locale})</span></div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold break-words">{r.customerName} <span className="text-xs text-muted-foreground font-normal">({r.locale})</span></div>
                   <div className="flex items-center gap-1 flex-wrap mt-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star key={i} className={`h-4 w-4 ${i < r.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} />

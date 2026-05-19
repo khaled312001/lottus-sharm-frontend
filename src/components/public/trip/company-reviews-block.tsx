@@ -171,7 +171,7 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
                     {r.customerName.trim().charAt(0).toUpperCase()}
                   </span>
                   <div className="min-w-0">
-                    <div className="font-bold text-primary leading-tight truncate">{r.customerName}</div>
+                    <div className="font-bold text-primary leading-tight truncate break-words">{r.customerName}</div>
                     <div className="text-[11px] text-muted-foreground inline-flex items-center gap-1.5 mt-0.5">
                       <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 font-bold border border-emerald-500/25">
                         <svg className="h-2.5 w-2.5" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2l-3.5-3.5a1 1 0 1 0-1.4 1.4l4.2 4.2c.4.4 1 .4 1.4 0l9-9a1 1 0 1 0-1.4-1.4L9 16.2z"/></svg>
@@ -184,7 +184,7 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
                 </div>
 
                 <Stars value={r.rating} size="sm" />
-                <p className="mt-2 text-foreground/85 leading-relaxed text-sm md:text-[15px] line-clamp-5">{r.comment}</p>
+                <p className="mt-2 text-foreground/85 leading-relaxed text-sm md:text-[15px] line-clamp-5 break-words [overflow-wrap:anywhere]">{r.comment}</p>
 
                 {r.images && r.images.length > 0 && (
                   <div className="mt-3 grid grid-cols-4 gap-1.5">

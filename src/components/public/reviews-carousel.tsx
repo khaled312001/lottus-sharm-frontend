@@ -121,7 +121,7 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
             </div>
 
             {/* Quote */}
-            <p className="font-serif text-base sm:text-lg md:text-xl leading-relaxed mb-4 text-balance text-cream/95 max-w-xl mx-auto line-clamp-4">
+            <p className="font-serif text-base sm:text-lg md:text-xl leading-relaxed mb-4 text-balance text-cream/95 max-w-xl mx-auto line-clamp-4 break-words [overflow-wrap:anywhere]">
               <span className="text-accent me-0.5">&ldquo;</span>
               {r.comment}
               <span className="text-accent ms-0.5">&rdquo;</span>
@@ -132,7 +132,7 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
 
             {/* Name + meta */}
             <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <span className="font-bold text-accent text-sm md:text-base">{r.customerName}</span>
+              <span className="font-bold text-accent text-sm md:text-base break-words [overflow-wrap:anywhere]">{r.customerName}</span>
               <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
                 <BadgeCheck className="h-2.5 w-2.5" />
                 {L(locale, { ar: 'موثق', en: 'verified', ru: 'подтв.', it: 'verificato' })}
