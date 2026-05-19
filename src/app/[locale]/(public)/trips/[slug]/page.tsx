@@ -11,7 +11,7 @@ import { TripCard } from '@/components/public/trip-card';
 import { Reveal } from '@/components/public/motion';
 import { TripTimeline } from '@/components/public/trip/trip-timeline';
 import { TripLikeButton } from '@/components/public/trip/trip-like-button';
-import { TripReviews } from '@/components/public/trip/trip-reviews';
+import { CompanyReviewsBlock } from '@/components/public/trip/company-reviews-block';
 import { TripComments } from '@/components/public/trip/trip-comments';
 import { TripSocialProof } from '@/components/public/trip/trip-social-proof';
 import { TripTrackView } from '@/components/public/trip/trip-track-view';
@@ -131,15 +131,6 @@ export default async function TripDetailPage({ params }: PageProps) {
             {/* Rating + Like + comment count + social proof */}
             <div className="mt-6 md:mt-7 flex flex-wrap items-center gap-3 sm:gap-4">
               <TripSocialProof tripId={trip.id} bookingsLast7Days={trip.bookingsLast7Days} locale={locale} />
-              {(trip.ratingAverage ?? 0) > 0 && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cream/10 backdrop-blur border border-accent/30 text-cream">
-                  <Star className="h-4 w-4 fill-accent text-accent" />
-                  <span className="font-bold tabular-nums">{(trip.ratingAverage ?? 0).toFixed(1)}</span>
-                  <span className="text-cream/70 text-sm">
-                    ({trip._count?.reviews ?? 0} {L(locale, { ar: 'تقييم', en: 'reviews', ru: 'отзывов', it: 'recensioni' })})
-                  </span>
-                </div>
-              )}
               <TripLikeButton slug={trip.slug} locale={locale} initialCount={trip._count?.likes ?? 0} />
               {(trip._count?.comments ?? 0) > 0 && (
                 <Link href={`/trips/${trip.slug}#comments`} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-cream/10 backdrop-blur border border-cream/20 text-cream hover:bg-cream/15 transition-colors">
@@ -377,14 +368,9 @@ export default async function TripDetailPage({ params }: PageProps) {
             </div>
           </Reveal>
 
-          {/* Reviews */}
+          {/* Reviews — company-wide (not trip-specific) */}
           <Reveal>
-            <TripReviews
-              slug={trip.slug}
-              locale={locale}
-              initialAverage={trip.ratingAverage ?? 0}
-              initialCount={trip._count?.reviews ?? 0}
-            />
+            <CompanyReviewsBlock locale={locale} />
           </Reveal>
 
           {/* Comments / discussion */}

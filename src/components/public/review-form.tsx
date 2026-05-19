@@ -195,7 +195,7 @@ export function ReviewForm({ locale }: { locale: string }) {
             it: 'Cosa ti è piaciuto del tuo viaggio?',
           })}
           maxLength={2000}
-          className="bg-cream/8 border-cream/20 text-cream placeholder:text-cream/40"
+          className="bg-white border-cream/30 text-primary placeholder:text-muted-foreground/70 focus-visible:ring-accent/40"
         />
         <p className="text-[11px] text-cream/45 mt-1 text-end tabular-nums">{comment.length}/2000</p>
       </div>

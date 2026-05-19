@@ -40,18 +40,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   }
 
   let reviews: ReviewItem[] = [];
+  let reviewsAvg = 0;
+  let reviewsTotal = 0;
   try {
-    // Show company-wide reviews first (left via /review). Fall back to trip-level
-    // reviews if we don't have enough company ones yet.
-    const company = await api.get<{ items: ReviewItem[] }>('/public/reviews/company?limit=24');
+    // Reviews are company-wide only (submitted from the /review page).
+    const company = await api.get<{ items: ReviewItem[]; total: number; average: number }>('/public/reviews/company?limit=24');
     reviews = company.items;
-    if (reviews.length < 6) {
-      const tripWide = await api.get<{ items: ReviewItem[] }>('/public/reviews?limit=12');
-      reviews = [...reviews, ...tripWide.items];
-    }
+    reviewsAvg = company.average || 0;
+    reviewsTotal = company.total || 0;
   } catch { reviews = []; }
-
-  const isAr = locale === 'ar';
 
   return (
     <>
@@ -547,9 +544,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* ============ REVIEWS CAROUSEL ============ */}
       {reviews.length > 0 && (
-        <section className="relative py-14 md:py-24 bg-primary-800 text-cream overflow-hidden hairline-top">
-          <div className="absolute -top-20 -right-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/10 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/5 blur-3xl" />
+        <section className="relative py-16 md:py-28 bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 text-cream overflow-hidden hairline-top">
+          <div className="absolute -top-20 -right-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-72 md:w-96 h-72 md:h-96 rounded-full bg-accent/5 blur-3xl pointer-events-none" />
+          {/* Sparkles */}
+          <span aria-hidden className="sparkle delay-1" style={{ top: '15%', insetInlineStart: '8%' }} />
+          <span aria-hidden className="sparkle delay-3" style={{ top: '70%', insetInlineEnd: '12%' }} />
+          <span aria-hidden className="sparkle delay-2" style={{ top: '40%', insetInlineEnd: '6%' }} />
+          {/* Top gold rule */}
+          <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
           <div className="container relative">
             <Reveal className="text-center mb-10 md:mb-14">
               <span className="eyebrow eyebrow-center">
@@ -559,17 +562,54 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 {L(locale, { ar: 'تجارب حقيقية من رحلاتهم معنا', en: 'Real stories from real travelers', ru: 'Реальные отзывы реальных путешественников', it: 'Storie vere di veri viaggiatori' })}
               </h2>
               <span className="rule-gold" />
+
+              {/* Premium rating badge */}
+              <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-2 mb-3">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream/8 border border-accent/30 backdrop-blur">
+                  <span className="font-serif text-2xl font-bold text-accent leading-none">{reviewsAvg.toFixed(1)}</span>
+                  <div className="inline-flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(reviewsAvg) ? 'fill-accent text-accent' : 'fill-transparent text-cream/30'}`} />
+                    ))}
+                  </div>
+                  <span className="text-[10px] uppercase tracking-wider text-cream/65 font-bold border-s border-cream/20 ps-2 ms-0.5">
+                    {reviewsTotal} {L(locale, { ar: 'تقييم', en: 'reviews', ru: 'отзывов', it: 'recensioni' })}
+                  </span>
+                </div>
+              </div>
+
               <p className="text-sm md:text-base opacity-75 max-w-xl mx-auto leading-relaxed">
                 {L(locale, {
-                  ar: `أكثر من ${reviews.length} مراجعة من زوار حقيقيين عاشوا تجربة لوتس شرم`,
-                  en: `${reviews.length}+ verified reviews from real Lotus Sharm travelers`,
-                  ru: `Более ${reviews.length} проверенных отзывов от реальных гостей Lotus Sharm`,
-                  it: `${reviews.length}+ recensioni verificate da veri ospiti Lotus Sharm`,
+                  ar: `أكثر من ${reviewsTotal} مراجعة موثقة من زوار حقيقيين عاشوا تجربة لوتس شرم`,
+                  en: `${reviewsTotal}+ verified reviews from real Lotus Sharm travelers`,
+                  ru: `Более ${reviewsTotal} проверенных отзывов от реальных гостей Lotus Sharm`,
+                  it: `${reviewsTotal}+ recensioni verificate da veri ospiti Lotus Sharm`,
                 })}
               </p>
             </Reveal>
             <Reveal>
               <ReviewsCarousel reviews={reviews} locale={locale} />
+            </Reveal>
+
+            {/* Write a review CTA */}
+            <Reveal delay={0.2}>
+              <div className="mt-10 md:mt-12 text-center">
+                <p className="text-sm text-cream/70 mb-4">
+                  {L(locale, {
+                    ar: 'سافرت معنا من قبل؟ شاركنا تجربتك ✨',
+                    en: 'Traveled with us before? Share your experience ✨',
+                    ru: 'Путешествовали с нами? Поделитесь впечатлениями ✨',
+                    it: 'Hai viaggiato con noi? Condividi la tua esperienza ✨',
+                  })}
+                </p>
+                <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-xl shadow-accent/30 group">
+                  <Link href="/review">
+                    <Star className="h-4 w-4 fill-current" />
+                    {L(locale, { ar: 'اكتب تقييمك', en: 'Write your review', ru: 'Написать отзыв', it: 'Scrivi una recensione' })}
+                    <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </div>
             </Reveal>
           </div>
         </section>
