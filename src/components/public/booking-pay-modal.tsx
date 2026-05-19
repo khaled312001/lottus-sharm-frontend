@@ -86,8 +86,9 @@ export function BookingPayModal({
     }
   };
 
+  const isCashOnArrival = method === 'CASH';
   const submit = async () => {
-    if (!file) {
+    if (!isCashOnArrival && !file) {
       return toast.error(L(locale, { ar: 'ارفع صورة الإيصال أولاً', en: 'Please attach the receipt', ru: 'Прикрепите чек', it: 'Allega la ricevuta' }) as string);
     }
     setSubmitting(true);
@@ -106,7 +107,7 @@ export function BookingPayModal({
       if (payload.travelerType) fd.append('travelerType', payload.travelerType);
       if (payload.isMarried) fd.append('isMarried', 'true');
       if (payload.notes) fd.append('notes', payload.notes);
-      fd.append('receipt', file);
+      if (file) fd.append('receipt', file);
 
       const res = await fetch(`${API_BASE}/public/bookings/with-receipt`, { method: 'POST', body: fd });
       const data = await res.json();
@@ -368,7 +369,7 @@ export function BookingPayModal({
         <Button variant="outline" onClick={onClose}>
           {L(locale, { ar: 'إلغاء', en: 'Cancel', ru: 'Отмена', it: 'Annulla' })}
         </Button>
-        <Button onClick={submit} disabled={submitting || !file} className="bg-primary text-cream hover:bg-primary/90">
+        <Button onClick={submit} disabled={submitting || (!isCashOnArrival && !file)} className="bg-primary text-cream hover:bg-primary/90">
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
           {L(locale, { ar: 'إرسال الحجز للمراجعة', en: 'Submit booking', ru: 'Отправить', it: 'Invia prenotazione' })}
         </Button>
@@ -393,7 +394,7 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4"
       onClick={onClose}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
