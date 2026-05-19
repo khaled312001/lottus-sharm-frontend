@@ -1,0 +1,17 @@
+{
+  "name": "Lotus Sharm Tourism",
+  "short_name": "Lotus Sharm",
+  "description": "Premium tours, hotels and transfers in Sharm El Sheikh — Egypt.",
+  "start_url": "/ar",
+  "display": "standalone",
+  "background_color": "#fdf6e9",
+  "theme_color": "#0d3a3a",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    { "src": "/logo.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" },
+    { "src": "/logo.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" }
+  ],
+  "categories": ["travel", "lifestyle"]
+}
