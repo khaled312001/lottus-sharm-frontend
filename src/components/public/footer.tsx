@@ -35,7 +35,9 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
             <li><FooterLink href="/trips">{t('nav.trips')}</FooterLink></li>
             <li><FooterLink href="/about">{t('nav.about')}</FooterLink></li>
             <li><FooterLink href="/gallery">{t('nav.gallery')}</FooterLink></li>
+            <li><FooterLink href={'/reviews' as never}>{L(locale, { ar: 'التقييمات', en: 'Reviews', ru: 'Отзывы', it: 'Recensioni' }) as string}</FooterLink></li>
             <li><FooterLink href="/blog">{t('nav.blog')}</FooterLink></li>
+            <li><FooterLink href={'/qr-codes' as never}>{L(locale, { ar: 'رموز QR', en: 'QR codes', ru: 'QR-коды', it: 'Codici QR' }) as string}</FooterLink></li>
             <li><FooterLink href="/contact">{t('nav.contact')}</FooterLink></li>
           </ul>
         </div>

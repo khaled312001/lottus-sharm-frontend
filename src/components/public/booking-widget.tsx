@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -153,6 +154,10 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
     return () => { document.body.style.overflow = prev; };
   }, [open]);
 
+  // Mount flag — portal target only available client-side
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   return (
     <>
       {/* ======================== COMPACT STICKY TRIGGER ======================== */}
@@ -209,17 +214,17 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         </div>
       </motion.div>
 
-      {/* ======================== FULL FORM MODAL (CSS-only, CSP-safe) ======================== */}
-      {open && (
+      {/* ======================== FULL FORM MODAL — portal to body, CSP-safe ======================== */}
+      {mounted && open && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-primary-900/60 backdrop-blur-sm p-0 sm:p-4 animate-fade-in"
+          className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-primary-900/60 backdrop-blur-sm p-0 sm:p-4 animate-fade-in"
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md max-h-[92vh] sm:max-h-[88vh] bg-white sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden flex flex-col animate-slide-up"
+            className="relative w-full max-w-md max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-32px)] bg-white sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden flex flex-col animate-slide-up"
           >
             <button
               type="button"
@@ -663,7 +668,8 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
 
       </div>{/* /scrollable */}
           </div>{/* /panel */}
-        </div>
+        </div>,
+        document.body,
       )}
 
       {showPayModal && formReady && (
