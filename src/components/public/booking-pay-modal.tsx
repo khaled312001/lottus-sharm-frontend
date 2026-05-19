@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocale } from 'next-intl';
 import { X, Upload, FileCheck2, Loader2, CheckCircle2, Phone, Mail, User, Copy, Check, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -377,16 +378,28 @@ export function BookingPayModal({
 }
 
 function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    setMounted(true);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, []);
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4" onClick={onClose}>
+  if (!mounted) return null;
+  // CRITICAL: portal to document.body so the fixed positioning escapes any
+  // ancestor with a `transform` (which would otherwise become the modal's
+  // containing block and clip it inside the booking widget).
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

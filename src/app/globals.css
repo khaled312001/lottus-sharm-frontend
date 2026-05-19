@@ -969,9 +969,12 @@ html[dir='rtl'] .animate-marquee { animation: marquee-rtl 30s linear infinite; }
 }
 
 @supports (animation-timeline: view()) {
-  /* Every section floats in as it enters the viewport */
-  main section,
-  article section {
+  /* Every TOP-LEVEL section floats in as it enters the viewport.
+     IMPORTANT: only direct children of main/article — never descendants
+     (which would trap modal content rendered inside a fixed-positioned
+     element with no scroll timeline, freezing it at opacity:0). */
+  main > section,
+  article > section {
     animation: section-float-in linear both;
     animation-timeline: view();
     animation-range: entry 5% cover 25%;
@@ -983,22 +986,18 @@ html[dir='rtl'] .animate-marquee { animation: marquee-rtl 30s linear infinite; }
     animation: none;
   }
 
-  /* Cards inside sections also drift in (subtle) */
-  section [data-card],
-  section .card-modern,
-  section .lotus-card,
-  section article[class*="rounded-"] {
-    animation: card-float-in linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 20%;
-  }
-
-  /* Section headings get a quicker reveal */
-  main section h2,
-  main section h3 {
-    animation: heading-float-in linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 30%;
+  /* Bulletproof escape: anything inside a modal/popover/fixed overlay is
+     immune to all scroll-driven animations regardless of selector match. */
+  [role="dialog"],
+  [role="dialog"] *,
+  [data-modal],
+  [data-modal] *,
+  [aria-modal="true"],
+  [aria-modal="true"] * {
+    animation: none !important;
+    animation-timeline: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
