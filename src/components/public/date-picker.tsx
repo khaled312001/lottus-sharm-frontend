@@ -18,6 +18,7 @@ const MONTHS = {
   en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
   ru: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
   it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+  de: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
 };
 
 const WEEKDAYS = {
@@ -25,6 +26,7 @@ const WEEKDAYS = {
   en: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
   ru: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
   it: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+  de: ['So','Mo','Di','Mi','Do','Fr','Sa'],
 };
 
 function parseISO(s: string): Date {

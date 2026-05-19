@@ -1,6 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ReviewForm } from '@/components/public/review-form';
+import { ReviewCard } from '@/components/public/review-card';
 import { L } from '@/lib/utils';
 import { Star, Quote, MessageCircle } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -119,58 +120,11 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
-              {reviews.map((r, i) => {
-                const tripTitle = r.trip?.translations.find((t) => t.locale === locale.toUpperCase())?.title || r.trip?.translations[0]?.title;
-                return (
-                  <Reveal key={r.id} delay={(i % 6) * 0.04}>
-                    <article className="bg-white rounded-xl border border-accent/15 p-4 hover:border-accent/40 hover:shadow-md transition-all h-full flex flex-col overflow-hidden">
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-0.5">
-                          {Array.from({ length: 5 }).map((_, idx) => (
-                            <Star key={idx} className={`h-3.5 w-3.5 ${idx < r.rating ? 'fill-accent text-accent' : 'text-muted-foreground/30'}`} />
-                          ))}
-                        </div>
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{r.locale}</span>
-                      </div>
-                      <p className="text-[13px] text-foreground/85 leading-relaxed mb-3 flex-1 line-clamp-6" dir="auto">{r.comment}</p>
-
-                      {/* Attached images */}
-                      {r.images && r.images.length > 0 && (
-                        <div className={`grid gap-1 mb-3 ${r.images.length === 1 ? 'grid-cols-1' : r.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                          {r.images.slice(0, 3).map((url, idx) => (
-                            <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="relative aspect-square overflow-hidden rounded-md bg-muted group">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={url} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                              {idx === 2 && r.images!.length > 3 && (
-                                <span className="absolute inset-0 bg-black/55 flex items-center justify-center text-white text-xs font-bold">+{r.images!.length - 3}</span>
-                              )}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Attached videos */}
-                      {r.videos && r.videos.length > 0 && (
-                        <div className="grid gap-1 mb-3 grid-cols-1">
-                          {r.videos.slice(0, 1).map((url) => (
-                            <video key={url} src={url} controls preload="metadata" className="w-full aspect-video rounded-md bg-black" />
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="pt-2 border-t border-accent/10 flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="font-bold text-primary text-xs truncate">{r.customerName}</div>
-                          {tripTitle && <div className="text-[10px] text-muted-foreground truncate">{tripTitle}</div>}
-                        </div>
-                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                          {new Date(r.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : locale, { year: 'numeric', month: 'short' })}
-                        </span>
-                      </div>
-                    </article>
-                  </Reveal>
-                );
-              })}
+              {reviews.map((r, i) => (
+                <Reveal key={r.id} delay={(i % 6) * 0.04}>
+                  <ReviewCard review={r} locale={locale} />
+                </Reveal>
+              ))}
             </div>
           )}
         </div>
