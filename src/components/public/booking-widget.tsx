@@ -209,35 +209,26 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         </div>
       </motion.div>
 
-      {/* ======================== FULL FORM MODAL ======================== */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="bw-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-primary-900/60 backdrop-blur-sm p-0 sm:p-4"
-            onClick={() => setOpen(false)}
+      {/* ======================== FULL FORM MODAL (CSS-only, CSP-safe) ======================== */}
+      {open && (
+        <div
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-primary-900/60 backdrop-blur-sm p-0 sm:p-4 animate-fade-in"
+          onClick={() => setOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-md max-h-[92vh] sm:max-h-[88vh] bg-white sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden flex flex-col animate-slide-up"
           >
-            <motion.div
-              key="bw-panel"
-              initial={{ opacity: 0, y: 40, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 40, scale: 0.97 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md max-h-[92vh] sm:max-h-[88vh] bg-white sm:rounded-2xl rounded-t-2xl card-shadow overflow-hidden flex flex-col"
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close"
+              className="absolute top-2.5 end-2.5 z-20 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors"
             >
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close"
-                className="absolute top-2.5 end-2.5 z-20 w-8 h-8 rounded-full bg-cream/15 hover:bg-cream/25 backdrop-blur text-cream flex items-center justify-center transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <X className="h-4 w-4" />
+            </button>
 
       <div className="absolute top-0 inset-x-0 h-1 gradient-gold z-10" />
 
@@ -671,10 +662,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
       </div>
 
       </div>{/* /scrollable */}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>{/* /panel */}
+        </div>
+      )}
 
       {showPayModal && formReady && (
         <BookingPayModal
