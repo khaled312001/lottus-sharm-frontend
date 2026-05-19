@@ -102,7 +102,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </h1>
             <div className="w-16 h-0.5 gradient-gold rounded-full mb-5" />
             <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">
-              {L(locale, { ar: 'منذ 2013 ونحن نرسم خرائط السعادة لآلاف الزوار في شرم الشيخ. كل رحلة قصة، وكل عميل عائلة.', en: 'Since 2013 we have been crafting happiness for thousands of visitors. Every trip is a story, every guest family.' })}
+              {L(locale, { ar: 'منذ 2013 ونحن نرسم خرائط السعادة لآلاف الزوار في شرم الشيخ. كل رحلة قصة، وكل عميل عائلة.', en: 'Since 2013 we have been crafting happiness for thousands of visitors. Every trip is a story, every guest family.', ru: 'С 2013 года мы создаём счастье для тысяч гостей в Шарм-эль-Шейхе. Каждая поездка — это история, каждый гость — семья.', it: 'Dal 2013 creiamo felicità per migliaia di visitatori a Sharm El Sheikh. Ogni viaggio è una storia, ogni ospite è famiglia.' })}
             </p>
           </Reveal>
         </div>
@@ -196,7 +196,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     {L(locale, { ar: 'شركة لوتس شرم للإستثمار والتسويق السياحي', en: 'Lottus Sharm Tourism Investment & Marketing Co.', ru: 'ООО «Lottus Sharm Tourism Investment & Marketing»', it: 'Lottus Sharm Tourism Investment & Marketing S.r.l.' })}
                   </h3>
                   <p className="text-sm text-cream/75 leading-relaxed">
-                    {L(locale, { ar: 'الاسم التجاري المعتمد: «لوتس شرم — Lotus Sharm» · شرم الشيخ، جنوب سيناء، مصر', en: 'Trade name: "Lotus Sharm" · Sharm El Sheikh, South Sinai, Egypt' })}
+                    {L(locale, { ar: 'الاسم التجاري المعتمد: «لوتس شرم — Lotus Sharm» · شرم الشيخ، جنوب سيناء، مصر', en: 'Trade name: "Lotus Sharm" · Sharm El Sheikh, South Sinai, Egypt', ru: 'Торговое название: «Lotus Sharm» · Шарм-эль-Шейх, Южный Синай, Египет', it: 'Nome commerciale: "Lotus Sharm" · Sharm El Sheikh, Sud Sinai, Egitto' })}
                   </p>
                 </div>
 
@@ -441,7 +441,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               {L(locale, { ar: 'نغطي مصر كلها — بقلب في شرم الشيخ', en: 'We cover all Egypt — with our heart in Sharm El Sheikh', ru: 'Мы охватываем весь Египет — с сердцем в Шарм-эль-Шейхе', it: 'Copriamo tutto l\'Egitto — con il cuore a Sharm El Sheikh' })}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              {L(locale, { ar: 'مقرنا الرئيسي شرم الشيخ، لكن خبرتنا تمتد عبر أهم الوجهات السياحية في مصر', en: "Headquartered in Sharm El Sheikh, our expertise spans Egypt's top tourist destinations" })}
+              {L(locale, { ar: 'مقرنا الرئيسي شرم الشيخ، لكن خبرتنا تمتد عبر أهم الوجهات السياحية في مصر', en: "Headquartered in Sharm El Sheikh, our expertise spans Egypt's top tourist destinations", ru: 'Наша штаб-квартира — Шарм-эль-Шейх, но наш опыт охватывает все главные направления Египта', it: 'Sede a Sharm El Sheikh, ma la nostra esperienza copre le principali destinazioni egiziane' })}
             </p>
           </Reveal>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 max-w-5xl mx-auto">

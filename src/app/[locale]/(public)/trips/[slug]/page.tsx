@@ -189,9 +189,9 @@ export default async function TripDetailPage({ params }: PageProps) {
           <Reveal>
             <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4">
               {[
-                { icon: ShieldCheck, ar: 'إلغاء مجاني', en: 'Free cancel', en_short: 'Free cancel', sub_ar: 'قبل 24 ساعة', sub_en: 'Up to 24h' },
-                { icon: Award, ar: 'تقييم 4.9★', en: 'Rated 4.9★', en_short: '4.9★ Rated', sub_ar: '500+ تقييم', sub_en: '500+ reviews' },
-                { icon: MessageCircle, ar: 'تأكيد فوري', en: 'Instant confirm', en_short: 'Instant', sub_ar: 'عبر واتساب', sub_en: 'via WhatsApp' },
+                { icon: ShieldCheck, ar: 'إلغاء مجاني', en: 'Free cancel',     en_short: 'Free cancel', ru: 'Бесплатная отмена', ru_short: 'Отмена', it: 'Cancellazione gratuita', it_short: 'Cancellaz.', sub_ar: 'قبل 24 ساعة', sub_en: 'Up to 24h',     sub_ru: 'За 24 часа',  sub_it: 'Fino a 24h' },
+                { icon: Award,       ar: 'تقييم 4.9★', en: 'Rated 4.9★',       en_short: '4.9★ Rated',  ru: 'Рейтинг 4.9★',      ru_short: '4.9★',   it: 'Voto 4.9★',             it_short: '4.9★',      sub_ar: '500+ تقييم',  sub_en: '500+ reviews', sub_ru: '500+ отзывов', sub_it: '500+ recensioni' },
+                { icon: MessageCircle, ar: 'تأكيد فوري', en: 'Instant confirm', en_short: 'Instant',     ru: 'Мгн. подтверждение', ru_short: 'Мгновенно', it: 'Conferma immediata',  it_short: 'Immediata',  sub_ar: 'عبر واتساب', sub_en: 'via WhatsApp', sub_ru: 'через WhatsApp', sub_it: 'via WhatsApp' },
               ].map((b, i) => (
                 <div
                   key={i}
@@ -203,10 +203,10 @@ export default async function TripDetailPage({ params }: PageProps) {
                   </div>
                   <div className="relative w-full min-w-0 leading-tight">
                     <div className="font-bold text-[11px] sm:text-sm text-primary whitespace-normal break-words">
-                      <span className="sm:hidden">{L(locale, { ar: b.ar, en: b.en_short })}</span>
-                      <span className="hidden sm:inline">{L(locale, { ar: b.ar, en: b.en })}</span>
+                      <span className="sm:hidden">{L(locale, { ar: b.ar, en: b.en_short, ru: b.ru_short, it: b.it_short })}</span>
+                      <span className="hidden sm:inline">{L(locale, { ar: b.ar, en: b.en, ru: b.ru, it: b.it })}</span>
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-normal break-words mt-0.5">{L(locale, { ar: b.sub_ar, en: b.sub_en })}</div>
+                    <div className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-normal break-words mt-0.5">{L(locale, { ar: b.sub_ar, en: b.sub_en, ru: b.sub_ru, it: b.sub_it })}</div>
                   </div>
                 </div>
               ))}

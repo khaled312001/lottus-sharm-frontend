@@ -213,9 +213,9 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
                 </h3>
                 <span className="rule-gold" />
                 <p className="opacity-85 mb-7 max-w-xl mx-auto leading-relaxed">
-                  {L(locale, { ar: 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك', en: "WhatsApp us — we'll design a 100% custom trip for your interests and budget" })}
+                  {L(locale, { ar: 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك', en: "WhatsApp us — we'll design a 100% custom trip for your interests and budget", ru: 'Напишите в WhatsApp — мы создадим тур 100% под ваши интересы и бюджет', it: 'Scrivici su WhatsApp — progetteremo un viaggio 100% su misura per i tuoi interessi e budget' })}
                 </p>
-                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد تصميم رحلة مخصصة', en: "Hi! I'd like a custom trip design." }))}
+                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد تصميم رحلة مخصصة', en: "Hi! I'd like a custom trip design.", ru: 'Здравствуйте! Хочу индивидуальный тур.', it: "Salve! Vorrei progettare un viaggio personalizzato." }))}
                   target="_blank" rel="noopener"
                   className="group inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-[#25D366]/30 hover:shadow-xl hover:shadow-[#25D366]/40 hover:-translate-y-0.5 transition-all duration-200">
                   <MessageCircle className="h-5 w-5 group-hover:scale-110 transition-transform" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp us', ru: 'Написать в WhatsApp', it: 'Scrivici su WhatsApp' })}

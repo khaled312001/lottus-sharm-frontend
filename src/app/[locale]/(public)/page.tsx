@@ -167,7 +167,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="relative aspect-[4/5] rounded-3xl overflow-hidden card-shadow-gold">
                   <Image
                     src="/hero-slides/hero-03.jpg"
-                    alt={L(locale, { ar: 'لوتس شرم — شركة السياحة الفاخرة', en: 'Lotus Sharm — luxury tourism' }) as string}
+                    alt={L(locale, { ar: 'لوتس شرم — شركة السياحة الفاخرة', en: 'Lotus Sharm — luxury tourism', ru: 'Lotus Sharm — люкс-туризм', it: 'Lotus Sharm — turismo di lusso' }) as string}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
@@ -560,9 +560,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </h2>
               <span className="rule-gold" />
               <p className="text-sm md:text-base opacity-75 max-w-xl mx-auto leading-relaxed">
-                {isAr
-                  ? `أكثر من ${reviews.length} مراجعة من زوار حقيقيين عاشوا تجربة لوتس شرم`
-                  : `${reviews.length}+ verified reviews from real Lotus Sharm travelers`}
+                {L(locale, {
+                  ar: `أكثر من ${reviews.length} مراجعة من زوار حقيقيين عاشوا تجربة لوتس شرم`,
+                  en: `${reviews.length}+ verified reviews from real Lotus Sharm travelers`,
+                  ru: `Более ${reviews.length} проверенных отзывов от реальных гостей Lotus Sharm`,
+                  it: `${reviews.length}+ recensioni verificate da veri ospiti Lotus Sharm`,
+                })}
               </p>
             </Reveal>
             <Reveal>

@@ -14,12 +14,12 @@ export const revalidate = 60;
 
 // Curated travel-guide topics shown as placeholders until the client publishes real posts
 const PLACEHOLDER_TOPICS = [
-  { slug: '#', cat_ar: 'دليل الزائر', cat_en: 'Visitor Guide', ar: 'أفضل 10 أنشطة تجربها في شرم الشيخ', en: '10 Must-Do Activities in Sharm El Sheikh', img: '/hero-slides/hero-01.jpg' },
-  { slug: '#', cat_ar: 'نصائح سفر', cat_en: 'Travel Tips', ar: 'متى أفضل وقت لزيارة شرم الشيخ؟', en: 'Best Time to Visit Sharm El Sheikh', img: '/hero-slides/hero-04.jpg' },
-  { slug: '#', cat_ar: 'الغوص', cat_en: 'Diving', ar: 'أفضل 5 مواقع غوص في البحر الأحمر', en: 'Top 5 Diving Spots in the Red Sea', img: '/hero-slides/hero-07.jpg' },
-  { slug: '#', cat_ar: 'صحراء', cat_en: 'Desert', ar: 'مغامرة سفاري الصحراء — ماذا تتوقع؟', en: 'Desert Safari Adventure — What to Expect', img: '/hero-slides/hero-02.jpg' },
-  { slug: '#', cat_ar: 'تاريخ', cat_en: 'History', ar: 'دير سانت كاترين: تاريخ يمتد 1500 سنة', en: 'St. Catherine Monastery: 1500 Years of History', img: '/hero-slides/hero-11.jpg' },
-  { slug: '#', cat_ar: 'طبيعة', cat_en: 'Nature', ar: 'محمية راس محمد: جنة الشعاب المرجانية', en: 'Ras Mohammed: Coral Reef Paradise', img: '/hero-slides/hero-13.jpg' },
+  { slug: '#', cat_ar: 'دليل الزائر', cat_en: 'Visitor Guide', cat_ru: 'Гид для туристов', cat_it: 'Guida del visitatore', ar: 'أفضل 10 أنشطة تجربها في شرم الشيخ', en: '10 Must-Do Activities in Sharm El Sheikh', ru: '10 обязательных активностей в Шарм-эль-Шейхе', it: '10 attività imperdibili a Sharm El Sheikh', img: '/hero-slides/hero-01.jpg' },
+  { slug: '#', cat_ar: 'نصائح سفر', cat_en: 'Travel Tips', cat_ru: 'Советы путешественникам', cat_it: 'Consigli di viaggio', ar: 'متى أفضل وقت لزيارة شرم الشيخ؟', en: 'Best Time to Visit Sharm El Sheikh', ru: 'Лучшее время для поездки в Шарм-эль-Шейх', it: 'Quando visitare Sharm El Sheikh', img: '/hero-slides/hero-04.jpg' },
+  { slug: '#', cat_ar: 'الغوص', cat_en: 'Diving', cat_ru: 'Дайвинг', cat_it: 'Diving', ar: 'أفضل 5 مواقع غوص في البحر الأحمر', en: 'Top 5 Diving Spots in the Red Sea', ru: 'Топ-5 мест для дайвинга в Красном море', it: 'Top 5 spot per il diving nel Mar Rosso', img: '/hero-slides/hero-07.jpg' },
+  { slug: '#', cat_ar: 'صحراء', cat_en: 'Desert', cat_ru: 'Пустыня', cat_it: 'Deserto', ar: 'مغامرة سفاري الصحراء — ماذا تتوقع؟', en: 'Desert Safari Adventure — What to Expect', ru: 'Сафари в пустыне — чего ждать', it: 'Safari nel deserto — cosa aspettarsi', img: '/hero-slides/hero-02.jpg' },
+  { slug: '#', cat_ar: 'تاريخ', cat_en: 'History', cat_ru: 'История', cat_it: 'Storia', ar: 'دير سانت كاترين: تاريخ يمتد 1500 سنة', en: 'St. Catherine Monastery: 1500 Years of History', ru: 'Монастырь Святой Екатерины: 1500 лет истории', it: 'Monastero di S. Caterina: 1500 anni di storia', img: '/hero-slides/hero-11.jpg' },
+  { slug: '#', cat_ar: 'طبيعة', cat_en: 'Nature', cat_ru: 'Природа', cat_it: 'Natura', ar: 'محمية راس محمد: جنة الشعاب المرجانية', en: 'Ras Mohammed: Coral Reef Paradise', ru: 'Рас-Мохаммед: рай коралловых рифов', it: 'Ras Mohammed: paradiso dei coralli', img: '/hero-slides/hero-13.jpg' },
 ];
 
 export default async function BlogIndex({ params }: { params: Promise<{ locale: string }> }) {
@@ -93,7 +93,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       </h2>
                       <p className="text-muted-foreground mb-5 line-clamp-3 leading-relaxed">{featured.tr?.excerpt}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        {featured.publishedAt && <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5 text-accent" /> {new Date(featured.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en' }))}</span>}
+                        {featured.publishedAt && <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5 text-accent" /> {new Date(featured.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en', ru: 'ru-RU', it: 'it-IT' }))}</span>}
                         <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-accent" /> {t('blog.readTime', { min: featured.readTime })}</span>
                         <span className="ms-auto inline-flex items-center gap-1 text-accent font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
                           {L(locale, { ar: 'اقرأ', en: 'Read', ru: 'Читать', it: 'Leggi' })} <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
@@ -124,7 +124,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                         <h3 className="font-serif font-bold text-lg mb-2 line-clamp-2 text-primary group-hover:text-accent transition-colors leading-snug">{p.tr?.title}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-3 mb-4 leading-relaxed">{p.tr?.excerpt}</p>
                         <div className="mt-auto flex items-center gap-3 text-xs text-muted-foreground pt-3 border-t border-accent/10">
-                          {p.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3 text-accent" /> {new Date(p.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en' }))}</span>}
+                          {p.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3 text-accent" /> {new Date(p.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en', ru: 'ru-RU', it: 'it-IT' }))}</span>}
                           <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3 text-accent" /> {t('blog.readTime', { min: p.readTime })}</span>
                         </div>
                       </div>
@@ -147,7 +147,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
               </h2>
               <div className="w-16 h-0.5 gradient-gold rounded-full mx-auto my-4" />
               <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                {L(locale, { ar: 'فريقنا يجهز محتوى ثرياً عن شرم الشيخ وأجمل وجهات مصر السياحية', en: "Our team is preparing rich content about Sharm El Sheikh and Egypt's top destinations" })}
+                {L(locale, { ar: 'فريقنا يجهز محتوى ثرياً عن شرم الشيخ وأجمل وجهات مصر السياحية', en: "Our team is preparing rich content about Sharm El Sheikh and Egypt's top destinations", ru: 'Наша команда готовит интересный контент о Шарм-эль-Шейхе и лучших местах Египта', it: 'Il nostro team sta preparando contenuti su Sharm El Sheikh e le migliori destinazioni egiziane' })}
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
@@ -158,7 +158,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       <Image src={p.img} alt="" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 via-primary-900/20 to-primary-900/10" />
                       <span className="absolute top-3 start-3 inline-block px-2.5 py-1 rounded-full bg-cream/95 text-primary text-[10px] font-bold uppercase tracking-wider shadow-md">
-                        {L(locale, { ar: p.cat_ar, en: p.cat_en })}
+                        {L(locale, { ar: p.cat_ar, en: p.cat_en, ru: p.cat_ru, it: p.cat_it })}
                       </span>
                       <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/95 text-primary text-[9px] font-bold uppercase shadow-md">
                         <span className="block w-1 h-1 rounded-full bg-primary animate-pulse" />
@@ -166,7 +166,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       </span>
                     </div>
                     <div className="p-5">
-                      <h3 className="font-serif font-bold text-lg leading-snug text-primary line-clamp-2 group-hover:text-accent transition-colors">{L(locale, { ar: p.ar, en: p.en })}</h3>
+                      <h3 className="font-serif font-bold text-lg leading-snug text-primary line-clamp-2 group-hover:text-accent transition-colors">{L(locale, { ar: p.ar, en: p.en, ru: p.ru, it: p.it })}</h3>
                     </div>
                   </article>
                 </Reveal>

@@ -129,7 +129,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <p className="text-sm opacity-90 mb-5">
                   {L(locale, { ar: 'احصل على خطة رحلة مخصصة تناسب اهتماماتك وميزانيتك بدون أي التزام.', en: 'Get a customized trip plan matching your interests and budget — no commitment.', ru: 'Получите индивидуальный план тура под ваши интересы и бюджет — без обязательств.', it: 'Ricevi un piano di viaggio personalizzato per i tuoi interessi e budget — senza impegno.' })}
                 </p>
-                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ', en: "Hi! I'd like a free trip consultation for Sharm El Sheikh" }))} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
+                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ', en: "Hi! I'd like a free trip consultation for Sharm El Sheikh", ru: 'Здравствуйте! Хочу бесплатную консультацию по туру в Шарм-эль-Шейхе', it: 'Salve! Vorrei una consulenza gratuita per un viaggio a Sharm El Sheikh' }))} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
                   <MessageCircle className="h-4 w-4" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp Chat', ru: 'WhatsApp чат', it: 'Chat WhatsApp' })}
                 </a>
               </div>
