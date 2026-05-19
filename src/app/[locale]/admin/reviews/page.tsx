@@ -198,7 +198,7 @@ export default function AdminReviewsPage() {
                   <Button size="icon" variant="ghost" onClick={() => del(r.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                 </div>
               </div>
-              <p className="text-sm text-foreground/90 mt-2">{r.comment}</p>
+              <p className="text-sm text-foreground/90 mt-2 break-words [overflow-wrap:anywhere] whitespace-pre-wrap">{r.comment}</p>
               {r.images && r.images.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-amber-200/60">
                   <div className="flex items-center justify-between mb-2">
