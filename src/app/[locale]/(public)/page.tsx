@@ -433,7 +433,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 reverse: false,
               },
               {
-                img: '/hero-slides/hero-09.jpg',
+                img: '/hero-slides/hotels-tourists.jpg',
                 icon: BedDouble,
                 badge: { ar: 'إقامة فاخرة', en: 'Luxury stays', ru: 'Люкс отели', it: 'Soggiorni lusso' },
                 title: {

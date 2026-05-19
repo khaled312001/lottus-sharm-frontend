@@ -40,6 +40,8 @@ interface BookingItem {
   currency: 'EGP' | 'USD';
   status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
   paymentStatus: 'UNPAID' | 'PARTIAL' | 'PAID' | 'REFUNDED';
+  invoiceUrl?: string | null;
+  invoicedAt?: string | null;
   createdAt: string;
   payments: PaymentItem[];
   trip: {
@@ -423,6 +425,17 @@ export function AccountClient({ locale }: { locale: string }) {
                               <FileCheck2 className="h-3 w-3" />
                               {L(locale, { ar: 'إيصال', en: 'Receipt', ru: 'Чек', it: 'Ricevuta' })}
                             </button>
+                          )}
+                          {b.invoiceUrl && (
+                            <a
+                              href={b.invoiceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold border border-amber-500/40 bg-amber-500/12 text-amber-800 hover:bg-amber-500/20 transition-colors"
+                            >
+                              <Receipt className="h-3 w-3" />
+                              {L(locale, { ar: 'فاتورة PDF', en: 'Invoice PDF', ru: 'Счёт PDF', it: 'Fattura PDF' })}
+                            </a>
                           )}
                         </div>
                       </div>

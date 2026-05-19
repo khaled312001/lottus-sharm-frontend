@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Minus, Calendar as CalendarIcon, MessageCircle, Users, Baby, BadgeCheck,
   Phone, User, Mail, Heart, Sparkles, ShieldCheck, ChevronRight, ChevronLeft,
-  Check, MapPin, CreditCard,
+  Check, MapPin, CreditCard, X, ArrowRight,
 } from 'lucide-react';
 import type { TripDTO } from '@/types/api';
 import { bookingWhatsAppLink } from '@/lib/whatsapp';
@@ -47,6 +47,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
 
   // ===== Stepper =====
   const [step, setStep] = useState<StepIdx>(0);
+
+  // ===== Modal open state =====
+  const [open, setOpen] = useState(false);
 
   // ===== Currency / total =====
   const { currency } = useCurrency();
@@ -142,15 +145,103 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   // Motion direction: RTL = swipe right-to-left when going forward
   const dir = isAr ? -1 : 1;
 
+  // Lock body scroll while modal is open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="relative bg-white rounded-2xl card-shadow border border-accent/15 lg:sticky lg:top-24 overflow-hidden"
-    >
-      {/* Gold ribbon */}
+    <>
+      {/* ======================== COMPACT STICKY TRIGGER ======================== */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative bg-white rounded-2xl card-shadow border border-accent/15 lg:sticky lg:top-24 overflow-hidden"
+      >
+        <div className="absolute top-0 inset-x-0 h-1 gradient-gold z-10" />
+        <div className="relative bg-gradient-to-br from-primary via-primary to-primary-900 text-cream p-4 overflow-hidden">
+          <div className="absolute -top-14 -end-14 w-28 h-28 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+          <div className="relative flex items-baseline justify-between gap-2">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-accent font-bold">{tCommon('from')}</div>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="font-serif text-3xl font-bold text-shimmer-gold leading-none">
+                  <Price amount={unit} from={fromCurrency} />
+                </span>
+                <span className="text-[11px] text-cream/65 ms-0.5">/ {tCommon('perPerson')}</span>
+              </div>
+            </div>
+            <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-cream/10 backdrop-blur border border-accent/30 text-[10px] font-bold text-cream/90 uppercase tracking-wider">
+              <BadgeCheck className="h-3 w-3 text-accent" />
+              {L(locale, { ar: 'آمن', en: 'Secure', ru: 'Безоп.', it: 'Sicuro' })}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3 space-y-2.5">
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="group w-full inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-accent hover:bg-accent-400 text-primary font-bold text-base shadow-lg shadow-accent/40 hover:-translate-y-0.5 transition-all"
+          >
+            <CreditCard className="h-5 w-5" />
+            {L(locale, { ar: 'احجز الآن', en: 'Book now', ru: 'Забронировать', it: 'Prenota ora' })}
+            <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+          </button>
+
+          <a
+            href="tel:+201090767278"
+            className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-lg border border-accent/30 hover:bg-accent/5 hover:border-accent text-primary font-bold text-sm transition-colors"
+          >
+            <Phone className="h-3.5 w-3.5 text-accent" />
+            {L(locale, { ar: 'اتصل بنا', en: 'Call us', ru: 'Позвонить', it: 'Chiama' })}
+          </a>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 pt-1 text-[10px] text-muted-foreground">
+            <TrustPill icon={ShieldCheck} text={L(locale, { ar: 'إلغاء مجاني', en: 'Free cancel', ru: 'Бесплатно', it: 'Gratis' }) as string} />
+            <TrustPill icon={Sparkles} text={L(locale, { ar: 'تأكيد فوري', en: 'Instant', ru: 'Мгновенно', it: 'Istantaneo' }) as string} />
+            <TrustPill icon={BadgeCheck} text={L(locale, { ar: 'مرخصة', en: 'Licensed', ru: 'Лицензия', it: 'Autorizzato' }) as string} />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ======================== FULL FORM MODAL ======================== */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="bw-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-primary-900/60 backdrop-blur-sm p-0 sm:p-4"
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              key="bw-panel"
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.97 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md max-h-[92vh] sm:max-h-[88vh] bg-white sm:rounded-2xl rounded-t-2xl card-shadow overflow-hidden flex flex-col"
+            >
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+                className="absolute top-2.5 end-2.5 z-20 w-8 h-8 rounded-full bg-cream/15 hover:bg-cream/25 backdrop-blur text-cream flex items-center justify-center transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
       <div className="absolute top-0 inset-x-0 h-1 gradient-gold z-10" />
+
+      <div className="overflow-y-auto flex-1 flex flex-col">
 
       {/* ===== HEADER ===== */}
       <div className="relative bg-gradient-to-br from-primary via-primary to-primary-900 text-cream px-4 py-3 overflow-hidden">
@@ -579,6 +670,12 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         </div>
       </div>
 
+      </div>{/* /scrollable */}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {showPayModal && formReady && (
         <BookingPayModal
           trip={trip}
@@ -600,7 +697,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
           onSuccess={() => { /* keep modal open showing success */ }}
         />
       )}
-    </motion.div>
+    </>
   );
 }
 
