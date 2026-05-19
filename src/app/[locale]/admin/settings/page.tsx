@@ -136,17 +136,18 @@ export default function AdminSettingsPage() {
           {/* Company name (4 langs) */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">اسم الشركة (4 لغات)</CardTitle>
+              <CardTitle className="text-base">اسم الشركة (5 لغات)</CardTitle>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-3">
               <F label="🇪🇬 عربي"><Input value={s.companyNameAr} onChange={(e) => upd('companyNameAr', e.target.value)} /></F>
               <F label="🇬🇧 English"><Input value={s.companyNameEn} onChange={(e) => upd('companyNameEn', e.target.value)} /></F>
               <F label="🇷🇺 Русский"><Input value={s.companyNameRu} onChange={(e) => upd('companyNameRu', e.target.value)} /></F>
               <F label="🇮🇹 Italiano"><Input value={s.companyNameIt} onChange={(e) => upd('companyNameIt', e.target.value)} /></F>
+              <F label="🇩🇪 Deutsch"><Input value={s.companyNameDe || ''} onChange={(e) => upd('companyNameDe', e.target.value)} /></F>
             </CardContent>
           </Card>
 
-          {/* Tagline (4 langs) */}
+          {/* Tagline (5 langs) */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">العبارة التسويقية (Tagline)</CardTitle>
@@ -156,6 +157,7 @@ export default function AdminSettingsPage() {
               <F label="🇬🇧 English"><Textarea rows={2} value={s.taglineEn} onChange={(e) => upd('taglineEn', e.target.value)} /></F>
               <F label="🇷🇺 Русский"><Textarea rows={2} value={s.taglineRu} onChange={(e) => upd('taglineRu', e.target.value)} /></F>
               <F label="🇮🇹 Italiano"><Textarea rows={2} value={s.taglineIt} onChange={(e) => upd('taglineIt', e.target.value)} /></F>
+              <F label="🇩🇪 Deutsch"><Textarea rows={2} value={s.taglineDe || ''} onChange={(e) => upd('taglineDe', e.target.value)} /></F>
             </CardContent>
           </Card>
 

@@ -24,21 +24,22 @@ export function buildWhatsAppLink(phone = '201090767278', message = ''): string 
 }
 
 export function localeToBcp47(locale: string): string {
-  const map: Record<string, string> = { ar: 'ar-EG', en: 'en-US', ru: 'ru-RU', it: 'it-IT' };
+  const map: Record<string, string> = { ar: 'ar-EG', en: 'en-US', ru: 'ru-RU', it: 'it-IT', de: 'de-DE' };
   return map[locale] || 'en-US';
 }
 
-export function localeToApiCode(locale: string): 'AR' | 'EN' | 'RU' | 'IT' {
+export function localeToApiCode(locale: string): 'AR' | 'EN' | 'RU' | 'IT' | 'DE' {
   const upper = locale.toUpperCase();
-  return (['AR', 'EN', 'RU', 'IT'] as const).includes(upper as 'AR') ? (upper as 'AR') : 'AR';
+  return (['AR', 'EN', 'RU', 'IT', 'DE'] as const).includes(upper as 'AR') ? (upper as 'AR') : 'AR';
 }
 
-// 4-language inline localizer. Use when you'd otherwise write `isAr ? X : Y`.
-// Provides RU + IT with English fallback if either is omitted.
-export type LocaleMap = { ar: string; en: string; ru?: string; it?: string };
+// Inline multi-language localizer. Use when you'd otherwise write `isAr ? X : Y`.
+// Provides RU + IT + DE with English fallback if any are omitted.
+export type LocaleMap = { ar: string; en: string; ru?: string; it?: string; de?: string };
 export function L(locale: string, m: LocaleMap): string {
   if (locale === 'ar') return m.ar;
   if (locale === 'ru' && m.ru) return m.ru;
   if (locale === 'it' && m.it) return m.it;
+  if (locale === 'de' && m.de) return m.de;
   return m.en;
 }

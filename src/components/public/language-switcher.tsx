@@ -12,6 +12,7 @@ const LANGS = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
   { code: 'ru', label: 'Русский', flag: '🇷🇺' },
   { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+  { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
 ] as const;
 
 export function LanguageSwitcher({ transparent = false, compact = false }: { transparent?: boolean; compact?: boolean }) {

@@ -10,7 +10,7 @@ export interface ReviewItem {
   customerName: string;
   rating: number;
   comment: string;
-  locale: 'AR' | 'EN' | 'RU' | 'IT';
+  locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE';
   createdAt: string;
   trip?: { slug: string; translations: { locale: string; title: string }[] } | null;
 }
@@ -55,7 +55,7 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
   if (reviews.length === 0) return null;
   const r = reviews[idx];
   const tripTitle =
-    r.trip?.translations.find((t) => t.locale === (L(locale, { ar: 'AR', en: 'EN', ru: 'RU', it: 'IT' })))?.title ||
+    r.trip?.translations.find((t) => t.locale === (L(locale, { ar: 'AR', en: 'EN', ru: 'RU', it: 'IT', de: 'DE' })))?.title ||
     r.trip?.translations[0]?.title;
 
   return (

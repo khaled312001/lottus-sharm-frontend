@@ -15,7 +15,7 @@ interface CommentRow {
   authorName: string;
   authorEmail?: string | null;
   content: string;
-  locale: 'AR' | 'EN' | 'RU' | 'IT';
+  locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE';
   isApproved: boolean;
   createdAt: string;
   trip?: { slug: string };

@@ -93,7 +93,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       </h2>
                       <p className="text-muted-foreground mb-5 line-clamp-3 leading-relaxed">{featured.tr?.excerpt}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        {featured.publishedAt && <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5 text-accent" /> {new Date(featured.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en', ru: 'ru-RU', it: 'it-IT' }))}</span>}
+                        {featured.publishedAt && <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5 text-accent" /> {new Date(featured.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en', ru: 'ru-RU', it: 'it-IT', de: 'de-DE' }))}</span>}
                         <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-accent" /> {t('blog.readTime', { min: featured.readTime })}</span>
                         <span className="ms-auto inline-flex items-center gap-1 text-accent font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
                           {L(locale, { ar: 'اقرأ', en: 'Read', ru: 'Читать', it: 'Leggi' })} <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
@@ -124,7 +124,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                         <h3 className="font-serif font-bold text-lg mb-2 line-clamp-2 text-primary group-hover:text-accent transition-colors leading-snug">{p.tr?.title}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-3 mb-4 leading-relaxed">{p.tr?.excerpt}</p>
                         <div className="mt-auto flex items-center gap-3 text-xs text-muted-foreground pt-3 border-t border-accent/10">
-                          {p.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3 text-accent" /> {new Date(p.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en', ru: 'ru-RU', it: 'it-IT' }))}</span>}
+                          {p.publishedAt && <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3 text-accent" /> {new Date(p.publishedAt).toLocaleDateString(L(locale, { ar: 'ar-EG', en: 'en', ru: 'ru-RU', it: 'it-IT', de: 'de-DE' }))}</span>}
                           <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3 text-accent" /> {t('blog.readTime', { min: p.readTime })}</span>
                         </div>
                       </div>

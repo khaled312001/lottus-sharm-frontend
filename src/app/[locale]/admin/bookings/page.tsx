@@ -573,7 +573,7 @@ function ManualBookingModal({ onClose, onCreated }: { onClose: () => void; onCre
     email: '',
     phone: '',
     country: '',
-    language: 'AR' as 'AR' | 'EN' | 'RU' | 'IT',
+    language: 'AR' as 'AR' | 'EN' | 'RU' | 'IT' | 'DE',
     notes: '',
     status: 'CONFIRMED' as Status,
     paymentStatus: 'UNPAID' as PaymentStatus,
@@ -714,12 +714,13 @@ function ManualBookingModal({ onClose, onCreated }: { onClose: () => void; onCre
                 <select
                   className="h-11 w-full rounded-lg border px-3 bg-white"
                   value={form.language}
-                  onChange={(e) => setForm({ ...form, language: e.target.value as 'AR' | 'EN' | 'RU' | 'IT' })}
+                  onChange={(e) => setForm({ ...form, language: e.target.value as 'AR' | 'EN' | 'RU' | 'IT' | 'DE' })}
                 >
                   <option value="AR">العربية</option>
                   <option value="EN">English</option>
                   <option value="RU">Русский</option>
                   <option value="IT">Italiano</option>
+                  <option value="DE">Deutsch</option>
                 </select>
               </div>
             </div>

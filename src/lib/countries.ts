@@ -129,7 +129,7 @@ export const ALL_COUNTRIES = COUNTRIES.filter((c) => {
   return true;
 });
 
-const localeMap: Record<string, string> = { ar: 'ar', en: 'en', ru: 'ru', it: 'it' };
+const localeMap: Record<string, string> = { ar: 'ar', en: 'en', ru: 'ru', it: 'it', de: 'de' };
 
 /** Localized country name. Falls back gracefully on older engines. */
 export function countryName(code: string, locale: string): string {

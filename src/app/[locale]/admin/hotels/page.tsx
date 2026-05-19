@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Star, Plus, ExternalLink, Loader2, Pencil, Save, X, Trash2, BedDouble } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface Translation { locale: 'AR' | 'EN' | 'RU' | 'IT'; name: string; features: string }
+interface Translation { locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE'; name: string; features: string }
 interface Hotel {
   id: number;
   slug: string;

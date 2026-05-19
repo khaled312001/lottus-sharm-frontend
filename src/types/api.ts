@@ -1,4 +1,4 @@
-export type ApiLocale = 'AR' | 'EN' | 'RU' | 'IT';
+export type ApiLocale = 'AR' | 'EN' | 'RU' | 'IT' | 'DE';
 
 export interface MediaDTO {
   id: number;
@@ -96,10 +96,12 @@ export interface SiteSettingsDTO {
   companyNameEn: string;
   companyNameRu: string;
   companyNameIt: string;
+  companyNameDe?: string;
   taglineAr: string;
   taglineEn: string;
   taglineRu: string;
   taglineIt: string;
+  taglineDe?: string;
   phone: string;
   whatsapp: string;
   email?: string | null;

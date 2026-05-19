@@ -13,10 +13,10 @@ import { RichTextEditor } from '@/components/admin/rich-text-editor';
 import { MediaPicker } from '@/components/admin/media-picker';
 import type { MediaDTO } from '@/types/api';
 
-type Locale = 'AR' | 'EN' | 'RU' | 'IT';
-const LOCALES: Locale[] = ['AR', 'EN', 'RU', 'IT'];
-const LABELS: Record<Locale, string> = { AR: 'العربية', EN: 'English', RU: 'Русский', IT: 'Italiano' };
-const FLAGS: Record<Locale, string> = { AR: 'ع', EN: 'EN', RU: 'RU', IT: 'IT' };
+type Locale = 'AR' | 'EN' | 'RU' | 'IT' | 'DE';
+const LOCALES: Locale[] = ['AR', 'EN', 'RU', 'IT', 'DE'];
+const LABELS: Record<Locale, string> = { AR: 'العربية', EN: 'English', RU: 'Русский', IT: 'Italiano', DE: 'Deutsch' };
+const FLAGS: Record<Locale, string> = { AR: 'ع', EN: 'EN', RU: 'RU', IT: 'IT', DE: 'DE' };
 
 interface StaticPageTr {
   locale: Locale;

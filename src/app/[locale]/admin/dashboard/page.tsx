@@ -99,7 +99,7 @@ export default function DashboardPage() {
 
   const t = data.totals;
 
-  const langPalette: Record<string, string> = { AR: '#0d3a3a', EN: '#3b82f6', RU: '#f43f5e', IT: '#10b981' };
+  const langPalette: Record<string, string> = { AR: '#0d3a3a', EN: '#3b82f6', RU: '#f43f5e', IT: '#10b981', DE: '#facc15' };
 
   return (
     <div className="space-y-5">

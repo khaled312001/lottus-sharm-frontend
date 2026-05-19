@@ -97,7 +97,7 @@ export function DatePicker({ value, onChange, min, max, locale, className }: Dat
   const monthLabel = `${MONTHS[lang][view.getMonth()]} ${view.getFullYear()}`;
   const formatDisplay = (d: Date) => {
     try {
-      return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : lang === 'ru' ? 'ru-RU' : lang === 'it' ? 'it-IT' : 'en-GB', {
+      return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : lang === 'ru' ? 'ru-RU' : lang === 'it' ? 'it-IT' : lang === 'de' ? 'de-DE' : 'en-GB', {
         weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
       });
     } catch {

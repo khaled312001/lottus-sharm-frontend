@@ -103,7 +103,7 @@ const WEBSITE_LD = {
   '@id': `${SITE}/#website`,
   url: SITE,
   name: 'Lotus Sharm Tourism',
-  inLanguage: ['ar-EG', 'en', 'ru', 'it'],
+  inLanguage: ['ar-EG', 'en', 'ru', 'it', 'de'],
   publisher: { '@id': `${SITE}/#organization` },
   potentialAction: {
     '@type': 'SearchAction',

@@ -14,7 +14,7 @@ import { CustomerAuthProvider } from '@/lib/customer-auth';
 const MAINTENANCE_FORCED = process.env.NEXT_PUBLIC_MAINTENANCE === 'on';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lotussharm.com';
-const ALL_LOCALES = ['ar', 'en', 'ru', 'it'] as const;
+const ALL_LOCALES = ['ar', 'en', 'ru', 'it', 'de'] as const;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -79,6 +79,20 @@ const SEO_META: Record<string, {
       'hotel Sharm El Sheikh', 'hotel Naama Bay', 'all-inclusive Sharm',
       'trasferimento aeroporto Sharm', 'transfer privato',
       'vacanze Egitto', 'tour Sinai', 'agenzia viaggi Sharm',
+    ],
+  },
+  de: {
+    title: 'Lotus Sharm — Ausflüge in Sharm El Sheikh, Ras Mohammed Yacht, Wüstensafari, Hotels & Transfers',
+    description: 'Buchen Sie die besten Ausflüge in Sharm El Sheikh mit Lotus Sharm: Ras Mohammed Schnorcheln & Yachttouren, Dahab & Farbiger Canyon, Wüstensafari, Beach Buggy, Delfinshow, U-Boot, romantisches Yacht-Dinner. 3-5 Sterne Hotels und Flughafentransfers. Über 13 Jahre Erfahrung. WhatsApp +20 109 076 7278.',
+    keywords: [
+      'Sharm El Sheikh Ausflüge', 'Sharm El Sheikh Touren', 'Ras Mohammed Schnorcheln',
+      'Yachttour Sharm', 'Tagesausflug Dahab', 'Farbiger Canyon', 'Wüstensafari Sharm',
+      'Beach Buggy Sharm', 'Rotes Meer Tauchen', 'Schnorcheln Sharm El Sheikh',
+      'Delfinshow Sharm', 'U-Boot Sharm', 'Romantisches Yacht-Dinner Sharm',
+      'Sharm Hotels', 'Naama Bay Hotels', 'All-inclusive Sharm',
+      'Flughafentransfer Sharm', 'Privattransfer Sharm',
+      'Ägypten Reisen', 'Sinai Tourismus', 'Sharm Urlaubspakete',
+      'Sharm El Sheikh Reisebüro', 'Sharm Aktivitäten buchen',
     ],
   },
 };

@@ -50,7 +50,7 @@ export default function AdminReviewsPage() {
     customerName: '',
     rating: 5,
     comment: '',
-    locale: 'AR' as 'AR' | 'EN' | 'RU' | 'IT',
+    locale: 'AR' as 'AR' | 'EN' | 'RU' | 'IT' | 'DE',
     isApproved: true,
   });
 
@@ -149,11 +149,12 @@ export default function AdminReviewsPage() {
             </div>
             <div>
               <label className="text-xs font-semibold mb-1.5 block">لغة التعليق</label>
-              <select className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm" value={form.locale} onChange={(e) => setForm({ ...form, locale: e.target.value as 'AR' | 'EN' | 'RU' | 'IT' })}>
+              <select className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm" value={form.locale} onChange={(e) => setForm({ ...form, locale: e.target.value as 'AR' | 'EN' | 'RU' | 'IT' | 'DE' })}>
                 <option value="AR">العربية</option>
                 <option value="EN">English</option>
                 <option value="RU">Русский</option>
                 <option value="IT">Italiano</option>
+                <option value="DE">Deutsch</option>
               </select>
             </div>
             <div className="md:col-span-2">

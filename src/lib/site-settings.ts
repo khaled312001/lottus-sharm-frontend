@@ -10,10 +10,12 @@ export async function getSiteSettings(): Promise<SiteSettingsDTO> {
       companyNameEn: 'Lotus Sharm Tourism',
       companyNameRu: 'Лотус Шарм',
       companyNameIt: 'Lotus Sharm',
+      companyNameDe: 'Lotus Sharm Tourismus',
       taglineAr: 'اكتشف جمال شرم الشيخ مع لوتس شرم',
       taglineEn: 'Discover the Beauty of Sharm El Sheikh',
       taglineRu: 'Откройте для себя красоту Шарм-эль-Шейха',
       taglineIt: 'Scopri la bellezza di Sharm El Sheikh',
+      taglineDe: 'Entdecken Sie die Schönheit von Sharm El Sheikh',
       phone: '01090767278',
       whatsapp: '201090767278',
       email: 'info@lotussharm.com',
@@ -42,6 +44,8 @@ export function getLocalizedName(s: SiteSettingsDTO, locale: string): string {
       return s.companyNameRu;
     case 'it':
       return s.companyNameIt;
+    case 'de':
+      return s.companyNameDe || s.companyNameEn;
     default:
       return s.companyNameEn;
   }
@@ -55,6 +59,8 @@ export function getLocalizedTagline(s: SiteSettingsDTO, locale: string): string 
       return s.taglineRu;
     case 'it':
       return s.taglineIt;
+    case 'de':
+      return s.taglineDe || s.taglineEn;
     default:
       return s.taglineEn;
   }

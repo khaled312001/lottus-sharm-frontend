@@ -14,7 +14,7 @@ interface ReviewItem {
   customerName: string;
   rating: number;
   comment: string;
-  locale: 'AR' | 'EN' | 'RU' | 'IT';
+  locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE';
   createdAt: string;
   images?: string[];
   videos?: string[];
