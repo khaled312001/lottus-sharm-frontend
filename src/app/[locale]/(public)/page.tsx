@@ -8,7 +8,11 @@ import { HeroSlider } from '@/components/public/hero-slider';
 import { ReviewsCarousel, type ReviewItem } from '@/components/public/reviews-carousel';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
-import { Award, Shield, Compass, Clock, ArrowRight, Sparkles, Star, Users, MessageCircle, ShieldCheck, ChevronDown, MapPin, Play } from 'lucide-react';
+import {
+  Award, Shield, Compass, Clock, ArrowRight, Sparkles, Star, Users, MessageCircle, ShieldCheck,
+  ChevronDown, MapPin, Play, Search, CalendarCheck, CreditCard, Smile, Globe2, BedDouble,
+  Camera, Heart,
+} from 'lucide-react';
 import { localeToApiCode, L } from '@/lib/utils';
 import { getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 import { fetchCMSPage } from '@/lib/cms';
@@ -152,6 +156,139 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* ============ ABOUT / INTRO ============ */}
+      <section className="relative py-14 md:py-24 bg-cream overflow-hidden hairline-top">
+        <div aria-hidden className="orb-accent orb-accent-sm absolute top-10 -end-20 pointer-events-none animate-blob" />
+        <div className="container relative">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Image collage */}
+            <Reveal>
+              <div className="relative max-w-md lg:max-w-none mx-auto">
+                <div className="relative aspect-[4/5] rounded-3xl overflow-hidden card-shadow-gold">
+                  <Image
+                    src="/hero-slides/hero-03.jpg"
+                    alt={L(locale, { ar: 'لوتس شرم — شركة السياحة الفاخرة', en: 'Lotus Sharm — luxury tourism' }) as string}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/40 via-transparent to-transparent" />
+                </div>
+
+                {/* Floating badge — top */}
+                <div className="absolute -top-4 -end-4 sm:-top-6 sm:-end-6 bg-white rounded-2xl px-4 py-3 shadow-2xl border border-accent/20 max-w-[180px]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-10 rounded-xl gradient-gold flex items-center justify-center text-primary shrink-0">
+                      <Award className="h-5 w-5" />
+                    </div>
+                    <div className="leading-tight">
+                      <div className="font-serif text-xl font-bold text-primary">{settings.yearsExperience}+</div>
+                      <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                        {L(locale, { ar: 'سنة خبرة', en: 'Years', ru: 'Лет', it: 'Anni' })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating badge — bottom */}
+                <div className="absolute -bottom-4 -start-4 sm:-bottom-6 sm:-start-6 bg-primary text-cream rounded-2xl px-4 py-3 shadow-2xl border border-accent/40 max-w-[200px]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/40 flex items-center justify-center text-accent shrink-0">
+                      <Star className="h-5 w-5 fill-current" />
+                    </div>
+                    <div className="leading-tight">
+                      <div className="font-serif text-xl font-bold text-accent">10,000+</div>
+                      <div className="text-[10px] text-cream/70 font-bold uppercase tracking-wider">
+                        {L(locale, { ar: 'سائح راضي', en: 'Happy guests', ru: 'Гостей', it: 'Ospiti felici' })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Decorative gold ring */}
+                <div aria-hidden className="absolute -z-10 -bottom-8 -end-8 w-40 h-40 rounded-full border-2 border-accent/30 hidden lg:block" />
+              </div>
+            </Reveal>
+
+            {/* Text */}
+            <div>
+              <Reveal>
+                <span className="eyebrow">
+                  {L(locale, { ar: 'تعرّف علينا', en: 'About us', ru: 'О нас', it: 'Chi siamo' })}
+                </span>
+                <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance mb-4">
+                  {L(locale, {
+                    ar: 'شريكك المثالي لتجربة لا تُنسى في شرم الشيخ',
+                    en: 'Your trusted partner for unforgettable Sharm El Sheikh experiences',
+                    ru: 'Ваш надёжный партнёр в Шарм-эль-Шейхе',
+                    it: 'Il tuo partner di fiducia a Sharm El Sheikh',
+                  })}
+                </h2>
+                <span aria-hidden className="block w-20 h-0.5 gradient-gold rounded-full mb-5" />
+              </Reveal>
+
+              <Reveal delay={0.15}>
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-4">
+                  {L(locale, {
+                    ar: 'في لوتس شرم، نقدم لك أكثر من مجرد رحلة سياحية — نقدم تجربة فاخرة مصممة بعناية، يقودها مرشدون محليون يعرفون كل ركن من أركان البحر الأحمر، وتدعمها خدمة عملاء حقيقية على مدار اليوم.',
+                    en: "At Lotus Sharm, we offer more than just trips — we craft luxury experiences led by local guides who know every corner of the Red Sea, supported by genuine 24/7 customer care.",
+                    ru: 'Lotus Sharm — это не просто экскурсии, а тщательно продуманные люксовые впечатления с местными гидами и круглосуточной поддержкой.',
+                    it: 'A Lotus Sharm offriamo esperienze di lusso curate da guide locali esperte, con assistenza 24/7.',
+                  })}
+                </p>
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
+                  {L(locale, {
+                    ar: 'من الغوص في الشعاب المرجانية إلى رحلات السفاري الصحراوية، من الفنادق الفاخرة إلى خدمات النقل الخاصة — كل تفصيلة مدروسة لتمنحك راحة بال كاملة طوال إقامتك.',
+                    en: 'From coral reef diving to desert safaris, from luxury hotels to private transfers — every detail is thought through to give you complete peace of mind.',
+                    ru: 'От дайвинга на коралловых рифах до сафари в пустыне, от люкс-отелей до индивидуальных трансферов — каждая деталь продумана.',
+                    it: 'Dal diving alle safari nel deserto, dagli hotel di lusso ai transfer privati — ogni dettaglio è curato.',
+                  })}
+                </p>
+              </Reveal>
+
+              {/* Inline mini-features */}
+              <Reveal delay={0.25}>
+                <div className="grid sm:grid-cols-2 gap-3 mb-7">
+                  {[
+                    { icon: Globe2, ar: 'متعدد اللغات', en: 'Multi-language', ru: 'Многоязычный', it: 'Multilingue' },
+                    { icon: ShieldCheck, ar: 'دفع آمن 100%', en: '100% secure payment', ru: 'Безопасная оплата', it: 'Pagamento sicuro' },
+                    { icon: Heart, ar: 'مناسب للعائلات', en: 'Family-friendly', ru: 'Для семей', it: 'Famiglia' },
+                    { icon: MessageCircle, ar: 'دعم 24/7', en: '24/7 support', ru: 'Поддержка 24/7', it: 'Supporto 24/7' },
+                  ].map((m) => {
+                    const I = m.icon;
+                    return (
+                      <div key={m.en} className="flex items-center gap-2.5">
+                        <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-accent/15 text-accent-700 shrink-0">
+                          <I className="h-4 w-4" />
+                        </span>
+                        <span className="text-sm font-bold text-primary">{L(locale, m) as string}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.35}>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button asChild className="bg-primary text-cream hover:bg-primary-900 font-bold group">
+                    <Link href="/about">
+                      {L(locale, { ar: 'تعرف علينا أكثر', en: 'Learn more', ru: 'Узнать больше', it: 'Scopri di più' })}
+                      <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-accent/40 text-accent-700 hover:bg-accent/10">
+                    <Link href="/contact">
+                      <MessageCircle className="h-4 w-4" />
+                      {L(locale, { ar: 'تواصل معنا', en: 'Contact us', ru: 'Связаться', it: 'Contatti' })}
+                    </Link>
+                  </Button>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ WHY US ============ */}
       <section className="relative py-14 md:py-24 bg-cream overflow-hidden hairline-top">
         <div aria-hidden className="orb-accent absolute -top-20 -end-32 pointer-events-none animate-blob" />
@@ -242,6 +379,172 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* ============ FEATURES SHOWCASE (zig-zag) ============ */}
+      <section className="relative py-14 md:py-24 bg-cream overflow-hidden hairline-top">
+        <div aria-hidden className="orb-accent orb-accent-sm absolute top-1/4 -end-24 pointer-events-none animate-blob" style={{ animationDelay: '2s' }} />
+        <div aria-hidden className="orb-accent orb-accent-sm absolute bottom-1/4 -start-24 pointer-events-none animate-blob" style={{ animationDelay: '6s' }} />
+
+        <div className="container relative">
+          <Reveal className="text-center max-w-2xl mx-auto mb-12 md:mb-16 flex flex-col items-center">
+            <span className="eyebrow">{L(locale, { ar: 'مميزاتنا', en: 'What we offer', ru: 'Наши преимущества', it: 'Cosa offriamo' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
+              {L(locale, {
+                ar: 'تجربة سياحية متكاملة من البداية للنهاية',
+                en: 'A complete travel experience, beginning to end',
+                ru: 'Полный туристический опыт от начала до конца',
+                it: "Un'esperienza di viaggio completa, dall'inizio alla fine",
+              })}
+            </h2>
+            <span className="rule-gold" />
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl">
+              {L(locale, {
+                ar: 'كل ما تحتاجه لرحلة مثالية في شرم الشيخ تحت سقف واحد — رحلات، فنادق، مواصلات، ومرشدين محترفين.',
+                en: 'Everything you need for a perfect Sharm El Sheikh trip under one roof — tours, hotels, transfers, and expert guides.',
+                ru: 'Всё для идеального путешествия в Шарм-эль-Шейхе в одном месте.',
+                it: 'Tutto per un viaggio perfetto a Sharm El Sheikh in un solo posto.',
+              })}
+            </p>
+          </Reveal>
+
+          <div className="space-y-12 md:space-y-20">
+            {[
+              {
+                img: '/hero-slides/hero-05.jpg',
+                icon: Compass,
+                badge: { ar: 'رحلات مميزة', en: 'Curated tours', ru: 'Туры', it: 'Tour' },
+                title: {
+                  ar: 'مغامرات لا تُنسى بقيادة خبراء محليين',
+                  en: 'Unforgettable adventures led by local experts',
+                  ru: 'Незабываемые приключения с местными экспертами',
+                  it: 'Avventure indimenticabili con guide locali',
+                },
+                desc: {
+                  ar: 'من رحلات الغوص في الشعاب المرجانية، إلى السفاري في الصحراء، والإبحار في البحر الأحمر — مرشدوننا يحملون شغف المكان ويعرفون أفضل اللحظات والأماكن لكل تجربة.',
+                  en: 'From coral reef dives to desert safaris and Red Sea sailing — our guides carry a passion for the place and know the best spots and moments for every experience.',
+                  ru: 'От дайвинга и сафари до плавания по Красному морю — наши гиды знают лучшие места и моменты.',
+                  it: 'Dal diving al safari nel deserto alla navigazione nel Mar Rosso — le nostre guide conoscono i luoghi migliori.',
+                },
+                bullets: [
+                  { ar: 'مجموعات صغيرة وخاصة', en: 'Small private groups', ru: 'Малые группы', it: 'Piccoli gruppi' },
+                  { ar: 'معدّات احترافية', en: 'Pro equipment', ru: 'Проф. снаряжение', it: 'Attrezzatura pro' },
+                  { ar: 'وجبات وترفيه مشمول', en: 'Meals & entertainment included', ru: 'Питание включено', it: 'Pasti inclusi' },
+                ],
+                cta: { href: '/trips', ar: 'تصفح الرحلات', en: 'Browse trips', ru: 'Туры', it: 'Tour' },
+                reverse: false,
+              },
+              {
+                img: '/hero-slides/hero-09.jpg',
+                icon: BedDouble,
+                badge: { ar: 'إقامة فاخرة', en: 'Luxury stays', ru: 'Люкс отели', it: 'Soggiorni lusso' },
+                title: {
+                  ar: 'فنادق خمس نجوم بأسعار حصرية',
+                  en: 'Five-star hotels at exclusive rates',
+                  ru: 'Пятизвёздочные отели по эксклюзивным ценам',
+                  it: 'Hotel 5 stelle a tariffe esclusive',
+                },
+                desc: {
+                  ar: 'شراكات مع أرقى الفنادق على البحر الأحمر تتيح لك الإقامة في غرف بإطلالات خلابة، خدمة استثنائية، وأسعار لن تجدها في مكان آخر.',
+                  en: 'Partnerships with the finest Red Sea hotels mean stunning rooms, exceptional service, and rates you won\'t find anywhere else.',
+                  ru: 'Партнёрства с лучшими отелями Красного моря — потрясающие номера и эксклюзивные цены.',
+                  it: 'Partnership con i migliori hotel del Mar Rosso — camere stupende e tariffe esclusive.',
+                },
+                bullets: [
+                  { ar: 'all-inclusive ميسر', en: 'Easy all-inclusive', ru: 'Всё включено', it: 'All-inclusive facile' },
+                  { ar: 'إطلالة على البحر', en: 'Sea-view rooms', ru: 'Вид на море', it: 'Vista mare' },
+                  { ar: 'spa وأنشطة عائلية', en: 'Spa & family activities', ru: 'Спа и активности', it: 'Spa e attività' },
+                ],
+                cta: { href: '/hotels', ar: 'تصفح الفنادق', en: 'View hotels', ru: 'Отели', it: 'Hotel' },
+                reverse: true,
+              },
+              {
+                img: '/hero-slides/hero-12.jpg',
+                icon: Camera,
+                badge: { ar: 'تجارب مخصصة', en: 'Tailored experiences', ru: 'Индивидуально', it: 'Su misura' },
+                title: {
+                  ar: 'رحلتك بالطريقة التي تحبها',
+                  en: 'Your trip, exactly the way you like it',
+                  ru: 'Ваша поездка по вашим правилам',
+                  it: 'Il tuo viaggio, come piace a te',
+                },
+                desc: {
+                  ar: 'سفر عائلي؟ شهر عسل؟ رحلة عمل؟ مجموعة أصحاب؟ كل تجربة نُصمّمها بناءً على احتياجاتك — من اختيار المواعيد، إلى التفاصيل الصغيرة التي تصنع الفارق.',
+                  en: 'Family trip? Honeymoon? Business retreat? Group of friends? We tailor every experience to your needs — from dates to the small details that make all the difference.',
+                  ru: 'Семейный отдых, медовый месяц, бизнес или дружеская компания — мы подстраиваемся под вас.',
+                  it: 'Famiglia, luna di miele, business o amici — adattiamo tutto alle tue esigenze.',
+                },
+                bullets: [
+                  { ar: 'لباقة العائلات والأطفال', en: 'Family & kids friendly', ru: 'Для детей', it: 'Famiglia' },
+                  { ar: 'تخفيضات للمجموعات', en: 'Group discounts', ru: 'Скидки группам', it: 'Sconti gruppo' },
+                  { ar: 'مرشد ناطق بلغتك', en: 'Guide in your language', ru: 'Гид на вашем языке', it: 'Guida nella tua lingua' },
+                ],
+                cta: { href: '/contact', ar: 'صمم رحلتك', en: 'Plan your trip', ru: 'План тура', it: 'Pianifica' },
+                reverse: false,
+              },
+            ].map((f, i) => {
+              const FIcon = f.icon;
+              return (
+                <Reveal key={i}>
+                  <div className={`grid lg:grid-cols-2 gap-8 lg:gap-14 items-center ${f.reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+                    {/* Image */}
+                    <div className="relative group">
+                      <div className="relative aspect-[4/3] rounded-3xl overflow-hidden card-shadow-gold">
+                        <Image
+                          src={f.img}
+                          alt={L(locale, f.title) as string}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-primary-900/55 via-primary-900/10 to-transparent" />
+                        <div className="absolute bottom-4 start-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cream/90 backdrop-blur border border-accent/30 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">
+                          <FIcon className="h-3.5 w-3.5 text-accent" />
+                          {L(locale, f.badge)}
+                        </div>
+                      </div>
+                      {/* Floating sparkle */}
+                      <div className="absolute -top-3 -end-3 w-12 h-12 rounded-2xl gradient-gold flex items-center justify-center text-primary shadow-xl shadow-accent/30 rotate-12 group-hover:rotate-0 transition-transform duration-500">
+                        <Sparkles className="h-5 w-5" />
+                      </div>
+                    </div>
+
+                    {/* Text */}
+                    <div>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.25em] text-accent-700 mb-3">
+                        <span className="font-serif text-2xl text-accent">{String(i + 1).padStart(2, '0')}</span>
+                        <span className="w-8 h-px bg-accent" />
+                        {L(locale, f.badge)}
+                      </span>
+                      <h3 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight mb-4 text-balance">
+                        {L(locale, f.title)}
+                      </h3>
+                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-5">
+                        {L(locale, f.desc)}
+                      </p>
+                      <ul className="space-y-2 mb-6">
+                        {f.bullets.map((b, j) => (
+                          <li key={j} className="flex items-center gap-2 text-sm text-primary">
+                            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-700 shrink-0">
+                              <CalendarCheck className="h-3 w-3" />
+                            </span>
+                            <span className="font-semibold">{L(locale, b) as string}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button asChild className="bg-accent text-primary hover:bg-accent-400 font-bold group">
+                        <Link href={f.cta.href as '/trips'}>
+                          {L(locale, f.cta)}
+                          <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ============ REVIEWS CAROUSEL ============ */}
       {reviews.length > 0 && (
         <section className="relative py-14 md:py-24 bg-primary-800 text-cream overflow-hidden hairline-top">
@@ -268,6 +571,115 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </section>
       )}
+
+      {/* ============ HOW IT WORKS ============ */}
+      <section className="relative py-14 md:py-24 bg-gradient-to-b from-cream via-muted/30 to-cream overflow-hidden">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+        <div className="container relative">
+          <Reveal className="text-center max-w-2xl mx-auto mb-12 md:mb-16 flex flex-col items-center">
+            <span className="eyebrow">{L(locale, { ar: 'كيف تحجز', en: 'How it works', ru: 'Как забронировать', it: 'Come prenotare' })}</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
+              {L(locale, {
+                ar: '4 خطوات بسيطة لرحلة أحلامك',
+                en: '4 simple steps to your dream trip',
+                ru: '4 простых шага к мечте',
+                it: '4 semplici passi al viaggio dei sogni',
+              })}
+            </h2>
+            <span className="rule-gold" />
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+              {L(locale, {
+                ar: 'من اختيار الرحلة إلى الاستمتاع بها — كل خطوة سهلة وواضحة.',
+                en: 'From choosing your trip to enjoying it — every step is easy and clear.',
+                ru: 'От выбора тура до самого путешествия — всё просто.',
+                it: 'Dalla scelta del tour al viaggio — tutto è semplice.',
+              })}
+            </p>
+          </Reveal>
+
+          <div className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {/* Connecting line (decorative, desktop only) */}
+            <div aria-hidden className="hidden lg:block absolute top-12 inset-x-12 h-0.5 bg-gradient-to-r from-accent/10 via-accent/40 to-accent/10 -z-10" />
+
+            {[
+              {
+                icon: Search,
+                title: { ar: 'اختر رحلتك', en: 'Browse trips', ru: 'Выберите тур', it: 'Scegli il tour' },
+                desc: { ar: 'تصفح كل الرحلات والمميزات والأسعار', en: 'Explore all tours, features, and prices', ru: 'Изучите туры и цены', it: 'Esplora tour e prezzi' },
+              },
+              {
+                icon: CalendarCheck,
+                title: { ar: 'حدد التاريخ', en: 'Pick a date', ru: 'Выберите дату', it: 'Scegli la data' },
+                desc: { ar: 'اختار اليوم المناسب وعدد المسافرين', en: 'Pick your day and travelers', ru: 'Дата и количество', it: 'Data e ospiti' },
+              },
+              {
+                icon: CreditCard,
+                title: { ar: 'احجز بأمان', en: 'Book securely', ru: 'Безопасная оплата', it: 'Prenota sicuro' },
+                desc: { ar: 'ادفع بطرق متعددة وبسرية تامة', en: 'Pay with multiple secure methods', ru: 'Несколько способов оплаты', it: 'Più metodi di pagamento' },
+              },
+              {
+                icon: Smile,
+                title: { ar: 'استمتع برحلتك', en: 'Enjoy your trip', ru: 'Наслаждайтесь', it: 'Goditi il viaggio' },
+                desc: { ar: 'فريقنا معاك في كل خطوة، استمتع وسيب الباقي علينا', en: 'Our team is with you every step — just enjoy', ru: 'Команда рядом — просто отдыхайте', it: 'Il team è con te — rilassati' },
+              },
+            ].map((s, i) => {
+              const SIcon = s.icon;
+              return (
+                <Reveal key={i} delay={i * 0.1}>
+                  <div className="group relative bg-white rounded-2xl p-5 md:p-6 card-shadow hover:card-shadow-gold hover:-translate-y-1.5 transition-all duration-300 border border-accent/15 h-full text-center">
+                    {/* Step number */}
+                    <span aria-hidden className="absolute top-3 end-3 font-serif text-4xl font-bold text-accent/10 group-hover:text-accent/25 transition-colors leading-none">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+
+                    {/* Icon */}
+                    <div className="relative mx-auto w-16 h-16 mb-4">
+                      <div className="absolute inset-0 rounded-2xl gradient-gold opacity-20 blur-md group-hover:opacity-40 transition-opacity" />
+                      <div className="relative w-16 h-16 rounded-2xl gradient-gold flex items-center justify-center text-primary shadow-lg shadow-accent/30 group-hover:rotate-[-6deg] transition-transform duration-500">
+                        <SIcon className="h-7 w-7" />
+                      </div>
+                    </div>
+
+                    <h3 className="font-serif text-lg md:text-xl font-bold text-primary mb-2 leading-tight group-hover:text-accent-700 transition-colors">
+                      {L(locale, s.title)}
+                    </h3>
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
+                      {L(locale, s.desc)}
+                    </p>
+
+                    {/* Arrow chevron (desktop, between cards) */}
+                    {i < 3 && (
+                      <div aria-hidden className="hidden lg:flex absolute top-10 -end-3 z-10 w-6 h-6 rounded-full bg-accent text-primary items-center justify-center shadow-md rtl:rotate-180">
+                        <ArrowRight className="h-3 w-3" />
+                      </div>
+                    )}
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          {/* Bottom trust strip */}
+          <Reveal delay={0.5}>
+            <div className="mt-10 md:mt-14 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+              <span className="inline-flex items-center gap-2 font-bold text-primary">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                {L(locale, { ar: 'إلغاء مجاني', en: 'Free cancellation', ru: 'Бесплатная отмена', it: 'Cancellazione gratuita' })}
+              </span>
+              <span className="w-px h-4 bg-accent/30" />
+              <span className="inline-flex items-center gap-2 font-bold text-primary">
+                <Sparkles className="h-4 w-4 text-accent" />
+                {L(locale, { ar: 'تأكيد فوري', en: 'Instant confirmation', ru: 'Мгновенное подтверждение', it: 'Conferma immediata' })}
+              </span>
+              <span className="w-px h-4 bg-accent/30" />
+              <span className="inline-flex items-center gap-2 font-bold text-primary">
+                <Award className="h-4 w-4 text-accent-700" />
+                {L(locale, { ar: 'مرخصة قانونياً', en: 'Officially licensed', ru: 'Лицензировано', it: 'Concessionato' })}
+              </span>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* ============ CTA ============ */}
       <section className="py-14 md:py-24 bg-mesh-cream">
