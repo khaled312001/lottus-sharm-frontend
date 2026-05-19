@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import type { TripDTO } from '@/types/api';
 import { L } from '@/lib/utils';
 import { Price } from './price';
+import { FavoriteButton } from './trip/favorite-button';
 
 export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: string; index?: number }) {
   const t = useTranslations();
@@ -29,10 +30,11 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -8 }}
+      className="group relative"
     >
       <Link
         href={`/trips/${trip.slug}`}
-        className="group block relative overflow-hidden rounded-2xl bg-white card-shadow hover:card-shadow-gold transition-shadow duration-500"
+        className="block relative overflow-hidden rounded-2xl bg-white card-shadow group-hover:card-shadow-gold transition-shadow duration-500"
       >
         <div className="relative aspect-[4/5] overflow-hidden bg-primary-800">
           <Image
@@ -52,8 +54,9 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
             </div>
           )}
 
-          <div className="absolute top-4 end-4 h-10 w-10 rounded-full bg-cream/90 backdrop-blur flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-            <ArrowUpRight className="h-5 w-5 rtl:rotate-90" />
+          {/* Hover "open" arrow — only on hover */}
+          <div className="absolute top-4 start-4 h-9 w-9 rounded-full bg-cream/90 backdrop-blur flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
+            <ArrowUpRight className="h-4 w-4 rtl:rotate-90" />
           </div>
 
           <div className="absolute inset-x-0 bottom-0 p-6 text-cream">
@@ -90,6 +93,11 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
           </div>
         </div>
       </Link>
+      {/* Favorite (heart) — sibling of the Link so the <button> isn't nested
+          inside an <a>. Positioned over the same card via absolute. */}
+      <div className="absolute top-4 end-4 z-10">
+        <FavoriteButton tripId={trip.id} size="md" />
+      </div>
     </motion.div>
   );
 }

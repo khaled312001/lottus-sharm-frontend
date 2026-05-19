@@ -9,13 +9,16 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Phase-2 features (bookings/payments/coupons/customers/newsletter/email)
-// are hidden from the client for now — they ship after the content phase
-// is signed off. Routes still exist; we just don't link them in the sidebar.
 const SECTIONS = [
   { title: 'الرئيسية', items: [
     { href: '/admin/dashboard' as const, icon: LayoutDashboard, label: 'لوحة التحكم' },
     { href: '/admin/reports' as const,   icon: BarChart3,       label: 'التقارير' },
+  ]},
+  { title: 'العمليات', items: [
+    { href: '/admin/bookings' as const, icon: CalendarCheck, label: 'الحجوزات' },
+    { href: '/admin/customers' as const, icon: Users, label: 'العملاء' },
+    { href: '/admin/payments' as const, icon: CreditCard, label: 'المدفوعات' },
+    { href: '/admin/coupons' as const, icon: Tag, label: 'كوبونات الخصم' },
   ]},
   { title: 'المحتوى', items: [
     { href: '/admin/trips' as const, icon: Map, label: 'الرحلات' },
@@ -29,6 +32,8 @@ const SECTIONS = [
   ]},
   { title: 'التواصل', items: [
     { href: '/admin/inquiries' as const, icon: MessageSquare, label: 'الرسائل' },
+    { href: '/admin/newsletter' as const, icon: Send, label: 'النشرة البريدية' },
+    { href: '/admin/email' as const, icon: Mail, label: 'البريد الإلكتروني' },
     { href: '/admin/qr-codes' as const, icon: QrCode, label: 'رموز QR' },
   ]},
   { title: 'الإعدادات', items: [

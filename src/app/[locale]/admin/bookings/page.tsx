@@ -11,8 +11,10 @@ import { toast } from 'sonner';
 import {
   Plus, X, MessageCircle, Globe, Phone as PhoneIcon, Hand, CreditCard, Loader2,
   Download, Calendar as CalIcon, List, ChevronLeft, ChevronRight,
+  Clock, Receipt, FileCheck2, AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ImageLightbox } from '@/components/public/image-lightbox';
 
 type Status = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 type Source = 'WEBSITE' | 'WHATSAPP' | 'PHONE' | 'MANUAL' | 'STRIPE';
@@ -81,6 +83,7 @@ export default function AdminBookingsPage() {
   const [showManual, setShowManual] = useState(false);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [calMonth, setCalMonth] = useState(() => new Date());
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number; caption?: string } | null>(null);
 
   const downloadCSV = async () => {
     try {
@@ -140,6 +143,14 @@ export default function AdminBookingsPage() {
     return map;
   }, [items]);
 
+  // KPI counts derived from the loaded list
+  const kpi = useMemo(() => {
+    const pending = items.filter((b) => b.status === 'PENDING').length;
+    const withReceipt = items.filter((b) => b.payments?.some((p) => p.screenshotUrl)).length;
+    const unpaid = items.filter((b) => b.paymentStatus === 'UNPAID' && b.status !== 'CANCELLED').length;
+    return { pending, withReceipt, unpaid };
+  }, [items]);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -167,6 +178,58 @@ export default function AdminBookingsPage() {
           </Button>
           <Button onClick={() => setShowManual(true)}><Plus className="h-4 w-4" /> إضافة حجز يدوي</Button>
         </div>
+      </div>
+
+      {/* KPI strip — quick jump filters */}
+      <div className="grid grid-cols-3 gap-3">
+        <button
+          type="button"
+          onClick={() => { setStatusFilter('PENDING'); setSourceFilter('ALL'); }}
+          className={cn(
+            'group text-start rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5 hover:shadow-md',
+            statusFilter === 'PENDING' ? 'border-amber-400 ring-2 ring-amber-200 bg-amber-50/40' : 'border-accent/15 hover:border-amber-300',
+          )}
+        >
+          <div className="flex items-center justify-between mb-1">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-100 text-amber-700 border border-amber-200">
+              <Clock className="h-4 w-4" />
+            </span>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">في الانتظار</span>
+          </div>
+          <div className="font-serif text-3xl font-bold text-amber-700 leading-none tabular-nums mt-2">{kpi.pending}</div>
+          <div className="text-[11px] text-muted-foreground mt-1">حجز يحتاج مراجعة</div>
+        </button>
+        <button
+          type="button"
+          onClick={() => { setStatusFilter('ALL'); setSourceFilter('ALL'); }}
+          className={cn(
+            'group text-start rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5 hover:shadow-md',
+            'border-accent/15 hover:border-emerald-300',
+          )}
+        >
+          <div className="flex items-center justify-between mb-1">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200">
+              <Receipt className="h-4 w-4" />
+            </span>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">إيصالات مرفوعة</span>
+          </div>
+          <div className="font-serif text-3xl font-bold text-emerald-700 leading-none tabular-nums mt-2">{kpi.withReceipt}</div>
+          <div className="text-[11px] text-muted-foreground mt-1">يمكن التحقق منها</div>
+        </button>
+        <button
+          type="button"
+          onClick={() => { setStatusFilter('ALL'); setSourceFilter('ALL'); }}
+          className="group text-start rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5 hover:shadow-md border-accent/15 hover:border-rose-300"
+        >
+          <div className="flex items-center justify-between mb-1">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-rose-100 text-rose-700 border border-rose-200">
+              <AlertCircle className="h-4 w-4" />
+            </span>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">غير مدفوع</span>
+          </div>
+          <div className="font-serif text-3xl font-bold text-rose-700 leading-none tabular-nums mt-2">{kpi.unpaid}</div>
+          <div className="text-[11px] text-muted-foreground mt-1">في انتظار الدفع</div>
+        </button>
       </div>
 
       <Card>
@@ -263,18 +326,40 @@ export default function AdminBookingsPage() {
                             {b.customer.phone && !b.customer.phone.startsWith('wa-pending-') && (
                               <a href={`https://wa.me/${b.customer.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener" className="text-xs text-primary hover:underline">WhatsApp</a>
                             )}
-                            {/* Receipt thumbnail — appears for self-service bookings */}
-                            {b.payments?.filter((p) => p.screenshotUrl).map((p) => (
-                              <a key={p.id} href={p.screenshotUrl!} target="_blank" rel="noopener" className="relative inline-block" title="عرض إيصال الدفع">
-                                {/\.(pdf)$/i.test(p.screenshotUrl!) ? (
-                                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-blue-500/15 border border-blue-500/40 text-blue-700 text-[10px] font-bold">PDF</span>
-                                ) : (
-                                  /* eslint-disable-next-line @next/next/no-img-element */
-                                  <img src={p.screenshotUrl!} alt="receipt" className="w-10 h-10 rounded-md object-cover border border-emerald-500/40 hover:border-emerald-500 transition-colors" />
-                                )}
-                                <span className="absolute -top-1 -end-1 w-3 h-3 rounded-full bg-emerald-500 border border-white" />
-                              </a>
-                            ))}
+                            {/* Receipt thumbnails — appears for self-service bookings.
+                                Images open in the shared lightbox; PDFs open in new tab. */}
+                            {(() => {
+                              const imageReceipts = (b.payments || []).filter((p) => p.screenshotUrl && !/\.pdf$/i.test(p.screenshotUrl!));
+                              const pdfReceipts   = (b.payments || []).filter((p) => p.screenshotUrl && /\.pdf$/i.test(p.screenshotUrl!));
+                              const imageUrls = imageReceipts.map((p) => p.screenshotUrl!) as string[];
+                              return (
+                                <>
+                                  {imageReceipts.map((p, idx) => (
+                                    <button
+                                      key={p.id}
+                                      type="button"
+                                      onClick={() => setLightbox({ images: imageUrls, index: idx, caption: `إيصال — ${b.reference} (${b.customer.fullName})` })}
+                                      className="relative inline-block group"
+                                      title="عرض إيصال الدفع"
+                                    >
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img src={p.screenshotUrl!} alt="receipt" className="w-10 h-10 rounded-md object-cover border border-emerald-500/40 group-hover:border-emerald-500 group-hover:scale-110 transition-all" />
+                                      <span className="absolute -top-1 -end-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 border-2 border-white text-white shadow">
+                                        <FileCheck2 className="h-2.5 w-2.5" />
+                                      </span>
+                                    </button>
+                                  ))}
+                                  {pdfReceipts.map((p) => (
+                                    <a key={p.id} href={p.screenshotUrl!} target="_blank" rel="noopener" className="relative inline-block group" title="عرض PDF">
+                                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-blue-500/15 border border-blue-500/40 text-blue-700 text-[10px] font-bold group-hover:bg-blue-500/25 transition-colors">PDF</span>
+                                      <span className="absolute -top-1 -end-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 border-2 border-white text-white shadow">
+                                        <FileCheck2 className="h-2.5 w-2.5" />
+                                      </span>
+                                    </a>
+                                  ))}
+                                </>
+                              );
+                            })()}
                           </div>
                         </td>
                       </tr>
@@ -293,6 +378,15 @@ export default function AdminBookingsPage() {
           onCreated={() => { setShowManual(false); void load(); }}
         />
       )}
+
+      {/* Receipt image lightbox — shared component with full nav + zoom */}
+      <ImageLightbox
+        open={!!lightbox}
+        images={lightbox?.images || []}
+        startIndex={lightbox?.index || 0}
+        caption={lightbox?.caption}
+        onClose={() => setLightbox(null)}
+      />
     </div>
   );
 }
