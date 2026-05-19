@@ -60,79 +60,60 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
 
   return (
     <div
-      className="relative max-w-4xl mx-auto"
+      className="relative max-w-3xl mx-auto"
       onMouseEnter={() => setAutoplay(false)}
       onMouseLeave={() => setAutoplay(true)}
     >
       {/* Decorative gold corner frames */}
-      <div aria-hidden className="absolute -top-3 -start-3 w-10 h-10 border-t-2 border-s-2 border-accent/40 rounded-tl-2xl pointer-events-none" />
-      <div aria-hidden className="absolute -top-3 -end-3 w-10 h-10 border-t-2 border-e-2 border-accent/40 rounded-tr-2xl pointer-events-none" />
-      <div aria-hidden className="absolute -bottom-3 -start-3 w-10 h-10 border-b-2 border-s-2 border-accent/40 rounded-bl-2xl pointer-events-none" />
-      <div aria-hidden className="absolute -bottom-3 -end-3 w-10 h-10 border-b-2 border-e-2 border-accent/40 rounded-br-2xl pointer-events-none" />
+      <div aria-hidden className="absolute -top-2 -start-2 w-7 h-7 border-t-2 border-s-2 border-accent/40 rounded-tl-xl pointer-events-none" />
+      <div aria-hidden className="absolute -top-2 -end-2 w-7 h-7 border-t-2 border-e-2 border-accent/40 rounded-tr-xl pointer-events-none" />
+      <div aria-hidden className="absolute -bottom-2 -start-2 w-7 h-7 border-b-2 border-s-2 border-accent/40 rounded-bl-xl pointer-events-none" />
+      <div aria-hidden className="absolute -bottom-2 -end-2 w-7 h-7 border-b-2 border-e-2 border-accent/40 rounded-br-xl pointer-events-none" />
 
       {/* ===== Main premium card ===== */}
-      <div className="relative bg-gradient-to-br from-cream/8 via-cream/[0.04] to-cream/8 backdrop-blur-md border border-accent/25 rounded-2xl md:rounded-3xl px-6 sm:px-10 md:px-14 lg:px-20 py-8 md:py-12 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-cream/8 via-cream/[0.04] to-cream/8 backdrop-blur-md border border-accent/25 rounded-2xl px-5 sm:px-8 md:px-12 lg:px-16 py-6 md:py-8 overflow-hidden">
         {/* Background ornaments */}
-        <div aria-hidden className="absolute -top-16 -end-16 w-48 h-48 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
-        <div aria-hidden className="absolute -bottom-20 -start-12 w-44 h-44 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute -top-12 -end-12 w-36 h-36 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute -bottom-16 -start-10 w-32 h-32 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
 
         {/* Giant background quote */}
         <Quote
           aria-hidden
-          className={`absolute top-4 ${isAr ? 'end-4' : 'start-4'} h-24 w-24 md:h-32 md:w-32 text-accent/10 pointer-events-none ${isAr ? 'scale-x-[-1]' : ''}`}
+          className={`absolute top-3 ${isAr ? 'end-3' : 'start-3'} h-16 w-16 md:h-24 md:w-24 text-accent/10 pointer-events-none ${isAr ? 'scale-x-[-1]' : ''}`}
         />
-
-        {/* Mobile arrow row (above card body) */}
-        <div className="md:hidden flex justify-between mb-2">
-          <button
-            onClick={() => go(idx - 1)}
-            className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-cream/10 hover:bg-accent hover:text-primary text-cream transition-colors border border-cream/20"
-            aria-label="Previous review"
-          >
-            <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
-          </button>
-          <button
-            onClick={() => go(idx + 1)}
-            className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-cream/10 hover:bg-accent hover:text-primary text-cream transition-colors border border-cream/20"
-            aria-label="Next review"
-          >
-            <ChevronRight className="h-4 w-4 rtl:rotate-180" />
-          </button>
-        </div>
 
         <AnimatePresence mode="wait">
           <motion.div
             key={r.id}
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -24 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, y: -18 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="relative text-center"
           >
             {/* Avatar */}
-            <div className="relative inline-block mb-4">
+            <div className="relative inline-block mb-3">
               <span className="absolute inset-0 -m-1 rounded-full bg-gradient-to-br from-accent via-accent-400 to-accent-600 blur-sm opacity-50" />
-              <span className="relative inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full gradient-gold text-primary font-bold font-serif text-2xl md:text-3xl ring-4 ring-cream/15 shadow-xl">
+              <span className="relative inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full gradient-gold text-primary font-bold font-serif text-lg md:text-2xl ring-[3px] ring-cream/15 shadow-lg">
                 {r.customerName.trim().charAt(0).toUpperCase()}
               </span>
-              {/* Verified badge */}
               <span
-                className="absolute -bottom-1 -end-1 w-7 h-7 rounded-full bg-primary border-2 border-accent flex items-center justify-center shadow-lg"
+                className="absolute -bottom-1 -end-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary border-2 border-accent flex items-center justify-center shadow-md"
                 title="Verified review"
               >
-                <BadgeCheck className="h-4 w-4 text-accent" />
+                <BadgeCheck className="h-3 w-3 md:h-3.5 md:w-3.5 text-accent" />
               </span>
             </div>
 
             {/* Stars */}
-            <div className="flex justify-center gap-1 mb-5">
+            <div className="flex justify-center gap-0.5 mb-3">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
                   className={
-                    'h-5 w-5 md:h-6 md:w-6 transition-colors ' +
+                    'h-4 w-4 md:h-5 md:w-5 transition-colors ' +
                     (i < r.rating
-                      ? 'text-accent fill-accent drop-shadow-[0_0_6px_rgba(201,168,106,0.5)]'
+                      ? 'text-accent fill-accent drop-shadow-[0_0_4px_rgba(201,168,106,0.5)]'
                       : 'text-cream/15')
                   }
                 />
@@ -140,28 +121,28 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
             </div>
 
             {/* Quote */}
-            <p className="font-serif text-lg sm:text-xl md:text-2xl lg:text-[26px] leading-relaxed md:leading-[1.55] mb-6 text-balance text-cream/95 max-w-2xl mx-auto">
-              <span className="text-accent text-2xl me-0.5">&ldquo;</span>
+            <p className="font-serif text-base sm:text-lg md:text-xl leading-relaxed mb-4 text-balance text-cream/95 max-w-xl mx-auto line-clamp-4">
+              <span className="text-accent me-0.5">&ldquo;</span>
               {r.comment}
-              <span className="text-accent text-2xl ms-0.5">&rdquo;</span>
+              <span className="text-accent ms-0.5">&rdquo;</span>
             </p>
 
             {/* Gold rule */}
-            <span aria-hidden className="block w-12 h-0.5 mx-auto mb-4 rounded-full bg-gradient-to-r from-transparent via-accent to-transparent" />
+            <span aria-hidden className="block w-10 h-0.5 mx-auto mb-2.5 rounded-full bg-gradient-to-r from-transparent via-accent to-transparent" />
 
             {/* Name + meta */}
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
-              <span className="font-bold text-accent text-base md:text-lg">{r.customerName}</span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                <BadgeCheck className="h-3 w-3" />
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+              <span className="font-bold text-accent text-sm md:text-base">{r.customerName}</span>
+              <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                <BadgeCheck className="h-2.5 w-2.5" />
                 {L(locale, { ar: 'موثق', en: 'verified', ru: 'подтв.', it: 'verificato' })}
               </span>
-              <span className="inline-flex items-center gap-1 text-xs text-cream/55">
-                <Calendar className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1 text-[11px] text-cream/55">
+                <Calendar className="h-2.5 w-2.5" />
                 {relativeMonth(r.createdAt, locale)}
               </span>
               {tripTitle && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cream/8 border border-cream/15 text-[11px] text-cream/75 font-semibold">
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-cream/8 border border-cream/15 text-[10px] text-cream/75 font-semibold">
                   <span className="text-accent">·</span>
                   {tripTitle}
                 </span>
@@ -175,42 +156,109 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
           <>
             <button
               onClick={() => go(idx - 1)}
-              className="hidden md:inline-flex absolute start-3 lg:-start-5 top-1/2 -translate-y-1/2 w-11 h-11 lg:w-12 lg:h-12 items-center justify-center rounded-full bg-primary-900/80 backdrop-blur hover:bg-accent hover:text-primary text-cream transition-colors border border-accent/30 shadow-xl"
+              className="hidden md:inline-flex absolute start-2 lg:-start-4 top-1/2 -translate-y-1/2 w-9 h-9 lg:w-10 lg:h-10 items-center justify-center rounded-full bg-primary-900/80 backdrop-blur hover:bg-accent hover:text-primary text-cream transition-colors border border-accent/30 shadow-lg"
               aria-label="Previous review"
             >
-              <ChevronLeft className="h-5 w-5 rtl:rotate-180" />
+              <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
             </button>
             <button
               onClick={() => go(idx + 1)}
-              className="hidden md:inline-flex absolute end-3 lg:-end-5 top-1/2 -translate-y-1/2 w-11 h-11 lg:w-12 lg:h-12 items-center justify-center rounded-full bg-primary-900/80 backdrop-blur hover:bg-accent hover:text-primary text-cream transition-colors border border-accent/30 shadow-xl"
+              className="hidden md:inline-flex absolute end-2 lg:-end-4 top-1/2 -translate-y-1/2 w-9 h-9 lg:w-10 lg:h-10 items-center justify-center rounded-full bg-primary-900/80 backdrop-blur hover:bg-accent hover:text-primary text-cream transition-colors border border-accent/30 shadow-lg"
               aria-label="Next review"
             >
-              <ChevronRight className="h-5 w-5 rtl:rotate-180" />
+              <ChevronRight className="h-4 w-4 rtl:rotate-180" />
             </button>
           </>
         )}
       </div>
 
-      {/* ===== Controls below card ===== */}
-      <div className="flex items-center justify-center gap-3 md:gap-5 mt-6 md:mt-8">
-        {/* Counter */}
-        <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-cream/55 tabular-nums tracking-wider uppercase">
-          <span className="text-accent font-serif text-base">{String(idx + 1).padStart(2, '0')}</span>
-          <span className="text-cream/30">/</span>
-          <span>{String(reviews.length).padStart(2, '0')}</span>
-        </span>
+      {/* ===== Mobile-only nav row: big prev/next flanking dots ===== */}
+      {reviews.length > 1 && (
+        <div className="md:hidden flex items-center justify-between gap-3 mt-4 px-2">
+          <button
+            onClick={() => go(idx - 1)}
+            className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary shadow-lg shadow-accent/30 active:scale-95 transition-transform"
+            aria-label="Previous review"
+          >
+            <ChevronLeft className="h-5 w-5 rtl:rotate-180" />
+          </button>
 
-        {/* Dots (active one has progress bar) */}
-        <div className="flex items-center gap-1.5">
-          {reviews.slice(0, Math.min(reviews.length, 10)).map((_, i) => {
+          {/* Dots strip (between arrows) */}
+          <div className="flex items-center gap-1.5 flex-1 justify-center">
+            {reviews.slice(0, Math.min(reviews.length, 6)).map((_, i) => {
+              const active = i === idx;
+              return (
+                <button
+                  key={i}
+                  onClick={() => go(i)}
+                  className={
+                    'relative h-1.5 rounded-full transition-all overflow-hidden ' +
+                    (active ? 'w-8 bg-cream/15' : 'w-1.5 bg-cream/25')
+                  }
+                  aria-label={`Review ${i + 1}`}
+                >
+                  {active && (
+                    <span
+                      className="absolute inset-y-0 start-0 bg-accent transition-[width] duration-100 ease-linear rounded-full"
+                      style={{ width: `${progress}%` }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+            {reviews.length > 6 && (
+              <span className="text-[10px] text-cream/40 ms-0.5">+{reviews.length - 6}</span>
+            )}
+          </div>
+
+          <button
+            onClick={() => go(idx + 1)}
+            className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary shadow-lg shadow-accent/30 active:scale-95 transition-transform"
+            aria-label="Next review"
+          >
+            <ChevronRight className="h-5 w-5 rtl:rotate-180" />
+          </button>
+        </div>
+      )}
+
+      {/* ===== Bottom info row: avatars + dots (desktop) + counter ===== */}
+      <div className="flex items-center justify-between gap-3 mt-4 md:mt-5 px-2">
+        {/* Avatar trust strip (LEFT) */}
+        <div className="flex items-center gap-2">
+          <div className="flex -space-x-2 rtl:space-x-reverse rtl:-space-x-reverse">
+            {trustStrip.slice(0, 6).map((tr) => (
+              <button
+                key={tr.id}
+                onClick={() => go(reviews.findIndex((rv) => rv.id === tr.id))}
+                title={tr.customerName}
+                className={
+                  'relative w-7 h-7 md:w-8 md:h-8 rounded-full ring-2 ring-primary-800 transition-transform hover:scale-110 hover:z-10 ' +
+                  (reviews[idx].id === tr.id ? 'z-10 ring-accent scale-110' : '')
+                }
+                aria-label={`Jump to ${tr.customerName}'s review`}
+              >
+                <span className="absolute inset-0 rounded-full gradient-gold flex items-center justify-center text-primary font-bold text-[10px] md:text-xs font-serif">
+                  {tr.customerName.trim().charAt(0).toUpperCase()}
+                </span>
+              </button>
+            ))}
+          </div>
+          <span className="text-[11px] md:text-xs text-cream/65 font-semibold">
+            +{reviews.length}
+          </span>
+        </div>
+
+        {/* Dots with progress (CENTER) — desktop only; mobile has its own row above */}
+        <div className="hidden md:flex items-center gap-1.5">
+          {reviews.slice(0, Math.min(reviews.length, 8)).map((_, i) => {
             const active = i === idx;
             return (
               <button
                 key={i}
                 onClick={() => go(i)}
                 className={
-                  'relative h-1.5 rounded-full transition-all overflow-hidden ' +
-                  (active ? 'w-10 bg-cream/15' : 'w-1.5 bg-cream/25 hover:bg-cream/45')
+                  'relative h-1 rounded-full transition-all overflow-hidden ' +
+                  (active ? 'w-8 bg-cream/15' : 'w-1 bg-cream/25 hover:bg-cream/45')
                 }
                 aria-label={`Review ${i + 1}`}
               >
@@ -223,47 +271,16 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
               </button>
             );
           })}
-          {reviews.length > 10 && (
-            <span className="text-[10px] text-cream/40 ms-1">+{reviews.length - 10}</span>
+          {reviews.length > 8 && (
+            <span className="text-[9px] text-cream/40 ms-0.5">+{reviews.length - 8}</span>
           )}
         </div>
 
-        {/* Autoplay indicator */}
-        <span className="hidden sm:inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-cream/45 font-bold">
-          <span className={'h-1.5 w-1.5 rounded-full ' + (autoplay ? 'bg-emerald-400 animate-pulse' : 'bg-cream/30')} />
-          {autoplay
-            ? L(locale, { ar: 'تشغيل تلقائي', en: 'auto', ru: 'авто', it: 'auto' })
-            : L(locale, { ar: 'متوقف', en: 'paused', ru: 'пауза', it: 'pausa' })}
-        </span>
-      </div>
-
-      {/* ===== Trust strip — reviewer avatars ===== */}
-      <div className="flex items-center justify-center gap-3 mt-7 md:mt-9">
-        <div className="flex -space-x-2 rtl:space-x-reverse rtl:-space-x-reverse">
-          {trustStrip.map((tr, i) => (
-            <button
-              key={tr.id}
-              onClick={() => go(reviews.findIndex((rv) => rv.id === tr.id))}
-              title={tr.customerName}
-              className={
-                'relative w-8 h-8 md:w-9 md:h-9 rounded-full ring-2 ring-primary-800 transition-transform hover:scale-110 hover:z-10 ' +
-                (reviews[idx].id === tr.id ? 'z-10 ring-accent' : '')
-              }
-              aria-label={`Jump to ${tr.customerName}'s review`}
-            >
-              <span className="absolute inset-0 rounded-full gradient-gold flex items-center justify-center text-primary font-bold text-xs md:text-sm font-serif">
-                {tr.customerName.trim().charAt(0).toUpperCase()}
-              </span>
-            </button>
-          ))}
-        </div>
-        <span className="text-xs md:text-sm text-cream/70 font-semibold">
-          {L(locale, {
-            ar: `+ ${reviews.length} مسافر`,
-            en: `+ ${reviews.length} travelers`,
-            ru: `+ ${reviews.length} путешественников`,
-            it: `+ ${reviews.length} viaggiatori`,
-          })}
+        {/* Counter (RIGHT) */}
+        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-cream/55 tabular-nums tracking-wider uppercase">
+          <span className="text-accent font-serif text-sm">{String(idx + 1).padStart(2, '0')}</span>
+          <span className="text-cream/30">/</span>
+          <span>{String(reviews.length).padStart(2, '0')}</span>
         </span>
       </div>
     </div>
