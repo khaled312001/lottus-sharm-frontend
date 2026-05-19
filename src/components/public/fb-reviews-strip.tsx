@@ -58,32 +58,49 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
     el.scrollLeft = oneSet;
   }, []);
 
-  // Mouse / touch drag
+  // Mouse / touch drag — only engages after a 6px movement threshold so
+  // simple clicks on images still fire normally (lightbox open).
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
-    let isDown = false;
+    let armed = false;
+    let dragging = false;
+    let pointerId = -1;
     let startX = 0;
     let startScroll = 0;
+    const DRAG_THRESHOLD = 6;
+
     const onDown = (e: PointerEvent) => {
-      isDown = true;
-      el.setPointerCapture(e.pointerId);
+      // Only left mouse button or touch / pen
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      armed = true;
+      dragging = false;
+      pointerId = e.pointerId;
       startX = e.clientX;
       startScroll = el.scrollLeft;
       setAutoplay(false);
-      el.style.cursor = 'grabbing';
     };
     const onMove = (e: PointerEvent) => {
-      if (!isDown) return;
+      if (!armed) return;
       const dx = e.clientX - startX;
-      el.scrollLeft = startScroll - dx;
+      if (!dragging && Math.abs(dx) > DRAG_THRESHOLD) {
+        dragging = true;
+        try { el.setPointerCapture(pointerId); } catch { /* */ }
+        el.style.cursor = 'grabbing';
+      }
+      if (dragging) {
+        el.scrollLeft = startScroll - dx;
+        e.preventDefault();
+      }
     };
-    const onUp = (e: PointerEvent) => {
-      if (!isDown) return;
-      isDown = false;
-      try { el.releasePointerCapture(e.pointerId); } catch { /* */ }
+    const onUp = () => {
+      if (dragging) {
+        try { el.releasePointerCapture(pointerId); } catch { /* */ }
+      }
+      armed = false; dragging = false; pointerId = -1;
       el.style.cursor = 'grab';
     };
+
     el.addEventListener('pointerdown', onDown);
     el.addEventListener('pointermove', onMove);
     el.addEventListener('pointerup', onUp);

@@ -181,6 +181,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* ============ FACEBOOK REVIEWS — directly after hero ============ */}
+      <FbReviewsStrip locale={locale} />
+
       {/* ============ ABOUT / INTRO ============ */}
       <section className="relative py-14 md:py-24 bg-cream overflow-hidden hairline-top">
         <div aria-hidden className="orb-accent orb-accent-sm absolute top-10 -end-20 pointer-events-none animate-blob" />
@@ -569,9 +572,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
       </section>
-
-      {/* ============ FACEBOOK REVIEWS STRIP — auto-scrolling marquee (above site reviews) ============ */}
-      <FbReviewsStrip locale={locale} />
 
       {/* ============ REVIEWS CAROUSEL ============ */}
       {reviews.length > 0 && (
