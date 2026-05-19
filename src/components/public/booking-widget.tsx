@@ -165,7 +165,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative bg-white rounded-2xl card-shadow border border-accent/15 lg:sticky lg:top-24 overflow-hidden"
+        className="relative bg-white rounded-2xl card-shadow border border-accent/15 lg:sticky lg:top-[25vh] overflow-hidden"
       >
         <div className="absolute top-0 inset-x-0 h-1 gradient-gold z-10" />
         <div className="relative bg-gradient-to-br from-primary via-primary to-primary-900 text-cream p-4 overflow-hidden">
