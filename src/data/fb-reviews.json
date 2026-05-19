@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "slug": "ahmed-el-sharkawy",
+    "name": "Ahmed El Sharkawy",
+    "comment": "بصراحة تجربة تستحق التوصية 👌❤️\n\nرحلتي مع شركة لوتس شرم كانت ممتازة جدًا من أول لحظة ركوب لحد ما رجعنا، كل حاجة كانت منظمة ومحترمة، والبرامج كلها كانت زي ما اتفقنا بالظبط من غير أي تغيير 👏\n\nكل كلمة اتقالت قبل الرحلة اتنفذت بالحرف، وده شيء قليل لما بيحصل 👌  \nوكمان حابب أشكر أ/ كريم على اهتمامه ومتابعته معانا خطوة بخطوة طول الرحلة، كان دايمًا موجود وبيسأل ومهتم بكل التفاصيل ❤️\n\nتجربة جميلة جدًا وأنصح أي حد يفكر يسافر يجرب معاهم",
+    "dateText": "2026-04-29",
+    "recommends": true,
+    "rating": 5,
+    "profileImage": "/fb-reviews/ahmed-el-sharkawy-pp.jpg",
+    "attachedImages": [
+      "/fb-reviews/ahmed-el-sharkawy-1.jpg",
+      "/fb-reviews/ahmed-el-sharkawy-2.jpg",
+      "/fb-reviews/ahmed-el-sharkawy-3.jpg",
+      "/fb-reviews/ahmed-el-sharkawy-4.jpg",
+      "/fb-reviews/ahmed-el-sharkawy-5.jpg",
+      "/fb-reviews/ahmed-el-sharkawy-6.jpg"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "mahmoud-gaballah",
+    "name": "Mahmoud Gaballah",
+    "comment": "ناس محترمة وتنظيم ممتاز\nاتبسطنا جدا في رحلتنا مع شركة لوتس بصحبة د. محمد خميس في سرابيط الخادم وراس محمد ودهب 😍",
+    "dateText": "2026-03-30",
+    "recommends": true,
+    "rating": 5,
+    "profileImage": "/fb-reviews/mahmoud-gaballah-pp.jpg",
+    "attachedImages": []
+  },
+  {
+    "id": 3,
+    "slug": "khaled-yahia",
+    "name": "Khaled Yahia",
+    "comment": "رحلة جميلة وتنظيم رائع وان شاء الله تتكرر قريبا",
+    "dateText": "2026-03-29",
+    "recommends": true,
+    "rating": 5,
+    "profileImage": "/fb-reviews/khaled-yahia-pp.jpg",
+    "attachedImages": []
+  }
+]
