@@ -111,27 +111,41 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
             </Reveal>
 
-            {/* Trust strip */}
-            <Reveal delay={0.6}>
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:text-sm text-cream/75">
+            {/* Reviews CTA buttons — prominent */}
+            <Reveal delay={0.55}>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
                 <Link
                   href="/review"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 hover:bg-accent/25 border border-accent/40 hover:border-accent/70 transition-colors group"
-                  title={L(locale, { ar: 'عرض كل التقييمات', en: 'See all reviews', ru: 'Все отзывы', it: 'Vedi tutte' }) as string}
+                  className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-primary font-bold text-sm shadow-lg shadow-accent/30 hover:bg-accent-400 hover:-translate-y-0.5 transition-all"
                 >
                   <span className="inline-flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(reviewsAvg || 5) ? 'fill-accent text-accent' : 'text-cream/30'}`} />
+                      <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(reviewsAvg || 5) ? 'fill-current' : 'fill-transparent'}`} strokeWidth={2} />
                     ))}
                   </span>
-                  <strong className="text-cream">{(reviewsAvg || 5).toFixed(1)}</strong>
-                  <span className="opacity-70 group-hover:opacity-100 transition-opacity">
-                    · <strong className="text-accent">{reviewsTotal || 0}</strong>{' '}
+                  <span>{(reviewsAvg || 5).toFixed(1)}</span>
+                  <span className="text-primary/70">·</span>
+                  <span>
+                    <strong>{reviewsTotal || 0}</strong>{' '}
                     {L(locale, { ar: 'تقييم', en: 'reviews', ru: 'отзывов', it: 'recensioni' })}
                   </span>
-                  <ArrowRight className="h-3 w-3 text-accent rtl:rotate-180 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-all" />
+                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
                 </Link>
-                <span className="w-px h-4 bg-cream/20" />
+                <a
+                  href="https://www.facebook.com/profile.php?id=61550600242507&sk=reviews"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1877F2] hover:bg-[#0e63d4] text-white font-bold text-sm shadow-lg shadow-[#1877F2]/30 hover:-translate-y-0.5 transition-all"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3V22A10 10 0 0 0 22 12Z"/></svg>
+                  {L(locale, { ar: 'تقييمات فيسبوك', en: 'Facebook reviews', ru: 'Отзывы Facebook', it: 'Recensioni Facebook' })}
+                </a>
+              </div>
+            </Reveal>
+
+            {/* Trust strip — compact */}
+            <Reveal delay={0.65}>
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:text-sm text-cream/75">
                 <span className="inline-flex items-center gap-1.5">
                   <ShieldCheck className="h-4 w-4 text-accent" />
                   {L(locale, { ar: 'مرخصة قانونياً', en: 'Licensed', ru: 'Лицензировано', it: 'Concessionato' })}

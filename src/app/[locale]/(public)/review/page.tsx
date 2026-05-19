@@ -16,6 +16,8 @@ interface ReviewItem {
   comment: string;
   locale: 'AR' | 'EN' | 'RU' | 'IT';
   createdAt: string;
+  images?: string[];
+  videos?: string[];
   trip?: { slug: string; translations: Array<{ locale: string; title: string }> } | null;
 }
 
@@ -50,7 +52,14 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
     total = c.total || 0;
     if (reviews.length < 12) {
       const tripWide = await api.get<{ items: ReviewItem[] }>('/public/reviews?limit=40');
-      reviews = [...reviews, ...(tripWide.items || [])];
+      // Dedupe by id — company and trip-wide endpoints can overlap
+      const seenIds = new Set(reviews.map((r) => r.id));
+      for (const r of (tripWide.items || [])) {
+        if (!seenIds.has(r.id)) {
+          reviews.push(r);
+          seenIds.add(r.id);
+        }
+      }
       total = Math.max(total, reviews.length);
       if (avg === 0 && reviews.length > 0) avg = reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
     }
@@ -114,7 +123,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
                 const tripTitle = r.trip?.translations.find((t) => t.locale === locale.toUpperCase())?.title || r.trip?.translations[0]?.title;
                 return (
                   <Reveal key={r.id} delay={(i % 6) * 0.04}>
-                    <article className="bg-white rounded-xl border border-accent/15 p-4 hover:border-accent/40 hover:shadow-md transition-all h-full flex flex-col">
+                    <article className="bg-white rounded-xl border border-accent/15 p-4 hover:border-accent/40 hover:shadow-md transition-all h-full flex flex-col overflow-hidden">
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <div className="flex items-center gap-0.5">
                           {Array.from({ length: 5 }).map((_, idx) => (
@@ -124,6 +133,31 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{r.locale}</span>
                       </div>
                       <p className="text-[13px] text-foreground/85 leading-relaxed mb-3 flex-1 line-clamp-6" dir="auto">{r.comment}</p>
+
+                      {/* Attached images */}
+                      {r.images && r.images.length > 0 && (
+                        <div className={`grid gap-1 mb-3 ${r.images.length === 1 ? 'grid-cols-1' : r.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                          {r.images.slice(0, 3).map((url, idx) => (
+                            <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="relative aspect-square overflow-hidden rounded-md bg-muted group">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={url} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                              {idx === 2 && r.images!.length > 3 && (
+                                <span className="absolute inset-0 bg-black/55 flex items-center justify-center text-white text-xs font-bold">+{r.images!.length - 3}</span>
+                              )}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Attached videos */}
+                      {r.videos && r.videos.length > 0 && (
+                        <div className="grid gap-1 mb-3 grid-cols-1">
+                          {r.videos.slice(0, 1).map((url) => (
+                            <video key={url} src={url} controls preload="metadata" className="w-full aspect-video rounded-md bg-black" />
+                          ))}
+                        </div>
+                      )}
+
                       <div className="pt-2 border-t border-accent/10 flex items-center justify-between gap-2">
                         <div className="min-w-0">
                           <div className="font-bold text-primary text-xs truncate">{r.customerName}</div>

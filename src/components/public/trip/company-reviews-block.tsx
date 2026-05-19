@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Link } from '@/i18n/routing';
-import { Star, Quote, MessageSquareQuote, PenLine, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Star, Quote, MessageSquareQuote } from 'lucide-react';
 import { api } from '@/lib/api';
 import { L } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ImageLightbox } from '../image-lightbox';
+
+// Display-only company-wide reviews — used on trip detail pages.
+// No "write a review" CTAs here; the form lives at /review.
 
 interface CompanyReviewItem {
   id: number;
@@ -90,8 +92,8 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
         })}
       </h2>
 
-      {/* Summary card */}
-      <div className="grid md:grid-cols-[260px_1fr_auto] gap-4 md:gap-6 bg-white rounded-2xl border border-accent/15 p-5 md:p-6 card-shadow">
+      {/* Summary card — display-only on trip pages (no CTA) */}
+      <div className="grid md:grid-cols-[260px_1fr] gap-4 md:gap-6 bg-white rounded-2xl border border-accent/15 p-5 md:p-6 card-shadow">
         {/* Score */}
         <div className="md:border-e rtl:md:border-e-0 rtl:md:border-s md:border-accent/15 md:pe-6 rtl:md:pe-0 rtl:md:ps-6 flex flex-col items-center md:items-start text-center md:text-start">
           <div className="font-serif text-5xl md:text-6xl font-bold text-primary leading-none">{(average || 0).toFixed(1)}</div>
@@ -119,28 +121,6 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
               <span className="w-9 text-end tabular-nums text-foreground/60">{d.c}</span>
             </div>
           ))}
-        </div>
-
-        {/* Write review CTA */}
-        <div className="md:border-s rtl:md:border-s-0 rtl:md:border-e md:border-accent/15 md:ps-6 rtl:md:ps-0 rtl:md:pe-6 flex flex-col items-center md:items-start justify-center text-center md:text-start gap-2">
-          <div className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-bold text-accent-700">
-            <Sparkles className="h-3 w-3" />
-            {L(locale, { ar: 'سافرت معنا؟', en: 'Traveled with us?', ru: 'Путешествовали?', it: 'Hai viaggiato?' })}
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed max-w-[180px]">
-            {L(locale, {
-              ar: 'شاركنا تجربتك وساعد غيرك من المسافرين.',
-              en: 'Share your experience and help other travelers.',
-              ru: 'Поделитесь и помогите другим.',
-              it: 'Condividi e aiuta altri viaggiatori.',
-            })}
-          </p>
-          <Button asChild className="gradient-gold text-primary font-bold hover:opacity-90 mt-1 w-full md:w-auto">
-            <Link href="/review">
-              <PenLine className="h-4 w-4" />
-              {L(locale, { ar: 'اكتب تقييمك', en: 'Write a review', ru: 'Написать отзыв', it: 'Scrivi una recensione' })}
-            </Link>
-          </Button>
         </div>
       </div>
 
@@ -233,20 +213,14 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
       ) : (
         <div className="mt-6 rounded-2xl border-2 border-dashed border-accent/30 bg-white/50 p-8 text-center">
           <MessageSquareQuote className="h-10 w-10 text-accent/40 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-sm text-muted-foreground">
             {L(locale, {
-              ar: 'لسه مفيش تقييمات — كن أول من يشاركنا تجربته!',
-              en: 'No reviews yet — be the first to share your experience!',
-              ru: 'Пока нет отзывов — будьте первым!',
-              it: 'Nessuna recensione ancora — sii il primo!',
+              ar: 'لسه مفيش تقييمات بعد.',
+              en: 'No reviews yet.',
+              ru: 'Пока нет отзывов.',
+              it: 'Nessuna recensione ancora.',
             })}
           </p>
-          <Button asChild className="gradient-gold text-primary font-bold">
-            <Link href="/review">
-              {L(locale, { ar: 'اكتب أول تقييم', en: 'Write the first review', ru: 'Первый отзыв', it: 'Prima recensione' })}
-              <ArrowUpRight className="h-4 w-4 rtl:rotate-90" />
-            </Link>
-          </Button>
         </div>
       )}
 
