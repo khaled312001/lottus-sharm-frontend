@@ -22,7 +22,7 @@ interface HotelDTO {
   nights: number;
   isFeatured: boolean;
   isActive: boolean;
-  heroImage?: { url: string; mediumUrl?: string | null; thumbnailUrl?: string | null } | null;
+  heroImage?: { url: string; mediumUrl?: string | null; thumbnailUrl?: string | null; type?: 'IMAGE' | 'VIDEO' } | null;
   notes?: string | null;
   tr?: { name: string; features: string; shortDesc?: string };
 }
@@ -213,7 +213,17 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-accent/15 hover:border-accent/40 card-shadow hover:card-shadow-gold hover:-translate-y-1 transition-all">
       <div className="relative aspect-[4/3] bg-muted">
-        {h.heroImage?.url ? (
+        {h.heroImage?.url && h.heroImage.type === 'VIDEO' ? (
+          <video
+            src={h.heroImage.url}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : h.heroImage?.url ? (
           <Image src={h.heroImage.mediumUrl || h.heroImage.url} alt={name} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary to-primary-900 flex items-center justify-center text-cream">

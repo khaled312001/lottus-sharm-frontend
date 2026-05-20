@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Star, Plus, ExternalLink, Loader2, Pencil, Save, X, Trash2, BedDouble } from 'lucide-react';
 import { toast } from 'sonner';
+import { MediaPicker } from '@/components/admin/media-picker';
+import type { MediaDTO } from '@/types/api';
 
 interface Translation { locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE'; name: string; features: string }
 interface Hotel {
@@ -23,6 +25,8 @@ interface Hotel {
   isActive: boolean;
   sortOrder: number;
   notes?: string | null;
+  heroImageId?: number | null;
+  heroImage?: MediaDTO | null;
   translations: Translation[];
 }
 
@@ -157,6 +161,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
     EN: { name: initial?.translations.find((t) => t.locale === 'EN')?.name || '', features: initial?.translations.find((t) => t.locale === 'EN')?.features || '' },
   });
   const [activeLocale, setActiveLocale] = useState<'AR' | 'EN'>('AR');
+  const [heroImage, setHeroImage] = useState<MediaDTO | null>(initial?.heroImage || null);
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
@@ -167,6 +172,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
       priceLocalEGP: form.priceLocalEGP, priceForeignUSD: form.priceForeignUSD,
       nights: form.nights, isFeatured: form.isFeatured, isActive: form.isActive,
       sortOrder: form.sortOrder, notes: form.notes || null,
+      heroImageId: heroImage?.id ?? null,
       translations: (['AR','EN'] as const).filter((l) => tr[l].name).map((l) => ({
         locale: l, name: tr[l].name, features: tr[l].features,
       })),
@@ -204,6 +210,17 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
           <div>
             <label className="text-sm font-semibold mb-1.5 block">المواصفات / الموقع ({activeLocale})</label>
             <Input value={tr[activeLocale].features} onChange={(e) => setTr({ ...tr, [activeLocale]: { ...tr[activeLocale], features: e.target.value } })} dir={activeLocale === 'AR' ? 'rtl' : 'ltr'} placeholder="مثال: خليج نعمة – صف ثاني – شاطئ رملي" />
+          </div>
+
+          {/* Hero media — image OR video. Uploads via the shared media library. */}
+          <div className="pt-2 border-t">
+            <MediaPicker
+              label="صورة أو فيديو الفندق (تظهر في صفحة الفنادق)"
+              mode="single"
+              value={heroImage}
+              onChange={(m) => setHeroImage(m as MediaDTO | null)}
+            />
+            <p className="text-[11px] text-muted-foreground mt-1.5">ارفع صورة أو فيديو من زر «رفع جديد»، أو اختر من المكتبة. الفيديو يُعرض تلقائياً بصمت في البطاقة.</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-3 pt-2 border-t">
