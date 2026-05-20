@@ -56,29 +56,31 @@ export function ReviewCard({ review: r, locale }: { review: ReviewItem; locale: 
         </button>
       )}
 
-      {/* Attached images */}
-      {r.images && r.images.length > 0 && (
-        <div className={`grid gap-1 mb-3 ${r.images.length === 1 ? 'grid-cols-1' : r.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-          {r.images.slice(0, 3).map((url, idx) => (
-            <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="relative aspect-square overflow-hidden rounded-md bg-muted group">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
-              {idx === 2 && r.images!.length > 3 && (
-                <span className="absolute inset-0 bg-black/55 flex items-center justify-center text-white text-xs font-bold">+{r.images!.length - 3}</span>
-              )}
-            </a>
-          ))}
-        </div>
-      )}
-
-      {/* Attached videos */}
-      {r.videos && r.videos.length > 0 && (
-        <div className="grid gap-1 mb-3 grid-cols-1">
-          {r.videos.slice(0, 1).map((url) => (
-            <video key={url} src={url} controls preload="metadata" className="w-full aspect-video rounded-md bg-black" />
-          ))}
-        </div>
-      )}
+      {/* Attached media — the API stores images AND videos in `images`, so detect
+          video URLs and render them as <video> (otherwise they'd be broken <img>). */}
+      {(() => {
+        const all = [...(r.images || []), ...(r.videos || [])];
+        if (all.length === 0) return null;
+        const isVideo = (u: string) => /\.(mp4|mov|webm|mkv|avi|m4v)(\?|$)/i.test(u);
+        const shown = all.slice(0, 3);
+        return (
+          <div className={`grid gap-1 mb-3 ${shown.length === 1 ? 'grid-cols-1' : shown.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+            {shown.map((url, idx) => (
+              isVideo(url) ? (
+                <video key={url} src={url} controls preload="metadata" className="relative aspect-square w-full object-cover rounded-md bg-black" />
+              ) : (
+                <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="relative aspect-square overflow-hidden rounded-md bg-muted group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  {idx === 2 && all.length > 3 && (
+                    <span className="absolute inset-0 bg-black/55 flex items-center justify-center text-white text-xs font-bold">+{all.length - 3}</span>
+                  )}
+                </a>
+              )
+            ))}
+          </div>
+        );
+      })()}
 
       <div className="pt-2 border-t border-accent/10 flex items-center justify-between gap-2">
         <div className="min-w-0">
