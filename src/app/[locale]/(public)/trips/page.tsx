@@ -70,19 +70,19 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
         <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal>
-            <span className="eyebrow">{L(locale, { ar: 'استكشف الرحلات', en: 'Explore trips', de: 'Explore trips', ru: 'Все туры', it: 'Esplora i tour' })}</span>
+            <span className="eyebrow">{L(locale, { ar: 'استكشف الرحلات', en: 'Explore trips', de: 'Ausflüge entdecken', ru: 'Все туры', it: 'Esplora i tour' })}</span>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">{heroTitle}</h1>
             <div className="w-16 h-0.5 gradient-gold rounded-full mb-5" />
             <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">{heroSubtitle}</p>
             <div className="mt-6 md:mt-7 flex flex-wrap gap-2 sm:gap-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs sm:text-sm backdrop-blur">
-                <Sparkles className="h-3.5 w-3.5" /> {totalCount}+ {L(locale, { ar: 'رحلة', en: 'experiences', de: 'experiences', ru: 'туров', it: 'esperienze' })}
+                <Sparkles className="h-3.5 w-3.5" /> {totalCount}+ {L(locale, { ar: 'رحلة', en: 'experiences', de: 'Erlebnisse', ru: 'туров', it: 'esperienze' })}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cream/10 border border-cream/20 text-cream/80 text-xs sm:text-sm backdrop-blur">
-                <Compass className="h-3.5 w-3.5 text-accent" /> {L(locale, { ar: 'كل فئات السياحة', en: 'All categories', de: 'All categories', ru: 'Все категории', it: 'Tutte le categorie' })}
+                <Compass className="h-3.5 w-3.5 text-accent" /> {L(locale, { ar: 'كل فئات السياحة', en: 'All categories', de: 'Alle Kategorien', ru: 'Все категории', it: 'Tutte le categorie' })}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cream/10 border border-cream/20 text-cream/80 text-xs sm:text-sm backdrop-blur">
-                <Calendar className="h-3.5 w-3.5 text-accent" /> {L(locale, { ar: 'يومياً', en: 'Daily departures', de: 'Daily departures', ru: 'Ежедневные отправления', it: 'Partenze giornaliere' })}
+                <Calendar className="h-3.5 w-3.5 text-accent" /> {L(locale, { ar: 'يومياً', en: 'Daily departures', de: 'Tägliche Abfahrten', ru: 'Ежедневные отправления', it: 'Partenze giornaliere' })}
               </span>
             </div>
           </Reveal>
@@ -155,7 +155,7 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
           <Reveal className="text-center py-20">
             <Compass className="h-12 w-12 text-accent mx-auto mb-4 opacity-50" />
             <p className="font-serif text-2xl text-primary mb-2">{t('trips.noTrips')}</p>
-            <p className="text-muted-foreground">{L(locale, { ar: 'جرب تغيير الفئة أو تواصل معنا لرحلة مخصصة', en: 'Try another category or contact us for a custom trip', de: 'Try another category or contact us for a custom trip', ru: 'Попробуйте другую категорию или свяжитесь для индивидуального тура', it: 'Prova un\'altra categoria o contattaci per un tour su misura' })}</p>
+            <p className="text-muted-foreground">{L(locale, { ar: 'جرب تغيير الفئة أو تواصل معنا لرحلة مخصصة', en: 'Try another category or contact us for a custom trip', de: 'Versuchen Sie eine andere Kategorie oder kontaktieren Sie uns für einen individuellen Ausflug', ru: 'Попробуйте другую категорию или свяжитесь для индивидуального тура', it: 'Prova un\'altra categoria o contattaci per un tour su misura' })}</p>
           </Reveal>
         ) : (
           <Suspense>
@@ -163,7 +163,7 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
               <p className="text-sm text-muted-foreground">
                 {L(locale, {
                   ar: `عرض ${trips.items.length} من ${trips.total} رحلة`,
-                  en: `Showing ${trips.items.length} of ${trips.total} trips`, de: `Showing ${trips.items.length} of ${trips.total} trips`,
+                  en: `Showing ${trips.items.length} of ${trips.total} trips`, de: `${trips.items.length} von ${trips.total} Ausflügen`,
                   ru: `Показано ${trips.items.length} из ${trips.total} туров`,
                   it: `Visualizzati ${trips.items.length} di ${trips.total} tour`,
                 })}
@@ -209,16 +209,16 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
                   <Sparkles className="h-7 w-7 text-accent" />
                 </div>
                 <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight text-balance">
-                  {L(locale, { ar: 'مش لاقي اللي بتدور عليه؟', en: "Can't find what you're looking for?", de: "Can't find what you're looking for?", ru: 'Не нашли то, что искали?', it: 'Non trovi quello che cerchi?' })}
+                  {L(locale, { ar: 'مش لاقي اللي بتدور عليه؟', en: "Can't find what you're looking for?", de: "Nicht das Richtige gefunden?", ru: 'Не нашли то, что искали?', it: 'Non trovi quello che cerchi?' })}
                 </h3>
                 <span className="rule-gold" />
                 <p className="opacity-85 mb-7 max-w-xl mx-auto leading-relaxed">
-                  {L(locale, { ar: 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك', en: "WhatsApp us — we'll design a 100% custom trip for your interests and budget", de: "WhatsApp us — we'll design a 100% custom trip for your interests and budget", ru: 'Напишите в WhatsApp — мы создадим тур 100% под ваши интересы и бюджет', it: 'Scrivici su WhatsApp — progetteremo un viaggio 100% su misura per i tuoi interessi e budget' })}
+                  {L(locale, { ar: 'كلمنا على واتساب ونصمم لك رحلة مخصصة 100% حسب اهتمامك وميزانيتك', en: "WhatsApp us — we'll design a 100% custom trip for your interests and budget", de: "Schreiben Sie uns auf WhatsApp — wir gestalten einen 100% individuellen Ausflug für Ihre Interessen und Ihr Budget", ru: 'Напишите в WhatsApp — мы создадим тур 100% под ваши интересы и бюджет', it: 'Scrivici su WhatsApp — progetteremo un viaggio 100% su misura per i tuoi interessi e budget' })}
                 </p>
-                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد تصميم رحلة مخصصة', en: "Hi! I'd like a custom trip design.", de: "Hi! I'd like a custom trip design.", ru: 'Здравствуйте! Хочу индивидуальный тур.', it: "Salve! Vorrei progettare un viaggio personalizzato." }))}
+                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد تصميم رحلة مخصصة', en: "Hi! I'd like a custom trip design.", de: "Hallo! Ich hätte gerne einen individuell gestalteten Ausflug.", ru: 'Здравствуйте! Хочу индивидуальный тур.', it: "Salve! Vorrei progettare un viaggio personalizzato." }))}
                   target="_blank" rel="noopener"
                   className="group inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-[#25D366]/30 hover:shadow-xl hover:shadow-[#25D366]/40 hover:-translate-y-0.5 transition-all duration-200">
-                  <MessageCircle className="h-5 w-5 group-hover:scale-110 transition-transform" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp us', de: 'WhatsApp us', ru: 'Написать в WhatsApp', it: 'Scrivici su WhatsApp' })}
+                  <MessageCircle className="h-5 w-5 group-hover:scale-110 transition-transform" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp us', de: 'Auf WhatsApp schreiben', ru: 'Написать в WhatsApp', it: 'Scrivici su WhatsApp' })}
                 </a>
               </div>
             </div>

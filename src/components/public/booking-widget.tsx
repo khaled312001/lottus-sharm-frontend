@@ -73,8 +73,8 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const formReady = step1Ready && step2Ready;
 
   const stepLabels = [
-    L(locale, { ar: 'الرحلة', en: 'Trip', de: 'Trip', ru: 'Тур', it: 'Tour' }) as string,
-    L(locale, { ar: 'بياناتك', en: 'Your info', de: 'Your info', ru: 'Контакты', it: 'I tuoi dati' }) as string,
+    L(locale, { ar: 'الرحلة', en: 'Trip', de: 'Ausflug', ru: 'Тур', it: 'Tour' }) as string,
+    L(locale, { ar: 'بياناتك', en: 'Your info', de: 'Ihre Daten', ru: 'Контакты', it: 'I tuoi dati' }) as string,
     L(locale, { ar: 'التأكيد', en: 'Confirm', de: 'Bestätigen', ru: 'Подтвердить', it: 'Conferma' }) as string,
   ];
 
@@ -120,14 +120,14 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const goNext = () => {
     if (step === 0) {
       if (!step1Ready) {
-        toast.error(L(locale, { ar: 'اختر التاريخ والعدد', en: 'Pick date and travelers', de: 'Pick date and travelers', ru: 'Выберите дату', it: 'Seleziona data' }) as string);
+        toast.error(L(locale, { ar: 'اختر التاريخ والعدد', en: 'Pick date and travelers', de: 'Datum und Reisende wählen', ru: 'Выберите дату', it: 'Seleziona data' }) as string);
         return;
       }
       setStep(1);
     } else if (step === 1) {
-      if (!isNameValid) { toast.error(L(locale, { ar: 'أدخل اسمك الكامل', en: 'Please enter your full name', de: 'Please enter your full name', ru: 'Введите полное имя', it: 'Inserisci nome completo' }) as string); return; }
-      if (!isPhoneValid) { toast.error(L(locale, { ar: 'رقم هاتف غير صحيح', en: 'Invalid phone number', de: 'Invalid phone number', ru: 'Неверный телефон', it: 'Numero non valido' }) as string); return; }
-      if (!isEmailValid) { toast.error(L(locale, { ar: 'البريد الإلكتروني غير صحيح', en: 'Invalid email', de: 'Invalid email', ru: 'Неверный email', it: 'Email non valida' }) as string); return; }
+      if (!isNameValid) { toast.error(L(locale, { ar: 'أدخل اسمك الكامل', en: 'Please enter your full name', de: 'Bitte geben Sie Ihren vollständigen Namen ein', ru: 'Введите полное имя', it: 'Inserisci nome completo' }) as string); return; }
+      if (!isPhoneValid) { toast.error(L(locale, { ar: 'رقم هاتف غير صحيح', en: 'Invalid phone number', de: 'Ungültige Telefonnummer', ru: 'Неверный телефон', it: 'Numero non valido' }) as string); return; }
+      if (!isEmailValid) { toast.error(L(locale, { ar: 'البريد الإلكتروني غير صحيح', en: 'Invalid email', de: 'Ungültige E-Mail', ru: 'Неверный email', it: 'Email non valida' }) as string); return; }
       setStep(2);
     }
   };
@@ -349,7 +349,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   <label className="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg bg-gradient-to-br from-accent/8 via-accent/5 to-accent/8 border border-accent/20 cursor-pointer hover:border-accent/45 transition-colors">
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary leading-tight">
                       <Heart className="h-3 w-3 text-accent" />
-                      {L(locale, { ar: 'مع عائلة', en: 'With family', de: 'With family', ru: 'С семьёй', it: 'In famiglia' })}
+                      {L(locale, { ar: 'مع عائلة', en: 'With family', de: 'Mit Familie', ru: 'С семьёй', it: 'In famiglia' })}
                     </span>
                     <ToggleSwitch checked={isMarried} onChange={(v) => { setIsMarried(v); if (!v) setChildren(0); }} />
                   </label>
@@ -362,11 +362,11 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                           trip.childDiscount > 0
                             ? (L(locale, {
                                 ar: `خصم ${trip.childDiscount}%`,
-                                en: `${trip.childDiscount}% off`, de: `${trip.childDiscount}% off`,
+                                en: `${trip.childDiscount}% off`, de: `${trip.childDiscount}% Rabatt`,
                                 ru: `скидка ${trip.childDiscount}%`,
                                 it: `sconto ${trip.childDiscount}%`,
                               }) as string)
-                            : (L(locale, { ar: 'كل الأعمار', en: 'all ages', de: 'all ages', ru: 'все возрасты', it: 'tutte le età' }) as string)
+                            : (L(locale, { ar: 'كل الأعمار', en: 'all ages', de: 'alle Altersgruppen', ru: 'все возрасты', it: 'tutte le età' }) as string)
                         }
                         value={children}
                         setValue={setChildren}
@@ -413,7 +413,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               <label className="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg bg-primary/5 border border-accent/20 cursor-pointer hover:border-accent/45 transition-colors">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary leading-tight">
                   <span className="text-base">🇪🇬</span>
-                  {L(locale, { ar: 'أنا مصري الجنسية', en: "I'm Egyptian", de: "I'm Egyptian", ru: 'Я египтянин', it: 'Sono egiziano' })}
+                  {L(locale, { ar: 'أنا مصري الجنسية', en: "I'm Egyptian", de: "Ich bin Ägypter", ru: 'Я египтянин', it: 'Sono egiziano' })}
                 </span>
                 <ToggleSwitch checked={isLocal} onChange={setIsLocal} />
               </label>
@@ -434,7 +434,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   <Sparkles className="h-3 w-3 text-accent shrink-0 mt-0.5" />
                   {L(locale, {
                     ar: 'بياناتك آمنة 100% — للتأكيد فقط.',
-                    en: 'Your details are 100% safe — confirmation only.', de: 'Your details are 100% safe — confirmation only.',
+                    en: 'Your details are 100% safe — confirmation only.', de: 'Ihre Daten sind 100% sicher — nur zur Bestätigung.',
                     ru: 'Данные защищены — только для подтверждения.',
                     it: 'Dati al sicuro — solo per conferma.',
                   })}
@@ -442,7 +442,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               </div>
 
               <Section
-                title={L(locale, { ar: 'بيانات التواصل', en: 'Contact details', de: 'Contact details', ru: 'Контакты', it: 'Contatti' }) as string}
+                title={L(locale, { ar: 'بيانات التواصل', en: 'Contact details', de: 'Kontaktdaten', ru: 'Контакты', it: 'Contatti' }) as string}
                 icon={User}
               >
                 <div className="space-y-1.5">
@@ -460,7 +460,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                     <Input
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder={L(locale, { ar: 'رقم الهاتف / واتساب', en: 'Phone / WhatsApp', de: 'Phone / WhatsApp', ru: 'Телефон / WhatsApp', it: 'Telefono / WhatsApp' }) as string}
+                      placeholder={L(locale, { ar: 'رقم الهاتف / واتساب', en: 'Phone / WhatsApp', de: 'Telefon / WhatsApp', ru: 'Телефон / WhatsApp', it: 'Telefono / WhatsApp' }) as string}
                       className="border-0 bg-transparent focus:bg-white h-9 text-sm"
                       dir="ltr"
                       type="tel"
@@ -471,7 +471,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                     <Input
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder={L(locale, { ar: 'البريد الإلكتروني (اختياري)', en: 'Email (optional)', de: 'Email (optional)', ru: 'Email (необязательно)', it: 'Email (opzionale)' }) as string}
+                      placeholder={L(locale, { ar: 'البريد الإلكتروني (اختياري)', en: 'Email (optional)', de: 'E-Mail (optional)', ru: 'Email (необязательно)', it: 'Email (opzionale)' }) as string}
                       className="border-0 bg-transparent focus:bg-white h-9 text-sm"
                       dir="ltr"
                       type="email"
@@ -490,7 +490,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder={L(locale, {
                     ar: 'نباتي، احتياجات خاصة، ساعة الالتقاط...',
-                    en: 'dietary needs, pickup time...', de: 'dietary needs, pickup time...',
+                    en: 'dietary needs, pickup time...', de: 'Ernährungswünsche, Abholzeit ...',
                     ru: 'вегетарианское, время...',
                     it: 'vegetariano, orario...',
                   }) as string}
@@ -516,7 +516,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               <div className="rounded-xl border-2 border-accent/25 bg-gradient-to-br from-accent/5 via-white to-accent/5 p-3 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase tracking-[0.18em] text-accent-700 font-bold">
-                    {L(locale, { ar: 'ملخص الحجز', en: 'Booking summary', de: 'Booking summary', ru: 'Сводка', it: 'Riepilogo' })}
+                    {L(locale, { ar: 'ملخص الحجز', en: 'Booking summary', de: 'Buchungsübersicht', ru: 'Сводка', it: 'Riepilogo' })}
                   </span>
                   <button
                     type="button"
@@ -536,9 +536,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   icon={Users}
                   label={L(locale, { ar: 'المسافرين', en: 'Travelers', de: 'Reisende', ru: 'Гости', it: 'Ospiti' }) as string}
                   value={
-                    `${adults} ${L(locale, { ar: 'بالغ', en: 'adult', de: 'adult', ru: 'взр.', it: 'ad.' })}` +
+                    `${adults} ${L(locale, { ar: 'بالغ', en: 'adult', de: 'Erwachsener', ru: 'взр.', it: 'ad.' })}` +
                     (showChildrenCounter && children > 0
-                      ? ` + ${children} ${L(locale, { ar: 'طفل', en: 'child', de: 'child', ru: 'дет.', it: 'b.' })}`
+                      ? ` + ${children} ${L(locale, { ar: 'طفل', en: 'child', de: 'Kind', ru: 'дет.', it: 'b.' })}`
                       : '')
                   }
                 />
@@ -582,7 +582,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                 <div className="flex items-center gap-2 py-0.5">
                   <span className="flex-1 h-px bg-accent/20" />
                   <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
-                    {L(locale, { ar: 'أو', en: 'or', de: 'or', ru: 'или', it: 'o' })}
+                    {L(locale, { ar: 'أو', en: 'or', de: 'oder', ru: 'или', it: 'o' })}
                   </span>
                   <span className="flex-1 h-px bg-accent/20" />
                 </div>

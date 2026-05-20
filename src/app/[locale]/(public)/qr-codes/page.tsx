@@ -12,13 +12,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const title = L(locale, {
     ar: 'رموز QR — لوتس شرم للسياحة',
-    en: 'QR Codes — Lotus Sharm Tourism', de: 'QR Codes — Lotus Sharm Tourism',
+    en: 'QR Codes — Lotus Sharm Tourism', de: 'QR-Codes — Lotus Sharm Tourism',
     ru: 'QR-коды — Lotus Sharm',
     it: 'Codici QR — Lotus Sharm Tourism',
   });
   const description = L(locale, {
     ar: 'حمّل رموز QR للموقع وصفحة الرحلات وصفحة التقييم.',
-    en: 'Download QR codes for the website, trips page, and review page.', de: 'Download QR codes for the website, trips page, and review page.',
+    en: 'Download QR codes for the website, trips page, and review page.', de: 'Laden Sie QR-Codes für die Website, die Ausflugsseite und die Bewertungsseite herunter.',
     ru: 'Скачайте QR-коды для сайта, страницы туров и отзывов.',
     it: 'Scarica i codici QR per il sito, i tour e le recensioni.',
   });
@@ -86,12 +86,12 @@ export default async function QrCodesPage({ params }: { params: Promise<{ locale
         <div className="container relative">
           <Reveal>
             <span className="eyebrow">
-              {L(locale, { ar: 'رموز QR', en: 'QR Codes', de: 'QR Codes', ru: 'QR-коды', it: 'Codici QR' })}
+              {L(locale, { ar: 'رموز QR', en: 'QR Codes', de: 'QR-Codes', ru: 'QR-коды', it: 'Codici QR' })}
             </span>
             <h1 className="font-serif text-3xl md:text-5xl font-bold mb-3 leading-tight">
               {L(locale, {
                 ar: 'امسح وافتح صفحات لوتس شرم فوراً',
-                en: 'Scan to open Lotus Sharm in seconds', de: 'Scan to open Lotus Sharm in seconds',
+                en: 'Scan to open Lotus Sharm in seconds', de: 'Scannen Sie, um Lotus Sharm in Sekunden zu öffnen',
                 ru: 'Сканируйте и открывайте Lotus Sharm',
                 it: 'Scansiona e apri Lotus Sharm',
               })}
@@ -100,7 +100,7 @@ export default async function QrCodesPage({ params }: { params: Promise<{ locale
             <p className="text-cream/80 max-w-2xl text-sm md:text-base">
               {L(locale, {
                 ar: 'حمّل أي رمز واطبعه على كروت العمل، بنرات الفنادق، أو شيرها مباشرة مع الضيوف.',
-                en: 'Download any code and print on business cards, hotel banners, or share with guests directly.', de: 'Download any code and print on business cards, hotel banners, or share with guests directly.',
+                en: 'Download any code and print on business cards, hotel banners, or share with guests directly.', de: 'Laden Sie einen Code herunter und drucken Sie ihn auf Visitenkarten, Hotelbanner oder teilen Sie ihn direkt mit Gästen.',
                 ru: 'Скачайте любой код для печати на визитках, баннерах в отелях или для отправки гостям.',
                 it: 'Scarica qualsiasi codice per stamparlo su biglietti, banner hotel o condividerlo con gli ospiti.',
               })}
@@ -148,7 +148,7 @@ export default async function QrCodesPage({ params }: { params: Promise<{ locale
                         className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-cream font-bold text-xs hover:bg-primary-900 transition-colors"
                       >
                         <Download className="h-3.5 w-3.5" />
-                        {L(locale, { ar: 'تحميل', en: 'Download', de: 'Download', ru: 'Скачать', it: 'Scarica' })}
+                        {L(locale, { ar: 'تحميل', en: 'Download', de: 'Herunterladen', ru: 'Скачать', it: 'Scarica' })}
                       </a>
                       <a
                         href={q.href}
@@ -156,7 +156,7 @@ export default async function QrCodesPage({ params }: { params: Promise<{ locale
                         rel="noopener noreferrer"
                         className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-accent/30 text-primary font-bold text-xs hover:bg-accent/5 hover:border-accent/60 transition-colors"
                       >
-                        {L(locale, { ar: 'فتح الرابط', en: 'Open link', de: 'Open link', ru: 'Открыть', it: 'Apri' })}
+                        {L(locale, { ar: 'فتح الرابط', en: 'Open link', de: 'Link öffnen', ru: 'Открыть', it: 'Apri' })}
                         <ArrowRight className="h-3 w-3 rtl:rotate-180" />
                       </a>
                     </div>
@@ -171,7 +171,7 @@ export default async function QrCodesPage({ params }: { params: Promise<{ locale
           <p className="text-sm text-muted-foreground mb-3">
             {L(locale, {
               ar: 'تحب تطبع نسخ مطبوعة احترافية؟',
-              en: 'Want professional printed copies?', de: 'Want professional printed copies?',
+              en: 'Want professional printed copies?', de: 'Möchten Sie professionelle Druckexemplare?',
               ru: 'Хотите профессионально напечатанные копии?',
               it: 'Vuoi copie stampate professionali?',
             })}

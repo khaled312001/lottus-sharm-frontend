@@ -178,7 +178,7 @@ export function AccountClient({ locale }: { locale: string }) {
       await navigator.clipboard.writeText(ref);
       setCopiedRef(ref);
       setTimeout(() => setCopiedRef(null), 1500);
-      toast.success(L(locale, { ar: 'تم النسخ', en: 'Copied', de: 'Copied', ru: 'Скопировано', it: 'Copiato' }) as string);
+      toast.success(L(locale, { ar: 'تم النسخ', en: 'Copied', de: 'Kopiert', ru: 'Скопировано', it: 'Copiato' }) as string);
     } catch { /* ignore */ }
   };
 
@@ -240,7 +240,7 @@ export function AccountClient({ locale }: { locale: string }) {
             />
             <StatCard
               icon={CheckCircle2}
-              label={L(locale, { ar: 'مدفوعات مؤكدة', en: 'Confirmed payments', de: 'Confirmed payments', ru: 'Подтверждено', it: 'Confermati' }) as string}
+              label={L(locale, { ar: 'مدفوعات مؤكدة', en: 'Confirmed payments', de: 'Bestätigte Zahlungen', ru: 'Подтверждено', it: 'Confermati' }) as string}
               value={stats.paidCount.toString()}
             />
             <StatCard
@@ -297,9 +297,9 @@ export function AccountClient({ locale }: { locale: string }) {
             {bookings.length === 0 ? (
               <EmptyState
                 icon={Calendar}
-                title={L(locale, { ar: 'مفيش حجوزات لحد دلوقتي', en: 'No bookings yet', de: 'No bookings yet', ru: 'Пока нет броней', it: 'Nessuna prenotazione' })}
-                desc={L(locale, { ar: 'تصفح الرحلات واحجز أول مغامرة معانا', en: 'Browse our trips and book your first adventure', de: 'Browse our trips and book your first adventure', ru: 'Просмотрите туры и забронируйте', it: 'Sfoglia i tour' })}
-                cta={L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Browse trips', ru: 'Туры', it: 'Tour' })}
+                title={L(locale, { ar: 'مفيش حجوزات لحد دلوقتي', en: 'No bookings yet', de: 'Noch keine Buchungen', ru: 'Пока нет броней', it: 'Nessuna prenotazione' })}
+                desc={L(locale, { ar: 'تصفح الرحلات واحجز أول مغامرة معانا', en: 'Browse our trips and book your first adventure', de: 'Entdecken Sie unsere Ausflüge und buchen Sie Ihr erstes Abenteuer', ru: 'Просмотрите туры и забронируйте', it: 'Sfoglia i tour' })}
+                cta={L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Ausflüge ansehen', ru: 'Туры', it: 'Tour' })}
                 href={`/${locale}/trips`}
               />
             ) : (
@@ -315,13 +315,13 @@ export function AccountClient({ locale }: { locale: string }) {
                 if (b.status === 'CANCELLED') {
                   countdownText = '';
                 } else if (days === 0) {
-                  countdownText = L(locale, { ar: 'اليوم!', en: 'Today!', de: 'Today!', ru: 'Сегодня!', it: 'Oggi!' }) as string;
+                  countdownText = L(locale, { ar: 'اليوم!', en: 'Today!', de: 'Heute!', ru: 'Сегодня!', it: 'Oggi!' }) as string;
                   countdownTone = 'soon';
                 } else if (days > 0 && days <= 3) {
-                  countdownText = L(locale, { ar: `بعد ${days} ${days === 1 ? 'يوم' : 'أيام'}`, en: `In ${days} day${days === 1 ? '' : 's'}`, de: `In ${days} day${days === 1 ? '' : 's'}`, ru: `Через ${days} дн.`, it: `Tra ${days} giorni` }) as string;
+                  countdownText = L(locale, { ar: `بعد ${days} ${days === 1 ? 'يوم' : 'أيام'}`, en: `In ${days} day${days === 1 ? '' : 's'}`, de: `In ${days} Tag${days === 1 ? '' : 'en'}`, ru: `Через ${days} дн.`, it: `Tra ${days} giorni` }) as string;
                   countdownTone = 'soon';
                 } else if (days > 3) {
-                  countdownText = L(locale, { ar: `بعد ${days} يوم`, en: `In ${days} days`, de: `In ${days} days`, ru: `Через ${days} дней`, it: `Tra ${days} giorni` }) as string;
+                  countdownText = L(locale, { ar: `بعد ${days} يوم`, en: `In ${days} days`, de: `In ${days} Tagen`, ru: `Через ${days} дней`, it: `Tra ${days} giorni` }) as string;
                   countdownTone = 'normal';
                 }
 
@@ -412,7 +412,7 @@ export function AccountClient({ locale }: { locale: string }) {
                           <button
                             onClick={() => copyReference(b.reference)}
                             className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-mono font-bold border border-accent/20 bg-muted/40 hover:bg-accent/10 hover:border-accent/40 transition-colors"
-                            title={L(locale, { ar: 'نسخ المرجع', en: 'Copy reference', de: 'Copy reference', ru: 'Копировать', it: 'Copia' }) as string}
+                            title={L(locale, { ar: 'نسخ المرجع', en: 'Copy reference', de: 'Referenz kopieren', ru: 'Копировать', it: 'Copia' }) as string}
                           >
                             {copiedRef === b.reference ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
                             {b.reference}
@@ -434,7 +434,7 @@ export function AccountClient({ locale }: { locale: string }) {
                               className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold border border-amber-500/40 bg-amber-500/12 text-amber-800 hover:bg-amber-500/20 transition-colors"
                             >
                               <Receipt className="h-3 w-3" />
-                              {L(locale, { ar: 'فاتورة PDF', en: 'Invoice PDF', de: 'Invoice PDF', ru: 'Счёт PDF', it: 'Fattura PDF' })}
+                              {L(locale, { ar: 'فاتورة PDF', en: 'Invoice PDF', de: 'Rechnung (PDF)', ru: 'Счёт PDF', it: 'Fattura PDF' })}
                             </a>
                           )}
                         </div>
@@ -458,7 +458,7 @@ export function AccountClient({ locale }: { locale: string }) {
                             className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#25D366] text-white text-[11px] font-bold hover:bg-[#1ea954] transition-colors"
                           >
                             <MessageCircle className="h-3 w-3" />
-                            {L(locale, { ar: 'استفسر', en: 'Ask', de: 'Ask', ru: 'Спросить', it: 'Chiedi' })}
+                            {L(locale, { ar: 'استفسر', en: 'Ask', de: 'Fragen', ru: 'Спросить', it: 'Chiedi' })}
                           </a>
                           <Link
                             href={`/trips/${b.trip.slug}`}
@@ -483,14 +483,14 @@ export function AccountClient({ locale }: { locale: string }) {
             {allPayments.length === 0 ? (
               <EmptyState
                 icon={CreditCard}
-                title={L(locale, { ar: 'مفيش مدفوعات بعد', en: 'No payments yet', de: 'No payments yet', ru: 'Нет оплат', it: 'Nessun pagamento' })}
+                title={L(locale, { ar: 'مفيش مدفوعات بعد', en: 'No payments yet', de: 'Noch keine Zahlungen', ru: 'Нет оплат', it: 'Nessun pagamento' })}
                 desc={L(locale, {
                   ar: 'اعمل أول حجز عشان تظهر مدفوعاتك هنا',
-                  en: 'Make your first booking to see payments here', de: 'Make your first booking to see payments here',
+                  en: 'Make your first booking to see payments here', de: 'Buchen Sie zum ersten Mal, um hier Zahlungen zu sehen',
                   ru: 'Сделайте первую бронь',
                   it: 'Prenota per vedere i pagamenti',
                 })}
-                cta={L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Browse trips', ru: 'Туры', it: 'Tour' })}
+                cta={L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Ausflüge ansehen', ru: 'Туры', it: 'Tour' })}
                 href={`/${locale}/trips`}
               />
             ) : (
@@ -501,13 +501,13 @@ export function AccountClient({ locale }: { locale: string }) {
                   <div className="relative flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <div className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold">
-                        {L(locale, { ar: 'إجمالي المدفوعات المؤكدة', en: 'Total confirmed payments', de: 'Total confirmed payments', ru: 'Подтверждённые оплаты', it: 'Pagamenti confermati' })}
+                        {L(locale, { ar: 'إجمالي المدفوعات المؤكدة', en: 'Total confirmed payments', de: 'Bestätigte Zahlungen gesamt', ru: 'Подтверждённые оплаты', it: 'Pagamenti confermati' })}
                       </div>
                       <div className="font-serif text-3xl md:text-4xl font-bold text-shimmer-gold mt-1 leading-none">
                         <Price amount={stats.totalSpent} from={stats.totalSpentCurrency as 'EGP' | 'USD'} />
                       </div>
                       <div className="text-xs text-cream/70 mt-1">
-                        {stats.paidCount} {L(locale, { ar: 'عملية مدفوعة', en: 'paid transactions', de: 'paid transactions', ru: 'оплачено', it: 'pagati' })}
+                        {stats.paidCount} {L(locale, { ar: 'عملية مدفوعة', en: 'paid transactions', de: 'bezahlte Transaktionen', ru: 'оплачено', it: 'pagati' })}
                       </div>
                     </div>
                     <Receipt className="h-12 w-12 text-accent/40 hidden sm:block" />
@@ -519,7 +519,7 @@ export function AccountClient({ locale }: { locale: string }) {
                   <div className="px-4 py-3 border-b border-accent/15 bg-muted/20 flex items-center justify-between">
                     <h3 className="font-serif font-bold text-primary text-base inline-flex items-center gap-2">
                       <Receipt className="h-4 w-4 text-accent" />
-                      {L(locale, { ar: 'سجل المدفوعات', en: 'Payment history', de: 'Payment history', ru: 'История оплат', it: 'Storico pagamenti' })}
+                      {L(locale, { ar: 'سجل المدفوعات', en: 'Payment history', de: 'Zahlungsverlauf', ru: 'История оплат', it: 'Storico pagamenti' })}
                     </h3>
                     <span className="text-xs text-muted-foreground tabular-nums font-bold">{allPayments.length}</span>
                   </div>
@@ -608,7 +608,7 @@ export function AccountClient({ locale }: { locale: string }) {
                   <AlertCircle className="h-3 w-3" />
                   {L(locale, {
                     ar: 'لو في مشكلة في أي دفعة، تواصل معانا عبر واتساب.',
-                    en: 'Issues with any payment? Reach out on WhatsApp.', de: 'Issues with any payment? Reach out on WhatsApp.',
+                    en: 'Issues with any payment? Reach out on WhatsApp.', de: 'Probleme mit einer Zahlung? Melden Sie sich per WhatsApp.',
                     ru: 'Проблемы с оплатой? Напишите в WhatsApp.',
                     it: 'Problemi con un pagamento? WhatsApp.',
                   })}
@@ -633,9 +633,9 @@ export function AccountClient({ locale }: { locale: string }) {
             {favorites.length === 0 ? (
               <EmptyState
                 icon={Heart}
-                title={L(locale, { ar: 'لا مفضلات بعد', en: 'No favorites yet', de: 'No favorites yet', ru: 'Нет избранного', it: 'Nessun preferito' })}
-                desc={L(locale, { ar: 'اضغط على القلب فى أي رحلة لإضافتها لمفضلاتك', en: 'Tap the heart on any trip to save it', de: 'Tap the heart on any trip to save it', ru: 'Нажмите ♥ на туре', it: 'Tocca ♥ su un tour' })}
-                cta={L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Browse trips', ru: 'Туры', it: 'Tour' })}
+                title={L(locale, { ar: 'لا مفضلات بعد', en: 'No favorites yet', de: 'Noch keine Favoriten', ru: 'Нет избранного', it: 'Nessun preferito' })}
+                desc={L(locale, { ar: 'اضغط على القلب فى أي رحلة لإضافتها لمفضلاتك', en: 'Tap the heart on any trip to save it', de: 'Tippen Sie bei einem Ausflug auf das Herz, um ihn zu speichern', ru: 'Нажмите ♥ на туре', it: 'Tocca ♥ su un tour' })}
+                cta={L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Ausflüge ansehen', ru: 'Туры', it: 'Tour' })}
                 href={`/${locale}/trips`}
               />
             ) : (
@@ -659,7 +659,7 @@ export function AccountClient({ locale }: { locale: string }) {
                     <div className="p-4">
                       <h3 className="font-serif font-bold text-base leading-tight mb-1 group-hover:text-accent-700 transition-colors">{tripTitle(t)}</h3>
                       <div className="text-sm font-bold text-accent-700 inline-flex items-center gap-1">
-                        <span className="text-[10px] uppercase text-muted-foreground font-bold">{L(locale, { ar: 'من', en: 'from', de: 'from', ru: 'от', it: 'da' })}</span>
+                        <span className="text-[10px] uppercase text-muted-foreground font-bold">{L(locale, { ar: 'من', en: 'from', de: 'ab', ru: 'от', it: 'da' })}</span>
                         <Price amount={Number(t.priceLocalEGP)} from="EGP" />
                       </div>
                     </div>
@@ -723,7 +723,7 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
 
   const submit = async () => {
     if (message.trim().length < 5) {
-      toast.error(L(locale, { ar: 'الرسالة قصيرة جداً', en: 'Message too short', de: 'Message too short', ru: 'Сообщение слишком короткое', it: 'Messaggio troppo corto' }) as string);
+      toast.error(L(locale, { ar: 'الرسالة قصيرة جداً', en: 'Message too short', de: 'Nachricht zu kurz', ru: 'Сообщение слишком короткое', it: 'Messaggio troppo corto' }) as string);
       return;
     }
     setBusy(true);
@@ -743,9 +743,9 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
       if (!res.ok || !data?.ok) throw new Error(data?.error?.code || 'Failed');
       setSent((s) => [{ at: new Date(), subject: subject.trim() || '—', body: message.trim() }, ...s]);
       setSubject(''); setMessage('');
-      toast.success(L(locale, { ar: 'اتبعتت رسالتك للفريق', en: 'Message sent to our team', de: 'Message sent to our team', ru: 'Сообщение отправлено', it: 'Messaggio inviato' }) as string);
+      toast.success(L(locale, { ar: 'اتبعتت رسالتك للفريق', en: 'Message sent to our team', de: 'Nachricht an unser Team gesendet', ru: 'Сообщение отправлено', it: 'Messaggio inviato' }) as string);
     } catch {
-      toast.error(L(locale, { ar: 'فشل الإرسال — جرب واتساب', en: 'Send failed — try WhatsApp', de: 'Send failed — try WhatsApp', ru: 'Ошибка отправки', it: 'Invio fallito' }) as string);
+      toast.error(L(locale, { ar: 'فشل الإرسال — جرب واتساب', en: 'Send failed — try WhatsApp', de: 'Senden fehlgeschlagen — versuchen Sie WhatsApp', ru: 'Ошибка отправки', it: 'Invio fallito' }) as string);
     } finally {
       setBusy(false);
     }
@@ -760,12 +760,12 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
           </span>
           <div className="min-w-0">
             <h2 className="font-serif text-xl font-bold text-primary leading-tight">
-              {L(locale, { ar: 'كلم فريقنا مباشرة', en: 'Message our team', de: 'Message our team', ru: 'Напишите нашей команде', it: 'Scrivi al nostro team' })}
+              {L(locale, { ar: 'كلم فريقنا مباشرة', en: 'Message our team', de: 'Schreiben Sie unserem Team', ru: 'Напишите нашей команде', it: 'Scrivi al nostro team' })}
             </h2>
             <p className="text-xs text-muted-foreground mt-1">
               {L(locale, {
                 ar: 'بنرد خلال ساعات قليلة في أوقات العمل. لاستفسار عاجل، استخدم واتساب.',
-                en: 'We reply within hours during business hours. For urgent matters, use WhatsApp.', de: 'We reply within hours during business hours. For urgent matters, use WhatsApp.',
+                en: 'We reply within hours during business hours. For urgent matters, use WhatsApp.', de: 'Wir antworten innerhalb von Stunden während der Geschäftszeiten. Bei dringenden Anliegen nutzen Sie WhatsApp.',
                 ru: 'Отвечаем в течение нескольких часов. Срочные вопросы — WhatsApp.',
                 it: 'Rispondiamo entro poche ore. Urgenze — WhatsApp.',
               })}
@@ -776,19 +776,19 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
         <div className="space-y-3">
           <div>
             <label className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5 block">
-              {L(locale, { ar: 'الموضوع (اختياري)', en: 'Subject (optional)', de: 'Subject (optional)', ru: 'Тема (необязательно)', it: 'Oggetto (opzionale)' })}
+              {L(locale, { ar: 'الموضوع (اختياري)', en: 'Subject (optional)', de: 'Betreff (optional)', ru: 'Тема (необязательно)', it: 'Oggetto (opzionale)' })}
             </label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               maxLength={120}
-              placeholder={L(locale, { ar: 'مثلاً: استفسار عن رحلة', en: 'e.g. Question about a trip', de: 'e.g. Question about a trip', ru: 'например, вопрос о туре', it: 'es. Domanda su un tour' }) as string}
+              placeholder={L(locale, { ar: 'مثلاً: استفسار عن رحلة', en: 'e.g. Question about a trip', de: 'z. B. Frage zu einem Ausflug', ru: 'например, вопрос о туре', it: 'es. Domanda su un tour' }) as string}
               className="w-full px-3.5 py-2.5 rounded-lg border border-accent/20 focus:border-accent/60 focus:outline-none bg-muted/30 focus:bg-white text-sm transition-colors"
             />
           </div>
           <div>
             <label className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5 block">
-              {L(locale, { ar: 'الرسالة', en: 'Message', de: 'Message', ru: 'Сообщение', it: 'Messaggio' })} <span className="text-accent">*</span>
+              {L(locale, { ar: 'الرسالة', en: 'Message', de: 'Nachricht', ru: 'Сообщение', it: 'Messaggio' })} <span className="text-accent">*</span>
             </label>
             <textarea
               value={message}
@@ -797,7 +797,7 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
               maxLength={2000}
               placeholder={L(locale, {
                 ar: 'اكتب رسالتك هنا...',
-                en: 'Type your message here...', de: 'Type your message here...',
+                en: 'Type your message here...', de: 'Schreiben Sie hier Ihre Nachricht ...',
                 ru: 'Напишите ваше сообщение...',
                 it: 'Scrivi il tuo messaggio...',
               }) as string}
@@ -819,7 +819,7 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
           <div className="mt-6 pt-5 border-t border-accent/15">
             <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              {L(locale, { ar: 'تم الإرسال بنجاح', en: 'Sent successfully', de: 'Sent successfully', ru: 'Успешно отправлено', it: 'Inviato con successo' })}
+              {L(locale, { ar: 'تم الإرسال بنجاح', en: 'Sent successfully', de: 'Erfolgreich gesendet', ru: 'Успешно отправлено', it: 'Inviato con successo' })}
             </h3>
             <ul className="space-y-2">
               {sent.map((s, i) => (
@@ -843,13 +843,13 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
           <div className="flex items-center gap-2 mb-3">
             <Smartphone className="h-5 w-5 text-accent" />
             <h3 className="font-serif text-lg font-bold">
-              {L(locale, { ar: 'أسرع رد على واتساب', en: 'Fastest reply on WhatsApp', de: 'Fastest reply on WhatsApp', ru: 'Быстрее в WhatsApp', it: 'Risposta veloce su WhatsApp' })}
+              {L(locale, { ar: 'أسرع رد على واتساب', en: 'Fastest reply on WhatsApp', de: 'Schnellste Antwort per WhatsApp', ru: 'Быстрее в WhatsApp', it: 'Risposta veloce su WhatsApp' })}
             </h3>
           </div>
           <p className="text-xs text-cream/80 mb-4 leading-relaxed">
             {L(locale, {
               ar: 'فريقنا متاح على واتساب 24/7 لأي استفسار عاجل.',
-              en: 'Our team is available on WhatsApp 24/7 for any urgent question.', de: 'Our team is available on WhatsApp 24/7 for any urgent question.',
+              en: 'Our team is available on WhatsApp 24/7 for any urgent question.', de: 'Unser Team ist rund um die Uhr per WhatsApp für dringende Fragen erreichbar.',
               ru: 'Команда на связи в WhatsApp 24/7.',
               it: 'Team disponibile su WhatsApp 24/7.',
             })}
@@ -861,14 +861,14 @@ function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: 
             className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-sm transition-colors"
           >
             <MessageCircle className="h-4 w-4" />
-            {L(locale, { ar: 'افتح واتساب', en: 'Open WhatsApp', de: 'Open WhatsApp', ru: 'Открыть WhatsApp', it: 'Apri WhatsApp' })}
+            {L(locale, { ar: 'افتح واتساب', en: 'Open WhatsApp', de: 'WhatsApp öffnen', ru: 'Открыть WhatsApp', it: 'Apri WhatsApp' })}
           </a>
         </div>
 
         <div className="bg-white rounded-2xl border border-accent/15 p-5">
           <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
             <Phone className="h-4 w-4 text-accent" />
-            {L(locale, { ar: 'بيانات اتصال أخرى', en: 'Other contacts', de: 'Other contacts', ru: 'Другие контакты', it: 'Altri contatti' })}
+            {L(locale, { ar: 'بيانات اتصال أخرى', en: 'Other contacts', de: 'Weitere Kontakte', ru: 'Другие контакты', it: 'Altri contatti' })}
           </h3>
           <ul className="space-y-2 text-xs">
             <li className="flex items-center gap-2">

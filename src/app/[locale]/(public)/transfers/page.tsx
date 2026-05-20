@@ -62,10 +62,10 @@ const GROUP_TITLES: Array<{ ar: string; en: string; ru: string; it: string; icon
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: L(locale, { ar: 'خدمات النقل والاستقبال — لوتس شرم', en: 'Transfers & airport pickups — Lotus Sharm', de: 'Transfers & airport pickups — Lotus Sharm', ru: 'Трансферы — Lotus Sharm', it: 'Trasferimenti — Lotus Sharm' }),
+    title: L(locale, { ar: 'خدمات النقل والاستقبال — لوتس شرم', en: 'Transfers & airport pickups — Lotus Sharm', de: 'Transfers & Flughafenabholung — Lotus Sharm', ru: 'Трансферы — Lotus Sharm', it: 'Trasferimenti — Lotus Sharm' }),
     description: L(locale, {
       ar: 'استقبال المطار، توصيل الفندق، طيران داخلي، تنقلات بين المحطات. سيارات، ميكروباص، أوتوبيس، طيران.',
-      en: 'Airport pickup, hotel drop-off, domestic flights, station transfers. Sedans, microbuses, coaches, flights.', de: 'Airport pickup, hotel drop-off, domestic flights, station transfers. Sedans, microbuses, coaches, flights.',
+      en: 'Airport pickup, hotel drop-off, domestic flights, station transfers. Sedans, microbuses, coaches, flights.', de: 'Flughafenabholung, Hoteltransfer, Inlandsflüge, Bahnhofstransfers. Limousinen, Microbusse, Reisebusse, Flüge.',
       ru: 'Трансфер из аэропорта, отель, домашние рейсы.',
       it: 'Trasferimenti aeroporto, hotel, voli interni.',
     }),
@@ -100,7 +100,7 @@ export default async function TransfersPage({ params }: { params: Promise<{ loca
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">
               {L(locale, {
                 ar: 'الاستقبال والتوصيل والتنقلات',
-                en: 'Pickups, drop-offs & transfers', de: 'Pickups, drop-offs & transfers',
+                en: 'Pickups, drop-offs & transfers', de: 'Abholungen, Transfers & Fahrten',
                 ru: 'Встречи, трансферы и перемещения',
                 it: 'Pickup, drop-off e trasferimenti',
               })}
@@ -109,7 +109,7 @@ export default async function TransfersPage({ params }: { params: Promise<{ loca
             <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">
               {L(locale, {
                 ar: 'سيارة خاصة، ميكروباص، أوتوبيس كبير، أو طيران داخلي — الأسعار تعتمد على العدد والمسافة.',
-                en: 'Private car, microbus, coach, or domestic flight — prices vary by group size and route.', de: 'Private car, microbus, coach, or domestic flight — prices vary by group size and route.',
+                en: 'Private car, microbus, coach, or domestic flight — prices vary by group size and route.', de: 'Privatwagen, Microbus, Reisebus oder Inlandsflug — Preise variieren je nach Gruppengröße und Route.',
                 ru: 'Машина, микроавтобус, автобус или внутренний рейс.',
                 it: 'Auto, microbus, pullman o volo interno — prezzi per gruppo e tratta.',
               })}
@@ -134,7 +134,7 @@ export default async function TransfersPage({ params }: { params: Promise<{ loca
                     {pickT(t, locale)}
                   </h2>
                   <p className="text-xs text-muted-foreground tabular-nums">
-                    {g.length} {L(locale, { ar: 'خيار متاح', en: 'options', de: 'options', ru: 'вариантов', it: 'opzioni' })}
+                    {g.length} {L(locale, { ar: 'خيار متاح', en: 'options', de: 'Optionen', ru: 'вариантов', it: 'opzioni' })}
                   </p>
                 </div>
               </div>
@@ -147,7 +147,7 @@ export default async function TransfersPage({ params }: { params: Promise<{ loca
 
         {items.length === 0 && (
           <div className="text-center py-20 text-muted-foreground">
-            {L(locale, { ar: 'لا توجد خدمات متاحة', en: 'No services available', de: 'No services available', ru: 'Нет услуг', it: 'Nessun servizio' })}
+            {L(locale, { ar: 'لا توجد خدمات متاحة', en: 'No services available', de: 'Keine Leistungen verfügbar', ru: 'Нет услуг', it: 'Nessun servizio' })}
           </div>
         )}
       </section>
@@ -164,7 +164,7 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
   const Icon = meta.icon;
   const waMsg = L(locale, {
     ar: `مرحبا، أود الحجز: ${name}`,
-    en: `Hello, I'd like to book: ${name}`, de: `Hello, I'd like to book: ${name}`,
+    en: `Hello, I'd like to book: ${name}`, de: `Hallo, ich möchte buchen: ${name}`,
     ru: `Здравствуйте, хочу заказать: ${name}`,
     it: `Salve, vorrei prenotare: ${name}`,
   });
@@ -190,8 +190,8 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
         <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">{desc}</p>
 
         <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-3">
-          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t.durationMinutes} {L(locale, { ar: 'دقيقة', en: 'min', de: 'min', ru: 'мин', it: 'min' })}</span>
-          <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {L(locale, { ar: `حتى ${t.capacity}`, en: `up to ${t.capacity}`, de: `up to ${t.capacity}`, ru: `до ${t.capacity}`, it: `fino a ${t.capacity}` })}</span>
+          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {t.durationMinutes} {L(locale, { ar: 'دقيقة', en: 'min', de: 'Min.', ru: 'мин', it: 'min' })}</span>
+          <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {L(locale, { ar: `حتى ${t.capacity}`, en: `up to ${t.capacity}`, de: `bis zu ${t.capacity}`, ru: `до ${t.capacity}`, it: `fino a ${t.capacity}` })}</span>
         </div>
 
         <div className="flex items-end justify-between gap-2 pt-3 border-t border-accent/10">
@@ -200,14 +200,14 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
           <div className="text-xs text-muted-foreground leading-snug">
             <div className="inline-flex items-center gap-1 font-semibold text-accent-700">
               <MessageCircle className="h-3.5 w-3.5" />
-              {L(locale, { ar: 'السعر حسب العدد والمسافة', en: 'Price on request', de: 'Price on request', ru: 'Цена по запросу', it: 'Prezzo su richiesta' })}
+              {L(locale, { ar: 'السعر حسب العدد والمسافة', en: 'Price on request', de: 'Preis auf Anfrage', ru: 'Цена по запросу', it: 'Prezzo su richiesta' })}
             </div>
             <div className="text-[10px] mt-0.5 opacity-80">
-              {L(locale, { ar: 'تواصل معنا للتسعير الفوري', en: 'Contact us for an instant quote', de: 'Contact us for an instant quote', ru: 'Свяжитесь для точной цены', it: 'Contattaci per il preventivo' })}
+              {L(locale, { ar: 'تواصل معنا للتسعير الفوري', en: 'Contact us for an instant quote', de: 'Kontaktieren Sie uns für ein sofortiges Angebot', ru: 'Свяжитесь для точной цены', it: 'Contattaci per il preventivo' })}
             </div>
           </div>
           <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors shrink-0">
-            {L(locale, { ar: 'استفسار', en: 'Get quote', de: 'Get quote', ru: 'Запрос', it: 'Richiedi' })}
+            {L(locale, { ar: 'استفسار', en: 'Get quote', de: 'Angebot erhalten', ru: 'Запрос', it: 'Richiedi' })}
           </a>
         </div>
       </div>

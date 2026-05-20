@@ -15,17 +15,17 @@ function relativeTime(iso: string, locale: string): string {
   const minute = 60 * 1000;
   const hour = 60 * minute;
   const day = 24 * hour;
-  if (diff < minute) return L(locale, { ar: 'الآن', en: 'just now', de: 'just now', ru: 'только что', it: 'ora' });
+  if (diff < minute) return L(locale, { ar: 'الآن', en: 'just now', de: 'gerade eben', ru: 'только что', it: 'ora' });
   if (diff < hour) {
     const n = Math.floor(diff / minute);
-    return L(locale, { ar: `قبل ${n}د`, en: `${n}m ago`, de: `${n}m ago`, ru: `${n} мин назад`, it: `${n}m fa` });
+    return L(locale, { ar: `قبل ${n}د`, en: `${n}m ago`, de: `vor ${n} Min`, ru: `${n} мин назад`, it: `${n}m fa` });
   }
   if (diff < day) {
     const n = Math.floor(diff / hour);
-    return L(locale, { ar: `قبل ${n}س`, en: `${n}h ago`, de: `${n}h ago`, ru: `${n} ч назад`, it: `${n}h fa` });
+    return L(locale, { ar: `قبل ${n}س`, en: `${n}h ago`, de: `vor ${n} Std`, ru: `${n} ч назад`, it: `${n}h fa` });
   }
   const n = Math.floor(diff / day);
-  if (n < 30) return L(locale, { ar: `قبل ${n}ي`, en: `${n}d ago`, de: `${n}d ago`, ru: `${n} дн назад`, it: `${n}g fa` });
+  if (n < 30) return L(locale, { ar: `قبل ${n}ي`, en: `${n}d ago`, de: `vor ${n} T`, ru: `${n} дн назад`, it: `${n}g fa` });
   return d.toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en');
 }
 
@@ -58,7 +58,7 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim().length < 2 || content.trim().length < 2) {
-      toast.error(L(locale, { ar: 'أكمل الحقول من فضلك', en: 'Please complete the fields', de: 'Please complete the fields', ru: 'Заполните поля', it: 'Compila i campi' }));
+      toast.error(L(locale, { ar: 'أكمل الحقول من فضلك', en: 'Please complete the fields', de: 'Bitte füllen Sie die Felder aus', ru: 'Заполните поля', it: 'Compila i campi' }));
       return;
     }
     startTransition(() => {
@@ -73,7 +73,7 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
           setItems((prev) => [created, ...prev]);
           setTotal((n) => n + 1);
           setContent('');
-          toast.success(L(locale, { ar: 'تم نشر تعليقك ✓', en: 'Comment posted ✓', de: 'Comment posted ✓', ru: 'Комментарий добавлен ✓', it: 'Commento pubblicato ✓' }));
+          toast.success(L(locale, { ar: 'تم نشر تعليقك ✓', en: 'Comment posted ✓', de: 'Kommentar veröffentlicht ✓', ru: 'Комментарий добавлен ✓', it: 'Commento pubblicato ✓' }));
         })
         .catch((e) => toast.error(e.message || 'Error'));
     });
@@ -84,7 +84,7 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
       <div className="inline-flex items-center gap-2.5 mb-3">
         <span className="block w-7 h-px bg-accent" />
         <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">
-          {L(locale, { ar: 'النقاشات والتعليقات', en: 'Discussion', de: 'Discussion', ru: 'Обсуждение', it: 'Discussione' })}
+          {L(locale, { ar: 'النقاشات والتعليقات', en: 'Discussion', de: 'Diskussion', ru: 'Обсуждение', it: 'Discussione' })}
         </span>
       </div>
       <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-5 leading-tight text-balance">
@@ -116,7 +116,7 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
             </div>
           </div>
           <textarea
-            placeholder={L(locale, { ar: 'اكتب سؤالك أو تعليقك هنا…', en: 'Write your question or comment…', de: 'Write your question or comment…', ru: 'Ваш вопрос или комментарий…', it: 'Scrivi qui domanda o commento…' })}
+            placeholder={L(locale, { ar: 'اكتب سؤالك أو تعليقك هنا…', en: 'Write your question or comment…', de: 'Schreiben Sie Ihre Frage oder Ihren Kommentar …', ru: 'Ваш вопрос или комментарий…', it: 'Scrivi qui domanda o commento…' })}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={3}
@@ -128,7 +128,7 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
             <p className="text-[11px] text-muted-foreground">
               {L(locale, {
                 ar: 'تظهر التعليقات فور إرسالها وفق سياسة المراجعة',
-                en: 'Comments appear instantly, subject to moderation', de: 'Comments appear instantly, subject to moderation',
+                en: 'Comments appear instantly, subject to moderation', de: 'Kommentare erscheinen sofort, vorbehaltlich Moderation',
                 ru: 'Комментарии появляются сразу, при модерации',
                 it: 'I commenti appaiono subito, soggetti a moderazione',
               })}
@@ -136,8 +136,8 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
             <Button type="submit" disabled={pending} className="gradient-gold text-primary font-bold hover:opacity-90">
               <Send className="h-4 w-4 me-1.5 rtl:rotate-180" />
               {pending
-                ? L(locale, { ar: 'جاري النشر…', en: 'Posting…', de: 'Posting…', ru: 'Отправка…', it: 'Invio…' })
-                : L(locale, { ar: 'نشر التعليق', en: 'Post comment', de: 'Post comment', ru: 'Отправить', it: 'Pubblica' })}
+                ? L(locale, { ar: 'جاري النشر…', en: 'Posting…', de: 'Wird veröffentlicht …', ru: 'Отправка…', it: 'Invio…' })
+                : L(locale, { ar: 'نشر التعليق', en: 'Post comment', de: 'Kommentar senden', ru: 'Отправить', it: 'Pubblica' })}
             </Button>
           </div>
         </form>
@@ -147,7 +147,7 @@ export function TripComments({ slug, locale, initialCount = 0 }: { slug: string;
       {items.length === 0 ? (
         <div className="mt-5 text-center text-sm text-muted-foreground py-6 bg-white/60 rounded-xl border border-dashed border-accent/30">
           <MessageSquare className="h-6 w-6 mx-auto mb-2 text-accent/60" />
-          {L(locale, { ar: 'لا توجد تعليقات بعد — ابدأ النقاش!', en: 'No comments yet — start the discussion!', de: 'No comments yet — start the discussion!', ru: 'Пока нет комментариев — будьте первым!', it: 'Ancora nessun commento — inizia la discussione!' })}
+          {L(locale, { ar: 'لا توجد تعليقات بعد — ابدأ النقاش!', en: 'No comments yet — start the discussion!', de: 'Noch keine Kommentare — starten Sie die Diskussion!', ru: 'Пока нет комментариев — будьте первым!', it: 'Ancora nessun commento — inizia la discussione!' })}
         </div>
       ) : (
         <ul className="mt-5 space-y-3">

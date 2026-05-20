@@ -96,7 +96,7 @@ export function FavoriteButton({
       router.push(`/login?next=${encodeURIComponent(next)}` as never);
       toast.info(L(locale, {
         ar: 'سجّل دخولك لحفظ الرحلة في مفضلاتك',
-        en: 'Sign in to save trips to favorites', de: 'Sign in to save trips to favorites',
+        en: 'Sign in to save trips to favorites', de: 'Melden Sie sich an, um Ausflüge in Favoriten zu speichern',
         ru: 'Войдите, чтобы добавить в избранное',
         it: 'Accedi per salvare nei preferiti',
       }) as string);

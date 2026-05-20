@@ -40,7 +40,7 @@ export function LoginClient({ locale }: { locale: string }) {
         const j = await r.json();
         if (!r.ok || !j.ok) throw new Error(j?.error?.message || 'Sign-in failed');
         await refresh();
-        toast.success(L(locale, { ar: 'تم تسجيل الدخول', en: 'Signed in', de: 'Signed in', ru: 'Вход выполнен', it: 'Accesso effettuato' }) as string);
+        toast.success(L(locale, { ar: 'تم تسجيل الدخول', en: 'Signed in', de: 'Angemeldet', ru: 'Вход выполнен', it: 'Accesso effettuato' }) as string);
         router.replace(next);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Sign-in failed');
@@ -79,13 +79,13 @@ export function LoginClient({ locale }: { locale: string }) {
               <BadgeCheck aria-hidden className="absolute -bottom-1 -end-1 h-5 w-5 text-emerald-400 fill-primary-900 bg-primary-900 rounded-full" />
             </div>
             <h1 className="font-serif text-2xl md:text-3xl font-bold mb-2">
-              {L(locale, { ar: 'تسجيل الدخول', en: 'Sign in', de: 'Sign in', ru: 'Вход', it: 'Accedi' })}
+              {L(locale, { ar: 'تسجيل الدخول', en: 'Sign in', de: 'Anmelden', ru: 'Вход', it: 'Accedi' })}
             </h1>
             <span aria-hidden className="block w-10 h-0.5 gradient-gold rounded-full mx-auto mb-3" />
             <p className="text-sm text-cream/75 leading-relaxed max-w-xs mx-auto">
               {L(locale, {
                 ar: 'سجّل دخولك بحساب جوجل لإدارة حجوزاتك ومفضلاتك ولترك تقييمات',
-                en: 'Sign in with Google to manage your bookings, favourites & reviews', de: 'Sign in with Google to manage your bookings, favourites & reviews',
+                en: 'Sign in with Google to manage your bookings, favourites & reviews', de: 'Melden Sie sich mit Google an, um Buchungen, Favoriten & Bewertungen zu verwalten',
                 ru: 'Войдите через Google для управления бронированиями и отзывами',
                 it: 'Accedi con Google per gestire prenotazioni, preferiti e recensioni',
               })}
@@ -96,17 +96,17 @@ export function LoginClient({ locale }: { locale: string }) {
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-3" />
               <p className="text-sm text-cream/75">
-                {L(locale, { ar: 'جاري تسجيل الدخول...', en: 'Signing you in...', de: 'Signing you in...', ru: 'Входим...', it: 'Accesso in corso...' })}
+                {L(locale, { ar: 'جاري تسجيل الدخول...', en: 'Signing you in...', de: 'Anmeldung läuft ...', ru: 'Входим...', it: 'Accesso in corso...' })}
               </p>
             </div>
           ) : error ? (
             <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-4 mb-4 text-sm">
               <p className="text-red-300 font-semibold mb-1">
-                {L(locale, { ar: 'تعذر تسجيل الدخول', en: 'Sign-in failed', de: 'Sign-in failed', ru: 'Ошибка входа', it: 'Accesso fallito' })}
+                {L(locale, { ar: 'تعذر تسجيل الدخول', en: 'Sign-in failed', de: 'Anmeldung fehlgeschlagen', ru: 'Ошибка входа', it: 'Accesso fallito' })}
               </p>
               <p className="text-red-200/80 text-xs">{error}</p>
               <Button onClick={() => { setError(null); startGoogle(); }} variant="outline" className="mt-3 w-full">
-                {L(locale, { ar: 'حاول مرة أخرى', en: 'Try again', de: 'Try again', ru: 'Повторить', it: 'Riprova' })}
+                {L(locale, { ar: 'حاول مرة أخرى', en: 'Try again', de: 'Erneut versuchen', ru: 'Повторить', it: 'Riprova' })}
               </Button>
             </div>
           ) : (
@@ -134,7 +134,7 @@ export function LoginClient({ locale }: { locale: string }) {
               <Sparkles className="h-3 w-3 text-accent" />
               {L(locale, {
                 ar: 'لا حاجة لكلمة سر — حساب آمن عبر Google',
-                en: 'No password needed — secure Google account', de: 'No password needed — secure Google account',
+                en: 'No password needed — secure Google account', de: 'Kein Passwort nötig — sicheres Google-Konto',
                 ru: 'Без пароля — через ваш Google',
                 it: 'Niente password — tramite il tuo Google',
               })}

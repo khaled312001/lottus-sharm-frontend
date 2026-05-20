@@ -140,14 +140,14 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
             <div className="text-center mb-10 md:mb-14">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/15 text-accent-700 font-bold text-xs uppercase tracking-wider mb-4 border border-accent/20">
                 <span className="block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                {L(locale, { ar: 'قريباً', en: 'Coming soon', de: 'Coming soon', ru: 'Скоро', it: 'Presto' })}
+                {L(locale, { ar: 'قريباً', en: 'Coming soon', de: 'Demnächst', ru: 'Скоро', it: 'Presto' })}
               </div>
               <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-3 max-w-2xl mx-auto leading-tight text-balance">
-                {L(locale, { ar: 'مقالات سفر وأدلة سياحية تُنشر قريباً', en: 'Travel articles and guides launching soon', de: 'Travel articles and guides launching soon', ru: 'Скоро опубликуем статьи и гиды по путешествиям', it: 'Articoli di viaggio e guide in arrivo' })}
+                {L(locale, { ar: 'مقالات سفر وأدلة سياحية تُنشر قريباً', en: 'Travel articles and guides launching soon', de: 'Reiseartikel und Reiseführer folgen in Kürze', ru: 'Скоро опубликуем статьи и гиды по путешествиям', it: 'Articoli di viaggio e guide in arrivo' })}
               </h2>
               <div className="w-16 h-0.5 gradient-gold rounded-full mx-auto my-4" />
               <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                {L(locale, { ar: 'فريقنا يجهز محتوى ثرياً عن شرم الشيخ وأجمل وجهات مصر السياحية', en: "Our team is preparing rich content about Sharm El Sheikh and Egypt's top destinations", de: "Our team is preparing rich content about Sharm El Sheikh and Egypt's top destinations", ru: 'Наша команда готовит интересный контент о Шарм-эль-Шейхе и лучших местах Египта', it: 'Il nostro team sta preparando contenuti su Sharm El Sheikh e le migliori destinazioni egiziane' })}
+                {L(locale, { ar: 'فريقنا يجهز محتوى ثرياً عن شرم الشيخ وأجمل وجهات مصر السياحية', en: "Our team is preparing rich content about Sharm El Sheikh and Egypt's top destinations", de: "Unser Team bereitet umfangreiche Inhalte über Sharm El Sheikh und Ägyptens beste Reiseziele vor", ru: 'Наша команда готовит интересный контент о Шарм-эль-Шейхе и лучших местах Египта', it: 'Il nostro team sta preparando contenuti su Sharm El Sheikh e le migliori destinazioni egiziane' })}
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
@@ -162,7 +162,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                       </span>
                       <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/95 text-primary text-[9px] font-bold uppercase shadow-md">
                         <span className="block w-1 h-1 rounded-full bg-primary animate-pulse" />
-                        {L(locale, { ar: 'قريباً', en: 'Soon', de: 'Soon', ru: 'Скоро', it: 'Presto' })}
+                        {L(locale, { ar: 'قريباً', en: 'Soon', de: 'Bald', ru: 'Скоро', it: 'Presto' })}
                       </span>
                     </div>
                     <div className="p-5">
@@ -189,18 +189,18 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                   <MessageCircle className="h-7 w-7 text-accent" />
                 </div>
                 <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-balance">
-                  {L(locale, { ar: 'استفسارات سفر؟', en: 'Travel questions?', de: 'Travel questions?', ru: 'Вопросы о путешествии?', it: 'Domande di viaggio?' })}
+                  {L(locale, { ar: 'استفسارات سفر؟', en: 'Travel questions?', de: 'Fragen zur Reise?', ru: 'Вопросы о путешествии?', it: 'Domande di viaggio?' })}
                 </h3>
                 <div className="w-12 h-0.5 gradient-gold rounded-full mx-auto mb-4" />
                 <p className="opacity-85 mb-7 max-w-xl mx-auto leading-relaxed">
-                  {L(locale, { ar: 'خبراءنا متاحون عبر واتساب للإجابة على كل أسئلتك عن السفر في مصر', en: 'Our experts are on WhatsApp to answer all your Egypt travel questions', de: 'Our experts are on WhatsApp to answer all your Egypt travel questions', ru: 'Наши эксперты в WhatsApp ответят на все ваши вопросы о Египте', it: 'I nostri esperti rispondono via WhatsApp a tutte le domande sull\'Egitto' })}
+                  {L(locale, { ar: 'خبراءنا متاحون عبر واتساب للإجابة على كل أسئلتك عن السفر في مصر', en: 'Our experts are on WhatsApp to answer all your Egypt travel questions', de: 'Unsere Experten beantworten auf WhatsApp all Ihre Fragen zur Ägypten-Reise', ru: 'Наши эксперты в WhatsApp ответят на все ваши вопросы о Египте', it: 'I nostri esperti rispondono via WhatsApp a tutte le domande sull\'Egitto' })}
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   <a href={buildWhatsAppLink('201090767278')} target="_blank" rel="noopener" className="group inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ea954] text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-[#25D366]/30 hover:shadow-xl hover:shadow-[#25D366]/40 hover:-translate-y-0.5 transition-all duration-200">
                     <MessageCircle className="h-5 w-5 group-hover:scale-110 transition-transform" /> {L(locale, { ar: 'واتساب', en: 'WhatsApp', de: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}
                   </a>
                   <Button asChild size="lg" variant="outline" className="border-cream/40 text-cream hover:bg-cream hover:text-primary group">
-                    <Link href="/trips">{L(locale, { ar: 'تصفح الرحلات', en: 'Browse Trips', de: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /></Link>
+                    <Link href="/trips">{L(locale, { ar: 'تصفح الرحلات', en: 'Browse Trips', de: 'Ausflüge ansehen', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /></Link>
                   </Button>
                 </div>
               </div>

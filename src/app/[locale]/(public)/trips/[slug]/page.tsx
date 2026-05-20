@@ -136,7 +136,7 @@ export default async function TripDetailPage({ params }: PageProps) {
                 <Link href={`/trips/${trip.slug}#comments`} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-cream/10 backdrop-blur border border-cream/20 text-cream hover:bg-cream/15 transition-colors">
                   <MessageCircle className="h-4 w-4 text-accent" />
                   <span className="font-semibold tabular-nums">{trip._count?.comments}</span>
-                  <span className="text-sm hidden sm:inline">{L(locale, { ar: 'تعليق', en: 'comments', de: 'comments', ru: 'комментариев', it: 'commenti' })}</span>
+                  <span className="text-sm hidden sm:inline">{L(locale, { ar: 'تعليق', en: 'comments', de: 'Kommentare', ru: 'комментариев', it: 'commenti' })}</span>
                 </Link>
               )}
             </div>
@@ -147,9 +147,9 @@ export default async function TripDetailPage({ params }: PageProps) {
             <div className="mt-7 md:mt-10 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl">
               {[
                 { icon: Clock, label: t('common.duration'), value: `${hours} ${t('common.hours')}` },
-                { icon: Calendar, label: t('common.starts'), value: trip.startTime || (L(locale, { ar: 'صباحاً', en: 'Morning', de: 'Morning', ru: 'Утром', it: 'Mattina' })) },
-                { icon: MapPin, label: t('trips.meetingPoint'), value: (locale === 'ar' && trip.meetingPoint) || L(locale, { ar: trip.meetingPoint || 'الفندق', en: 'Hotel pickup', de: 'Hotel pickup', ru: 'Трансфер из отеля', it: 'Pick-up dall\'hotel' }) },
-                { icon: Users, label: L(locale, { ar: 'من السعر', en: 'From', de: 'From', ru: 'от', it: 'da' }), value: isAr ? `${Number(trip.priceLocalEGP)} ج.م` : `$${Number(trip.priceForeignUSD)}` },
+                { icon: Calendar, label: t('common.starts'), value: trip.startTime || (L(locale, { ar: 'صباحاً', en: 'Morning', de: 'Morgens', ru: 'Утром', it: 'Mattina' })) },
+                { icon: MapPin, label: t('trips.meetingPoint'), value: (locale === 'ar' && trip.meetingPoint) || L(locale, { ar: trip.meetingPoint || 'الفندق', en: 'Hotel pickup', de: 'Hotelabholung', ru: 'Трансфер из отеля', it: 'Pick-up dall\'hotel' }) },
+                { icon: Users, label: L(locale, { ar: 'من السعر', en: 'From', de: 'Ab', ru: 'от', it: 'da' }), value: isAr ? `${Number(trip.priceLocalEGP)} ج.م` : `$${Number(trip.priceForeignUSD)}` },
               ].map((f, i) => (
                 <div key={i} className="group glass-dark rounded-xl p-3 sm:p-3.5 border border-accent/15 hover:border-accent/40 hover:bg-primary/60 transition-all duration-300">
                   <div className="flex items-center gap-2 mb-1.5">
@@ -209,10 +209,10 @@ export default async function TripDetailPage({ params }: PageProps) {
             <div>
               <div className="inline-flex items-center gap-2.5 mb-3">
                 <span className="block w-7 h-px bg-accent" />
-                <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'عن الرحلة', en: 'About the trip', de: 'About the trip', ru: 'О туре', it: 'Sul tour' })}</span>
+                <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'عن الرحلة', en: 'About the trip', de: 'Über den Ausflug', ru: 'О туре', it: 'Sul tour' })}</span>
               </div>
               <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-5 leading-tight text-balance">
-                {L(locale, { ar: 'تفاصيل وأكثر', en: 'Trip details', de: 'Trip details', ru: 'Детали тура', it: 'Dettagli del tour' })}
+                {L(locale, { ar: 'تفاصيل وأكثر', en: 'Trip details', de: 'Ausflugsdetails', ru: 'Детали тура', it: 'Dettagli del tour' })}
               </h2>
               <div className="prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: tr?.longDesc || '' }} />
             </div>
@@ -227,7 +227,7 @@ export default async function TripDetailPage({ params }: PageProps) {
                   <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'أبرز المعالم', en: 'Highlights', de: 'Highlights', ru: 'Изюминки', it: 'Punti salienti' })}</span>
                 </div>
                 <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-5 leading-tight text-balance">
-                  {L(locale, { ar: 'ما الذي سترونه', en: "What you'll experience", de: "What you'll experience", ru: 'Что вас ждёт', it: 'Cosa vivrai' })}
+                  {L(locale, { ar: 'ما الذي سترونه', en: "What you'll experience", de: "Was Sie erleben", ru: 'Что вас ждёт', it: 'Cosa vivrai' })}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
                   {trip.highlights.map((h, i) => (
@@ -255,10 +255,10 @@ export default async function TripDetailPage({ params }: PageProps) {
               <div>
                 <div className="inline-flex items-center gap-2.5 mb-3">
                   <span className="block w-7 h-px bg-accent" />
-                  <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'الأسعار شفافة', en: 'Transparent pricing', de: 'Transparent pricing', ru: 'Прозрачные цены', it: 'Prezzi trasparenti' })}</span>
+                  <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'الأسعار شفافة', en: 'Transparent pricing', de: 'Transparente Preise', ru: 'Прозрачные цены', it: 'Prezzi trasparenti' })}</span>
                 </div>
                 <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-5 leading-tight text-balance">
-                  {L(locale, { ar: 'ما يشمله وما لا يشمله', en: "What's included & excluded", de: "What's included & excluded", ru: 'Что включено и что нет', it: 'Cosa è incluso ed escluso' })}
+                  {L(locale, { ar: 'ما يشمله وما لا يشمله', en: "What's included & excluded", de: "Inklusive & exklusive Leistungen", ru: 'Что включено и что нет', it: 'Cosa è incluso ed escluso' })}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4 md:gap-5">
                   {includes.length > 0 && (
@@ -310,7 +310,7 @@ export default async function TripDetailPage({ params }: PageProps) {
               <div>
                 <div className="inline-flex items-center gap-2.5 mb-3">
                   <span className="block w-7 h-px bg-accent" />
-                  <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'استعد بشكل صحيح', en: 'Be prepared', de: 'Be prepared', ru: 'Будьте готовы', it: 'Sii preparato' })}</span>
+                  <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">{L(locale, { ar: 'استعد بشكل صحيح', en: 'Be prepared', de: 'Gut vorbereitet', ru: 'Будьте готовы', it: 'Sii preparato' })}</span>
                 </div>
                 <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-5 leading-tight text-balance">{t('trips.whatToBring')}</h2>
                 <div className="relative bg-gradient-to-br from-amber-50 to-amber-50/40 rounded-2xl p-5 md:p-6 border border-amber-200/60 overflow-hidden">
@@ -319,7 +319,7 @@ export default async function TripDetailPage({ params }: PageProps) {
                     <span className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center">
                       <Backpack className="h-5 w-5" />
                     </span>
-                    <h3 className="font-serif font-bold text-lg">{L(locale, { ar: 'احضر معك', en: 'Bring with you', de: 'Bring with you', ru: 'Возьмите с собой', it: 'Porta con te' })}</h3>
+                    <h3 className="font-serif font-bold text-lg">{L(locale, { ar: 'احضر معك', en: 'Bring with you', de: 'Mitzubringen', ru: 'Возьмите с собой', it: 'Porta con te' })}</h3>
                   </div>
                   <div className="relative flex flex-wrap gap-2">
                     {brings.map((b) => (
@@ -347,9 +347,9 @@ export default async function TripDetailPage({ params }: PageProps) {
                     </span>
                     <div className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold">{t('trips.meetingPoint')}</div>
                   </div>
-                  <div className="font-serif text-lg md:text-xl font-bold leading-snug">{(locale === 'ar' && trip.meetingPoint) || L(locale, { ar: trip.meetingPoint || 'فندق الإقامة في شرم الشيخ', en: 'Your Sharm hotel', de: 'Your Sharm hotel', ru: 'Ваш отель в Шарме', it: 'Il tuo hotel a Sharm' })}</div>
+                  <div className="font-serif text-lg md:text-xl font-bold leading-snug">{(locale === 'ar' && trip.meetingPoint) || L(locale, { ar: trip.meetingPoint || 'فندق الإقامة في شرم الشيخ', en: 'Your Sharm hotel', de: 'Ihr Hotel in Sharm', ru: 'Ваш отель в Шарме', it: 'Il tuo hotel a Sharm' })}</div>
                   <div className="text-sm text-cream/70 mt-1.5">
-                    {L(locale, { ar: 'الالتقاط من الفندق مجاناً', en: 'Free hotel pickup', de: 'Free hotel pickup', ru: 'Бесплатный трансфер из отеля', it: 'Pick-up gratuito dall\'hotel' })}
+                    {L(locale, { ar: 'الالتقاط من الفندق مجاناً', en: 'Free hotel pickup', de: 'Kostenlose Hotelabholung', ru: 'Бесплатный трансфер из отеля', it: 'Pick-up gratuito dall\'hotel' })}
                   </div>
                 </div>
                 <div>
@@ -361,7 +361,7 @@ export default async function TripDetailPage({ params }: PageProps) {
                   </div>
                   <div className="font-serif text-lg md:text-xl font-bold leading-snug">{trip.startTime || '09:00'} · {hours} {t('common.hours')}</div>
                   <div className="text-sm text-cream/70 mt-1.5">
-                    {L(locale, { ar: 'تنطلق يومياً', en: 'Daily departures', de: 'Daily departures', ru: 'Ежедневные отправления', it: 'Partenze giornaliere' })}
+                    {L(locale, { ar: 'تنطلق يومياً', en: 'Daily departures', de: 'Tägliche Abfahrten', ru: 'Ежедневные отправления', it: 'Partenze giornaliere' })}
                   </div>
                 </div>
               </div>
@@ -387,7 +387,7 @@ export default async function TripDetailPage({ params }: PageProps) {
           <div className="mt-4 text-center">
             <a href={inquiryHref} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 text-sm text-primary/70 hover:text-primary font-semibold">
               <MessageCircle className="h-4 w-4 text-[#25D366]" />
-              {L(locale, { ar: 'أو استفسر عن الرحلة على واتساب', en: 'Or ask about this trip on WhatsApp', de: 'Or ask about this trip on WhatsApp', ru: 'Или спросите об этом туре в WhatsApp', it: 'O chiedi di questo tour su WhatsApp' })}
+              {L(locale, { ar: 'أو استفسر عن الرحلة على واتساب', en: 'Or ask about this trip on WhatsApp', de: 'Oder fragen Sie zu diesem Ausflug per WhatsApp', ru: 'Или спросите об этом туре в WhatsApp', it: 'O chiedi di questo tour su WhatsApp' })}
             </a>
           </div>
         </aside>
@@ -403,12 +403,12 @@ export default async function TripDetailPage({ params }: PageProps) {
               <div>
                 <div className="inline-flex items-center gap-2.5 mb-2.5">
                   <span className="block w-8 h-px bg-accent" />
-                  <span className="text-accent uppercase tracking-[0.3em] text-[10px] sm:text-xs font-bold">{L(locale, { ar: 'رحلات قد تعجبك', en: 'You might also like', de: 'You might also like', ru: 'Также вам понравится', it: 'Potrebbe interessarti anche' })}</span>
+                  <span className="text-accent uppercase tracking-[0.3em] text-[10px] sm:text-xs font-bold">{L(locale, { ar: 'رحلات قد تعجبك', en: 'You might also like', de: 'Das könnte Ihnen auch gefallen', ru: 'Также вам понравится', it: 'Potrebbe interessarti anche' })}</span>
                 </div>
-                <h2 className="font-serif text-2xl md:text-4xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'استكشف رحلات أخرى', en: 'Explore other trips', de: 'Explore other trips', ru: 'Изучите другие туры', it: 'Esplora altri tour' })}</h2>
+                <h2 className="font-serif text-2xl md:text-4xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'استكشف رحلات أخرى', en: 'Explore other trips', de: 'Weitere Ausflüge entdecken', ru: 'Изучите другие туры', it: 'Esplora altri tour' })}</h2>
               </div>
               <Button asChild variant="ghost" className="text-accent-700 hover:text-accent hover:bg-accent/10 group">
-                <Link href="/trips">{L(locale, { ar: 'كل الرحلات', en: 'All trips', de: 'All trips', ru: 'Все туры', it: 'Tutti i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /></Link>
+                <Link href="/trips">{L(locale, { ar: 'كل الرحلات', en: 'All trips', de: 'Alle Ausflüge', ru: 'Все туры', it: 'Tutti i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /></Link>
               </Button>
             </Reveal>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">

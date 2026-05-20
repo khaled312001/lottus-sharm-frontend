@@ -31,7 +31,7 @@ export function AccountPill() {
       >
         <LogIn className="h-4 w-4" />
         <span className="hidden sm:inline">
-          {L(locale, { ar: 'الدخول', en: 'Sign in', de: 'Sign in', ru: 'Вход', it: 'Accedi' })}
+          {L(locale, { ar: 'الدخول', en: 'Sign in', de: 'Anmelden', ru: 'Вход', it: 'Accedi' })}
         </span>
       </Link>
     );

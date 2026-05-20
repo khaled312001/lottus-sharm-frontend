@@ -45,7 +45,7 @@ export function ReviewForm({ locale }: { locale: string }) {
     if (media.length + list.length > MAX_FILES) {
       return toast.error(L(locale, {
         ar: `الحد الأقصى ${MAX_FILES} ملفات`,
-        en: `Max ${MAX_FILES} files`, de: `Max ${MAX_FILES} files`,
+        en: `Max ${MAX_FILES} files`, de: `Max. ${MAX_FILES} Dateien`,
         ru: `Максимум ${MAX_FILES} файлов`,
         it: `Massimo ${MAX_FILES} file`,
       }));
@@ -75,10 +75,10 @@ export function ReviewForm({ locale }: { locale: string }) {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim().length < 2) {
-      return toast.error(L(locale, { ar: 'أدخل اسمك من فضلك', en: 'Please enter your name', de: 'Please enter your name', ru: 'Введите имя', it: 'Inserisci il nome' }));
+      return toast.error(L(locale, { ar: 'أدخل اسمك من فضلك', en: 'Please enter your name', de: 'Bitte geben Sie Ihren Namen ein', ru: 'Введите имя', it: 'Inserisci il nome' }));
     }
     if (comment.trim().length < 5) {
-      return toast.error(L(locale, { ar: 'اكتب رأيك من فضلك', en: 'Please write your review', de: 'Please write your review', ru: 'Напишите отзыв', it: 'Scrivi la recensione' }));
+      return toast.error(L(locale, { ar: 'اكتب رأيك من فضلك', en: 'Please write your review', de: 'Bitte schreiben Sie Ihre Bewertung', ru: 'Напишите отзыв', it: 'Scrivi la recensione' }));
     }
 
     setPending(true);
@@ -105,12 +105,12 @@ export function ReviewForm({ locale }: { locale: string }) {
           <CheckCircle2 className="h-8 w-8 text-emerald-400" />
         </div>
         <h2 className="font-serif text-2xl font-bold mb-2 text-cream">
-          {L(locale, { ar: 'شكراً لتقييمك! ❤', en: 'Thank you for your review! ❤', de: 'Thank you for your review! ❤', ru: 'Спасибо за отзыв! ❤', it: 'Grazie per la recensione! ❤' })}
+          {L(locale, { ar: 'شكراً لتقييمك! ❤', en: 'Thank you for your review! ❤', de: 'Danke für Ihre Bewertung! ❤', ru: 'Спасибо за отзыв! ❤', it: 'Grazie per la recensione! ❤' })}
         </h2>
         <p className="text-cream/75 text-sm leading-relaxed max-w-md mx-auto">
           {L(locale, {
             ar: 'تقييمك وصلنا وسيظهر على الموقع بعد المراجعة خلال 24 ساعة كحد أقصى.',
-            en: 'Your review reached us and will appear on the site within 24 hours after approval.', de: 'Your review reached us and will appear on the site within 24 hours after approval.',
+            en: 'Your review reached us and will appear on the site within 24 hours after approval.', de: 'Ihre Bewertung hat uns erreicht und erscheint nach Freigabe innerhalb von 24 Stunden auf der Website.',
             ru: 'Отзыв получен и появится на сайте после модерации в течение 24 часов.',
             it: 'La recensione è arrivata e apparirà sul sito entro 24 ore dopo l\'approvazione.',
           })}
@@ -125,7 +125,7 @@ export function ReviewForm({ locale }: { locale: string }) {
       {/* Star rating */}
       <div>
         <label className="block text-sm font-bold text-cream mb-3 text-center">
-          {L(locale, { ar: 'كيف كانت تجربتك؟', en: 'How was your experience?', de: 'How was your experience?', ru: 'Как ваш опыт?', it: 'Com\'è stata la tua esperienza?' })}
+          {L(locale, { ar: 'كيف كانت تجربتك؟', en: 'How was your experience?', de: 'Wie war Ihr Erlebnis?', ru: 'Как ваш опыт?', it: 'Com\'è stata la tua esperienza?' })}
         </label>
         <div className="flex justify-center gap-1.5">
           {[1, 2, 3, 4, 5].map((n) => (
@@ -155,7 +155,7 @@ export function ReviewForm({ locale }: { locale: string }) {
       {/* Signed-in profile chip (replaces the editable name field) */}
       <div>
         <label className="block text-sm font-bold text-cream mb-1.5">
-          {L(locale, { ar: 'باسمك على جوجل', en: 'Posting as', de: 'Posting as', ru: 'Публикуете как', it: 'Pubblichi come' })}
+          {L(locale, { ar: 'باسمك على جوجل', en: 'Posting as', de: 'Veröffentlichen als', ru: 'Публикуете как', it: 'Pubblichi come' })}
         </label>
         <div className="inline-flex items-center gap-3 px-3 py-2 rounded-xl bg-cream/8 border border-cream/20 backdrop-blur w-full">
           {customer?.avatarUrl ? (
@@ -172,7 +172,7 @@ export function ReviewForm({ locale }: { locale: string }) {
           </div>
           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-1 rounded-full shrink-0">
             <svg className="h-3 w-3" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2l-3.5-3.5a1 1 0 1 0-1.4 1.4l4.2 4.2c.4.4 1 .4 1.4 0l9-9a1 1 0 1 0-1.4-1.4L9 16.2z"/></svg>
-            {L(locale, { ar: 'موثق', en: 'verified', de: 'verified', ru: 'подтв.', it: 'verificato' })}
+            {L(locale, { ar: 'موثق', en: 'verified', de: 'verifiziert', ru: 'подтв.', it: 'verificato' })}
           </span>
         </div>
       </div>
@@ -180,7 +180,7 @@ export function ReviewForm({ locale }: { locale: string }) {
       {/* Comment */}
       <div>
         <label className="block text-sm font-bold text-cream mb-1.5">
-          {L(locale, { ar: 'تقييمك', en: 'Your review', de: 'Your review', ru: 'Ваш отзыв', it: 'La tua recensione' })}
+          {L(locale, { ar: 'تقييمك', en: 'Your review', de: 'Ihre Bewertung', ru: 'Ваш отзыв', it: 'La tua recensione' })}
           <span className="text-accent ms-1">*</span>
         </label>
         <Textarea
@@ -190,7 +190,7 @@ export function ReviewForm({ locale }: { locale: string }) {
           dir={isAr ? 'rtl' : 'ltr'}
           placeholder={L(locale, {
             ar: 'ما الذي أعجبك في رحلتك معنا؟ التنظيم، الدليل السياحي، الأنشطة...',
-            en: 'What did you enjoy most about your trip with us?', de: 'What did you enjoy most about your trip with us?',
+            en: 'What did you enjoy most about your trip with us?', de: 'Was hat Ihnen an Ihrem Ausflug mit uns am besten gefallen?',
             ru: 'Что вам понравилось в путешествии?',
             it: 'Cosa ti è piaciuto del tuo viaggio?',
           })}
@@ -203,9 +203,9 @@ export function ReviewForm({ locale }: { locale: string }) {
       {/* Media upload */}
       <div>
         <label className="block text-sm font-bold text-cream mb-2">
-          {L(locale, { ar: 'صور أو فيديوهات (اختياري)', en: 'Photos or videos (optional)', de: 'Photos or videos (optional)', ru: 'Фото или видео (по желанию)', it: 'Foto o video (opzionale)' })}
+          {L(locale, { ar: 'صور أو فيديوهات (اختياري)', en: 'Photos or videos (optional)', de: 'Fotos oder Videos (optional)', ru: 'Фото или видео (по желанию)', it: 'Foto o video (opzionale)' })}
           <span className="text-cream/45 ms-2 text-xs font-normal">
-            {L(locale, { ar: `حتى ${MAX_FILES} ملفات`, en: `up to ${MAX_FILES} files`, de: `up to ${MAX_FILES} files`, ru: `до ${MAX_FILES}`, it: `fino a ${MAX_FILES}` })}
+            {L(locale, { ar: `حتى ${MAX_FILES} ملفات`, en: `up to ${MAX_FILES} files`, de: `bis zu ${MAX_FILES} Dateien`, ru: `до ${MAX_FILES}`, it: `fino a ${MAX_FILES}` })}
           </span>
         </label>
 
@@ -248,13 +248,13 @@ export function ReviewForm({ locale }: { locale: string }) {
               disabled={uploading}
             />
             {uploading ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> {L(locale, { ar: 'جاري الرفع...', en: 'Uploading...', de: 'Uploading...', ru: 'Загрузка...', it: 'Caricamento...' })}</>
+              <><Loader2 className="h-4 w-4 animate-spin" /> {L(locale, { ar: 'جاري الرفع...', en: 'Uploading...', de: 'Wird hochgeladen ...', ru: 'Загрузка...', it: 'Caricamento...' })}</>
             ) : (
               <>
                 <Plus className="h-4 w-4" />
                 <ImageIcon className="h-4 w-4 opacity-60" />
                 <VideoIcon className="h-4 w-4 opacity-60" />
-                <span>{L(locale, { ar: 'إضافة صور أو فيديوهات', en: 'Add photos or videos', de: 'Add photos or videos', ru: 'Добавить фото или видео', it: 'Aggiungi foto o video' })}</span>
+                <span>{L(locale, { ar: 'إضافة صور أو فيديوهات', en: 'Add photos or videos', de: 'Fotos oder Videos hinzufügen', ru: 'Добавить фото или видео', it: 'Aggiungi foto o video' })}</span>
               </>
             )}
           </label>
@@ -282,14 +282,14 @@ export function ReviewForm({ locale }: { locale: string }) {
           {pending ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              {L(locale, { ar: 'جاري الإرسال...', en: 'Sending...', de: 'Sending...', ru: 'Отправка...', it: 'Invio in corso...' })}
+              {L(locale, { ar: 'جاري الإرسال...', en: 'Sending...', de: 'Wird gesendet ...', ru: 'Отправка...', it: 'Invio in corso...' })}
             </>
           ) : (
             <>
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/15 group-hover:bg-primary/25 transition-colors">
                 <Send className="h-3.5 w-3.5 rtl:rotate-180" />
               </span>
-              <span>{L(locale, { ar: 'أرسل تقييمي', en: 'Submit my review', de: 'Submit my review', ru: 'Отправить отзыв', it: 'Invia recensione' })}</span>
+              <span>{L(locale, { ar: 'أرسل تقييمي', en: 'Submit my review', de: 'Bewertung absenden', ru: 'Отправить отзыв', it: 'Invia recensione' })}</span>
               <Sparkles className="h-4 w-4 opacity-60 group-hover:opacity-100 group-hover:rotate-12 transition-all" />
             </>
           )}

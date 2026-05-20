@@ -28,7 +28,7 @@ export function TripSocialProof({
         <span className="text-[11px] sm:text-xs font-semibold text-amber-100/85">
           {L(locale, {
             ar: 'حجز هذا الأسبوع',
-            en: 'booked this week', de: 'booked this week',
+            en: 'booked this week', de: 'diese Woche gebucht',
             ru: 'броней за неделю',
             it: 'prenot. settimana',
           })}

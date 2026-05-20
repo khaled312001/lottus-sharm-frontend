@@ -90,7 +90,7 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
           transition={{ duration: 0.3 }}
         >
           {items.length === 0 ? (
-            <p className="text-center text-muted-foreground py-16">{L(locale, { ar: 'لا يوجد محتوى', en: 'No content yet', de: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
+            <p className="text-center text-muted-foreground py-16">{L(locale, { ar: 'لا يوجد محتوى', en: 'No content yet', de: 'Noch keine Inhalte', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
           ) : (
             <>
               <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">

@@ -92,7 +92,7 @@ export function SearchBar({ variant = 'header' }: { variant?: 'header' | 'drawer
   }
 
   const totalResults = results.trips.length + results.posts.length;
-  const placeholder = L(locale, { ar: 'ابحث عن رحلة أو مقالة...', en: 'Search trips or articles...', de: 'Search trips or articles...', ru: 'Поиск туров и статей...', it: 'Cerca tour o articoli...' });
+  const placeholder = L(locale, { ar: 'ابحث عن رحلة أو مقالة...', en: 'Search trips or articles...', de: 'Ausflüge oder Artikel suchen ...', ru: 'Поиск туров и статей...', it: 'Cerca tour o articoli...' });
 
   // Drawer variant — always expanded
   if (variant === 'drawer') {
@@ -217,13 +217,13 @@ function SearchResultsDropdown({
           {loading && (
             <div className={cn('px-4 py-6 text-center text-sm', isDark ? 'text-cream/60' : 'text-muted-foreground')}>
               <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
-              {L(locale, { ar: 'جاري البحث...', en: 'Searching...', de: 'Searching...', ru: 'Поиск...', it: 'Ricerca...' })}
+              {L(locale, { ar: 'جاري البحث...', en: 'Searching...', de: 'Suche läuft ...', ru: 'Поиск...', it: 'Ricerca...' })}
             </div>
           )}
 
           {!loading && totalResults === 0 && (
             <div className={cn('px-4 py-6 text-center text-sm', isDark ? 'text-cream/60' : 'text-muted-foreground')}>
-              {L(locale, { ar: `لا توجد نتائج لـ "${q}"`, en: `No results for "${q}"`, de: `No results for "${q}"`, ru: `Нет результатов для «${q}»`, it: `Nessun risultato per "${q}"` })}
+              {L(locale, { ar: `لا توجد نتائج لـ "${q}"`, en: `No results for "${q}"`, de: `Keine Ergebnisse für "${q}"`, ru: `Нет результатов для «${q}»`, it: `Nessun risultato per "${q}"` })}
             </div>
           )}
 
@@ -291,7 +291,7 @@ function SearchResultsDropdown({
             <div className={cn('px-3 py-2 border-t text-[11px]', isDark ? 'border-cream/10 text-cream/55' : 'border-muted text-muted-foreground')}>
               {L(locale, {
                 ar: `اضغط Enter للبحث عن "${q}"`,
-                en: `Press Enter to search for "${q}"`, de: `Press Enter to search for "${q}"`,
+                en: `Press Enter to search for "${q}"`, de: `Drücken Sie Enter, um nach "${q}" zu suchen`,
                 ru: `Нажмите Enter для поиска "${q}"`,
                 it: `Premi Invio per cercare "${q}"`,
               })}

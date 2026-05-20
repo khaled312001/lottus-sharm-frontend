@@ -87,10 +87,10 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-xs uppercase tracking-[0.15em] opacity-80">
-                {L(locale, { ar: 'سافرت معنا قبل كده؟', en: 'Travelled with us?', de: 'Travelled with us?', ru: 'Путешествовали?', it: 'Hai viaggiato con noi?' })}
+                {L(locale, { ar: 'سافرت معنا قبل كده؟', en: 'Travelled with us?', de: 'Mit uns gereist?', ru: 'Путешествовали?', it: 'Hai viaggiato con noi?' })}
               </div>
               <div className="text-sm leading-tight font-extrabold">
-                {L(locale, { ar: 'اترك تقييمك الآن', en: 'Leave your review', de: 'Leave your review', ru: 'Оставьте отзыв', it: 'Lascia una recensione' })}
+                {L(locale, { ar: 'اترك تقييمك الآن', en: 'Leave your review', de: 'Hinterlassen Sie Ihre Bewertung', ru: 'Оставьте отзыв', it: 'Lascia una recensione' })}
               </div>
             </div>
             <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
@@ -118,21 +118,21 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
                 href="/privacy"
                 className="px-3 py-1.5 rounded-md text-cream/70 hover:text-accent hover:bg-cream/5 transition-all"
               >
-                {L(locale, { ar: 'سياسة الخصوصية', en: 'Privacy Policy', de: 'Privacy Policy', ru: 'Конфиденциальность', it: 'Privacy' })}
+                {L(locale, { ar: 'سياسة الخصوصية', en: 'Privacy Policy', de: 'Datenschutzerklärung', ru: 'Конфиденциальность', it: 'Privacy' })}
               </Link>
               <span className="text-cream/30">•</span>
               <Link
                 href="/terms"
                 className="px-3 py-1.5 rounded-md text-cream/70 hover:text-accent hover:bg-cream/5 transition-all"
               >
-                {L(locale, { ar: 'الشروط والأحكام', en: 'Terms of Service', de: 'Terms of Service', ru: 'Условия использования', it: 'Termini' })}
+                {L(locale, { ar: 'الشروط والأحكام', en: 'Terms of Service', de: 'Nutzungsbedingungen', ru: 'Условия использования', it: 'Termini' })}
               </Link>
               <span className="text-cream/30">•</span>
               <Link
                 href="/cancellation-policy"
                 className="px-3 py-1.5 rounded-md text-cream/70 hover:text-accent hover:bg-cream/5 transition-all"
               >
-                {L(locale, { ar: 'سياسة الإلغاء', en: 'Cancellation', de: 'Cancellation', ru: 'Отмена', it: 'Cancellazione' })}
+                {L(locale, { ar: 'سياسة الإلغاء', en: 'Cancellation', de: 'Stornierung', ru: 'Отмена', it: 'Cancellazione' })}
               </Link>
             </nav>
           </div>
@@ -156,7 +156,7 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
             <span className="text-center">
               {L(locale, {
                 ar: 'تم تطوير هذا الموقع بواسطة',
-                en: 'This website was crafted by', de: 'This website was crafted by',
+                en: 'This website was crafted by', de: 'Diese Website wurde erstellt von',
                 ru: 'Этот сайт разработан компанией',
                 it: 'Sito sviluppato da',
               })}

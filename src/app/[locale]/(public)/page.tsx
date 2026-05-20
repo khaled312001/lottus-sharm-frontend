@@ -138,7 +138,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1877F2] hover:bg-[#0e63d4] text-white font-bold text-sm shadow-lg shadow-[#1877F2]/30 hover:-translate-y-0.5 transition-all"
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3V22A10 10 0 0 0 22 12Z"/></svg>
-                  {L(locale, { ar: 'تقييمات فيسبوك', en: 'Facebook reviews', de: 'Facebook reviews', ru: 'Отзывы Facebook', it: 'Recensioni Facebook' })}
+                  {L(locale, { ar: 'تقييمات فيسبوك', en: 'Facebook reviews', de: 'Facebook-Bewertungen', ru: 'Отзывы Facebook', it: 'Recensioni Facebook' })}
                 </a>
               </div>
             </Reveal>
@@ -153,7 +153,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <span className="w-px h-4 bg-cream/20" />
                 <span className="inline-flex items-center gap-1.5">
                   <MessageCircle className="h-4 w-4 text-[#25D366]" />
-                  {L(locale, { ar: 'دعم 24/7', en: '24/7 Support', de: '24/7 Support', ru: 'Поддержка 24/7', it: 'Supporto 24/7' })}
+                  {L(locale, { ar: 'دعم 24/7', en: '24/7 Support', de: '24/7-Support', ru: 'Поддержка 24/7', it: 'Supporto 24/7' })}
                 </span>
               </div>
             </Reveal>
@@ -167,7 +167,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container">
           <div className="grid grid-cols-4 gap-3">
             {[
-              { v: `${settings.yearsExperience}+`, l: L(locale, { ar: 'سنة', en: 'Yrs', de: 'Yrs', ru: 'Лет', it: 'Anni' }) },
+              { v: `${settings.yearsExperience}+`, l: L(locale, { ar: 'سنة', en: 'Yrs', de: 'Jahre', ru: 'Лет', it: 'Anni' }) },
               { v: '5★', l: L(locale, { ar: 'تقييم', en: 'Rating', de: 'Bewertung', ru: 'Рейтинг', it: 'Valutazione' }) },
               { v: '10k+', l: L(locale, { ar: 'سائح', en: 'Guests', de: 'Gäste', ru: 'Гостей', it: 'Ospiti' }) },
               { v: '24/7', l: L(locale, { ar: 'دعم', en: 'Support', de: 'Support', ru: 'Поддержка', it: 'Supporto' }) },
@@ -195,7 +195,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="relative aspect-[4/5] rounded-3xl overflow-hidden card-shadow-gold">
                   <Image
                     src="/hero-slides/hero-03.jpg"
-                    alt={L(locale, { ar: 'لوتس شرم — شركة السياحة الفاخرة', en: 'Lotus Sharm — luxury tourism', de: 'Lotus Sharm — luxury tourism', ru: 'Lotus Sharm — люкс-туризм', it: 'Lotus Sharm — turismo di lusso' }) as string}
+                    alt={L(locale, { ar: 'لوتس شرم — شركة السياحة الفاخرة', en: 'Lotus Sharm — luxury tourism', de: 'Lotus Sharm — Luxustourismus', ru: 'Lotus Sharm — люкс-туризм', it: 'Lotus Sharm — turismo di lusso' }) as string}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
@@ -227,7 +227,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     <div className="leading-tight">
                       <div className="font-serif text-xl font-bold text-accent">10,000+</div>
                       <div className="text-[10px] text-cream/70 font-bold uppercase tracking-wider">
-                        {L(locale, { ar: 'سائح راضي', en: 'Happy guests', de: 'Happy guests', ru: 'Гостей', it: 'Ospiti felici' })}
+                        {L(locale, { ar: 'سائح راضي', en: 'Happy guests', de: 'Zufriedene Gäste', ru: 'Гостей', it: 'Ospiti felici' })}
                       </div>
                     </div>
                   </div>
@@ -247,7 +247,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance mb-4">
                   {L(locale, {
                     ar: 'شريكك المثالي لتجربة لا تُنسى في شرم الشيخ',
-                    en: 'Your trusted partner for unforgettable Sharm El Sheikh experiences', de: 'Your trusted partner for unforgettable Sharm El Sheikh experiences',
+                    en: 'Your trusted partner for unforgettable Sharm El Sheikh experiences', de: 'Ihr vertrauensvoller Partner für unvergessliche Erlebnisse in Sharm El Sheikh',
                     ru: 'Ваш надёжный партнёр в Шарм-эль-Шейхе',
                     it: 'Il tuo partner di fiducia a Sharm El Sheikh',
                   })}
@@ -259,7 +259,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-4">
                   {L(locale, {
                     ar: 'في لوتس شرم، نقدم لك أكثر من مجرد رحلة سياحية — نقدم تجربة فاخرة مصممة بعناية، يقودها مرشدون محليون يعرفون كل ركن من أركان البحر الأحمر، وتدعمها خدمة عملاء حقيقية على مدار اليوم.',
-                    en: "At Lotus Sharm, we offer more than just trips — we craft luxury experiences led by local guides who know every corner of the Red Sea, supported by genuine 24/7 customer care.", de: 'At Lotus Sharm, we offer more than just trips — we craft luxury experiences led by local guides who know every corner of the Red Sea, supported by genuine 24/7 customer care.',
+                    en: "At Lotus Sharm, we offer more than just trips — we craft luxury experiences led by local guides who know every corner of the Red Sea, supported by genuine 24/7 customer care.", de: 'Bei Lotus Sharm bieten wir mehr als nur Ausflüge — wir gestalten Luxuserlebnisse mit einheimischen Guides, die jeden Winkel des Roten Meeres kennen, unterstützt durch echten Rund-um-die-Uhr-Service.',
                     ru: 'Lotus Sharm — это не просто экскурсии, а тщательно продуманные люксовые впечатления с местными гидами и круглосуточной поддержкой.',
                     it: 'A Lotus Sharm offriamo esperienze di lusso curate da guide locali esperte, con assistenza 24/7.',
                   })}
@@ -267,7 +267,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
                   {L(locale, {
                     ar: 'من الغوص في الشعاب المرجانية إلى رحلات السفاري الصحراوية، من الفنادق الفاخرة إلى خدمات النقل الخاصة — كل تفصيلة مدروسة لتمنحك راحة بال كاملة طوال إقامتك.',
-                    en: 'From coral reef diving to desert safaris, from luxury hotels to private transfers — every detail is thought through to give you complete peace of mind.', de: 'From coral reef diving to desert safaris, from luxury hotels to private transfers — every detail is thought through to give you complete peace of mind.',
+                    en: 'From coral reef diving to desert safaris, from luxury hotels to private transfers — every detail is thought through to give you complete peace of mind.', de: 'Vom Tauchen am Korallenriff bis zur Wüstensafari, von Luxushotels bis zu privaten Transfers — jedes Detail ist durchdacht, damit Sie sich völlig sorglos fühlen.',
                     ru: 'От дайвинга на коралловых рифах до сафари в пустыне, от люкс-отелей до индивидуальных трансферов — каждая деталь продумана.',
                     it: 'Dal diving alle safari nel deserto, dagli hotel di lusso ai transfer privati — ogni dettaglio è curato.',
                   })}
@@ -300,7 +300,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="flex flex-wrap items-center gap-3">
                   <Button asChild className="bg-primary text-cream hover:bg-primary-900 font-bold group">
                     <Link href="/about">
-                      {L(locale, { ar: 'تعرف علينا أكثر', en: 'Learn more', de: 'Learn more', ru: 'Узнать больше', it: 'Scopri di più' })}
+                      {L(locale, { ar: 'تعرف علينا أكثر', en: 'Learn more', de: 'Mehr erfahren', ru: 'Узнать больше', it: 'Scopri di più' })}
                       <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
                     </Link>
                   </Button>
@@ -328,7 +328,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto mb-10 md:mb-14 flex flex-col items-center">
-            <span className="eyebrow">{L(locale, { ar: 'لماذا نحن', en: 'Why choose us', de: 'Why choose us', ru: 'Почему выбирают нас', it: 'Perché sceglierci' })}</span>
+            <span className="eyebrow">{L(locale, { ar: 'لماذا نحن', en: 'Why choose us', de: 'Warum wir', ru: 'Почему выбирают нас', it: 'Perché sceglierci' })}</span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">{t('home.whyUs')}</h2>
             <span className="rule-gold" />
           </Reveal>
@@ -383,7 +383,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container relative">
           <Reveal className="flex items-end justify-between flex-wrap gap-4 mb-8 md:mb-12">
             <div>
-              <span className="eyebrow">{L(locale, { ar: 'رحلاتنا المميزة', en: 'Curated experiences', de: 'Curated experiences', ru: 'Лучшие туры', it: 'Esperienze selezionate' })}</span>
+              <span className="eyebrow">{L(locale, { ar: 'رحلاتنا المميزة', en: 'Curated experiences', de: 'Sorgfältig kuratierte Erlebnisse', ru: 'Лучшие туры', it: 'Esperienze selezionate' })}</span>
               <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-2 leading-tight text-balance">{t('home.featuredTrips')}</h2>
               <p className="text-sm md:text-base text-muted-foreground max-w-md leading-relaxed">{t('home.featuredTripsDesc')}</p>
             </div>
@@ -414,11 +414,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto mb-12 md:mb-16 flex flex-col items-center">
-            <span className="eyebrow">{L(locale, { ar: 'مميزاتنا', en: 'What we offer', de: 'What we offer', ru: 'Наши преимущества', it: 'Cosa offriamo' })}</span>
+            <span className="eyebrow">{L(locale, { ar: 'مميزاتنا', en: 'What we offer', de: 'Was wir bieten', ru: 'Наши преимущества', it: 'Cosa offriamo' })}</span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
               {L(locale, {
                 ar: 'تجربة سياحية متكاملة من البداية للنهاية',
-                en: 'A complete travel experience, beginning to end', de: 'A complete travel experience, beginning to end',
+                en: 'A complete travel experience, beginning to end', de: 'Ein komplettes Reiseerlebnis, von Anfang bis Ende',
                 ru: 'Полный туристический опыт от начала до конца',
                 it: "Un'esperienza di viaggio completa, dall'inizio alla fine",
               })}
@@ -427,7 +427,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl">
               {L(locale, {
                 ar: 'كل ما تحتاجه لرحلة مثالية في شرم الشيخ تحت سقف واحد — رحلات، فنادق، مواصلات، ومرشدين محترفين.',
-                en: 'Everything you need for a perfect Sharm El Sheikh trip under one roof — tours, hotels, transfers, and expert guides.', de: 'Everything you need for a perfect Sharm El Sheikh trip under one roof — tours, hotels, transfers, and expert guides.',
+                en: 'Everything you need for a perfect Sharm El Sheikh trip under one roof — tours, hotels, transfers, and expert guides.', de: 'Alles für eine perfekte Sharm-El-Sheikh-Reise unter einem Dach — Touren, Hotels, Transfers und erfahrene Guides.',
                 ru: 'Всё для идеального путешествия в Шарм-эль-Шейхе в одном месте.',
                 it: 'Tutto per un viaggio perfetto a Sharm El Sheikh in un solo posto.',
               })}
@@ -588,10 +588,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6">
                 <div className="text-center md:text-start">
                   <span className="eyebrow eyebrow-center md:!self-start">
-                    {L(locale, { ar: 'آراء عملائنا', en: 'What our guests say', de: 'What our guests say', ru: 'Что говорят гости', it: 'I nostri ospiti' })}
+                    {L(locale, { ar: 'آراء عملائنا', en: 'What our guests say', de: 'Was unsere Gäste sagen', ru: 'Что говорят гости', it: 'I nostri ospiti' })}
                   </span>
                   <h2 className="font-serif text-2xl md:text-4xl font-bold leading-tight text-balance">
-                    {L(locale, { ar: 'تجارب حقيقية من رحلاتهم معنا', en: 'Real stories from real travelers', de: 'Real stories from real travelers', ru: 'Реальные отзывы', it: 'Storie vere' })}
+                    {L(locale, { ar: 'تجارب حقيقية من رحلاتهم معنا', en: 'Real stories from real travelers', de: 'Echte Geschichten von echten Reisenden', ru: 'Реальные отзывы', it: 'Storie vere' })}
                   </h2>
                 </div>
 
@@ -611,7 +611,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   <Button asChild size="sm" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-lg shadow-accent/25 group h-9 text-xs">
                     <Link href="/review">
                       <Star className="h-3.5 w-3.5 fill-current" />
-                      {L(locale, { ar: 'اكتب تقييمك', en: 'Write a review', de: 'Write a review', ru: 'Написать', it: 'Scrivi' })}
+                      {L(locale, { ar: 'اكتب تقييمك', en: 'Write a review', de: 'Bewertung schreiben', ru: 'Написать', it: 'Scrivi' })}
                       <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
                     </Link>
                   </Button>
@@ -631,11 +631,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto mb-12 md:mb-16 flex flex-col items-center">
-            <span className="eyebrow">{L(locale, { ar: 'كيف تحجز', en: 'How it works', de: 'How it works', ru: 'Как забронировать', it: 'Come prenotare' })}</span>
+            <span className="eyebrow">{L(locale, { ar: 'كيف تحجز', en: 'How it works', de: 'So funktioniert es', ru: 'Как забронировать', it: 'Come prenotare' })}</span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
               {L(locale, {
                 ar: '4 خطوات بسيطة لرحلة أحلامك',
-                en: '4 simple steps to your dream trip', de: '4 simple steps to your dream trip',
+                en: '4 simple steps to your dream trip', de: '4 einfache Schritte zu Ihrer Traumreise',
                 ru: '4 простых шага к мечте',
                 it: '4 semplici passi al viaggio dei sogni',
               })}
@@ -644,7 +644,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
               {L(locale, {
                 ar: 'من اختيار الرحلة إلى الاستمتاع بها — كل خطوة سهلة وواضحة.',
-                en: 'From choosing your trip to enjoying it — every step is easy and clear.', de: 'From choosing your trip to enjoying it — every step is easy and clear.',
+                en: 'From choosing your trip to enjoying it — every step is easy and clear.', de: 'Von der Auswahl bis zum Genuss — jeder Schritt ist einfach und klar.',
                 ru: 'От выбора тура до самого путешествия — всё просто.',
                 it: 'Dalla scelta del tour al viaggio — tutto è semplice.',
               })}
@@ -718,17 +718,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="mt-10 md:mt-14 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
               <span className="inline-flex items-center gap-2 font-bold text-primary">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                {L(locale, { ar: 'إلغاء مجاني', en: 'Free cancellation', de: 'Free cancellation', ru: 'Бесплатная отмена', it: 'Cancellazione gratuita' })}
+                {L(locale, { ar: 'إلغاء مجاني', en: 'Free cancellation', de: 'Kostenlose Stornierung', ru: 'Бесплатная отмена', it: 'Cancellazione gratuita' })}
               </span>
               <span className="w-px h-4 bg-accent/30" />
               <span className="inline-flex items-center gap-2 font-bold text-primary">
                 <Sparkles className="h-4 w-4 text-accent" />
-                {L(locale, { ar: 'تأكيد فوري', en: 'Instant confirmation', de: 'Instant confirmation', ru: 'Мгновенное подтверждение', it: 'Conferma immediata' })}
+                {L(locale, { ar: 'تأكيد فوري', en: 'Instant confirmation', de: 'Sofortige Bestätigung', ru: 'Мгновенное подтверждение', it: 'Conferma immediata' })}
               </span>
               <span className="w-px h-4 bg-accent/30" />
               <span className="inline-flex items-center gap-2 font-bold text-primary">
                 <Award className="h-4 w-4 text-accent-700" />
-                {L(locale, { ar: 'مرخصة قانونياً', en: 'Officially licensed', de: 'Officially licensed', ru: 'Лицензировано', it: 'Concessionato' })}
+                {L(locale, { ar: 'مرخصة قانونياً', en: 'Officially licensed', de: 'Offiziell lizenziert', ru: 'Лицензировано', it: 'Concessionato' })}
               </span>
             </div>
           </Reveal>
@@ -759,11 +759,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   </span>
                 </div>
                 <h2 className="font-serif text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-balance leading-tight">
-                  {L(locale, { ar: 'جاهز لمغامرتك القادمة؟', en: 'Ready for your next adventure?', de: 'Ready for your next adventure?', ru: 'Готовы к новому приключению?', it: 'Pronto per la prossima avventura?' })}
+                  {L(locale, { ar: 'جاهز لمغامرتك القادمة؟', en: 'Ready for your next adventure?', de: 'Bereit für Ihr nächstes Abenteuer?', ru: 'Готовы к новому приключению?', it: 'Pronto per la prossima avventura?' })}
                 </h2>
                 <span className="rule-gold" />
                 <p className="text-sm md:text-lg opacity-90 mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed">
-                  {L(locale, { ar: 'احجز رحلتك اليوم واستمتع بتجربة سياحية لا تُنسى في شرم الشيخ', en: 'Book today and enjoy an unforgettable experience in Sharm El Sheikh', de: 'Book today and enjoy an unforgettable experience in Sharm El Sheikh', ru: 'Забронируйте сегодня и получите незабываемые впечатления в Шарм-эль-Шейхе', it: 'Prenota oggi e goditi un\'esperienza indimenticabile a Sharm El Sheikh' })}
+                  {L(locale, { ar: 'احجز رحلتك اليوم واستمتع بتجربة سياحية لا تُنسى في شرم الشيخ', en: 'Book today and enjoy an unforgettable experience in Sharm El Sheikh', de: 'Buchen Sie heute und genießen Sie ein unvergessliches Erlebnis in Sharm El Sheikh', ru: 'Забронируйте сегодня и получите незабываемые впечатления в Шарм-эль-Шейхе', it: 'Prenota oggi e goditi un\'esperienza indimenticabile a Sharm El Sheikh' })}
                 </p>
                 <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-2xl shadow-accent/40 group hover:-translate-y-0.5 transition-all animate-glow-pulse">
                   <Link href="/trips">

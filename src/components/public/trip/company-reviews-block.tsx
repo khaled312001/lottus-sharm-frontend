@@ -24,10 +24,10 @@ function relativeTime(iso: string, locale: string): string {
   const d = new Date(iso);
   const diff = Date.now() - d.getTime();
   const day = 24 * 60 * 60 * 1000;
-  if (diff < day) return L(locale, { ar: 'اليوم', en: 'Today', de: 'Today', ru: 'Сегодня', it: 'Oggi' }) as string;
+  if (diff < day) return L(locale, { ar: 'اليوم', en: 'Today', de: 'Heute', ru: 'Сегодня', it: 'Oggi' }) as string;
   if (diff < 7 * day) {
     const n = Math.floor(diff / day);
-    return L(locale, { ar: `قبل ${n} ${n === 1 ? 'يوم' : 'أيام'}`, en: `${n}d ago`, de: `${n}d ago`, ru: `${n} дн. назад`, it: `${n}g fa` }) as string;
+    return L(locale, { ar: `قبل ${n} ${n === 1 ? 'يوم' : 'أيام'}`, en: `${n}d ago`, de: `vor ${n} T`, ru: `${n} дн. назад`, it: `${n}g fa` }) as string;
   }
   return d.toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en');
 }
@@ -80,13 +80,13 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
       <div className="inline-flex items-center gap-2.5 mb-3">
         <span className="block w-7 h-px bg-accent" />
         <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">
-          {L(locale, { ar: 'تقييمات عملائنا', en: 'Customer reviews', de: 'Customer reviews', ru: 'Отзывы клиентов', it: 'Recensioni clienti' })}
+          {L(locale, { ar: 'تقييمات عملائنا', en: 'Customer reviews', de: 'Kundenbewertungen', ru: 'Отзывы клиентов', it: 'Recensioni clienti' })}
         </span>
       </div>
       <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-5 leading-tight text-balance">
         {L(locale, {
           ar: 'تجارب حقيقية من زوارنا',
-          en: 'Real stories from our travelers', de: 'Real stories from our travelers',
+          en: 'Real stories from our travelers', de: 'Echte Geschichten von unseren Reisenden',
           ru: 'Реальные истории наших путешественников',
           it: 'Storie vere dei nostri viaggiatori',
         })}
@@ -101,7 +101,7 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
           <div className="text-sm text-muted-foreground mt-2 font-semibold">
             {L(locale, {
               ar: `${total} تقييم موثق`,
-              en: `${total} verified review${total === 1 ? '' : 's'}`, de: `${total} verified review${total === 1 ? '' : 's'}`,
+              en: `${total} verified review${total === 1 ? '' : 's'}`, de: `${total} verifizierte Bewertung${total === 1 ? '' : 'en'}`,
               ru: `${total} проверенных отзыв${total === 1 ? '' : total < 5 ? 'а' : 'ов'}`,
               it: `${total} recensione verificat${total === 1 ? 'a' : 'e'}`,
             })}
@@ -155,7 +155,7 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
                     <div className="text-[11px] text-muted-foreground inline-flex items-center gap-1.5 mt-0.5">
                       <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 font-bold border border-emerald-500/25">
                         <svg className="h-2.5 w-2.5" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2l-3.5-3.5a1 1 0 1 0-1.4 1.4l4.2 4.2c.4.4 1 .4 1.4 0l9-9a1 1 0 1 0-1.4-1.4L9 16.2z"/></svg>
-                        {L(locale, { ar: 'موثق', en: 'verified', de: 'verified', ru: 'подтв.', it: 'verificato' })}
+                        {L(locale, { ar: 'موثق', en: 'verified', de: 'verifiziert', ru: 'подтв.', it: 'verificato' })}
                       </span>
                       <span>·</span>
                       <span>{relativeTime(r.createdAt, locale)}</span>
@@ -202,7 +202,7 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
                   ? (L(locale, { ar: 'عرض أقل', en: 'Show less', de: 'Weniger anzeigen', ru: 'Свернуть', it: 'Mostra meno' }) as string)
                   : (L(locale, {
                       ar: `عرض كل التقييمات (${items.length})`,
-                      en: `View all reviews (${items.length})`, de: `View all reviews (${items.length})`,
+                      en: `View all reviews (${items.length})`, de: `Alle Bewertungen ansehen (${items.length})`,
                       ru: `Все отзывы (${items.length})`,
                       it: `Tutte le recensioni (${items.length})`,
                     }) as string)}
@@ -216,7 +216,7 @@ export function CompanyReviewsBlock({ locale }: { locale: string }) {
           <p className="text-sm text-muted-foreground">
             {L(locale, {
               ar: 'لسه مفيش تقييمات بعد.',
-              en: 'No reviews yet.', de: 'No reviews yet.',
+              en: 'No reviews yet.', de: 'Noch keine Bewertungen.',
               ru: 'Пока нет отзывов.',
               it: 'Nessuna recensione ancora.',
             })}

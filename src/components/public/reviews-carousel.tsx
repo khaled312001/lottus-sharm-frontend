@@ -135,7 +135,7 @@ export function ReviewsCarousel({ reviews, locale }: { reviews: ReviewItem[]; lo
               <span className="font-bold text-accent text-sm md:text-base break-words [overflow-wrap:anywhere]">{r.customerName}</span>
               <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
                 <BadgeCheck className="h-2.5 w-2.5" />
-                {L(locale, { ar: 'موثق', en: 'verified', de: 'verified', ru: 'подтв.', it: 'verificato' })}
+                {L(locale, { ar: 'موثق', en: 'verified', de: 'verifiziert', ru: 'подтв.', it: 'verificato' })}
               </span>
               <span className="inline-flex items-center gap-1 text-[11px] text-cream/55">
                 <Calendar className="h-2.5 w-2.5" />

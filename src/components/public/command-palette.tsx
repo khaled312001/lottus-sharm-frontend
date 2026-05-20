@@ -147,7 +147,7 @@ export function CommandPalette() {
   const groups: { key: Item['group']; label: string; items: Item[] }[] = [
     { key: 'trips', label: L(locale, { ar: 'الرحلات', en: 'Trips', de: 'Touren', ru: 'Туры', it: 'Tour' }) as string, items: items.filter((i) => i.group === 'trips') },
     { key: 'posts', label: L(locale, { ar: 'المدونة', en: 'Blog', de: 'Blog', ru: 'Блог', it: 'Blog' }) as string, items: items.filter((i) => i.group === 'posts') },
-    { key: 'pages', label: L(locale, { ar: 'الصفحات', en: 'Pages', de: 'Pages', ru: 'Страницы', it: 'Pagine' }) as string, items: items.filter((i) => i.group === 'pages') },
+    { key: 'pages', label: L(locale, { ar: 'الصفحات', en: 'Pages', de: 'Seiten', ru: 'Страницы', it: 'Pagine' }) as string, items: items.filter((i) => i.group === 'pages') },
   ];
 
   let runningIdx = -1;
@@ -170,7 +170,7 @@ export function CommandPalette() {
             type="search"
             value={q}
             onChange={(e) => { setQ(e.target.value); setActive(0); }}
-            placeholder={L(locale, { ar: 'ابحث في الموقع...', en: 'Search the site...', de: 'Search the site...', ru: 'Поиск по сайту...', it: 'Cerca nel sito...' }) as string}
+            placeholder={L(locale, { ar: 'ابحث في الموقع...', en: 'Search the site...', de: 'Website durchsuchen ...', ru: 'Поиск по сайту...', it: 'Cerca nel sito...' }) as string}
             className="flex-1 h-14 bg-transparent outline-none text-base text-primary placeholder:text-muted-foreground"
           />
           <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-mono text-muted-foreground bg-muted/30">ESC</kbd>
@@ -181,13 +181,13 @@ export function CommandPalette() {
           {loading && (
             <div className="px-3 py-6 text-center text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
-              {L(locale, { ar: 'جاري البحث...', en: 'Searching...', de: 'Searching...', ru: 'Поиск...', it: 'Ricerca...' })}
+              {L(locale, { ar: 'جاري البحث...', en: 'Searching...', de: 'Suche läuft ...', ru: 'Поиск...', it: 'Ricerca...' })}
             </div>
           )}
 
           {!loading && items.length === 0 && (
             <div className="px-3 py-8 text-center text-sm text-muted-foreground">
-              {L(locale, { ar: 'لا توجد نتائج', en: 'No results', de: 'No results', ru: 'Нет результатов', it: 'Nessun risultato' })}
+              {L(locale, { ar: 'لا توجد نتائج', en: 'No results', de: 'Keine Ergebnisse', ru: 'Нет результатов', it: 'Nessun risultato' })}
             </div>
           )}
 
@@ -235,16 +235,16 @@ export function CommandPalette() {
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 rounded border font-mono text-[10px] bg-white">↑↓</kbd>
-              {L(locale, { ar: 'تنقل', en: 'navigate', de: 'navigate', ru: 'навигация', it: 'naviga' })}
+              {L(locale, { ar: 'تنقل', en: 'navigate', de: 'navigieren', ru: 'навигация', it: 'naviga' })}
             </span>
             <span className="inline-flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 rounded border font-mono text-[10px] bg-white">↵</kbd>
-              {L(locale, { ar: 'فتح', en: 'open', de: 'open', ru: 'открыть', it: 'apri' })}
+              {L(locale, { ar: 'فتح', en: 'open', de: 'öffnen', ru: 'открыть', it: 'apri' })}
             </span>
           </div>
           <div className="inline-flex items-center gap-1">
             <CmdIcon className="h-3 w-3" />K
-            <span className="opacity-60">{L(locale, { ar: 'لإغلاق', en: 'to toggle', de: 'to toggle', ru: 'переключить', it: 'apri/chiudi' })}</span>
+            <span className="opacity-60">{L(locale, { ar: 'لإغلاق', en: 'to toggle', de: 'zum Umschalten', ru: 'переключить', it: 'apri/chiudi' })}</span>
           </div>
         </div>
       </div>

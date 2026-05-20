@@ -40,10 +40,10 @@ export function PaymentMethodsCard({
     try {
       await navigator.clipboard.writeText(value);
       setCopied(key);
-      toast.success(L(locale, { ar: 'تم النسخ', en: 'Copied', de: 'Copied', ru: 'Скопировано', it: 'Copiato' }) as string);
+      toast.success(L(locale, { ar: 'تم النسخ', en: 'Copied', de: 'Kopiert', ru: 'Скопировано', it: 'Copiato' }) as string);
       setTimeout(() => setCopied(null), 1500);
     } catch {
-      toast.error(L(locale, { ar: 'تعذر النسخ', en: 'Copy failed', de: 'Copy failed', ru: 'Не удалось', it: 'Errore' }) as string);
+      toast.error(L(locale, { ar: 'تعذر النسخ', en: 'Copy failed', de: 'Kopieren fehlgeschlagen', ru: 'Не удалось', it: 'Errore' }) as string);
     }
   };
 
@@ -159,7 +159,7 @@ export function PaymentMethodsCard({
         <ShieldCheck className="h-3 w-3 text-emerald-600" />
         {L(locale, {
           ar: 'بعد التحويل ارفع صورة الإيصال هنا لتأكيد الحجز خلال ساعات',
-          en: 'After transfer, upload your receipt here to confirm within hours', de: 'After transfer, upload your receipt here to confirm within hours',
+          en: 'After transfer, upload your receipt here to confirm within hours', de: 'Laden Sie nach der Überweisung Ihren Beleg hier hoch, um innerhalb von Stunden zu bestätigen',
           ru: 'После перевода загрузите чек — подтвердим в течение часов',
           it: 'Dopo il bonifico, carica la ricevuta — confermiamo entro poche ore',
         })}

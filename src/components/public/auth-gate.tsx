@@ -43,10 +43,10 @@ export function AuthGate({
   if (customer) return <>{children}</>;
 
   const headline = title || (reason === 'reviews'
-    ? (L(locale, { ar: 'سجّل دخولك لتترك تقييماً', en: 'Sign in to leave a review', de: 'Sign in to leave a review', ru: 'Войдите, чтобы оставить отзыв', it: 'Accedi per lasciare una recensione' }) as string)
+    ? (L(locale, { ar: 'سجّل دخولك لتترك تقييماً', en: 'Sign in to leave a review', de: 'Melden Sie sich an, um eine Bewertung abzugeben', ru: 'Войдите, чтобы оставить отзыв', it: 'Accedi per lasciare una recensione' }) as string)
     : reason === 'comments'
-    ? (L(locale, { ar: 'سجّل دخولك لكتابة تعليق', en: 'Sign in to post a comment', de: 'Sign in to post a comment', ru: 'Войдите, чтобы оставить комментарий', it: 'Accedi per commentare' }) as string)
-    : (L(locale, { ar: 'سجّل دخولك للمتابعة', en: 'Sign in to continue', de: 'Sign in to continue', ru: 'Войдите, чтобы продолжить', it: 'Accedi per continuare' }) as string));
+    ? (L(locale, { ar: 'سجّل دخولك لكتابة تعليق', en: 'Sign in to post a comment', de: 'Melden Sie sich an, um einen Kommentar zu schreiben', ru: 'Войдите, чтобы оставить комментарий', it: 'Accedi per commentare' }) as string)
+    : (L(locale, { ar: 'سجّل دخولك للمتابعة', en: 'Sign in to continue', de: 'Melden Sie sich an, um fortzufahren', ru: 'Войдите, чтобы продолжить', it: 'Accedi per continuare' }) as string));
 
   return (
     <div className="relative bg-gradient-to-br from-primary via-primary to-primary-900 text-cream rounded-2xl border border-accent/25 shadow-xl overflow-hidden">
@@ -66,7 +66,7 @@ export function AuthGate({
         <p className="text-sm text-cream/75 mb-5 max-w-md mx-auto leading-relaxed">
           {L(locale, {
             ar: 'اسمك وبريدك سيُجلبا تلقائياً من حسابك — لا داعي لإدخالهما يدوياً',
-            en: 'Your name & email are pulled from your account — no need to fill them in', de: 'Your name & email are pulled from your account — no need to fill them in',
+            en: 'Your name & email are pulled from your account — no need to fill them in', de: 'Name & E-Mail werden aus Ihrem Konto übernommen — keine Eingabe nötig',
             ru: 'Ваше имя и email подтянутся из аккаунта — заполнять не нужно',
             it: 'Nome ed email vengono presi dal tuo account — niente compilazione',
           })}
@@ -80,7 +80,7 @@ export function AuthGate({
           <Sparkles className="h-3 w-3 text-accent" />
           {L(locale, {
             ar: 'دخول آمن بحساب جوجل — لا حاجة لكلمة سر',
-            en: 'Secure Google sign-in — no password needed', de: 'Secure Google sign-in — no password needed',
+            en: 'Secure Google sign-in — no password needed', de: 'Sichere Google-Anmeldung — kein Passwort nötig',
             ru: 'Безопасный вход через Google — без пароля',
             it: 'Accesso sicuro Google — niente password',
           })}

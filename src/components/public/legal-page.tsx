@@ -58,7 +58,7 @@ export function LegalPage({
             <p className="text-cream/80 text-sm md:text-base max-w-2xl">
               {L(locale, {
                 ar: 'هذه الصفحة شفافة وملزمة لكلا الطرفين. اقرأها بعناية قبل استخدام خدماتنا.',
-                en: 'This page is transparent and binding for both parties. Please read carefully before using our services.', de: 'This page is transparent and binding for both parties. Please read carefully before using our services.',
+                en: 'This page is transparent and binding for both parties. Please read carefully before using our services.', de: 'Diese Seite ist transparent und für beide Parteien verbindlich. Bitte lesen Sie sie sorgfältig, bevor Sie unsere Dienste nutzen.',
                 ru: 'Эта страница прозрачна и обязательна для обеих сторон. Внимательно ознакомьтесь перед использованием наших услуг.',
                 it: 'Questa pagina è trasparente e vincolante per entrambe le parti. Leggi con attenzione prima di usare i nostri servizi.',
               })}
@@ -89,12 +89,12 @@ export function LegalPage({
                 <div className="absolute -top-10 -end-10 w-32 h-32 rounded-full bg-accent/20 blur-2xl pointer-events-none" />
                 <div className="relative">
                   <div className="text-accent uppercase tracking-[0.3em] text-[10px] font-bold mb-2">
-                    {L(locale, { ar: 'بحاجة لمساعدة؟', en: 'Need help?', de: 'Need help?', ru: 'Нужна помощь?', it: 'Hai bisogno di aiuto?' })}
+                    {L(locale, { ar: 'بحاجة لمساعدة؟', en: 'Need help?', de: 'Brauchen Sie Hilfe?', ru: 'Нужна помощь?', it: 'Hai bisogno di aiuto?' })}
                   </div>
                   <h3 className="font-serif text-lg font-bold mb-3 leading-tight">
                     {L(locale, {
                       ar: 'فريقنا متاح 24/7 للرد على استفساراتك',
-                      en: 'Our team is online 24/7 to answer your questions', de: 'Our team is online 24/7 to answer your questions',
+                      en: 'Our team is online 24/7 to answer your questions', de: 'Unser Team ist rund um die Uhr online, um Ihre Fragen zu beantworten',
                       ru: 'Команда онлайн 24/7 для ответов на ваши вопросы',
                       it: 'Il nostro team è online 24/7 per rispondere',
                     })}
@@ -107,7 +107,7 @@ export function LegalPage({
                     <a
                       href={buildWhatsAppLink('201090767278', L(locale, {
                         ar: 'مرحبا، لدي سؤال عن سياستكم',
-                        en: 'Hi! I have a question about your policy', de: 'Hi! I have a question about your policy',
+                        en: 'Hi! I have a question about your policy', de: 'Hallo! Ich habe eine Frage zu Ihren Richtlinien',
                         ru: 'Здравствуйте! У меня вопрос о вашей политике',
                         it: 'Ciao! Ho una domanda sulla vostra politica',
                       }))}
@@ -130,7 +130,7 @@ export function LegalPage({
             <Reveal delay={0.25}>
               <div className="rounded-2xl bg-white border border-accent/15 p-5">
                 <div className="text-accent uppercase tracking-[0.3em] text-[10px] font-bold mb-3">
-                  {L(locale, { ar: 'الصفحات القانونية', en: 'Legal pages', de: 'Legal pages', ru: 'Юридические страницы', it: 'Pagine legali' })}
+                  {L(locale, { ar: 'الصفحات القانونية', en: 'Legal pages', de: 'Rechtliche Seiten', ru: 'Юридические страницы', it: 'Pagine legali' })}
                 </div>
                 <ul className="space-y-1.5 text-sm">
                   {(['privacy', 'terms', 'cancellation-policy'] as const).map((s) => {
@@ -165,7 +165,7 @@ export function LegalPage({
                 <div className="mt-3 pt-3 border-t border-accent/15">
                   <Link href="/" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
                     <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" />
-                    {L(locale, { ar: 'العودة للرئيسية', en: 'Back to home', de: 'Back to home', ru: 'На главную', it: 'Torna alla home' })}
+                    {L(locale, { ar: 'العودة للرئيسية', en: 'Back to home', de: 'Zurück zur Startseite', ru: 'На главную', it: 'Torna alla home' })}
                   </Link>
                 </div>
               </div>
