@@ -158,6 +158,14 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
+  // Reserve space at the bottom of the viewport for the mobile sticky CTA bar so
+  // the floating FABs (WhatsApp / back-to-top) lift above it instead of overlapping.
+  // The var only affects elements that opt in via calc(... + var(--mobile-cta)).
+  useEffect(() => {
+    document.body.style.setProperty('--mobile-cta', '5rem');
+    return () => { document.body.style.removeProperty('--mobile-cta'); };
+  }, []);
+
   return (
     <>
       {/* ======================== COMPACT STICKY TRIGGER ======================== */}
@@ -668,6 +676,31 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
 
       </div>{/* /scrollable */}
           </div>{/* /panel */}
+        </div>,
+        document.body,
+      )}
+
+      {/* ======================== MOBILE STICKY CTA BAR ========================
+          Always reachable without scrolling to the form. Hidden on lg+ (where the
+          sidebar widget is sticky) and while the modal is open. Portaled to body
+          so it escapes the motion/transform parent. */}
+      {mounted && !open && createPortal(
+        <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 flex items-center gap-3 bg-white/95 backdrop-blur border-t border-accent/20 shadow-[0_-6px_24px_-8px_rgba(10,40,40,0.3)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
+          <div className="leading-none shrink-0">
+            <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold">{tCommon('from')}</div>
+            <div className="font-serif text-lg font-bold text-accent-700 mt-0.5">
+              <Price amount={unit} from={fromCurrency} />
+              <span className="text-[10px] text-muted-foreground font-sans"> / {tCommon('perPerson')}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-accent hover:bg-accent-400 text-primary font-bold text-base shadow-lg shadow-accent/40 active:scale-[0.98] transition-all"
+          >
+            <CreditCard className="h-5 w-5" />
+            {L(locale, { ar: 'احجز الآن', en: 'Book now', de: 'Jetzt buchen', ru: 'Забронировать', it: 'Prenota ora' })}
+          </button>
         </div>,
         document.body,
       )}

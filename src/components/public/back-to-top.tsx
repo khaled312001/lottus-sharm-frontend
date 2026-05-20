@@ -38,7 +38,7 @@ export function BackToTop() {
       aria-label="Back to top"
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       className={cn(
-        'fixed bottom-4 md:bottom-6 end-4 md:end-6 z-30 inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary text-cream shadow-2xl shadow-primary-900/30 border border-accent/30 backdrop-blur transition-all duration-300 hover:bg-primary-700 hover:-translate-y-1 hover:shadow-accent/30',
+        'fixed bottom-[calc(1rem+var(--mobile-cta,0px))] lg:bottom-6 end-4 md:end-6 z-30 inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary text-cream shadow-2xl shadow-primary-900/30 border border-accent/30 backdrop-blur transition-all duration-300 hover:bg-primary-700 hover:-translate-y-1 hover:shadow-accent/30',
         visible ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-2',
       )}
     >

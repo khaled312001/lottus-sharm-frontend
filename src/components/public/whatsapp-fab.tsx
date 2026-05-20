@@ -15,7 +15,7 @@ export function WhatsAppFAB({ phone }: { phone: string }) {
       transition={{ delay: 1.5, type: 'spring', stiffness: 200, damping: 15 }}
       whileHover={{ scale: 1.05, y: -2 }}
       whileTap={{ scale: 0.95 }}
-      className="fixed bottom-4 md:bottom-6 start-4 md:start-6 z-40 flex items-center gap-2 rounded-full bg-[#25D366] w-13 h-13 md:w-auto md:h-auto md:px-5 md:py-3.5 text-white shadow-2xl shadow-[#25D366]/40"
+      className="fixed bottom-[calc(1rem+var(--mobile-cta,0px))] lg:bottom-6 start-4 md:start-6 z-40 flex items-center gap-2 rounded-full bg-[#25D366] w-13 h-13 md:w-auto md:h-auto md:px-5 md:py-3.5 text-white shadow-2xl shadow-[#25D366]/40 transition-[bottom] duration-300"
       style={{ width: 'auto' }}
     >
       <span className="absolute -inset-1 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />

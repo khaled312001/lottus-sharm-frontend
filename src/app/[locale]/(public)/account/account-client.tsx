@@ -7,7 +7,7 @@ import { Link } from '@/i18n/routing';
 import {
   Calendar, Heart, CreditCard, MessageCircle, LogOut, Loader2, MapPin, Clock,
   Users, CheckCircle2, AlertCircle, XCircle, FileCheck2, ImageIcon, ExternalLink,
-  Smartphone, Send, Banknote, Receipt, ArrowUpRight, Copy, Check, Phone, Mail,
+  Smartphone, Send, Banknote, Receipt, ArrowUpRight, Copy, Check, Phone,
   TrendingUp, Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { useCustomer } from '@/lib/customer-auth';
 import { API_BASE } from '@/lib/api';
 import { Price } from '@/components/public/price';
 import { ImageLightbox } from '@/components/public/image-lightbox';
+import { CustomerChat } from '@/components/public/customer-chat';
 import { toast } from 'sonner';
 
 interface PaymentItem {
@@ -672,7 +673,7 @@ export function AccountClient({ locale }: { locale: string }) {
 
         {/* ===== MESSAGES ===== */}
         {tab === 'messages' && !busy && (
-          <CustomerMessageForm locale={locale} customerEmail={customer.email} customerName={customer.name} />
+          <CustomerChat locale={locale} />
         )}
       </div>
 
@@ -715,176 +716,6 @@ function StatCard({
   );
 }
 
-function CustomerMessageForm({ locale, customerEmail, customerName }: { locale: string; customerEmail: string; customerName: string }) {
-  const [subject, setSubject] = useState('');
-  const [message, setMessage] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState<{ at: Date; subject: string; body: string }[]>([]);
-
-  const submit = async () => {
-    if (message.trim().length < 5) {
-      toast.error(L(locale, { ar: 'الرسالة قصيرة جداً', en: 'Message too short', de: 'Nachricht zu kurz', ru: 'Сообщение слишком короткое', it: 'Messaggio troppo corto' }) as string);
-      return;
-    }
-    setBusy(true);
-    try {
-      const res = await fetch(`${API_BASE}/public/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: customerName,
-          email: customerEmail,
-          subject: subject.trim() || 'Message from customer dashboard',
-          message: message.trim(),
-          locale: locale.toUpperCase(),
-        }),
-      });
-      const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.ok) throw new Error(data?.error?.code || 'Failed');
-      setSent((s) => [{ at: new Date(), subject: subject.trim() || '—', body: message.trim() }, ...s]);
-      setSubject(''); setMessage('');
-      toast.success(L(locale, { ar: 'اتبعتت رسالتك للفريق', en: 'Message sent to our team', de: 'Nachricht an unser Team gesendet', ru: 'Сообщение отправлено', it: 'Messaggio inviato' }) as string);
-    } catch {
-      toast.error(L(locale, { ar: 'فشل الإرسال — جرب واتساب', en: 'Send failed — try WhatsApp', de: 'Senden fehlgeschlagen — versuchen Sie WhatsApp', ru: 'Ошибка отправки', it: 'Invio fallito' }) as string);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <div className="grid lg:grid-cols-[1fr_320px] gap-4">
-      <div className="bg-white rounded-2xl border border-accent/15 shadow-sm p-5 md:p-6">
-        <div className="flex items-start gap-3 mb-5">
-          <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-accent/15 text-accent-700 shrink-0">
-            <MessageCircle className="h-5 w-5" />
-          </span>
-          <div className="min-w-0">
-            <h2 className="font-serif text-xl font-bold text-primary leading-tight">
-              {L(locale, { ar: 'كلم فريقنا مباشرة', en: 'Message our team', de: 'Schreiben Sie unserem Team', ru: 'Напишите нашей команде', it: 'Scrivi al nostro team' })}
-            </h2>
-            <p className="text-xs text-muted-foreground mt-1">
-              {L(locale, {
-                ar: 'بنرد خلال ساعات قليلة في أوقات العمل. لاستفسار عاجل، استخدم واتساب.',
-                en: 'We reply within hours during business hours. For urgent matters, use WhatsApp.', de: 'Wir antworten innerhalb von Stunden während der Geschäftszeiten. Bei dringenden Anliegen nutzen Sie WhatsApp.',
-                ru: 'Отвечаем в течение нескольких часов. Срочные вопросы — WhatsApp.',
-                it: 'Rispondiamo entro poche ore. Urgenze — WhatsApp.',
-              })}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <div>
-            <label className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5 block">
-              {L(locale, { ar: 'الموضوع (اختياري)', en: 'Subject (optional)', de: 'Betreff (optional)', ru: 'Тема (необязательно)', it: 'Oggetto (opzionale)' })}
-            </label>
-            <input
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              maxLength={120}
-              placeholder={L(locale, { ar: 'مثلاً: استفسار عن رحلة', en: 'e.g. Question about a trip', de: 'z. B. Frage zu einem Ausflug', ru: 'например, вопрос о туре', it: 'es. Domanda su un tour' }) as string}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-accent/20 focus:border-accent/60 focus:outline-none bg-muted/30 focus:bg-white text-sm transition-colors"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5 block">
-              {L(locale, { ar: 'الرسالة', en: 'Message', de: 'Nachricht', ru: 'Сообщение', it: 'Messaggio' })} <span className="text-accent">*</span>
-            </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={6}
-              maxLength={2000}
-              placeholder={L(locale, {
-                ar: 'اكتب رسالتك هنا...',
-                en: 'Type your message here...', de: 'Schreiben Sie hier Ihre Nachricht ...',
-                ru: 'Напишите ваше сообщение...',
-                it: 'Scrivi il tuo messaggio...',
-              }) as string}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-accent/20 focus:border-accent/60 focus:outline-none bg-muted/30 focus:bg-white text-sm resize-y min-h-[140px] transition-colors"
-            />
-            <div className="text-[10px] text-muted-foreground text-end mt-1 tabular-nums">{message.length}/2000</div>
-          </div>
-          <Button
-            onClick={submit}
-            disabled={busy || message.trim().length < 5}
-            className="bg-primary text-cream hover:bg-primary-900 w-full md:w-auto"
-          >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {L(locale, { ar: 'إرسال', en: 'Send', de: 'Senden', ru: 'Отправить', it: 'Invia' })}
-          </Button>
-        </div>
-
-        {sent.length > 0 && (
-          <div className="mt-6 pt-5 border-t border-accent/15">
-            <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              {L(locale, { ar: 'تم الإرسال بنجاح', en: 'Sent successfully', de: 'Erfolgreich gesendet', ru: 'Успешно отправлено', it: 'Inviato con successo' })}
-            </h3>
-            <ul className="space-y-2">
-              {sent.map((s, i) => (
-                <li key={i} className="bg-emerald-50/40 border border-emerald-500/20 rounded-lg p-3 text-xs">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-primary truncate">{s.subject}</span>
-                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                      {s.at.toLocaleTimeString(locale === 'ar' ? 'ar-EG' : locale, { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground mt-1 line-clamp-2">{s.body}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      <aside className="space-y-3">
-        <div className="bg-gradient-to-br from-primary via-primary to-primary-900 text-cream rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <Smartphone className="h-5 w-5 text-accent" />
-            <h3 className="font-serif text-lg font-bold">
-              {L(locale, { ar: 'أسرع رد على واتساب', en: 'Fastest reply on WhatsApp', de: 'Schnellste Antwort per WhatsApp', ru: 'Быстрее в WhatsApp', it: 'Risposta veloce su WhatsApp' })}
-            </h3>
-          </div>
-          <p className="text-xs text-cream/80 mb-4 leading-relaxed">
-            {L(locale, {
-              ar: 'فريقنا متاح على واتساب 24/7 لأي استفسار عاجل.',
-              en: 'Our team is available on WhatsApp 24/7 for any urgent question.', de: 'Unser Team ist rund um die Uhr per WhatsApp für dringende Fragen erreichbar.',
-              ru: 'Команда на связи в WhatsApp 24/7.',
-              it: 'Team disponibile su WhatsApp 24/7.',
-            })}
-          </p>
-          <a
-            href={`https://wa.me/201090767278?text=${encodeURIComponent(`مرحبا، اسمي ${customerName}`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-sm transition-colors"
-          >
-            <MessageCircle className="h-4 w-4" />
-            {L(locale, { ar: 'افتح واتساب', en: 'Open WhatsApp', de: 'WhatsApp öffnen', ru: 'Открыть WhatsApp', it: 'Apri WhatsApp' })}
-          </a>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-accent/15 p-5">
-          <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
-            <Phone className="h-4 w-4 text-accent" />
-            {L(locale, { ar: 'بيانات اتصال أخرى', en: 'Other contacts', de: 'Weitere Kontakte', ru: 'Другие контакты', it: 'Altri contatti' })}
-          </h3>
-          <ul className="space-y-2 text-xs">
-            <li className="flex items-center gap-2">
-              <Phone className="h-3 w-3 text-accent/70" />
-              <a href="tel:+201090767278" dir="ltr" className="text-foreground/80 hover:text-accent-700 font-mono">+20 109 076 7278</a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail className="h-3 w-3 text-accent/70" />
-              <a href="mailto:info@lotussharm.com" className="text-foreground/80 hover:text-accent-700">info@lotussharm.com</a>
-            </li>
-          </ul>
-        </div>
-      </aside>
-    </div>
-  );
-}
 
 function EmptyState({
   icon: Icon, title, desc, cta, href, onClick, external,

@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 export type AdminNotification = {
   id: string;
-  type: 'booking' | 'review' | 'comment' | 'contact';
+  type: 'booking' | 'review' | 'comment' | 'contact' | 'message';
   title: string;
   body?: string;
   link?: string;
@@ -38,6 +38,7 @@ const ICONS: Record<AdminNotification['type'], LucideIcon> = {
   review: Star,
   comment: MessageSquare,
   contact: Mail,
+  message: MessageSquare,
 };
 
 const TYPE_STYLES: Record<AdminNotification['type'], string> = {
@@ -45,6 +46,7 @@ const TYPE_STYLES: Record<AdminNotification['type'], string> = {
   review:  'bg-amber-100 text-amber-700 border-amber-300',
   comment: 'bg-sky-100 text-sky-700 border-sky-300',
   contact: 'bg-violet-100 text-violet-700 border-violet-300',
+  message: 'bg-teal-100 text-teal-700 border-teal-300',
 };
 
 // Two soft synthesised chimes — distinct per category — so admins can tell
@@ -61,6 +63,7 @@ function playChime(type: AdminNotification['type']) {
       review:  [988, 1175],    // softer two-tone
       comment: [659, 784],     // mid two-tone
       contact: [523, 659, 784], // three-tone alert
+      message: [784, 1046],    // light "pop" two-tone — incoming chat
     };
     const seq = tones[type];
     seq.forEach((freq, i) => {
@@ -91,6 +94,11 @@ export function AdminNotificationsProvider({ children }: { children: React.React
     return localStorage.getItem(SOUND_KEY) !== 'off';
   });
   const esRef = useRef<EventSource | null>(null);
+  const itemsRef = useRef<AdminNotification[]>(items);
+  itemsRef.current = items;
+  const soundRef = useRef(soundEnabled);
+  soundRef.current = soundEnabled;
+  const lastPollRef = useRef<number>(Date.now());
 
   const unread = items.filter((n) => !n.read).length;
 
@@ -100,6 +108,33 @@ export function AdminNotificationsProvider({ children }: { children: React.React
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next.slice(0, 50)));
     }
   }, []);
+
+  // Add a freshly-arrived notification (from SSE or polling). De-dupes by id so
+  // the two channels never double-count. Plays the chime + toast on first sight.
+  const ingest = useCallback((data: AdminNotification) => {
+    if (itemsRef.current.some((n) => n.id === data.id)) return;
+    const next = [{ ...data, read: false }, ...itemsRef.current].slice(0, 50);
+    itemsRef.current = next;
+    persist(next);
+    if (soundRef.current) playChime(data.type);
+    const Icon = ICONS[data.type] || Bell;
+    toast.custom(() => (
+      <div className="flex items-start gap-3 bg-white border border-accent/25 rounded-xl shadow-2xl shadow-primary-900/20 p-3 pe-4 max-w-sm">
+        <span className={cn('inline-flex items-center justify-center w-9 h-9 rounded-xl border shrink-0', TYPE_STYLES[data.type])}>
+          <Icon className="h-4 w-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="font-bold text-primary text-sm leading-tight">{data.title}</div>
+          {data.body && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{data.body}</div>}
+          {data.link && (
+            <Link href={data.link as never} className="inline-block mt-1.5 text-xs font-bold text-accent-700 hover:text-accent">
+              عرض ←
+            </Link>
+          )}
+        </div>
+      </div>
+    ), { duration: 6000 });
+  }, [persist]);
 
   const markAllRead = useCallback(() => {
     persist(items.map((n) => ({ ...n, read: true })));
@@ -119,51 +154,45 @@ export function AdminNotificationsProvider({ children }: { children: React.React
     });
   }, []);
 
-  // SSE connection — re-opens when auth changes
+  // Real-time delivery: SSE (instant) + polling (reliable fallback behind
+  // LiteSpeed/Passenger, which can buffer the event stream). Both feed `ingest`,
+  // which de-dupes by id, so whichever arrives first wins.
   useEffect(() => {
     if (!token || !user) return;
-    // SSE doesn't support custom headers in the standard EventSource API.
-    // We pass the token as a query param; the auth middleware reads from it.
+
+    // --- SSE ---
     const url = `${API_BASE}/admin/notifications/stream?access_token=${encodeURIComponent(token)}`;
     const es = new EventSource(url, { withCredentials: true });
     esRef.current = es;
-
     es.addEventListener('notify', (evt) => {
-      try {
-        const data = JSON.parse((evt as MessageEvent).data) as AdminNotification;
-        persist([{ ...data, read: false }, ...items].slice(0, 50));
-        if (soundEnabled) playChime(data.type);
-        // Toast with link
-        const Icon = ICONS[data.type];
-        toast.custom(() => (
-          <div className="flex items-start gap-3 bg-white border border-accent/25 rounded-xl shadow-2xl shadow-primary-900/20 p-3 pe-4 max-w-sm">
-            <span className={cn('inline-flex items-center justify-center w-9 h-9 rounded-xl border shrink-0', TYPE_STYLES[data.type])}>
-              <Icon className="h-4 w-4" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="font-bold text-primary text-sm leading-tight">{data.title}</div>
-              {data.body && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{data.body}</div>}
-              {data.link && (
-                <Link href={data.link as never} className="inline-block mt-1.5 text-xs font-bold text-accent-700 hover:text-accent">
-                  عرض ←
-                </Link>
-              )}
-            </div>
-          </div>
-        ), { duration: 6000 });
-      } catch { /* ignore */ }
+      try { ingest(JSON.parse((evt as MessageEvent).data) as AdminNotification); } catch { /* ignore */ }
     });
+    es.onerror = () => { /* EventSource auto-reconnects */ };
 
-    es.onerror = () => {
-      // EventSource auto-reconnects; nothing to do
+    // --- Polling fallback (every 15s) ---
+    const poll = async () => {
+      try {
+        const r = await fetch(`${API_BASE}/admin/notifications/recent?since=${lastPollRef.current}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
+        });
+        if (!r.ok) return;
+        const j = await r.json();
+        if (j?.ok) {
+          lastPollRef.current = j.data.now || Date.now();
+          (j.data.items as AdminNotification[]).forEach(ingest);
+        }
+      } catch { /* offline — try next tick */ }
     };
+    const interval = setInterval(poll, 15_000);
 
     return () => {
       es.close();
       esRef.current = null;
+      clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, user?.id, soundEnabled]);
+  }, [token, user?.id, ingest]);
 
   return (
     <Ctx.Provider value={{ items, unread, markAllRead, markRead, clear, soundEnabled, toggleSound }}>
