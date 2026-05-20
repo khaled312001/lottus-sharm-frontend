@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Plus, Loader2, Save, X, Trash2, Pencil, Car, Bus, Plane } from 'lucide-react';
 import { toast } from 'sonner';
+import { MediaPicker } from '@/components/admin/media-picker';
+import type { MediaDTO } from '@/types/api';
 
 interface Translation { locale: 'AR' | 'EN'; name: string; shortDesc: string }
 interface Transfer {
@@ -15,6 +17,8 @@ interface Transfer {
   capacity: number; durationMinutes: number;
   priceLocalEGP: string; priceForeignUSD: string;
   isFeatured: boolean; isActive: boolean; sortOrder: number;
+  heroImageId?: number | null;
+  heroImage?: MediaDTO | null;
   translations: Translation[];
 }
 
@@ -143,6 +147,7 @@ function TransferForm({ initial, onClose, onSaved }: { initial: Transfer | null;
     AR: { name: initial?.translations.find((t) => t.locale === 'AR')?.name || '', shortDesc: initial?.translations.find((t) => t.locale === 'AR')?.shortDesc || '' },
     EN: { name: initial?.translations.find((t) => t.locale === 'EN')?.name || '', shortDesc: initial?.translations.find((t) => t.locale === 'EN')?.shortDesc || '' },
   });
+  const [heroImage, setHeroImage] = useState<MediaDTO | null>(initial?.heroImage ?? null);
   const [activeLocale, setActiveLocale] = useState<'AR' | 'EN'>('AR');
   const [saving, setSaving] = useState(false);
 
@@ -154,6 +159,7 @@ function TransferForm({ initial, onClose, onSaved }: { initial: Transfer | null;
       capacity: form.capacity, durationMinutes: form.durationMinutes,
       priceLocalEGP: form.priceLocalEGP, priceForeignUSD: form.priceForeignUSD,
       isFeatured: form.isFeatured, isActive: form.isActive, sortOrder: form.sortOrder,
+      heroImageId: heroImage?.id ?? null,
       translations: (['AR','EN'] as const).filter((l) => tr[l].name).map((l) => ({
         locale: l, name: tr[l].name, shortDesc: tr[l].shortDesc || tr[l].name,
       })),
@@ -189,6 +195,10 @@ function TransferForm({ initial, onClose, onSaved }: { initial: Transfer | null;
           <div>
             <label className="text-sm font-semibold mb-1.5 block">الوصف القصير ({activeLocale})</label>
             <Input value={tr[activeLocale].shortDesc} onChange={(e) => setTr({ ...tr, [activeLocale]: { ...tr[activeLocale], shortDesc: e.target.value } })} dir={activeLocale === 'AR' ? 'rtl' : 'ltr'} />
+          </div>
+
+          <div className="pt-2 border-t">
+            <MediaPicker label="صورة الخدمة" mode="single" value={heroImage} onChange={setHeroImage} />
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3 pt-2 border-t">
