@@ -68,7 +68,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="absolute -bottom-32 -start-20 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div className="container relative">
           <Reveal className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'اتصل بنا', en: 'Get in touch', ru: 'Свяжитесь с нами', it: 'Contattaci' })}</span>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'اتصل بنا', en: 'Get in touch', de: 'Get in touch', ru: 'Свяжитесь с нами', it: 'Contattaci' })}</span>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-tight text-balance">{heroTitle}</h1>
             <span className="rule-gold" />
             <p className="text-base sm:text-lg opacity-90 leading-relaxed">{heroSubtitle}</p>
@@ -80,14 +80,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="container">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {[
-              { icon: Phone,         ar: 'اتصل بنا',           en: 'Call us',      ru: 'Позвоните нам', it: 'Chiamaci',
+              { icon: Phone,         ar: 'اتصل بنا',           en: 'Call us',      de: 'Anrufen',       ru: 'Позвоните нам', it: 'Chiamaci',
                 value: '+20 109 076 7278', href: 'tel:+201090767278', color: 'bg-primary text-cream' },
-              { icon: MessageCircle, ar: 'واتساب',             en: 'WhatsApp',     ru: 'WhatsApp',      it: 'WhatsApp',
+              { icon: MessageCircle, ar: 'واتساب',             en: 'WhatsApp',     de: 'WhatsApp',      ru: 'WhatsApp',      it: 'WhatsApp',
                 value: '01090767278', href: buildWhatsAppLink('201090767278'), color: 'bg-[#25D366] text-white' },
-              { icon: Mail,          ar: 'البريد الإلكتروني',  en: 'Email us',     ru: 'Эл. почта',     it: 'Email',
+              { icon: Mail,          ar: 'البريد الإلكتروني',  en: 'Email us',     de: 'E-Mail',        ru: 'Эл. почта',     it: 'Email',
                 value: settings.email || 'info@lotussharm.com', href: `mailto:${settings.email || 'info@lotussharm.com'}`, color: 'bg-accent text-primary' },
-              { icon: MapPin,        ar: 'موقعنا',             en: 'Our location', ru: 'Наш адрес',     it: 'La nostra sede',
-                value: L(locale, { ar: 'شرم الشيخ، مصر', en: 'Sharm El Sheikh, Egypt', ru: 'Шарм-эль-Шейх, Египет', it: 'Sharm El Sheikh, Egitto' }), href: 'https://maps.google.com/?q=Sharm+El+Sheikh', color: 'bg-primary-800 text-cream' },
+              { icon: MapPin,        ar: 'موقعنا',             en: 'Our location', de: 'Unser Standort', ru: 'Наш адрес',     it: 'La nostra sede',
+                value: L(locale, { ar: 'شرم الشيخ، مصر', en: 'Sharm El Sheikh, Egypt', de: 'Sharm El Sheikh, Egypt', ru: 'Шарм-эль-Шейх, Египет', it: 'Sharm El Sheikh, Egitto' }), href: 'https://maps.google.com/?q=Sharm+El+Sheikh', color: 'bg-primary-800 text-cream' },
             ].map((c, i) => (
               <Reveal key={c.en} delay={i * 0.08}>
                 <a href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener" className={`group relative block rounded-2xl ${c.color} p-5 md:p-6 hover:-translate-y-2 transition-all duration-500 shadow-lg hover:shadow-2xl h-full overflow-hidden`}>
@@ -95,7 +95,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                   <span aria-hidden className="absolute -top-10 -end-10 w-32 h-32 rounded-full border border-current opacity-0 group-hover:opacity-20 group-hover:scale-110 transition-all duration-700" />
                   <span aria-hidden className="absolute -top-16 -end-16 w-40 h-40 rounded-full border border-current opacity-0 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700" style={{ transitionDelay: '0.1s' }} />
                   <c.icon className="relative h-7 w-7 mb-3 opacity-90 group-hover:scale-125 group-hover:rotate-[-6deg] transition-transform duration-300" />
-                  <div className="relative text-[10px] uppercase tracking-wider opacity-75 mb-1">{L(locale, { ar: c.ar, en: c.en, ru: c.ru, it: c.it })}</div>
+                  <div className="relative text-[10px] uppercase tracking-wider opacity-75 mb-1">{L(locale, { ar: c.ar, en: c.en, ru: c.ru, it: c.it, de: c.de })}</div>
                   <div className="relative font-bold text-sm md:text-base break-words">{c.value}</div>
                   <ArrowRight aria-hidden className="absolute bottom-4 end-4 h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-all duration-300 rtl:rotate-180" />
                 </a>
@@ -109,12 +109,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="container grid lg:grid-cols-5 gap-8 lg:gap-12">
           <div className="lg:col-span-3">
             <Reveal>
-              <span className="eyebrow">{L(locale, { ar: 'أرسل رسالة', en: 'Send a message', ru: 'Отправить сообщение', it: 'Invia un messaggio' })}</span>
+              <span className="eyebrow">{L(locale, { ar: 'أرسل رسالة', en: 'Send a message', de: 'Send a message', ru: 'Отправить сообщение', it: 'Invia un messaggio' })}</span>
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3 leading-tight text-balance">
-                {L(locale, { ar: 'كلمنا، ورد لك في دقائق', en: 'Message us, hear back in minutes', ru: 'Напишите — ответим в течение минут', it: 'Scrivici — rispondiamo in pochi minuti' })}
+                {L(locale, { ar: 'كلمنا، ورد لك في دقائق', en: 'Message us, hear back in minutes', de: 'Message us, hear back in minutes', ru: 'Напишите — ответим в течение минут', it: 'Scrivici — rispondiamo in pochi minuti' })}
               </h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                {L(locale, { ar: 'فريقنا متاح 24/7 للإجابة على استفساراتك واقتراح أفضل الباقات لرحلتك.', en: 'Our team is online 24/7 to answer questions and suggest the best packages.', ru: 'Наша команда онлайн 24/7 — ответим на вопросы и подберём лучшие туры.', it: 'Il nostro team è online 24/7 per rispondere e suggerire i migliori pacchetti.' })}
+                {L(locale, { ar: 'فريقنا متاح 24/7 للإجابة على استفساراتك واقتراح أفضل الباقات لرحلتك.', en: 'Our team is online 24/7 to answer questions and suggest the best packages.', de: 'Our team is online 24/7 to answer questions and suggest the best packages.', ru: 'Наша команда онлайн 24/7 — ответим на вопросы и подберём лучшие туры.', it: 'Il nostro team è online 24/7 per rispondere e suggerire i migliori pacchetti.' })}
               </p>
               <ContactForm />
             </Reveal>
@@ -125,12 +125,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <div className="bg-primary text-cream rounded-2xl p-6 relative overflow-hidden">
                 <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-accent/20 blur-2xl" />
                 <Sparkles className="h-8 w-8 text-accent mb-3" />
-                <h3 className="font-serif text-xl font-bold mb-2">{L(locale, { ar: 'استشارة مجانية', en: 'Free consultation', ru: 'Бесплатная консультация', it: 'Consulenza gratuita' })}</h3>
+                <h3 className="font-serif text-xl font-bold mb-2">{L(locale, { ar: 'استشارة مجانية', en: 'Free consultation', de: 'Free consultation', ru: 'Бесплатная консультация', it: 'Consulenza gratuita' })}</h3>
                 <p className="text-sm opacity-90 mb-5">
-                  {L(locale, { ar: 'احصل على خطة رحلة مخصصة تناسب اهتماماتك وميزانيتك بدون أي التزام.', en: 'Get a customized trip plan matching your interests and budget — no commitment.', ru: 'Получите индивидуальный план тура под ваши интересы и бюджет — без обязательств.', it: 'Ricevi un piano di viaggio personalizzato per i tuoi interessi e budget — senza impegno.' })}
+                  {L(locale, { ar: 'احصل على خطة رحلة مخصصة تناسب اهتماماتك وميزانيتك بدون أي التزام.', en: 'Get a customized trip plan matching your interests and budget — no commitment.', de: 'Get a customized trip plan matching your interests and budget — no commitment.', ru: 'Получите индивидуальный план тура под ваши интересы и бюджет — без обязательств.', it: 'Ricevi un piano di viaggio personalizzato per i tuoi interessi e budget — senza impegno.' })}
                 </p>
-                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ', en: "Hi! I'd like a free trip consultation for Sharm El Sheikh", ru: 'Здравствуйте! Хочу бесплатную консультацию по туру в Шарм-эль-Шейхе', it: 'Salve! Vorrei una consulenza gratuita per un viaggio a Sharm El Sheikh' }))} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
-                  <MessageCircle className="h-4 w-4" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp Chat', ru: 'WhatsApp чат', it: 'Chat WhatsApp' })}
+                <a href={buildWhatsAppLink('201090767278', L(locale, { ar: 'مرحبا، أريد استشارة مجانية لرحلة في شرم الشيخ', en: "Hi! I'd like a free trip consultation for Sharm El Sheikh", de: "Hi! I'd like a free trip consultation for Sharm El Sheikh", ru: 'Здравствуйте! Хочу бесплатную консультацию по туру в Шарм-эль-Шейхе', it: 'Salve! Vorrei una consulenza gratuita per un viaggio a Sharm El Sheikh' }))} target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-5 py-3 rounded-xl text-sm hover:bg-accent-400 transition-colors">
+                  <MessageCircle className="h-4 w-4" /> {L(locale, { ar: 'تواصل واتساب', en: 'WhatsApp Chat', de: 'WhatsApp Chat', ru: 'WhatsApp чат', it: 'Chat WhatsApp' })}
                 </a>
               </div>
             </Reveal>
@@ -139,19 +139,19 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <div className="bg-white rounded-2xl p-6 border border-accent/15">
                 <div className="flex items-center gap-2 mb-4 text-primary">
                   <Clock className="h-5 w-5 text-accent" />
-                  <h3 className="font-serif font-bold text-lg">{L(locale, { ar: 'ساعات العمل', en: 'Working hours', ru: 'Часы работы', it: 'Orari di lavoro' })}</h3>
+                  <h3 className="font-serif font-bold text-lg">{L(locale, { ar: 'ساعات العمل', en: 'Working hours', de: 'Working hours', ru: 'Часы работы', it: 'Orari di lavoro' })}</h3>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex justify-between"><span className="text-muted-foreground">{L(locale, { ar: 'السبت — الخميس', en: 'Sat — Thu', ru: 'Сб — Чт', it: 'Sab — Gio' })}</span><span className="font-semibold text-primary">{L(locale, { ar: '8 ص — 11 م', en: '8 AM — 11 PM', ru: '8:00 — 23:00', it: '8:00 — 23:00' })}</span></li>
-                  <li className="flex justify-between"><span className="text-muted-foreground">{L(locale, { ar: 'الجمعة', en: 'Friday', ru: 'Пятница', it: 'Venerdì' })}</span><span className="font-semibold text-primary">{L(locale, { ar: '10 ص — 11 م', en: '10 AM — 11 PM', ru: '10:00 — 23:00', it: '10:00 — 23:00' })}</span></li>
-                  <li className="flex justify-between pt-2 border-t border-accent/15"><span className="text-muted-foreground">{L(locale, { ar: 'واتساب', en: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}</span><span className="font-bold text-accent-700">{L(locale, { ar: '24/7', en: '24/7', ru: '24/7', it: '24/7' })}</span></li>
+                  <li className="flex justify-between"><span className="text-muted-foreground">{L(locale, { ar: 'السبت — الخميس', en: 'Sat — Thu', de: 'Sat — Thu', ru: 'Сб — Чт', it: 'Sab — Gio' })}</span><span className="font-semibold text-primary">{L(locale, { ar: '8 ص — 11 م', en: '8 AM — 11 PM', de: '8 AM — 11 PM', ru: '8:00 — 23:00', it: '8:00 — 23:00' })}</span></li>
+                  <li className="flex justify-between"><span className="text-muted-foreground">{L(locale, { ar: 'الجمعة', en: 'Friday', de: 'Friday', ru: 'Пятница', it: 'Venerdì' })}</span><span className="font-semibold text-primary">{L(locale, { ar: '10 ص — 11 م', en: '10 AM — 11 PM', de: '10 AM — 11 PM', ru: '10:00 — 23:00', it: '10:00 — 23:00' })}</span></li>
+                  <li className="flex justify-between pt-2 border-t border-accent/15"><span className="text-muted-foreground">{L(locale, { ar: 'واتساب', en: 'WhatsApp', de: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}</span><span className="font-bold text-accent-700">{L(locale, { ar: '24/7', en: '24/7', de: '24/7', ru: '24/7', it: '24/7' })}</span></li>
                 </ul>
               </div>
             </Reveal>
 
             <Reveal delay={0.35}>
               <div className="bg-white rounded-2xl p-6 border border-accent/15">
-                <h3 className="font-serif font-bold text-lg text-primary mb-4">{L(locale, { ar: 'تابعنا', en: 'Follow us', ru: 'Подписывайтесь', it: 'Seguici' })}</h3>
+                <h3 className="font-serif font-bold text-lg text-primary mb-4">{L(locale, { ar: 'تابعنا', en: 'Follow us', de: 'Follow us', ru: 'Подписывайтесь', it: 'Seguici' })}</h3>
                 <div className="grid grid-cols-3 gap-2">
                   {settings.facebookUrl && (
                     <a href={settings.facebookUrl} target="_blank" rel="noopener" className="flex flex-col items-center gap-1.5 bg-[#1877F2] text-white py-3 rounded-lg hover:opacity-90 transition-opacity">
@@ -181,9 +181,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/15 border border-accent/30 mx-auto mb-4">
               <HelpCircle className="h-7 w-7 text-accent" />
             </div>
-            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'الأسئلة الشائعة', en: 'FAQ', ru: 'Частые вопросы', it: 'FAQ' })}</span>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'الأسئلة الشائعة', en: 'FAQ', de: 'FAQ', ru: 'Частые вопросы', it: 'FAQ' })}</span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
-              {L(locale, { ar: 'كل ما تريد معرفته', en: 'Everything you need to know', ru: 'Всё, что нужно знать', it: 'Tutto quello che devi sapere' })}
+              {L(locale, { ar: 'كل ما تريد معرفته', en: 'Everything you need to know', de: 'Everything you need to know', ru: 'Всё, что нужно знать', it: 'Tutto quello che devi sapere' })}
             </h2>
             <span className="rule-gold" />
           </Reveal>
@@ -192,11 +192,11 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <Reveal key={f.q_en} delay={i * 0.05}>
                 <details className="group bg-white rounded-2xl border border-accent/15 hover:border-accent/40 hover:shadow-md transition-all overflow-hidden">
                   <summary className="flex items-center justify-between gap-4 p-5 md:p-6 cursor-pointer list-none">
-                    <span className="font-serif font-bold text-primary text-base md:text-lg leading-snug">{L(locale, { ar: f.q_ar, en: f.q_en, ru: f.q_ru, it: f.q_it })}</span>
+                    <span className="font-serif font-bold text-primary text-base md:text-lg leading-snug">{L(locale, { ar: f.q_ar, en: f.q_en, ru: f.q_ru, it: f.q_it, de: f.q_en })}</span>
                     <span className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 border border-accent/25 text-accent-700 font-bold flex items-center justify-center group-open:rotate-45 transition-transform duration-300">+</span>
                   </summary>
                   <div className="px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base text-foreground/80 leading-relaxed border-t border-accent/10 pt-4">
-                    {L(locale, { ar: f.a_ar, en: f.a_en, ru: f.a_ru, it: f.a_it })}
+                    {L(locale, { ar: f.a_ar, en: f.a_en, ru: f.a_ru, it: f.a_it, de: f.a_en })}
                   </div>
                 </details>
               </Reveal>
@@ -208,8 +208,8 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       <section className="py-16 md:py-20 bg-cream">
         <div className="container">
           <Reveal className="text-center mb-8">
-            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'مكاننا', en: 'Find us', ru: 'Найти нас', it: 'Trovarci' })}</span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'في قلب شرم الشيخ', en: 'In the heart of Sharm El Sheikh', ru: 'В самом сердце Шарм-эль-Шейха', it: 'Nel cuore di Sharm El Sheikh' })}</h2>
+            <span className="eyebrow eyebrow-center">{L(locale, { ar: 'مكاننا', en: 'Find us', de: 'Find us', ru: 'Найти нас', it: 'Trovarci' })}</span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary leading-tight text-balance">{L(locale, { ar: 'في قلب شرم الشيخ', en: 'In the heart of Sharm El Sheikh', de: 'In the heart of Sharm El Sheikh', ru: 'В самом сердце Шарм-эль-Шейха', it: 'Nel cuore di Sharm El Sheikh' })}</h2>
             <span className="rule-gold" />
           </Reveal>
           <Reveal>

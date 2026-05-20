@@ -26,37 +26,43 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
   const loop = REVIEWS.length > 0 ? [...REVIEWS, ...REVIEWS, ...REVIEWS] : [];
   const trackRef = useRef<HTMLDivElement>(null);
   const [openImg, setOpenImg] = useState<string | null>(null);
-  const [autoplay, setAutoplay] = useState(true);
+  const pausedRef = useRef(false); // pause flag (no effect restart)
   const isAr = locale === 'ar';
+  const setAutoplay = (on: boolean) => { pausedRef.current = !on; };
 
-  // Auto-scroll (mouse-friendly, pausable)
+  // Single continuous auto-scroll loop. Uses a ref pause flag so hovering /
+  // dragging never tears down the rAF — guarantees it always resumes.
   useEffect(() => {
-    if (!autoplay || REVIEWS.length === 0) return;
+    if (REVIEWS.length === 0) return;
     const el = trackRef.current;
     if (!el) return;
+
+    // Init at the middle copy once layout is measured
+    let initialized = false;
     let raf = 0;
     let last = performance.now();
+
     const tick = (now: number) => {
-      const dt = now - last; last = now;
-      const dir = isAr ? -1 : 1; // RTL scrolls right→left, LTR left→right
-      el.scrollLeft += (dt / 32) * dir; // ~30px/s
-      // Loop seam: when we cross the middle copy boundary, jump back invisibly
+      const dt = Math.min(now - last, 64); last = now;
       const oneSet = el.scrollWidth / 3;
-      if (el.scrollLeft >= oneSet * 2) el.scrollLeft -= oneSet;
-      else if (el.scrollLeft <= 0) el.scrollLeft += oneSet;
+      if (oneSet > 0 && !initialized) {
+        el.scrollLeft = oneSet;
+        initialized = true;
+      }
+      if (!pausedRef.current && oneSet > 0) {
+        const dir = isAr ? -1 : 1;
+        el.scrollLeft += (dt / 28) * dir; // ~36px/s
+      }
+      // Seamless wrap
+      if (oneSet > 0) {
+        if (el.scrollLeft >= oneSet * 2) el.scrollLeft -= oneSet;
+        else if (el.scrollLeft <= 0) el.scrollLeft += oneSet;
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [autoplay, isAr]);
-
-  // Initialize scroll position to the middle copy so we can scroll both ways
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    const oneSet = el.scrollWidth / 3;
-    el.scrollLeft = oneSet;
-  }, []);
+  }, [isAr]);
 
   // Mouse / touch drag — only engages after a 6px movement threshold so
   // simple clicks on images still fire normally (lightbox open).
@@ -133,7 +139,7 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#1877F2] mb-1.5">
               <Facebook className="h-4 w-4" />
-              {L(locale, { ar: 'تقييمات فيسبوك', en: 'Facebook reviews', ru: 'Отзывы Facebook', it: 'Recensioni Facebook' })}
+              {L(locale, { ar: 'تقييمات فيسبوك', en: 'Facebook reviews', ru: 'Отзывы Facebook', it: 'Recensioni Facebook', de: 'Facebook-Bewertungen' })}
             </span>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary leading-tight">
               {L(locale, {
@@ -141,6 +147,7 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
                 en: 'Real Facebook reviews from our guests',
                 ru: 'Реальные отзывы из Facebook',
                 it: 'Recensioni reali da Facebook',
+                de: 'Echte Facebook-Bewertungen unserer Gäste',
               })}
             </h2>
           </div>
@@ -151,7 +158,7 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1877F2] hover:bg-[#0e63d4] text-white font-bold text-sm transition-colors"
           >
             <Facebook className="h-4 w-4" />
-            {L(locale, { ar: 'افتح فيسبوك', en: 'Open Facebook', ru: 'Открыть Facebook', it: 'Apri Facebook' })}
+            {L(locale, { ar: 'افتح فيسبوك', en: 'Open Facebook', ru: 'Открыть Facebook', it: 'Apri Facebook', de: 'Facebook öffnen' })}
           </a>
         </div>
       </div>
@@ -254,14 +261,14 @@ function FbReviewCard({ review, locale, onOpenImage }: { review: FbReview; local
   return (
     <article
       className={cn(
-        'shrink-0 w-[260px] sm:w-[300px] md:w-[320px] bg-white overflow-hidden flex flex-col h-fit',
-        // FB-style: rounded-lg, very light border, layered shadow
-        'rounded-lg border border-[#dadde1] shadow-[0_2px_4px_rgba(0,0,0,0.08)]',
-        'hover:shadow-[0_4px_12px_rgba(24,119,242,0.15)] transition-shadow duration-200',
+        // Uniform fixed height + width across all cards
+        'shrink-0 w-[280px] sm:w-[300px] md:w-[320px] h-[400px] bg-white overflow-hidden flex flex-col',
+        'rounded-xl border border-[#dadde1] shadow-[0_2px_6px_rgba(0,0,0,0.08)]',
+        'hover:shadow-[0_6px_16px_rgba(24,119,242,0.18)] transition-shadow duration-200',
       )}
     >
       {/* Card header — FB style */}
-      <header className="p-3 pb-2 flex items-start gap-2.5">
+      <header className="p-3 pb-2 flex items-start gap-2.5 shrink-0">
         <div className="shrink-0">
           {review.profileImage ? (
             <Image
@@ -292,24 +299,30 @@ function FbReviewCard({ review, locale, onOpenImage }: { review: FbReview; local
             {review.recommends && (
               <span className="ms-1 inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/30">
                 <ThumbsUp className="h-2.5 w-2.5" />
-                {L(locale, { ar: 'يوصي', en: 'recommends', ru: 'реком.', it: 'consiglia' })}
+                {L(locale, { ar: 'يوصي', en: 'recommends', ru: 'реком.', it: 'consiglia', de: 'empfiehlt' })}
               </span>
             )}
           </div>
         </div>
       </header>
 
-      {/* Comment text — clamped FB-style */}
-      <div className="px-3 pb-3 flex-1">
-        <p className="text-[14px] leading-[1.43] text-[#050505] whitespace-pre-wrap line-clamp-5" dir="auto">
+      {/* Comment text — flex-1 fills remaining space, clamps gracefully */}
+      <div className="px-3 pb-2 flex-1 min-h-0 overflow-hidden">
+        <p
+          className={cn(
+            'text-[13.5px] leading-[1.45] text-[#050505] whitespace-pre-wrap',
+            hasImages ? 'line-clamp-3' : 'line-clamp-[11]',
+          )}
+          dir="auto"
+        >
           {review.comment}
         </p>
       </div>
 
-      {/* Attached images grid (compact) */}
+      {/* Attached images — fixed-height row so card height stays uniform */}
       {hasImages && (
         <div className={cn(
-          'grid gap-[2px] border-t border-[#dadde1]',
+          'grid gap-[2px] border-t border-[#dadde1] shrink-0 h-[96px]',
           review.attachedImages.length === 1 && 'grid-cols-1',
           review.attachedImages.length === 2 && 'grid-cols-2',
           review.attachedImages.length >= 3 && 'grid-cols-3',
@@ -319,10 +332,10 @@ function FbReviewCard({ review, locale, onOpenImage }: { review: FbReview; local
               key={img}
               type="button"
               onClick={(e) => { e.stopPropagation(); onOpenImage(img); }}
-              className="relative aspect-square overflow-hidden bg-[#f0f2f5] group"
+              className="relative overflow-hidden bg-[#f0f2f5] group h-full"
               aria-label="Open photo"
             >
-              <Image src={img} alt="" fill sizes="160px" className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
+              <Image src={img} alt="" fill sizes="120px" className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
               {i === 2 && review.attachedImages.length > 3 && (
                 <div className="absolute inset-0 bg-black/55 flex items-center justify-center text-white font-bold text-lg">
                   +{review.attachedImages.length - 3}
@@ -333,8 +346,8 @@ function FbReviewCard({ review, locale, onOpenImage }: { review: FbReview; local
         </div>
       )}
 
-      {/* Footer — only "View on Facebook" (Like removed) */}
-      <footer className="px-3 py-2 border-t border-[#dadde1] text-[12px] flex items-center justify-end">
+      {/* Footer — only "View on Facebook" */}
+      <footer className="px-3 py-2 border-t border-[#dadde1] text-[12px] flex items-center justify-end shrink-0">
         <a
           href="https://www.facebook.com/profile.php?id=61550600242507&sk=reviews"
           target="_blank"
@@ -342,7 +355,7 @@ function FbReviewCard({ review, locale, onOpenImage }: { review: FbReview; local
           className="text-[#1877F2] font-semibold hover:underline inline-flex items-center gap-1.5"
         >
           <Facebook className="h-3.5 w-3.5" />
-          {L(locale, { ar: 'عرض على فيسبوك', en: 'View on Facebook', ru: 'Открыть в Facebook', it: 'Apri su Facebook' })}
+          {L(locale, { ar: 'عرض على فيسبوك', en: 'View on Facebook', ru: 'Открыть в Facebook', it: 'Apri su Facebook', de: 'Auf Facebook ansehen' })}
         </a>
       </footer>
     </article>

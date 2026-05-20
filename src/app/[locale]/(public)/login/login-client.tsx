@@ -40,7 +40,7 @@ export function LoginClient({ locale }: { locale: string }) {
         const j = await r.json();
         if (!r.ok || !j.ok) throw new Error(j?.error?.message || 'Sign-in failed');
         await refresh();
-        toast.success(L(locale, { ar: 'تم تسجيل الدخول', en: 'Signed in', ru: 'Вход выполнен', it: 'Accesso effettuato' }) as string);
+        toast.success(L(locale, { ar: 'تم تسجيل الدخول', en: 'Signed in', de: 'Signed in', ru: 'Вход выполнен', it: 'Accesso effettuato' }) as string);
         router.replace(next);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Sign-in failed');
@@ -79,13 +79,13 @@ export function LoginClient({ locale }: { locale: string }) {
               <BadgeCheck aria-hidden className="absolute -bottom-1 -end-1 h-5 w-5 text-emerald-400 fill-primary-900 bg-primary-900 rounded-full" />
             </div>
             <h1 className="font-serif text-2xl md:text-3xl font-bold mb-2">
-              {L(locale, { ar: 'تسجيل الدخول', en: 'Sign in', ru: 'Вход', it: 'Accedi' })}
+              {L(locale, { ar: 'تسجيل الدخول', en: 'Sign in', de: 'Sign in', ru: 'Вход', it: 'Accedi' })}
             </h1>
             <span aria-hidden className="block w-10 h-0.5 gradient-gold rounded-full mx-auto mb-3" />
             <p className="text-sm text-cream/75 leading-relaxed max-w-xs mx-auto">
               {L(locale, {
                 ar: 'سجّل دخولك بحساب جوجل لإدارة حجوزاتك ومفضلاتك ولترك تقييمات',
-                en: 'Sign in with Google to manage your bookings, favourites & reviews',
+                en: 'Sign in with Google to manage your bookings, favourites & reviews', de: 'Sign in with Google to manage your bookings, favourites & reviews',
                 ru: 'Войдите через Google для управления бронированиями и отзывами',
                 it: 'Accedi con Google per gestire prenotazioni, preferiti e recensioni',
               })}
@@ -96,17 +96,17 @@ export function LoginClient({ locale }: { locale: string }) {
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-3" />
               <p className="text-sm text-cream/75">
-                {L(locale, { ar: 'جاري تسجيل الدخول...', en: 'Signing you in...', ru: 'Входим...', it: 'Accesso in corso...' })}
+                {L(locale, { ar: 'جاري تسجيل الدخول...', en: 'Signing you in...', de: 'Signing you in...', ru: 'Входим...', it: 'Accesso in corso...' })}
               </p>
             </div>
           ) : error ? (
             <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-4 mb-4 text-sm">
               <p className="text-red-300 font-semibold mb-1">
-                {L(locale, { ar: 'تعذر تسجيل الدخول', en: 'Sign-in failed', ru: 'Ошибка входа', it: 'Accesso fallito' })}
+                {L(locale, { ar: 'تعذر تسجيل الدخول', en: 'Sign-in failed', de: 'Sign-in failed', ru: 'Ошибка входа', it: 'Accesso fallito' })}
               </p>
               <p className="text-red-200/80 text-xs">{error}</p>
               <Button onClick={() => { setError(null); startGoogle(); }} variant="outline" className="mt-3 w-full">
-                {L(locale, { ar: 'حاول مرة أخرى', en: 'Try again', ru: 'Повторить', it: 'Riprova' })}
+                {L(locale, { ar: 'حاول مرة أخرى', en: 'Try again', de: 'Try again', ru: 'Повторить', it: 'Riprova' })}
               </Button>
             </div>
           ) : (
@@ -116,14 +116,14 @@ export function LoginClient({ locale }: { locale: string }) {
           {/* Benefits row */}
           <div className="mt-6 grid grid-cols-3 gap-2 text-center">
             {[
-              { icon: BadgeCheck, ar: 'إدارة الحجوزات', en: 'Manage bookings', ru: 'Брони', it: 'Prenotazioni' },
-              { icon: Heart, ar: 'حفظ مفضلاتك', en: 'Save favourites', ru: 'Избранное', it: 'Preferiti' },
-              { icon: MessageSquare, ar: 'تقييمات سريعة', en: 'Quick reviews', ru: 'Отзывы', it: 'Recensioni' },
+              { icon: BadgeCheck, ar: 'إدارة الحجوزات', en: 'Manage bookings', de: 'Buchungen verwalten', ru: 'Брони', it: 'Prenotazioni' },
+              { icon: Heart, ar: 'حفظ مفضلاتك', en: 'Save favourites', de: 'Favoriten speichern', ru: 'Избранное', it: 'Preferiti' },
+              { icon: MessageSquare, ar: 'تقييمات سريعة', en: 'Quick reviews', de: 'Schnelle Bewertungen', ru: 'Отзывы', it: 'Recensioni' },
             ].map((b) => (
               <div key={b.en} className="flex flex-col items-center gap-1 p-2 rounded-lg bg-cream/5 border border-cream/10">
                 <b.icon className="h-3.5 w-3.5 text-accent" />
                 <span className="text-[10px] text-cream/80 font-semibold leading-tight">
-                  {L(locale, { ar: b.ar, en: b.en, ru: b.ru, it: b.it })}
+                  {L(locale, { ar: b.ar, en: b.en, ru: b.ru, it: b.it, de: b.de })}
                 </span>
               </div>
             ))}
@@ -134,7 +134,7 @@ export function LoginClient({ locale }: { locale: string }) {
               <Sparkles className="h-3 w-3 text-accent" />
               {L(locale, {
                 ar: 'لا حاجة لكلمة سر — حساب آمن عبر Google',
-                en: 'No password needed — secure Google account',
+                en: 'No password needed — secure Google account', de: 'No password needed — secure Google account',
                 ru: 'Без пароля — через ваш Google',
                 it: 'Niente password — tramite il tuo Google',
               })}

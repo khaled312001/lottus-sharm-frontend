@@ -34,11 +34,11 @@ export function TripTimeline({ steps, locale }: { steps: TripTimelineStepDTO[]; 
         <div className="inline-flex items-center gap-2.5 mb-3">
           <span className="block w-7 h-px bg-accent" />
           <span className="text-accent uppercase tracking-[0.25em] text-[10px] sm:text-[11px] font-bold">
-            {L(locale, { ar: 'سير الرحلة', en: 'Itinerary', ru: 'Маршрут', it: 'Itinerario' })}
+            {L(locale, { ar: 'سير الرحلة', en: 'Itinerary', de: 'Itinerary', ru: 'Маршрут', it: 'Itinerario' })}
           </span>
         </div>
         <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-6 leading-tight text-balance">
-          {L(locale, { ar: 'ساعة بساعة طوال اليوم', en: 'Your day, hour by hour', ru: 'Ваш день час за часом', it: 'La tua giornata, ora per ora' })}
+          {L(locale, { ar: 'ساعة بساعة طوال اليوم', en: 'Your day, hour by hour', de: 'Your day, hour by hour', ru: 'Ваш день час за часом', it: 'La tua giornata, ora per ora' })}
         </h2>
 
         <ol className="relative">

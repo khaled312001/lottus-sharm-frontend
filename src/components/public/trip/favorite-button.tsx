@@ -96,7 +96,7 @@ export function FavoriteButton({
       router.push(`/login?next=${encodeURIComponent(next)}` as never);
       toast.info(L(locale, {
         ar: 'سجّل دخولك لحفظ الرحلة في مفضلاتك',
-        en: 'Sign in to save trips to favorites',
+        en: 'Sign in to save trips to favorites', de: 'Sign in to save trips to favorites',
         ru: 'Войдите, чтобы добавить в избранное',
         it: 'Accedi per salvare nei preferiti',
       }) as string);
@@ -110,6 +110,7 @@ export function FavoriteButton({
           toast.success(L(locale, {
             ar: active ? 'أُزيلت من المفضلات' : 'أُضيفت لمفضلاتك',
             en: active ? 'Removed from favorites' : 'Added to favorites',
+            de: active ? 'Aus Favoriten entfernt' : 'Zu Favoriten hinzugefügt',
             ru: active ? 'Удалено из избранного' : 'Добавлено в избранное',
             it: active ? 'Rimosso dai preferiti' : 'Aggiunto ai preferiti',
           }) as string);

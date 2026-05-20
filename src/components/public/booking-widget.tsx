@@ -73,9 +73,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const formReady = step1Ready && step2Ready;
 
   const stepLabels = [
-    L(locale, { ar: 'الرحلة', en: 'Trip', ru: 'Тур', it: 'Tour' }) as string,
-    L(locale, { ar: 'بياناتك', en: 'Your info', ru: 'Контакты', it: 'I tuoi dati' }) as string,
-    L(locale, { ar: 'التأكيد', en: 'Confirm', ru: 'Подтвердить', it: 'Conferma' }) as string,
+    L(locale, { ar: 'الرحلة', en: 'Trip', de: 'Trip', ru: 'Тур', it: 'Tour' }) as string,
+    L(locale, { ar: 'بياناتك', en: 'Your info', de: 'Your info', ru: 'Контакты', it: 'I tuoi dati' }) as string,
+    L(locale, { ar: 'التأكيد', en: 'Confirm', de: 'Bestätigen', ru: 'Подтвердить', it: 'Conferma' }) as string,
   ];
 
   // ===== Build WhatsApp link =====
@@ -120,14 +120,14 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const goNext = () => {
     if (step === 0) {
       if (!step1Ready) {
-        toast.error(L(locale, { ar: 'اختر التاريخ والعدد', en: 'Pick date and travelers', ru: 'Выберите дату', it: 'Seleziona data' }) as string);
+        toast.error(L(locale, { ar: 'اختر التاريخ والعدد', en: 'Pick date and travelers', de: 'Pick date and travelers', ru: 'Выберите дату', it: 'Seleziona data' }) as string);
         return;
       }
       setStep(1);
     } else if (step === 1) {
-      if (!isNameValid) { toast.error(L(locale, { ar: 'أدخل اسمك الكامل', en: 'Please enter your full name', ru: 'Введите полное имя', it: 'Inserisci nome completo' }) as string); return; }
-      if (!isPhoneValid) { toast.error(L(locale, { ar: 'رقم هاتف غير صحيح', en: 'Invalid phone number', ru: 'Неверный телефон', it: 'Numero non valido' }) as string); return; }
-      if (!isEmailValid) { toast.error(L(locale, { ar: 'البريد الإلكتروني غير صحيح', en: 'Invalid email', ru: 'Неверный email', it: 'Email non valida' }) as string); return; }
+      if (!isNameValid) { toast.error(L(locale, { ar: 'أدخل اسمك الكامل', en: 'Please enter your full name', de: 'Please enter your full name', ru: 'Введите полное имя', it: 'Inserisci nome completo' }) as string); return; }
+      if (!isPhoneValid) { toast.error(L(locale, { ar: 'رقم هاتف غير صحيح', en: 'Invalid phone number', de: 'Invalid phone number', ru: 'Неверный телефон', it: 'Numero non valido' }) as string); return; }
+      if (!isEmailValid) { toast.error(L(locale, { ar: 'البريد الإلكتروني غير صحيح', en: 'Invalid email', de: 'Invalid email', ru: 'Неверный email', it: 'Email non valida' }) as string); return; }
       setStep(2);
     }
   };
@@ -182,7 +182,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
             </div>
             <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-cream/10 backdrop-blur border border-accent/30 text-[10px] font-bold text-cream/90 uppercase tracking-wider">
               <BadgeCheck className="h-3 w-3 text-accent" />
-              {L(locale, { ar: 'آمن', en: 'Secure', ru: 'Безоп.', it: 'Sicuro' })}
+              {L(locale, { ar: 'آمن', en: 'Secure', de: 'Sicher', ru: 'Безоп.', it: 'Sicuro' })}
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
             className="group w-full inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-accent hover:bg-accent-400 text-primary font-bold text-base shadow-lg shadow-accent/40 hover:-translate-y-0.5 transition-all"
           >
             <CreditCard className="h-5 w-5" />
-            {L(locale, { ar: 'احجز الآن', en: 'Book now', ru: 'Забронировать', it: 'Prenota ora' })}
+            {L(locale, { ar: 'احجز الآن', en: 'Book now', de: 'Jetzt buchen', ru: 'Забронировать', it: 'Prenota ora' })}
             <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
           </button>
 
@@ -203,13 +203,13 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
             className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-lg border border-accent/30 hover:bg-accent/5 hover:border-accent text-primary font-bold text-sm transition-colors"
           >
             <Phone className="h-3.5 w-3.5 text-accent" />
-            {L(locale, { ar: 'اتصل بنا', en: 'Call us', ru: 'Позвонить', it: 'Chiama' })}
+            {L(locale, { ar: 'اتصل بنا', en: 'Call us', de: 'Anrufen', ru: 'Позвонить', it: 'Chiama' })}
           </a>
 
           <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 pt-1 text-[10px] text-muted-foreground">
-            <TrustPill icon={ShieldCheck} text={L(locale, { ar: 'إلغاء مجاني', en: 'Free cancel', ru: 'Бесплатно', it: 'Gratis' }) as string} />
-            <TrustPill icon={Sparkles} text={L(locale, { ar: 'تأكيد فوري', en: 'Instant', ru: 'Мгновенно', it: 'Istantaneo' }) as string} />
-            <TrustPill icon={BadgeCheck} text={L(locale, { ar: 'مرخصة', en: 'Licensed', ru: 'Лицензия', it: 'Autorizzato' }) as string} />
+            <TrustPill icon={ShieldCheck} text={L(locale, { ar: 'إلغاء مجاني', en: 'Free cancel', de: 'Kostenlose Stornierung', ru: 'Бесплатно', it: 'Gratis' }) as string} />
+            <TrustPill icon={Sparkles} text={L(locale, { ar: 'تأكيد فوري', en: 'Instant', de: 'Sofort', ru: 'Мгновенно', it: 'Istantaneo' }) as string} />
+            <TrustPill icon={BadgeCheck} text={L(locale, { ar: 'مرخصة', en: 'Licensed', de: 'Lizenziert', ru: 'Лицензия', it: 'Autorizzato' }) as string} />
           </div>
         </div>
       </motion.div>
@@ -254,7 +254,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
           </div>
           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cream/10 backdrop-blur border border-accent/30 text-[9px] font-bold text-cream/90 uppercase tracking-wider">
             <BadgeCheck className="h-3 w-3 text-accent" />
-            {L(locale, { ar: 'آمن', en: 'Secure', ru: 'Безоп.', it: 'Sicuro' })}
+            {L(locale, { ar: 'آمن', en: 'Secure', de: 'Sicher', ru: 'Безоп.', it: 'Sicuro' })}
           </div>
         </div>
       </div>
@@ -326,21 +326,21 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               className="space-y-3"
             >
               <Section
-                title={L(locale, { ar: 'تاريخ الرحلة', en: 'Trip date', ru: 'Дата', it: 'Data' }) as string}
+                title={L(locale, { ar: 'تاريخ الرحلة', en: 'Trip date', de: 'Reisedatum', ru: 'Дата', it: 'Data' }) as string}
                 icon={CalendarIcon}
               >
                 <DatePicker value={date} onChange={setDate} min={minDate} locale={locale} />
               </Section>
 
               <Section
-                title={L(locale, { ar: 'عدد المسافرين', en: 'Travelers', ru: 'Гости', it: 'Ospiti' }) as string}
+                title={L(locale, { ar: 'عدد المسافرين', en: 'Travelers', de: 'Reisende', ru: 'Гости', it: 'Ospiti' }) as string}
                 icon={Users}
               >
                 <div className="space-y-1.5">
                   <Counter
                     icon={Users}
-                    label={L(locale, { ar: 'البالغين', en: 'Adults', ru: 'Взрослые', it: 'Adulti' }) as string}
-                    sublabel={L(locale, { ar: 'الإلزامي', en: 'required', ru: 'обязательно', it: 'obbligatorio' }) as string}
+                    label={L(locale, { ar: 'البالغين', en: 'Adults', de: 'Erwachsene', ru: 'Взрослые', it: 'Adulti' }) as string}
+                    sublabel={L(locale, { ar: 'الإلزامي', en: 'required', de: 'erforderlich', ru: 'обязательно', it: 'obbligatorio' }) as string}
                     value={adults}
                     setValue={setAdults}
                     min={1}
@@ -349,7 +349,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   <label className="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg bg-gradient-to-br from-accent/8 via-accent/5 to-accent/8 border border-accent/20 cursor-pointer hover:border-accent/45 transition-colors">
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary leading-tight">
                       <Heart className="h-3 w-3 text-accent" />
-                      {L(locale, { ar: 'مع عائلة', en: 'With family', ru: 'С семьёй', it: 'In famiglia' })}
+                      {L(locale, { ar: 'مع عائلة', en: 'With family', de: 'With family', ru: 'С семьёй', it: 'In famiglia' })}
                     </span>
                     <ToggleSwitch checked={isMarried} onChange={(v) => { setIsMarried(v); if (!v) setChildren(0); }} />
                   </label>
@@ -357,16 +357,16 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                     <div className="animate-in slide-in-from-top-1 fade-in duration-200">
                       <Counter
                         icon={Baby}
-                        label={L(locale, { ar: 'الأطفال', en: 'Children', ru: 'Дети', it: 'Bambini' }) as string}
+                        label={L(locale, { ar: 'الأطفال', en: 'Children', de: 'Kinder', ru: 'Дети', it: 'Bambini' }) as string}
                         sublabel={
                           trip.childDiscount > 0
                             ? (L(locale, {
                                 ar: `خصم ${trip.childDiscount}%`,
-                                en: `${trip.childDiscount}% off`,
+                                en: `${trip.childDiscount}% off`, de: `${trip.childDiscount}% off`,
                                 ru: `скидка ${trip.childDiscount}%`,
                                 it: `sconto ${trip.childDiscount}%`,
                               }) as string)
-                            : (L(locale, { ar: 'كل الأعمار', en: 'all ages', ru: 'все возрасты', it: 'tutte le età' }) as string)
+                            : (L(locale, { ar: 'كل الأعمار', en: 'all ages', de: 'all ages', ru: 'все возрасты', it: 'tutte le età' }) as string)
                         }
                         value={children}
                         setValue={setChildren}
@@ -379,7 +379,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               </Section>
 
               <Section
-                title={L(locale, { ar: 'الفئة العمرية', en: 'Age group', ru: 'Возраст', it: 'Età' }) as string}
+                title={L(locale, { ar: 'الفئة العمرية', en: 'Age group', de: 'Altersgruppe', ru: 'Возраст', it: 'Età' }) as string}
                 icon={User}
               >
                 <div className="grid grid-cols-2 gap-1.5">
@@ -413,7 +413,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               <label className="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg bg-primary/5 border border-accent/20 cursor-pointer hover:border-accent/45 transition-colors">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary leading-tight">
                   <span className="text-base">🇪🇬</span>
-                  {L(locale, { ar: 'أنا مصري الجنسية', en: "I'm Egyptian", ru: 'Я египтянин', it: 'Sono egiziano' })}
+                  {L(locale, { ar: 'أنا مصري الجنسية', en: "I'm Egyptian", de: "I'm Egyptian", ru: 'Я египтянин', it: 'Sono egiziano' })}
                 </span>
                 <ToggleSwitch checked={isLocal} onChange={setIsLocal} />
               </label>
@@ -434,7 +434,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   <Sparkles className="h-3 w-3 text-accent shrink-0 mt-0.5" />
                   {L(locale, {
                     ar: 'بياناتك آمنة 100% — للتأكيد فقط.',
-                    en: 'Your details are 100% safe — confirmation only.',
+                    en: 'Your details are 100% safe — confirmation only.', de: 'Your details are 100% safe — confirmation only.',
                     ru: 'Данные защищены — только для подтверждения.',
                     it: 'Dati al sicuro — solo per conferma.',
                   })}
@@ -442,7 +442,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               </div>
 
               <Section
-                title={L(locale, { ar: 'بيانات التواصل', en: 'Contact details', ru: 'Контакты', it: 'Contatti' }) as string}
+                title={L(locale, { ar: 'بيانات التواصل', en: 'Contact details', de: 'Contact details', ru: 'Контакты', it: 'Contatti' }) as string}
                 icon={User}
               >
                 <div className="space-y-1.5">
@@ -450,7 +450,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                     <Input
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder={L(locale, { ar: 'الاسم الكامل', en: 'Full name', ru: 'Полное имя', it: 'Nome completo' }) as string}
+                      placeholder={L(locale, { ar: 'الاسم الكامل', en: 'Full name', de: 'Vollständiger Name', ru: 'Полное имя', it: 'Nome completo' }) as string}
                       className="border-0 bg-transparent focus:bg-white h-9 text-sm"
                       dir={isAr ? 'rtl' : 'ltr'}
                       autoFocus
@@ -460,7 +460,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                     <Input
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder={L(locale, { ar: 'رقم الهاتف / واتساب', en: 'Phone / WhatsApp', ru: 'Телефон / WhatsApp', it: 'Telefono / WhatsApp' }) as string}
+                      placeholder={L(locale, { ar: 'رقم الهاتف / واتساب', en: 'Phone / WhatsApp', de: 'Phone / WhatsApp', ru: 'Телефон / WhatsApp', it: 'Telefono / WhatsApp' }) as string}
                       className="border-0 bg-transparent focus:bg-white h-9 text-sm"
                       dir="ltr"
                       type="tel"
@@ -471,7 +471,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                     <Input
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder={L(locale, { ar: 'البريد الإلكتروني (اختياري)', en: 'Email (optional)', ru: 'Email (необязательно)', it: 'Email (opzionale)' }) as string}
+                      placeholder={L(locale, { ar: 'البريد الإلكتروني (اختياري)', en: 'Email (optional)', de: 'Email (optional)', ru: 'Email (необязательно)', it: 'Email (opzionale)' }) as string}
                       className="border-0 bg-transparent focus:bg-white h-9 text-sm"
                       dir="ltr"
                       type="email"
@@ -481,16 +481,16 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               </Section>
 
               <Section
-                title={L(locale, { ar: 'ملاحظات', en: 'Notes', ru: 'Пожелания', it: 'Note' }) as string}
+                title={L(locale, { ar: 'ملاحظات', en: 'Notes', de: 'Notizen', ru: 'Пожелания', it: 'Note' }) as string}
                 icon={MessageCircle}
-                badge={L(locale, { ar: 'اختياري', en: 'optional', ru: 'опц.', it: 'opz.' }) as string}
+                badge={L(locale, { ar: 'اختياري', en: 'optional', de: 'optional', ru: 'опц.', it: 'opz.' }) as string}
               >
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder={L(locale, {
                     ar: 'نباتي، احتياجات خاصة، ساعة الالتقاط...',
-                    en: 'dietary needs, pickup time...',
+                    en: 'dietary needs, pickup time...', de: 'dietary needs, pickup time...',
                     ru: 'вегетарианское, время...',
                     it: 'vegetariano, orario...',
                   }) as string}
@@ -516,39 +516,39 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               <div className="rounded-xl border-2 border-accent/25 bg-gradient-to-br from-accent/5 via-white to-accent/5 p-3 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase tracking-[0.18em] text-accent-700 font-bold">
-                    {L(locale, { ar: 'ملخص الحجز', en: 'Booking summary', ru: 'Сводка', it: 'Riepilogo' })}
+                    {L(locale, { ar: 'ملخص الحجز', en: 'Booking summary', de: 'Booking summary', ru: 'Сводка', it: 'Riepilogo' })}
                   </span>
                   <button
                     type="button"
                     onClick={() => setStep(0)}
                     className="text-[10px] font-bold text-accent-700 hover:text-accent-800 underline-offset-2 hover:underline"
                   >
-                    {L(locale, { ar: 'تعديل', en: 'Edit', ru: 'Изменить', it: 'Modifica' })}
+                    {L(locale, { ar: 'تعديل', en: 'Edit', de: 'Bearbeiten', ru: 'Изменить', it: 'Modifica' })}
                   </button>
                 </div>
 
                 <SummaryRow
                   icon={CalendarIcon}
-                  label={L(locale, { ar: 'التاريخ', en: 'Date', ru: 'Дата', it: 'Data' }) as string}
+                  label={L(locale, { ar: 'التاريخ', en: 'Date', de: 'Datum', ru: 'Дата', it: 'Data' }) as string}
                   value={new Date(date).toLocaleDateString(isAr ? 'ar-EG' : locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
                 />
                 <SummaryRow
                   icon={Users}
-                  label={L(locale, { ar: 'المسافرين', en: 'Travelers', ru: 'Гости', it: 'Ospiti' }) as string}
+                  label={L(locale, { ar: 'المسافرين', en: 'Travelers', de: 'Reisende', ru: 'Гости', it: 'Ospiti' }) as string}
                   value={
-                    `${adults} ${L(locale, { ar: 'بالغ', en: 'adult', ru: 'взр.', it: 'ad.' })}` +
+                    `${adults} ${L(locale, { ar: 'بالغ', en: 'adult', de: 'adult', ru: 'взр.', it: 'ad.' })}` +
                     (showChildrenCounter && children > 0
-                      ? ` + ${children} ${L(locale, { ar: 'طفل', en: 'child', ru: 'дет.', it: 'b.' })}`
+                      ? ` + ${children} ${L(locale, { ar: 'طفل', en: 'child', de: 'child', ru: 'дет.', it: 'b.' })}`
                       : '')
                   }
                 />
                 <SummaryRow
                   icon={MapPin}
-                  label={L(locale, { ar: 'الجنسية', en: 'Nationality', ru: 'Гражданство', it: 'Nazion.' }) as string}
+                  label={L(locale, { ar: 'الجنسية', en: 'Nationality', de: 'Nationalität', ru: 'Гражданство', it: 'Nazion.' }) as string}
                   value={
                     isLocal
-                      ? (L(locale, { ar: 'مصري', en: 'Egyptian', ru: 'Египет', it: 'Egiziano' }) as string)
-                      : (L(locale, { ar: 'سائح', en: 'Tourist', ru: 'Турист', it: 'Turista' }) as string)
+                      ? (L(locale, { ar: 'مصري', en: 'Egyptian', de: 'Ägyptisch', ru: 'Египет', it: 'Egiziano' }) as string)
+                      : (L(locale, { ar: 'سائح', en: 'Tourist', de: 'Tourist', ru: 'Турист', it: 'Turista' }) as string)
                   }
                 />
                 <SummaryRow
@@ -576,13 +576,13 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   aria-disabled={!formReady}
                 >
                   <MessageCircle className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                  {L(locale, { ar: 'احجز عبر واتساب', en: 'Book via WhatsApp', ru: 'Через WhatsApp', it: 'Via WhatsApp' })}
+                  {L(locale, { ar: 'احجز عبر واتساب', en: 'Book via WhatsApp', de: 'Über WhatsApp buchen', ru: 'Через WhatsApp', it: 'Via WhatsApp' })}
                 </a>
 
                 <div className="flex items-center gap-2 py-0.5">
                   <span className="flex-1 h-px bg-accent/20" />
                   <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
-                    {L(locale, { ar: 'أو', en: 'or', ru: 'или', it: 'o' })}
+                    {L(locale, { ar: 'أو', en: 'or', de: 'or', ru: 'или', it: 'o' })}
                   </span>
                   <span className="flex-1 h-px bg-accent/20" />
                 </div>
@@ -599,7 +599,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   )}
                 >
                   <CreditCard className="h-4 w-4" />
-                  {L(locale, { ar: 'ارفع إيصال الدفع', en: 'Upload receipt', ru: 'Загрузить чек', it: 'Carica ricevuta' })}
+                  {L(locale, { ar: 'ارفع إيصال الدفع', en: 'Upload receipt', de: 'Beleg hochladen', ru: 'Загрузить чек', it: 'Carica ricevuta' })}
                 </button>
 
                 <a
@@ -607,7 +607,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   className="inline-flex items-center justify-center gap-1.5 w-full h-9 rounded-lg border border-accent/30 hover:bg-accent/5 hover:border-accent text-primary font-bold text-xs transition-colors"
                 >
                   <Phone className="h-3 w-3 text-accent" />
-                  {L(locale, { ar: 'اتصل بنا', en: 'Call us', ru: 'Позвонить', it: 'Chiama' })}
+                  {L(locale, { ar: 'اتصل بنا', en: 'Call us', de: 'Anrufen', ru: 'Позвонить', it: 'Chiama' })}
                 </a>
               </div>
             </motion.div>
@@ -620,7 +620,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         <div className="flex justify-between items-end">
           <div>
             <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold">
-              {L(locale, { ar: 'الإجمالي', en: 'Total', ru: 'Итого', it: 'Totale' })}
+              {L(locale, { ar: 'الإجمالي', en: 'Total', de: 'Gesamt', ru: 'Итого', it: 'Totale' })}
             </div>
             <div className="text-[9px] text-muted-foreground flex items-center gap-1 flex-wrap mt-0.5">
               <span>{adults} × <Price amount={unit} from={fromCurrency} /></span>
@@ -644,7 +644,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                 className="inline-flex items-center justify-center gap-1 h-10 px-3 rounded-lg border-2 border-accent/25 text-primary font-bold text-xs hover:bg-accent/5 hover:border-accent/50 transition-all"
               >
                 {isAr ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
-                {L(locale, { ar: 'رجوع', en: 'Back', ru: 'Назад', it: 'Indietro' })}
+                {L(locale, { ar: 'رجوع', en: 'Back', de: 'Zurück', ru: 'Назад', it: 'Indietro' })}
               </button>
             ) : null}
             <button
@@ -652,7 +652,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               onClick={goNext}
               className="flex-1 inline-flex items-center justify-center gap-1 h-10 rounded-lg bg-primary hover:bg-primary-900 text-cream font-bold text-sm shadow-md shadow-primary/25 hover:-translate-y-0.5 transition-all group"
             >
-              {L(locale, { ar: 'متابعة', en: 'Continue', ru: 'Далее', it: 'Continua' })}
+              {L(locale, { ar: 'متابعة', en: 'Continue', de: 'Weiter', ru: 'Далее', it: 'Continua' })}
               {isAr ? <ChevronLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" /> : <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />}
             </button>
           </div>
@@ -660,9 +660,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
 
         {/* Trust footer */}
         <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 pt-0.5 text-[9px] text-muted-foreground">
-          <TrustPill icon={ShieldCheck} text={L(locale, { ar: 'إلغاء مجاني', en: 'Free cancel', ru: 'Бесплатно', it: 'Gratis' }) as string} />
-          <TrustPill icon={Sparkles} text={L(locale, { ar: 'تأكيد فوري', en: 'Instant', ru: 'Мгновенно', it: 'Istantaneo' }) as string} />
-          <TrustPill icon={BadgeCheck} text={L(locale, { ar: 'مرخصة', en: 'Licensed', ru: 'Лицензия', it: 'Autorizzato' }) as string} />
+          <TrustPill icon={ShieldCheck} text={L(locale, { ar: 'إلغاء مجاني', en: 'Free cancel', de: 'Kostenlose Stornierung', ru: 'Бесплатно', it: 'Gratis' }) as string} />
+          <TrustPill icon={Sparkles} text={L(locale, { ar: 'تأكيد فوري', en: 'Instant', de: 'Sofort', ru: 'Мгновенно', it: 'Istantaneo' }) as string} />
+          <TrustPill icon={BadgeCheck} text={L(locale, { ar: 'مرخصة', en: 'Licensed', de: 'Lizenziert', ru: 'Лицензия', it: 'Autorizzato' }) as string} />
         </div>
       </div>
 

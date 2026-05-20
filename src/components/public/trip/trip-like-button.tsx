@@ -54,8 +54,8 @@ export function TripLikeButton({ slug, locale, initialCount = 0 }: { slug: strin
       <span className="tabular-nums">{count}</span>
       <span className="hidden sm:inline">
         {liked
-          ? L(locale, { ar: 'أعجبتك', en: 'Liked', ru: 'Нравится', it: 'Ti piace' })
-          : L(locale, { ar: 'إعجاب', en: 'Like', ru: 'Нравится', it: 'Mi piace' })}
+          ? L(locale, { ar: 'أعجبتك', en: 'Liked', de: 'Liked', ru: 'Нравится', it: 'Ti piace' })
+          : L(locale, { ar: 'إعجاب', en: 'Like', de: 'Like', ru: 'Нравится', it: 'Mi piace' })}
       </span>
     </button>
   );

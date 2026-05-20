@@ -59,9 +59,9 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
       <div className="flex justify-center mb-8">
         <div className="inline-flex items-center bg-white rounded-full p-1 border border-accent/20 shadow-sm">
           {[
-            { k: 'all',    ar: 'الكل',     en: 'All',     ru: 'Все',   it: 'Tutti', count: photos.length + videos.length, icon: null },
-            { k: 'photos', ar: 'صور',      en: 'Photos',  ru: 'Фото',  it: 'Foto',  count: photos.length, icon: Camera },
-            { k: 'videos', ar: 'فيديوهات', en: 'Videos',  ru: 'Видео', it: 'Video', count: videos.length, icon: Video },
+            { k: 'all',    ar: 'الكل',     en: 'All',     de: 'Alle',   ru: 'Все',   it: 'Tutti', count: photos.length + videos.length, icon: null },
+            { k: 'photos', ar: 'صور',      en: 'Photos',  de: 'Fotos',  ru: 'Фото',  it: 'Foto',  count: photos.length, icon: Camera },
+            { k: 'videos', ar: 'فيديوهات', en: 'Videos',  de: 'Videos', ru: 'Видео', it: 'Video', count: videos.length, icon: Video },
           ].map((t) => (
             <button
               key={t.k}
@@ -72,7 +72,7 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
               )}
             >
               {t.icon && <t.icon className="h-4 w-4" />}
-              {L(locale, { ar: t.ar, en: t.en, ru: t.ru, it: t.it })}
+              {L(locale, { ar: t.ar, en: t.en, ru: t.ru, it: t.it, de: t.de })}
               <span className={cn('text-xs px-2 py-0.5 rounded-full', tab === t.k ? 'bg-accent text-primary' : 'bg-accent/15 text-accent-700')}>
                 {t.count}
               </span>
@@ -90,7 +90,7 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
           transition={{ duration: 0.3 }}
         >
           {items.length === 0 ? (
-            <p className="text-center text-muted-foreground py-16">{L(locale, { ar: 'لا يوجد محتوى', en: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
+            <p className="text-center text-muted-foreground py-16">{L(locale, { ar: 'لا يوجد محتوى', en: 'No content yet', de: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
           ) : (
             <>
               <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">

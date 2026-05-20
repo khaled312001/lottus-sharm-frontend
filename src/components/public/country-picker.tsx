@@ -63,7 +63,7 @@ export function CountryPicker({
 
   const ph = placeholder || (L(locale, {
     ar: 'اختر الجنسية',
-    en: 'Select nationality',
+    en: 'Select nationality', de: 'Select nationality',
     ru: 'Выберите гражданство',
     it: 'Seleziona nazionalità',
   }) as string);
@@ -115,7 +115,7 @@ export function CountryPicker({
                   <Globe2 className="h-4 w-4" />
                 </span>
                 <h3 className="font-bold text-sm">
-                  {L(locale, { ar: 'اختر الجنسية', en: 'Select nationality', ru: 'Гражданство', it: 'Nazionalità' })}
+                  {L(locale, { ar: 'اختر الجنسية', en: 'Select nationality', de: 'Select nationality', ru: 'Гражданство', it: 'Nazionalità' })}
                 </h3>
               </div>
               <button
@@ -136,7 +136,7 @@ export function CountryPicker({
                 type="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder={L(locale, { ar: 'ابحث عن دولة...', en: 'Search country...', ru: 'Поиск страны...', it: 'Cerca paese...' }) as string}
+                placeholder={L(locale, { ar: 'ابحث عن دولة...', en: 'Search country...', de: 'Search country...', ru: 'Поиск страны...', it: 'Cerca paese...' }) as string}
                 className="w-full h-11 ps-9 pe-3 rounded-lg bg-muted/40 border border-transparent focus:bg-white focus:border-accent/50 outline-none text-sm transition-colors"
                 autoComplete="off"
               />
@@ -146,7 +146,7 @@ export function CountryPicker({
             {popular.length > 0 && (
               <div className="px-4 pt-3">
                 <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground mb-2">
-                  {L(locale, { ar: 'الأكثر اختياراً', en: 'Popular', ru: 'Популярные', it: 'Più scelti' })}
+                  {L(locale, { ar: 'الأكثر اختياراً', en: 'Popular', de: 'Popular', ru: 'Популярные', it: 'Più scelti' })}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {popular.map(({ code, country }) => {
@@ -176,7 +176,7 @@ export function CountryPicker({
             <ul className="flex-1 overflow-y-auto py-2 px-2">
               {filtered.length === 0 ? (
                 <li className="px-4 py-12 text-center text-sm text-muted-foreground">
-                  {L(locale, { ar: 'لا توجد نتائج', en: 'No results', ru: 'Нет результатов', it: 'Nessun risultato' })}
+                  {L(locale, { ar: 'لا توجد نتائج', en: 'No results', de: 'No results', ru: 'Нет результатов', it: 'Nessun risultato' })}
                 </li>
               ) : filtered.map((c) => {
                 const isSelected = c.code === value;
@@ -205,7 +205,7 @@ export function CountryPicker({
             {/* Footer */}
             <div className="px-4 py-2.5 border-t border-accent/15 bg-muted/20 text-[11px] text-muted-foreground flex items-center justify-between">
               <span>
-                {filtered.length} {L(locale, { ar: 'دولة', en: 'countries', ru: 'стран', it: 'paesi' })}
+                {filtered.length} {L(locale, { ar: 'دولة', en: 'countries', de: 'countries', ru: 'стран', it: 'paesi' })}
               </span>
               <kbd className="inline-flex items-center px-1.5 py-0.5 rounded border font-mono text-[10px] bg-white">ESC</kbd>
             </div>

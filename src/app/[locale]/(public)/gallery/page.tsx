@@ -84,15 +84,15 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
         <div className="container relative">
           <Reveal>
             <Camera className="h-10 w-10 text-accent mb-4" />
-            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'لحظات لا تُنسى', en: 'Unforgettable moments', ru: 'Незабываемые моменты', it: 'Momenti indimenticabili' })}</div>
+            <div className="text-accent uppercase tracking-[0.3em] text-xs font-bold mb-3">{L(locale, { ar: 'لحظات لا تُنسى', en: 'Unforgettable moments', de: 'Unforgettable moments', ru: 'Незабываемые моменты', it: 'Momenti indimenticabili' })}</div>
             <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1]">{heroTitle}</h1>
             <p className="text-lg opacity-90 max-w-2xl">{heroSubtitle}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-cream/70">
-              <span className="inline-flex items-center gap-1.5"><Camera className="h-4 w-4 text-accent" /> {dedPhotos.length} {L(locale, { ar: 'صورة', en: 'photos', ru: 'фото', it: 'foto' })}</span>
+              <span className="inline-flex items-center gap-1.5"><Camera className="h-4 w-4 text-accent" /> {dedPhotos.length} {L(locale, { ar: 'صورة', en: 'photos', de: 'photos', ru: 'фото', it: 'foto' })}</span>
               <span>·</span>
-              <span className="inline-flex items-center gap-1.5"><Video className="h-4 w-4 text-accent" /> {dedVideos.length} {L(locale, { ar: 'فيديو', en: 'videos', ru: 'видео', it: 'video' })}</span>
+              <span className="inline-flex items-center gap-1.5"><Video className="h-4 w-4 text-accent" /> {dedVideos.length} {L(locale, { ar: 'فيديو', en: 'videos', de: 'videos', ru: 'видео', it: 'video' })}</span>
               <span>·</span>
-              <span>{trips.length} {L(locale, { ar: 'رحلة', en: 'experiences', ru: 'туров', it: 'esperienze' })}</span>
+              <span>{trips.length} {L(locale, { ar: 'رحلة', en: 'experiences', de: 'experiences', ru: 'туров', it: 'esperienze' })}</span>
             </div>
           </Reveal>
         </div>
@@ -101,7 +101,7 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
       <section className="container py-12 md:py-16">
         {(dedPhotos.length + dedVideos.length) === 0 ? (
           <Reveal className="text-center py-20 text-muted-foreground">
-            <p className="font-serif text-xl mb-2">{L(locale, { ar: 'لا توجد صور حالياً', en: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
+            <p className="font-serif text-xl mb-2">{L(locale, { ar: 'لا توجد صور حالياً', en: 'No content yet', de: 'No content yet', ru: 'Контента пока нет', it: 'Nessun contenuto' })}</p>
           </Reveal>
         ) : (
           <Reveal>
@@ -115,10 +115,10 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
           <Reveal>
             <div className="relative max-w-4xl mx-auto rounded-2xl bg-primary text-cream p-8 md:p-12 text-center overflow-hidden">
               <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-accent/15 blur-3xl" />
-              <h3 className="font-serif text-2xl md:text-3xl font-bold mb-3">{L(locale, { ar: 'عاوز تعمل ذكريات زي دي؟', en: 'Want to make memories like these?', ru: 'Хотите оставить такие же воспоминания?', it: 'Vuoi creare ricordi così?' })}</h3>
-              <p className="opacity-85 mb-6 max-w-xl mx-auto">{L(locale, { ar: 'تصفح رحلاتنا واختر مغامرتك القادمة', en: 'Browse our trips and pick your next adventure', ru: 'Просмотрите туры и выберите своё следующее приключение', it: 'Sfoglia i tour e scegli la tua prossima avventura' })}</p>
+              <h3 className="font-serif text-2xl md:text-3xl font-bold mb-3">{L(locale, { ar: 'عاوز تعمل ذكريات زي دي؟', en: 'Want to make memories like these?', de: 'Want to make memories like these?', ru: 'Хотите оставить такие же воспоминания?', it: 'Vuoi creare ricordi così?' })}</h3>
+              <p className="opacity-85 mb-6 max-w-xl mx-auto">{L(locale, { ar: 'تصفح رحلاتنا واختر مغامرتك القادمة', en: 'Browse our trips and pick your next adventure', de: 'Browse our trips and pick your next adventure', ru: 'Просмотрите туры и выберите своё следующее приключение', it: 'Sfoglia i tour e scegli la tua prossima avventura' })}</p>
               <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent-400 font-bold">
-                <Link href="/trips">{L(locale, { ar: 'تصفح الرحلات', en: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
+                <Link href="/trips">{L(locale, { ar: 'تصفح الرحلات', en: 'Browse Trips', de: 'Browse Trips', ru: 'Просмотреть туры', it: 'Sfoglia i tour' })} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
               </Button>
             </div>
           </Reveal>

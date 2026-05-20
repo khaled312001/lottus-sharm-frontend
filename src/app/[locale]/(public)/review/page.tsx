@@ -26,13 +26,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const title = L(locale, {
     ar: 'تقييمات العملاء واترك تقييمك — لوتس شرم',
-    en: 'Customer reviews — Lotus Sharm Tourism',
+    en: 'Customer reviews — Lotus Sharm Tourism', de: 'Customer reviews — Lotus Sharm Tourism',
     ru: 'Отзывы клиентов — Lotus Sharm',
     it: 'Recensioni clienti — Lotus Sharm',
   });
   const description = L(locale, {
     ar: 'اقرأ تقييمات حقيقية من ضيوف لوتس شرم — أو شاركنا تجربتك في دقيقة واحدة.',
-    en: 'Read verified Lotus Sharm guest reviews — or share your own in a minute.',
+    en: 'Read verified Lotus Sharm guest reviews — or share your own in a minute.', de: 'Read verified Lotus Sharm guest reviews — or share your own in a minute.',
     ru: 'Реальные отзывы гостей Lotus Sharm — или поделитесь своим за минуту.',
     it: 'Recensioni verificate degli ospiti Lotus Sharm — o condividi la tua.',
   });
@@ -74,12 +74,12 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
         <div className="container relative text-center max-w-3xl mx-auto">
           <Reveal>
             <span className="eyebrow eyebrow-center">
-              {L(locale, { ar: 'تقييمات الضيوف', en: 'Guest reviews', ru: 'Отзывы гостей', it: 'Recensioni' })}
+              {L(locale, { ar: 'تقييمات الضيوف', en: 'Guest reviews', de: 'Guest reviews', ru: 'Отзывы гостей', it: 'Recensioni' })}
             </span>
             <h1 className="font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight">
               {L(locale, {
                 ar: 'تجارب حقيقية من ضيوفنا',
-                en: 'Real stories from real travelers',
+                en: 'Real stories from real travelers', de: 'Real stories from real travelers',
                 ru: 'Реальные истории от реальных путешественников',
                 it: 'Storie vere di veri viaggiatori',
               })}
@@ -94,7 +94,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
               <span className="font-serif text-2xl font-bold text-accent">{avg.toFixed(1)}</span>
               <span className="text-xs uppercase tracking-wider text-cream/60 ms-1 ps-2 border-s border-cream/20">
                 <strong className="text-accent">{total}+</strong>{' '}
-                {L(locale, { ar: 'تقييم موثّق', en: 'verified reviews', ru: 'проверенных отзывов', it: 'recensioni verificate' })}
+                {L(locale, { ar: 'تقييم موثّق', en: 'verified reviews', de: 'verifizierte Bewertungen', ru: 'проверенных отзывов', it: 'recensioni verificate' })}
               </span>
             </div>
           </Reveal>
@@ -106,7 +106,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
         <div>
           <div className="flex items-baseline justify-between gap-3 mb-5">
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary">
-              {L(locale, { ar: 'كل التقييمات', en: 'All reviews', ru: 'Все отзывы', it: 'Tutte le recensioni' })}
+              {L(locale, { ar: 'كل التقييمات', en: 'All reviews', de: 'All reviews', ru: 'Все отзывы', it: 'Tutte le recensioni' })}
             </h2>
             <span className="text-sm text-muted-foreground tabular-nums">{reviews.length}</span>
           </div>
@@ -115,7 +115,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
             <div className="bg-white rounded-2xl border-2 border-dashed border-accent/25 p-10 text-center">
               <Quote className="h-10 w-10 text-accent/30 mx-auto mb-3" />
               <p className="text-muted-foreground">
-                {L(locale, { ar: 'كن أول من يقيّمنا!', en: 'Be the first to review us!', ru: 'Будьте первым!', it: 'Sii il primo!' })}
+                {L(locale, { ar: 'كن أول من يقيّمنا!', en: 'Be the first to review us!', de: 'Be the first to review us!', ru: 'Будьте первым!', it: 'Sii il primo!' })}
               </p>
             </div>
           ) : (
@@ -138,17 +138,17 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
               </span>
               <div>
                 <div className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold">
-                  {L(locale, { ar: 'سافرت معنا؟', en: 'Travelled with us?', ru: 'Путешествовали?', it: 'Hai viaggiato con noi?' })}
+                  {L(locale, { ar: 'سافرت معنا؟', en: 'Travelled with us?', de: 'Travelled with us?', ru: 'Путешествовали?', it: 'Hai viaggiato con noi?' })}
                 </div>
                 <h2 className="font-serif text-xl font-bold leading-tight">
-                  {L(locale, { ar: 'اترك تقييمك', en: 'Leave a review', ru: 'Оставьте отзыв', it: 'Lascia una recensione' })}
+                  {L(locale, { ar: 'اترك تقييمك', en: 'Leave a review', de: 'Leave a review', ru: 'Оставьте отзыв', it: 'Lascia una recensione' })}
                 </h2>
               </div>
             </div>
             <p className="text-xs text-cream/75 leading-relaxed mb-4">
               {L(locale, {
                 ar: 'رأيك يهمنا. اكتب عن رحلتك في دقيقة، وهيظهر بعد المراجعة.',
-                en: 'Your feedback matters. Write in a minute — appears after review.',
+                en: 'Your feedback matters. Write in a minute — appears after review.', de: 'Your feedback matters. Write in a minute — appears after review.',
                 ru: 'Поделитесь впечатлениями за минуту — появится после модерации.',
                 it: 'Scrivi in un minuto — apparirà dopo la moderazione.',
               })}

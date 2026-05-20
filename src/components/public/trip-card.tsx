@@ -50,7 +50,7 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
           {trip.isFeatured && (
             <div className="absolute top-4 start-4 flex items-center gap-1.5 rounded-full bg-accent/95 backdrop-blur px-3 py-1.5 text-xs font-bold text-primary shadow-lg">
               <Star className="h-3 w-3 fill-current" />
-              {L(locale, { ar: 'مميزة', en: 'Featured', ru: 'Популярный', it: 'In evidenza' })}
+              {L(locale, { ar: 'مميزة', en: 'Featured', de: 'Empfohlen', ru: 'Популярный', it: 'In evidenza' })}
             </div>
           )}
 

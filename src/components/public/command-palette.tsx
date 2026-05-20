@@ -18,13 +18,13 @@ type Item = {
 };
 
 const PAGES = [
-  { id: 'p-home',     href: '/',                    ar: 'الرئيسية',   en: 'Home',        ru: 'Главная',  it: 'Home' },
-  { id: 'p-trips',    href: '/trips',               ar: 'الرحلات',    en: 'Trips',       ru: 'Туры',     it: 'Tour' },
-  { id: 'p-blog',     href: '/blog',                ar: 'المدونة',    en: 'Blog',        ru: 'Блог',     it: 'Blog' },
-  { id: 'p-about',    href: '/about',               ar: 'من نحن',     en: 'About',       ru: 'О нас',    it: 'Chi siamo' },
-  { id: 'p-contact',  href: '/contact',             ar: 'تواصل',      en: 'Contact',     ru: 'Контакты', it: 'Contatti' },
-  { id: 'p-privacy',  href: '/privacy',             ar: 'الخصوصية',   en: 'Privacy',     ru: 'Конфиденциальность', it: 'Privacy' },
-  { id: 'p-terms',    href: '/terms',               ar: 'الشروط',     en: 'Terms',       ru: 'Условия',  it: 'Termini' },
+  { id: 'p-home',     href: '/',                    ar: 'الرئيسية',   en: 'Home',        de: 'Startseite', ru: 'Главная',  it: 'Home' },
+  { id: 'p-trips',    href: '/trips',               ar: 'الرحلات',    en: 'Trips',       de: 'Touren',     ru: 'Туры',     it: 'Tour' },
+  { id: 'p-blog',     href: '/blog',                ar: 'المدونة',    en: 'Blog',        de: 'Blog',       ru: 'Блог',     it: 'Blog' },
+  { id: 'p-about',    href: '/about',               ar: 'من نحن',     en: 'About',       de: 'Über uns',   ru: 'О нас',    it: 'Chi siamo' },
+  { id: 'p-contact',  href: '/contact',             ar: 'تواصل',      en: 'Contact',     de: 'Kontakt',    ru: 'Контакты', it: 'Contatti' },
+  { id: 'p-privacy',  href: '/privacy',             ar: 'الخصوصية',   en: 'Privacy',     de: 'Datenschutz', ru: 'Конфиденциальность', it: 'Privacy' },
+  { id: 'p-terms',    href: '/terms',               ar: 'الشروط',     en: 'Terms',       de: 'AGB',        ru: 'Условия',  it: 'Termini' },
 ];
 
 export function CommandPalette() {
@@ -66,11 +66,11 @@ export function CommandPalette() {
   useEffect(() => {
     const needle = q.trim().toLowerCase();
     const pageItems: Item[] = PAGES
-      .filter((p) => !needle || (L(locale, { ar: p.ar, en: p.en, ru: p.ru, it: p.it }) as string).toLowerCase().includes(needle) || p.href.includes(needle))
+      .filter((p) => !needle || (L(locale, { ar: p.ar, en: p.en, ru: p.ru, it: p.it, de: p.de }) as string).toLowerCase().includes(needle) || p.href.includes(needle))
       .map((p) => ({
         id: p.id,
         group: 'pages',
-        title: L(locale, { ar: p.ar, en: p.en, ru: p.ru, it: p.it }) as string,
+        title: L(locale, { ar: p.ar, en: p.en, ru: p.ru, it: p.it, de: p.de }) as string,
         subtitle: p.href,
         href: p.href,
         icon: ArrowRight,
@@ -145,9 +145,9 @@ export function CommandPalette() {
 
   // Group items for rendering
   const groups: { key: Item['group']; label: string; items: Item[] }[] = [
-    { key: 'trips', label: L(locale, { ar: 'الرحلات', en: 'Trips', ru: 'Туры', it: 'Tour' }) as string, items: items.filter((i) => i.group === 'trips') },
-    { key: 'posts', label: L(locale, { ar: 'المدونة', en: 'Blog', ru: 'Блог', it: 'Blog' }) as string, items: items.filter((i) => i.group === 'posts') },
-    { key: 'pages', label: L(locale, { ar: 'الصفحات', en: 'Pages', ru: 'Страницы', it: 'Pagine' }) as string, items: items.filter((i) => i.group === 'pages') },
+    { key: 'trips', label: L(locale, { ar: 'الرحلات', en: 'Trips', de: 'Touren', ru: 'Туры', it: 'Tour' }) as string, items: items.filter((i) => i.group === 'trips') },
+    { key: 'posts', label: L(locale, { ar: 'المدونة', en: 'Blog', de: 'Blog', ru: 'Блог', it: 'Blog' }) as string, items: items.filter((i) => i.group === 'posts') },
+    { key: 'pages', label: L(locale, { ar: 'الصفحات', en: 'Pages', de: 'Pages', ru: 'Страницы', it: 'Pagine' }) as string, items: items.filter((i) => i.group === 'pages') },
   ];
 
   let runningIdx = -1;
@@ -170,7 +170,7 @@ export function CommandPalette() {
             type="search"
             value={q}
             onChange={(e) => { setQ(e.target.value); setActive(0); }}
-            placeholder={L(locale, { ar: 'ابحث في الموقع...', en: 'Search the site...', ru: 'Поиск по сайту...', it: 'Cerca nel sito...' }) as string}
+            placeholder={L(locale, { ar: 'ابحث في الموقع...', en: 'Search the site...', de: 'Search the site...', ru: 'Поиск по сайту...', it: 'Cerca nel sito...' }) as string}
             className="flex-1 h-14 bg-transparent outline-none text-base text-primary placeholder:text-muted-foreground"
           />
           <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-mono text-muted-foreground bg-muted/30">ESC</kbd>
@@ -181,13 +181,13 @@ export function CommandPalette() {
           {loading && (
             <div className="px-3 py-6 text-center text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
-              {L(locale, { ar: 'جاري البحث...', en: 'Searching...', ru: 'Поиск...', it: 'Ricerca...' })}
+              {L(locale, { ar: 'جاري البحث...', en: 'Searching...', de: 'Searching...', ru: 'Поиск...', it: 'Ricerca...' })}
             </div>
           )}
 
           {!loading && items.length === 0 && (
             <div className="px-3 py-8 text-center text-sm text-muted-foreground">
-              {L(locale, { ar: 'لا توجد نتائج', en: 'No results', ru: 'Нет результатов', it: 'Nessun risultato' })}
+              {L(locale, { ar: 'لا توجد نتائج', en: 'No results', de: 'No results', ru: 'Нет результатов', it: 'Nessun risultato' })}
             </div>
           )}
 
@@ -235,16 +235,16 @@ export function CommandPalette() {
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 rounded border font-mono text-[10px] bg-white">↑↓</kbd>
-              {L(locale, { ar: 'تنقل', en: 'navigate', ru: 'навигация', it: 'naviga' })}
+              {L(locale, { ar: 'تنقل', en: 'navigate', de: 'navigate', ru: 'навигация', it: 'naviga' })}
             </span>
             <span className="inline-flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 rounded border font-mono text-[10px] bg-white">↵</kbd>
-              {L(locale, { ar: 'فتح', en: 'open', ru: 'открыть', it: 'apri' })}
+              {L(locale, { ar: 'فتح', en: 'open', de: 'open', ru: 'открыть', it: 'apri' })}
             </span>
           </div>
           <div className="inline-flex items-center gap-1">
             <CmdIcon className="h-3 w-3" />K
-            <span className="opacity-60">{L(locale, { ar: 'لإغلاق', en: 'to toggle', ru: 'переключить', it: 'apri/chiudi' })}</span>
+            <span className="opacity-60">{L(locale, { ar: 'لإغلاق', en: 'to toggle', de: 'to toggle', ru: 'переключить', it: 'apri/chiudi' })}</span>
           </div>
         </div>
       </div>

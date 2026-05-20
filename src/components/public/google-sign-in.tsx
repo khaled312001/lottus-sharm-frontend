@@ -32,7 +32,7 @@ export function GoogleSignInButton({ next, variant = 'primary', label, className
 
   const text = label || (L(locale, {
     ar: 'الدخول باستخدام Google',
-    en: 'Continue with Google',
+    en: 'Continue with Google', de: 'Continue with Google',
     ru: 'Войти через Google',
     it: 'Continua con Google',
   }) as string);

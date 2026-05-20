@@ -26,13 +26,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const title = L(locale, {
     ar: 'تقييمات فيسبوك — لوتس شرم للسياحة',
-    en: 'Facebook reviews — Lotus Sharm Tourism',
+    en: 'Facebook reviews — Lotus Sharm Tourism', de: 'Facebook reviews — Lotus Sharm Tourism',
     ru: 'Отзывы Facebook — Lotus Sharm',
     it: 'Recensioni Facebook — Lotus Sharm Tourism',
   });
   const description = L(locale, {
     ar: 'تقييمات حقيقية من زوار لوتس شرم على فيسبوك مع الصور والتعليقات الكاملة.',
-    en: 'Verified Facebook reviews from Lotus Sharm guests — full comments and photos.',
+    en: 'Verified Facebook reviews from Lotus Sharm guests — full comments and photos.', de: 'Verified Facebook reviews from Lotus Sharm guests — full comments and photos.',
     ru: 'Реальные отзывы из Facebook о Lotus Sharm — полные комментарии и фото.',
     it: 'Recensioni reali da Facebook degli ospiti Lotus Sharm.',
   });
@@ -54,12 +54,12 @@ export default async function FbReviewsPage({ params }: { params: Promise<{ loca
               <Facebook className="h-10 w-10 md:h-12 md:w-12" />
               <div>
                 <span className="block text-[11px] font-bold uppercase tracking-[0.25em] text-white/80">
-                  {L(locale, { ar: 'مباشر من فيسبوك', en: 'Direct from Facebook', ru: 'Прямо из Facebook', it: 'Direttamente da Facebook' })}
+                  {L(locale, { ar: 'مباشر من فيسبوك', en: 'Direct from Facebook', de: 'Direct from Facebook', ru: 'Прямо из Facebook', it: 'Direttamente da Facebook' })}
                 </span>
                 <h1 className="font-serif text-2xl md:text-4xl font-bold leading-tight mt-1">
                   {L(locale, {
                     ar: 'تقييمات زوارنا على فيسبوك',
-                    en: 'What guests say on Facebook',
+                    en: 'What guests say on Facebook', de: 'What guests say on Facebook',
                     ru: 'Что говорят гости на Facebook',
                     it: 'Cosa dicono gli ospiti su Facebook',
                   })}
@@ -69,7 +69,7 @@ export default async function FbReviewsPage({ params }: { params: Promise<{ loca
             <p className="text-white/90 max-w-2xl text-sm md:text-base mb-5">
               {L(locale, {
                 ar: 'كل تقييمات صفحتنا على فيسبوك من ضيوف حقيقيين بأسمائهم وصورهم — وبدون أي تعديل.',
-                en: 'Every review from our Facebook page — real guests, real names, real photos, unedited.',
+                en: 'Every review from our Facebook page — real guests, real names, real photos, unedited.', de: 'Every review from our Facebook page — real guests, real names, real photos, unedited.',
                 ru: 'Все отзывы с нашей страницы Facebook — реальные гости и фотографии.',
                 it: 'Tutte le recensioni dalla nostra pagina Facebook — ospiti reali, senza modifiche.',
               })}
@@ -81,7 +81,7 @@ export default async function FbReviewsPage({ params }: { params: Promise<{ loca
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1877F2] font-bold text-sm hover:bg-white/95 transition-colors shadow-lg"
             >
               <Facebook className="h-4 w-4" />
-              {L(locale, { ar: 'افتح الصفحة على فيسبوك', en: 'Open page on Facebook', ru: 'Открыть в Facebook', it: 'Apri su Facebook' })}
+              {L(locale, { ar: 'افتح الصفحة على فيسبوك', en: 'Open page on Facebook', de: 'Open page on Facebook', ru: 'Открыть в Facebook', it: 'Apri su Facebook' })}
               <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
             </a>
           </Reveal>
@@ -119,7 +119,7 @@ export default async function FbReviewsPage({ params }: { params: Promise<{ loca
                       {r.recommends && (
                         <span className="ms-1 inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
                           <ThumbsUp className="h-3 w-3" />
-                          {L(locale, { ar: 'يوصي', en: 'recommends', ru: 'реком.', it: 'consiglia' })}
+                          {L(locale, { ar: 'يوصي', en: 'recommends', de: 'empfiehlt', ru: 'реком.', it: 'consiglia' })}
                         </span>
                       )}
                     </div>
@@ -150,7 +150,7 @@ export default async function FbReviewsPage({ params }: { params: Promise<{ loca
                     className="text-[#1877F2] font-semibold hover:underline inline-flex items-center gap-1.5"
                   >
                     <Facebook className="h-3.5 w-3.5" />
-                    {L(locale, { ar: 'عرض على فيسبوك', en: 'View on Facebook', ru: 'Открыть в Facebook', it: 'Apri su Facebook' })}
+                    {L(locale, { ar: 'عرض على فيسبوك', en: 'View on Facebook', de: 'Auf Facebook ansehen', ru: 'Открыть в Facebook', it: 'Apri su Facebook' })}
                   </a>
                 </footer>
               </article>

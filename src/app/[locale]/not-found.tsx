@@ -34,13 +34,13 @@ export default function NotFound() {
 
         <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream/10 backdrop-blur border border-accent/40 text-accent text-[11px] font-bold uppercase tracking-[0.25em] mb-4">
           <Map className="h-3.5 w-3.5" />
-          {L(locale, { ar: 'ضلّيت طريقك؟', en: 'Lost your way?', ru: 'Заблудились?', it: 'Ti sei perso?' })}
+          {L(locale, { ar: 'ضلّيت طريقك؟', en: 'Lost your way?', de: 'Lost your way?', ru: 'Заблудились?', it: 'Ti sei perso?' })}
         </span>
 
         <h1 className="font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight text-balance">
           {L(locale, {
             ar: 'الصفحة دي مش موجودة',
-            en: "This page doesn't exist",
+            en: "This page doesn't exist", de: "This page doesn't exist",
             ru: 'Страница не найдена',
             it: 'Pagina non trovata',
           })}
@@ -49,7 +49,7 @@ export default function NotFound() {
         <p className="text-sm md:text-base opacity-85 max-w-md mx-auto leading-relaxed mb-8">
           {L(locale, {
             ar: 'بس لسه فيه رحلات كتير في انتظارك! تعالى نوصلك للمكان الصح.',
-            en: 'But plenty of trips are still waiting for you — let us guide you back.',
+            en: 'But plenty of trips are still waiting for you — let us guide you back.', de: 'But plenty of trips are still waiting for you — let us guide you back.',
             ru: 'Но много туров ждёт вас — давайте вернёмся на правильный путь.',
             it: 'Ma molti tour ti aspettano — ti riportiamo sulla strada giusta.',
           })}
@@ -58,39 +58,39 @@ export default function NotFound() {
         <div className="flex flex-wrap justify-center gap-3">
           <Link href="/" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-accent text-primary font-bold text-sm shadow-2xl shadow-accent/30 hover:bg-accent-400 hover:-translate-y-0.5 transition-all">
             <Home className="h-4 w-4" />
-            {L(locale, { ar: 'الرئيسية', en: 'Home', ru: 'Главная', it: 'Home' })}
+            {L(locale, { ar: 'الرئيسية', en: 'Home', de: 'Startseite', ru: 'Главная', it: 'Home' })}
             <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
           </Link>
           <Link href="/trips" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-cream/10 hover:bg-cream/20 backdrop-blur border border-cream/25 text-cream font-bold text-sm transition-colors">
             <Search className="h-4 w-4" />
-            {L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', ru: 'Туры', it: 'Tour' })}
+            {L(locale, { ar: 'تصفح الرحلات', en: 'Browse trips', de: 'Browse trips', ru: 'Туры', it: 'Tour' })}
           </Link>
           <a href="https://wa.me/201090767278" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-sm transition-colors">
             <MessageCircle className="h-4 w-4" />
-            {L(locale, { ar: 'واتساب', en: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}
+            {L(locale, { ar: 'واتساب', en: 'WhatsApp', de: 'WhatsApp', ru: 'WhatsApp', it: 'WhatsApp' })}
           </a>
         </div>
 
         {/* Helpful links */}
         <div className="mt-10 pt-6 border-t border-cream/10 max-w-md mx-auto">
           <p className="text-[11px] uppercase tracking-[0.25em] text-cream/55 font-bold mb-3">
-            {L(locale, { ar: 'روابط مفيدة', en: 'Helpful links', ru: 'Полезные ссылки', it: 'Link utili' })}
+            {L(locale, { ar: 'روابط مفيدة', en: 'Helpful links', de: 'Helpful links', ru: 'Полезные ссылки', it: 'Link utili' })}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
             <Link href="/hotels" className="text-cream/75 hover:text-accent transition-colors">
-              {L(locale, { ar: 'الفنادق', en: 'Hotels', ru: 'Отели', it: 'Hotel' })}
+              {L(locale, { ar: 'الفنادق', en: 'Hotels', de: 'Hotels', ru: 'Отели', it: 'Hotel' })}
             </Link>
             <span className="w-px h-3 bg-cream/20" />
             <Link href="/transfers" className="text-cream/75 hover:text-accent transition-colors">
-              {L(locale, { ar: 'النقل', en: 'Transfers', ru: 'Трансферы', it: 'Trasferimenti' })}
+              {L(locale, { ar: 'النقل', en: 'Transfers', de: 'Transfers', ru: 'Трансферы', it: 'Trasferimenti' })}
             </Link>
             <span className="w-px h-3 bg-cream/20" />
             <Link href="/blog" className="text-cream/75 hover:text-accent transition-colors">
-              {L(locale, { ar: 'المدونة', en: 'Blog', ru: 'Блог', it: 'Blog' })}
+              {L(locale, { ar: 'المدونة', en: 'Blog', de: 'Blog', ru: 'Блог', it: 'Blog' })}
             </Link>
             <span className="w-px h-3 bg-cream/20" />
             <Link href="/contact" className="text-cream/75 hover:text-accent transition-colors">
-              {L(locale, { ar: 'تواصل', en: 'Contact', ru: 'Контакты', it: 'Contatti' })}
+              {L(locale, { ar: 'تواصل', en: 'Contact', de: 'Kontakt', ru: 'Контакты', it: 'Contatti' })}
             </Link>
           </div>
         </div>

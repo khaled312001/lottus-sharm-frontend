@@ -52,10 +52,10 @@ function pick(o: { ar: string; en: string; ru: string; it: string }, locale: str
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: L(locale, { ar: 'حجز فنادق شرم الشيخ — لوتس شرم', en: 'Sharm El Sheikh hotels — Lotus Sharm', ru: 'Отели Шарм-эль-Шейха — Lotus Sharm', it: 'Hotel a Sharm El Sheikh — Lotus Sharm' }),
+    title: L(locale, { ar: 'حجز فنادق شرم الشيخ — لوتس شرم', en: 'Sharm El Sheikh hotels — Lotus Sharm', de: 'Sharm El Sheikh hotels — Lotus Sharm', ru: 'Отели Шарм-эль-Шейха — Lotus Sharm', it: 'Hotel a Sharm El Sheikh — Lotus Sharm' }),
     description: L(locale, {
       ar: 'احجز أفضل فنادق شرم الشيخ مع لوتس شرم — 3 ليالي 4 أيام شامل الانتقالات. أكثر من 25 فندق من 3 إلى 5 نجوم.',
-      en: 'Book the best Sharm El Sheikh hotels with Lotus Sharm — 3 nights/4 days incl. transfers. 25+ hotels from 3 to 5 stars.',
+      en: 'Book the best Sharm El Sheikh hotels with Lotus Sharm — 3 nights/4 days incl. transfers. 25+ hotels from 3 to 5 stars.', de: 'Book the best Sharm El Sheikh hotels with Lotus Sharm — 3 nights/4 days incl. transfers. 25+ hotels from 3 to 5 stars.',
       ru: 'Лучшие отели Шарм-эль-Шейха — 3 ночи/4 дня с трансферами. Более 25 отелей.',
       it: 'I migliori hotel a Sharm El Sheikh — 3 notti/4 giorni con trasferimenti. Oltre 25 hotel.',
     }),
@@ -91,12 +91,12 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
           <Reveal>
             <div className="inline-flex items-center gap-2 mb-4 px-3.5 py-1.5 rounded-full bg-accent/15 border border-accent/40 text-accent text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]">
               <BedDouble className="h-3.5 w-3.5" />
-              {L(locale, { ar: 'حجز الفنادق', en: 'Hotel bookings', ru: 'Бронирование отелей', it: 'Prenotazioni hotel' })}
+              {L(locale, { ar: 'حجز الفنادق', en: 'Hotel bookings', de: 'Hotel bookings', ru: 'Бронирование отелей', it: 'Prenotazioni hotel' })}
             </div>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold mb-4 max-w-3xl leading-[1.1] text-balance">
               {L(locale, {
                 ar: 'احجز فندقك في شرم الشيخ',
-                en: 'Book your Sharm El Sheikh hotel',
+                en: 'Book your Sharm El Sheikh hotel', de: 'Book your Sharm El Sheikh hotel',
                 ru: 'Забронируйте отель в Шарм-эль-Шейхе',
                 it: 'Prenota il tuo hotel a Sharm El Sheikh',
               })}
@@ -105,7 +105,7 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
             <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl leading-relaxed">
               {L(locale, {
                 ar: 'كل الأسعار للفرد · 3 ليالي / 4 أيام · شامل الانتقالات ذهاب وعودة',
-                en: 'All prices per person · 3 nights / 4 days · round-trip transfers included',
+                en: 'All prices per person · 3 nights / 4 days · round-trip transfers included', de: 'All prices per person · 3 nights / 4 days · round-trip transfers included',
                 ru: 'Цены за человека · 3 ночи / 4 дня · трансферы включены',
                 it: 'Prezzi a persona · 3 notti / 4 giorni · trasferimenti inclusi',
               })}
@@ -135,14 +135,14 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
                   </div>
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary leading-tight">
                     {s === 5
-                      ? L(locale, { ar: 'فنادق 5 نجوم فاخرة', en: '5-star luxury hotels', ru: 'Отели 5★ премиум', it: 'Hotel 5 stelle luxury' })
+                      ? L(locale, { ar: 'فنادق 5 نجوم فاخرة', en: '5-star luxury hotels', de: '5-star luxury hotels', ru: 'Отели 5★ премиум', it: 'Hotel 5 stelle luxury' })
                       : s === 4
-                      ? L(locale, { ar: 'فنادق 4 نجوم', en: '4-star hotels', ru: 'Отели 4★', it: 'Hotel 4 stelle' })
-                      : L(locale, { ar: 'فنادق 3 نجوم اقتصادية', en: '3-star budget hotels', ru: 'Отели 3★', it: 'Hotel 3 stelle' })}
+                      ? L(locale, { ar: 'فنادق 4 نجوم', en: '4-star hotels', de: '4-star hotels', ru: 'Отели 4★', it: 'Hotel 4 stelle' })
+                      : L(locale, { ar: 'فنادق 3 نجوم اقتصادية', en: '3-star budget hotels', de: '3-star budget hotels', ru: 'Отели 3★', it: 'Hotel 3 stelle' })}
                   </h2>
                 </div>
                 <span className="text-sm text-muted-foreground tabular-nums">
-                  {group.length} {L(locale, { ar: 'فندق', en: 'hotels', ru: 'отелей', it: 'hotel' })}
+                  {group.length} {L(locale, { ar: 'فندق', en: 'hotels', de: 'hotels', ru: 'отелей', it: 'hotel' })}
                 </span>
               </div>
 
@@ -155,7 +155,7 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
 
         {items.length === 0 && (
           <div className="text-center py-20 text-muted-foreground">
-            {L(locale, { ar: 'لا توجد فنادق متاحة حالياً', en: 'No hotels available right now', ru: 'Сейчас отелей нет', it: 'Nessun hotel disponibile' })}
+            {L(locale, { ar: 'لا توجد فنادق متاحة حالياً', en: 'No hotels available right now', de: 'No hotels available right now', ru: 'Сейчас отелей нет', it: 'Nessun hotel disponibile' })}
           </div>
         )}
       </section>
@@ -166,7 +166,7 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
           <p>
             {L(locale, {
               ar: '✦ سياسة الأطفال تختلف حسب كل فندق — تواصل معنا للتفاصيل',
-              en: '✦ Child policy varies per hotel — contact us for details',
+              en: '✦ Child policy varies per hotel — contact us for details', de: '✦ Child policy varies per hotel — contact us for details',
               ru: '✦ Политика для детей зависит от отеля — уточняйте',
               it: '✦ Politica bambini varia per hotel — contattaci',
             })}
@@ -174,7 +174,7 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
           <p>
             {L(locale, {
               ar: 'يوجد أسعار خاصة لمجموعات: شارميليون · ريكسوس · الباتروس · صن رايز',
-              en: 'Special group rates available at: Sharmillion · Rixos · Albatros · Sunrise',
+              en: 'Special group rates available at: Sharmillion · Rixos · Albatros · Sunrise', de: 'Special group rates available at: Sharmillion · Rixos · Albatros · Sunrise',
               ru: 'Спецтарифы для групп: Sharmillion · Rixos · Albatros · Sunrise',
               it: 'Tariffe speciali per gruppi: Sharmillion · Rixos · Albatros · Sunrise',
             })}
@@ -204,7 +204,7 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
   const soldOut = !h.isActive || priceEGP === 0;
   const waMsg = L(locale, {
     ar: `مرحبا، أود الاستفسار عن حجز فندق "${name}" (${h.stars} نجوم).`,
-    en: `Hello, I'd like to book hotel "${name}" (${h.stars}★).`,
+    en: `Hello, I'd like to book hotel "${name}" (${h.stars}★).`, de: `Hello, I'd like to book hotel "${name}" (${h.stars}★).`,
     ru: `Здравствуйте, хочу забронировать отель "${name}" (${h.stars}★).`,
     it: `Salve, vorrei prenotare l'hotel "${name}" (${h.stars}★).`,
   });
@@ -227,12 +227,12 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
         </div>
         {h.isFeatured && (
           <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent text-primary text-[10px] font-bold uppercase tracking-wider">
-            <Sparkles className="h-3 w-3" /> {L(locale, { ar: 'مميز', en: 'Featured', ru: 'Топ', it: 'Top' })}
+            <Sparkles className="h-3 w-3" /> {L(locale, { ar: 'مميز', en: 'Featured', de: 'Empfohlen', ru: 'Топ', it: 'Top' })}
           </span>
         )}
         {soldOut && (
           <span className="absolute bottom-3 start-3 inline-flex items-center px-2 py-1 rounded-full bg-red-600 text-white text-[10px] font-bold uppercase">
-            {L(locale, { ar: 'مكتمل / للاستعلام', en: 'On request', ru: 'По запросу', it: 'Su richiesta' })}
+            {L(locale, { ar: 'مكتمل / للاستعلام', en: 'On request', de: 'On request', ru: 'По запросу', it: 'Su richiesta' })}
           </span>
         )}
       </div>
@@ -254,18 +254,18 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
             {pick(board, locale)}
           </span>
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-            {h.nights} {L(locale, { ar: 'ليالي', en: 'nights', ru: 'ночей', it: 'notti' })}
+            {h.nights} {L(locale, { ar: 'ليالي', en: 'nights', de: 'nights', ru: 'ночей', it: 'notti' })}
           </span>
         </div>
 
         <div className="flex items-end justify-between pt-3 border-t border-accent/10">
           <div>
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-              {L(locale, { ar: 'سعر الفرد', en: 'Per person', ru: 'За человека', it: 'A persona' })}
+              {L(locale, { ar: 'سعر الفرد', en: 'Per person', de: 'Per person', ru: 'За человека', it: 'A persona' })}
             </div>
             <div className="font-serif text-xl font-bold text-accent-700">
               {soldOut
-                ? <span className="text-muted-foreground text-sm">{L(locale, { ar: 'استفسر', en: 'Ask us', ru: 'Уточнить', it: 'Chiedi' })}</span>
+                ? <span className="text-muted-foreground text-sm">{L(locale, { ar: 'استفسر', en: 'Ask us', de: 'Ask us', ru: 'Уточнить', it: 'Chiedi' })}</span>
                 : <Price amount={priceEGP} from="EGP" />}
             </div>
           </div>
@@ -275,7 +275,7 @@ function HotelCard({ h, locale }: { h: HotelDTO; locale: string }) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#1ea954] text-white font-bold text-xs shadow shadow-emerald-500/30 transition-colors"
           >
-            {L(locale, { ar: 'احجز', en: 'Book', ru: 'Забронировать', it: 'Prenota' })}
+            {L(locale, { ar: 'احجز', en: 'Book', de: 'Book', ru: 'Забронировать', it: 'Prenota' })}
           </a>
         </div>
       </div>

@@ -71,7 +71,7 @@ export function BookingPayModal({
       await navigator.clipboard.writeText(value);
       setCopied(key);
       setTimeout(() => setCopied(null), 1500);
-      toast.success(L(locale, { ar: 'تم النسخ', en: 'Copied', ru: 'Скопировано', it: 'Copiato' }) as string);
+      toast.success(L(locale, { ar: 'تم النسخ', en: 'Copied', de: 'Copied', ru: 'Скопировано', it: 'Copiato' }) as string);
     } catch { /* ignore */ }
   };
 
@@ -89,7 +89,7 @@ export function BookingPayModal({
   const isCashOnArrival = method === 'CASH';
   const submit = async () => {
     if (!isCashOnArrival && !file) {
-      return toast.error(L(locale, { ar: 'ارفع صورة الإيصال أولاً', en: 'Please attach the receipt', ru: 'Прикрепите чек', it: 'Allega la ricevuta' }) as string);
+      return toast.error(L(locale, { ar: 'ارفع صورة الإيصال أولاً', en: 'Please attach the receipt', de: 'Please attach the receipt', ru: 'Прикрепите чек', it: 'Allega la ricevuta' }) as string);
     }
     setSubmitting(true);
     try {
@@ -130,24 +130,24 @@ export function BookingPayModal({
             <CheckCircle2 className="h-8 w-8 text-emerald-500" />
           </div>
           <h3 className="font-serif text-2xl font-bold text-primary mb-2">
-            {L(locale, { ar: 'تم استلام حجزك!', en: 'Booking received!', ru: 'Бронь получена!', it: 'Prenotazione ricevuta!' })}
+            {L(locale, { ar: 'تم استلام حجزك!', en: 'Booking received!', de: 'Booking received!', ru: 'Бронь получена!', it: 'Prenotazione ricevuta!' })}
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto mb-4">
             {L(locale, {
               ar: 'فريقنا هيراجع الإيصال ويأكد الحجز خلال ساعات. هتوصلك رسالة على واتساب والإيميل.',
-              en: 'Our team will review the receipt and confirm within hours. You\'ll get a WhatsApp + email confirmation.',
+              en: 'Our team will review the receipt and confirm within hours. You\'ll get a WhatsApp + email confirmation.', de: "Our team will review the receipt and confirm within hours. You\'ll get a WhatsApp + email confirmation.",
               ru: 'Команда проверит чек и подтвердит за несколько часов. Вы получите уведомление.',
               it: 'Il team verificherà la ricevuta e confermerà in poche ore. Riceverai conferma via WhatsApp ed email.',
             })}
           </p>
           <div className="inline-flex flex-col items-center gap-1 px-5 py-3 rounded-xl bg-accent/10 border border-accent/30">
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-              {L(locale, { ar: 'رقم الحجز', en: 'Booking reference', ru: 'Номер брони', it: 'N° prenotazione' })}
+              {L(locale, { ar: 'رقم الحجز', en: 'Booking reference', de: 'Booking reference', ru: 'Номер брони', it: 'N° prenotazione' })}
             </span>
             <span className="font-mono font-bold text-lg text-accent-700">{success}</span>
           </div>
           <Button onClick={onClose} className="mt-6 w-full">
-            {L(locale, { ar: 'إغلاق', en: 'Close', ru: 'Закрыть', it: 'Chiudi' })}
+            {L(locale, { ar: 'إغلاق', en: 'Close', de: 'Close', ru: 'Закрыть', it: 'Chiudi' })}
           </Button>
         </div>
       </Modal>
@@ -213,12 +213,12 @@ export function BookingPayModal({
       <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
         <div>
           <h3 className="font-serif text-xl font-bold text-primary">
-            {L(locale, { ar: 'حجز وادفع', en: 'Book & pay', ru: 'Бронь и оплата', it: 'Prenota e paga' })}
+            {L(locale, { ar: 'حجز وادفع', en: 'Book & pay', de: 'Book & pay', ru: 'Бронь и оплата', it: 'Prenota e paga' })}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
             {L(locale, {
               ar: 'ارفع إيصال الدفع وفريقنا هيأكد الحجز.',
-              en: 'Upload your payment receipt and our team will confirm.',
+              en: 'Upload your payment receipt and our team will confirm.', de: 'Upload your payment receipt and our team will confirm.',
               ru: 'Загрузите чек, команда подтвердит бронь.',
               it: 'Carica la ricevuta, il team confermerà.',
             })}
@@ -233,17 +233,17 @@ export function BookingPayModal({
         {/* Booking summary */}
         <div className="rounded-xl bg-accent/8 border border-accent/25 p-4">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mb-1">
-            {L(locale, { ar: 'ملخص الحجز', en: 'Booking summary', ru: 'Сводка', it: 'Riepilogo' })}
+            {L(locale, { ar: 'ملخص الحجز', en: 'Booking summary', de: 'Booking summary', ru: 'Сводка', it: 'Riepilogo' })}
           </div>
           <div className="font-bold text-primary text-sm leading-snug">
             {trip.tr?.title || trip.translations.find((t) => t.locale === 'AR')?.title || trip.slug}
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
-            <div>{L(locale, { ar: 'التاريخ', en: 'Date', ru: 'Дата', it: 'Data' })}: <span className="text-foreground font-semibold">{payload.date}</span></div>
-            <div>{L(locale, { ar: 'الإجمالي', en: 'Total', ru: 'Итого', it: 'Totale' })}: <span className="text-foreground font-bold tabular-nums">{total.toLocaleString()} {currency}</span></div>
-            <div>{L(locale, { ar: 'البالغين', en: 'Adults', ru: 'Взрослые', it: 'Adulti' })}: <span className="text-foreground font-semibold">{payload.adults}</span></div>
+            <div>{L(locale, { ar: 'التاريخ', en: 'Date', de: 'Datum', ru: 'Дата', it: 'Data' })}: <span className="text-foreground font-semibold">{payload.date}</span></div>
+            <div>{L(locale, { ar: 'الإجمالي', en: 'Total', de: 'Gesamt', ru: 'Итого', it: 'Totale' })}: <span className="text-foreground font-bold tabular-nums">{total.toLocaleString()} {currency}</span></div>
+            <div>{L(locale, { ar: 'البالغين', en: 'Adults', de: 'Erwachsene', ru: 'Взрослые', it: 'Adulti' })}: <span className="text-foreground font-semibold">{payload.adults}</span></div>
             {payload.children > 0 && (
-              <div>{L(locale, { ar: 'الأطفال', en: 'Children', ru: 'Дети', it: 'Bambini' })}: <span className="text-foreground font-semibold">{payload.children}</span></div>
+              <div>{L(locale, { ar: 'الأطفال', en: 'Children', de: 'Kinder', ru: 'Дети', it: 'Bambini' })}: <span className="text-foreground font-semibold">{payload.children}</span></div>
             )}
             <div className="col-span-2 inline-flex items-center gap-1.5">
               <User className="h-3 w-3 text-accent" />
@@ -259,7 +259,7 @@ export function BookingPayModal({
         {/* Method picker */}
         <div>
           <label className="block text-xs font-bold text-primary/80 uppercase tracking-wider mb-2">
-            {L(locale, { ar: 'اختر طريقة الدفع', en: 'Choose payment method', ru: 'Способ оплаты', it: 'Metodo di pagamento' })}
+            {L(locale, { ar: 'اختر طريقة الدفع', en: 'Choose payment method', de: 'Choose payment method', ru: 'Способ оплаты', it: 'Metodo di pagamento' })}
           </label>
           <div className="grid grid-cols-2 gap-2">
             {methods.map((m) => (
@@ -313,7 +313,7 @@ export function BookingPayModal({
             <p className="text-xs text-muted-foreground">
               {L(locale, {
                 ar: 'الدفع نقداً عند الوصول — لسنا بحاجة لإيصال مسبق، فقط أرفق صورة لتأكيد هويتك.',
-                en: 'Cash on arrival — attach an ID or any reference image to confirm.',
+                en: 'Cash on arrival — attach an ID or any reference image to confirm.', de: 'Cash on arrival — attach an ID or any reference image to confirm.',
                 ru: 'Наличные при встрече — прикрепите ID или фото для подтверждения.',
                 it: 'Contanti all\'arrivo — allega un documento o foto di riferimento.',
               })}
@@ -324,7 +324,7 @@ export function BookingPayModal({
         {/* File upload */}
         <div>
           <label className="block text-xs font-bold text-primary/80 uppercase tracking-wider mb-2">
-            {L(locale, { ar: 'صورة الإيصال', en: 'Payment receipt', ru: 'Чек оплаты', it: 'Ricevuta' })}
+            {L(locale, { ar: 'صورة الإيصال', en: 'Payment receipt', de: 'Payment receipt', ru: 'Чек оплаты', it: 'Ricevuta' })}
             <span className="text-accent ms-1">*</span>
           </label>
           {!file ? (
@@ -338,7 +338,7 @@ export function BookingPayModal({
               />
               <Upload className="h-5 w-5 text-accent" />
               <span className="text-sm font-bold">
-                {L(locale, { ar: 'اختر الصورة (أو PDF)', en: 'Choose file (image or PDF)', ru: 'Выбрать файл', it: 'Scegli file' })}
+                {L(locale, { ar: 'اختر الصورة (أو PDF)', en: 'Choose file (image or PDF)', de: 'Choose file (image or PDF)', ru: 'Выбрать файл', it: 'Scegli file' })}
               </span>
             </label>
           ) : (
@@ -367,11 +367,11 @@ export function BookingPayModal({
 
       <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 z-10">
         <Button variant="outline" onClick={onClose}>
-          {L(locale, { ar: 'إلغاء', en: 'Cancel', ru: 'Отмена', it: 'Annulla' })}
+          {L(locale, { ar: 'إلغاء', en: 'Cancel', de: 'Cancel', ru: 'Отмена', it: 'Annulla' })}
         </Button>
         <Button onClick={submit} disabled={submitting || (!isCashOnArrival && !file)} className="bg-primary text-cream hover:bg-primary/90">
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-          {L(locale, { ar: 'إرسال الحجز للمراجعة', en: 'Submit booking', ru: 'Отправить', it: 'Invia prenotazione' })}
+          {L(locale, { ar: 'إرسال الحجز للمراجعة', en: 'Submit booking', de: 'Submit booking', ru: 'Отправить', it: 'Invia prenotazione' })}
         </Button>
       </div>
     </Modal>

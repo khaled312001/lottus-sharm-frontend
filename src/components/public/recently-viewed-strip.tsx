@@ -52,7 +52,7 @@ export function RecentlyViewedStrip({ excludeSlug }: { excludeSlug?: string }) {
             <Clock className="h-4 w-4" />
           </span>
           <h3 className="font-serif text-xl md:text-2xl font-bold text-primary leading-tight">
-            {L(locale, { ar: 'شاهدتها مؤخراً', en: 'Recently viewed', ru: 'Недавно просмотренные', it: 'Visti di recente' })}
+            {L(locale, { ar: 'شاهدتها مؤخراً', en: 'Recently viewed', de: 'Recently viewed', ru: 'Недавно просмотренные', it: 'Visti di recente' })}
           </h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
@@ -92,10 +92,10 @@ export function RecentlyViewedStrip({ excludeSlug }: { excludeSlug?: string }) {
 function relativeAgo(ts: number, locale: string): string {
   const diff = Date.now() - ts;
   const m = Math.floor(diff / 60000);
-  if (m < 1) return L(locale, { ar: 'الآن', en: 'now', ru: 'сейчас', it: 'ora' }) as string;
-  if (m < 60) return L(locale, { ar: `${m}د`, en: `${m}m`, ru: `${m}м`, it: `${m}m` }) as string;
+  if (m < 1) return L(locale, { ar: 'الآن', en: 'now', de: 'now', ru: 'сейчас', it: 'ora' }) as string;
+  if (m < 60) return L(locale, { ar: `${m}د`, en: `${m}m`, de: `${m}m`, ru: `${m}м`, it: `${m}m` }) as string;
   const h = Math.floor(m / 60);
-  if (h < 24) return L(locale, { ar: `${h}س`, en: `${h}h`, ru: `${h}ч`, it: `${h}h` }) as string;
+  if (h < 24) return L(locale, { ar: `${h}س`, en: `${h}h`, de: `${h}h`, ru: `${h}ч`, it: `${h}h` }) as string;
   const d = Math.floor(h / 24);
-  return L(locale, { ar: `${d}ي`, en: `${d}d`, ru: `${d}д`, it: `${d}g` }) as string;
+  return L(locale, { ar: `${d}ي`, en: `${d}d`, de: `${d}d`, ru: `${d}д`, it: `${d}g` }) as string;
 }
