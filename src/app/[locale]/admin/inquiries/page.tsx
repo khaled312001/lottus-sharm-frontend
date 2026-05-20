@@ -44,7 +44,7 @@ export default function AdminInquiriesPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">الرسائل الواردة</h2>
+      <h2 className="text-2xl font-bold">الإشعارات</h2>
       <Card>
         <CardContent className="p-4 space-y-3">
           {items.length === 0 ? (
