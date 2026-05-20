@@ -978,38 +978,12 @@ html[dir='rtl'] .animate-marquee { animation: marquee-rtl 30s linear infinite; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@supports (animation-timeline: view()) {
-  /* Every TOP-LEVEL section floats in as it enters the viewport.
-     IMPORTANT: only direct children of main/article — never descendants
-     (which would trap modal content rendered inside a fixed-positioned
-     element with no scroll timeline, freezing it at opacity:0). */
-  main > section,
-  article > section {
-    animation: section-float-in linear both;
-    animation-timeline: view();
-    animation-range: entry 5% cover 25%;
-  }
-  /* But not the hero (first one) — it should be visible immediately */
-  main > section:first-of-type,
-  main > section:first-child,
-  article > section:first-of-type {
-    animation: none;
-  }
-
-  /* Bulletproof escape: anything inside a modal/popover/fixed overlay is
-     immune to all scroll-driven animations regardless of selector match. */
-  [role="dialog"],
-  [role="dialog"] *,
-  [data-modal],
-  [data-modal] *,
-  [aria-modal="true"],
-  [aria-modal="true"] * {
-    animation: none !important;
-    animation-timeline: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
+/* NOTE: Scroll-driven section animations (animation-timeline: view()) were
+   removed — on long pages they left sections near the bottom of the viewport
+   at opacity:0, revealing the cream body background as a "white gradient" wash
+   that crept up the page on scroll. Entry reveals are handled per-component by
+   the framer-motion <Reveal> wrapper instead, which never leaves content
+   stuck transparent. */
 
 /* Reduced motion preference — disable non-essential animations */
 @media (prefers-reduced-motion: reduce) {

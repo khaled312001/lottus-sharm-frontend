@@ -8,14 +8,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function NotFound() {
-  // next-intl exposes the active request locale (set by the locale layout via
-  // setRequestLocale). Fall back to Arabic — the contract's primary locale.
+// Rendered inside the public layout (header + footer) whenever a route within
+// the public site triggers notFound() — including the catch-all below for any
+// URL that matches no real page (e.g. /ar/reviews).
+export default async function PublicNotFound() {
   let locale = 'ar';
   try {
     locale = await getLocale();
   } catch {
-    /* request locale not available in this context — keep the default */
+    /* keep default */
   }
   return <NotFoundContent locale={locale} />;
 }
