@@ -18,6 +18,8 @@ export default function AdminMediaPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<'ALL' | 'IMAGE' | 'VIDEO'>('ALL');
+  const [folder, setFolder] = useState<string>('ALL'); // 'ALL' | '__none__' | <category>
+  const [uploadCategory, setUploadCategory] = useState('');
   const [preview, setPreview] = useState<MediaDTO | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 24;
@@ -44,6 +46,9 @@ export default function AdminMediaPage() {
     try {
       const form = new FormData();
       Array.from(files).forEach((f) => form.append('files', f));
+      // Upload into the typed folder, or the currently-open folder if none typed.
+      const cat = uploadCategory.trim() || (folder !== 'ALL' && folder !== '__none__' ? folder : '');
+      if (cat) form.append('category', cat);
       const res = await fetch(`${API_BASE}/admin/media/upload`, {
         method: 'POST',
         body: form,
@@ -52,7 +57,8 @@ export default function AdminMediaPage() {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) throw new Error(json.error?.message || 'Upload failed');
-      toast.success(`تم رفع ${json.data.items.length} ملف`);
+      toast.success(`تم رفع ${json.data.items.length} ملف${cat ? ` إلى «${cat}»` : ''}`);
+      setUploadCategory('');
       void load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
@@ -71,12 +77,30 @@ export default function AdminMediaPage() {
     }
   };
 
-  const filtered = items.filter((m) => filter === 'ALL' || m.type === filter);
+  // Move a media item into a folder (category) — empty string clears it.
+  const setCategory = async (id: number, category: string) => {
+    try {
+      await api.patch(`/admin/media/${id}`, { category });
+      setItems((prev) => prev.map((m) => (m.id === id ? { ...m, category: category || null } : m)));
+      setPreview((p) => (p && p.id === id ? { ...p, category: category || null } : p));
+      toast.success(category ? `نُقل إلى «${category}»` : 'أُزيل من القسم');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error');
+    }
+  };
+
+  // Distinct folders (categories) present in the library.
+  const folders = [...new Set(items.map((m) => m.category).filter(Boolean) as string[])].sort((a, b) => a.localeCompare(b));
+
+  const filtered = items.filter((m) =>
+    (filter === 'ALL' || m.type === filter) &&
+    (folder === 'ALL' || (folder === '__none__' ? !m.category : m.category === folder)),
+  );
   const imageCount = items.filter((m) => m.type === 'IMAGE').length;
   const videoCount = items.filter((m) => m.type === 'VIDEO').length;
 
-  // Reset to page 1 whenever the filter changes
-  useEffect(() => { setPage(1); }, [filter]);
+  // Reset to page 1 whenever a filter changes
+  useEffect(() => { setPage(1); }, [filter, folder]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -97,13 +121,46 @@ export default function AdminMediaPage() {
             {items.length} ملف · {imageCount} صورة · {videoCount} فيديو
           </p>
         </div>
-        <label className="cursor-pointer">
-          <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => upload(e.target.files)} />
-          <span className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">
-            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-            رفع ملفات
-          </span>
-        </label>
+        <div className="flex items-center gap-2">
+          <input
+            value={uploadCategory}
+            onChange={(e) => setUploadCategory(e.target.value)}
+            placeholder="القسم (folder) — اختياري"
+            className="h-11 w-44 rounded-lg border px-3 text-sm bg-white"
+            list="media-folders"
+          />
+          <datalist id="media-folders">
+            {folders.map((f) => <option key={f} value={f} />)}
+          </datalist>
+          <label className="cursor-pointer">
+            <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => upload(e.target.files)} />
+            <span className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">
+              {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              رفع ملفات
+            </span>
+          </label>
+        </div>
+      </div>
+
+      {/* Folder (category) tabs — admin organises the gallery into sections */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="text-xs text-muted-foreground font-semibold ms-1">الأقسام:</span>
+        {([
+          { v: 'ALL', label: 'الكل' },
+          { v: '__none__', label: 'بدون قسم' },
+          ...folders.map((f) => ({ v: f, label: f })),
+        ]).map((f) => (
+          <button
+            key={f.v}
+            onClick={() => setFolder(f.v)}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors',
+              folder === f.v ? 'bg-accent text-primary border-accent' : 'bg-white border-accent/25 hover:bg-accent/10',
+            )}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {/* Tabs */}
@@ -223,6 +280,29 @@ export default function AdminMediaPage() {
                 const sb = (preview as unknown as { sizeBytes?: number }).sizeBytes;
                 return sb ? <> · {(sb / 1024 / 1024).toFixed(2)} MB</> : null;
               })()}
+            </div>
+            {/* Folder (category) editor */}
+            <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2">
+              <span className="text-white/70 text-xs">القسم:</span>
+              <input
+                key={preview.id}
+                defaultValue={preview.category || ''}
+                placeholder="اكتب اسم القسم..."
+                list="media-folders"
+                className="h-9 rounded-md px-2.5 text-sm bg-white/90 text-primary w-48"
+                onKeyDown={(e) => { if (e.key === 'Enter') setCategory(preview.id, (e.target as HTMLInputElement).value.trim()); }}
+                id="preview-cat-input"
+              />
+              <button
+                type="button"
+                onClick={() => { const el = document.getElementById('preview-cat-input') as HTMLInputElement | null; if (el) setCategory(preview.id, el.value.trim()); }}
+                className="h-9 px-3 rounded-md bg-accent text-primary text-xs font-bold hover:bg-accent-400"
+              >
+                حفظ
+              </button>
+              {preview.category && (
+                <button type="button" onClick={() => setCategory(preview.id, '')} className="h-9 px-3 rounded-md bg-white/15 text-white text-xs hover:bg-white/25">إزالة</button>
+              )}
             </div>
           </div>
         </div>

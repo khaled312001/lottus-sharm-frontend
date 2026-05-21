@@ -36,6 +36,13 @@ const LOCALES: { code: ApiLocale; label: string }[] = [
 ];
 
 const CATEGORIES = ['SEA', 'DESERT', 'CITY', 'DIVING', 'EVENTS', 'SAFARI'] as const;
+// Regions are extensible — add an entry here to expose a new destination everywhere.
+const REGIONS = [
+  { v: 'SHARM', l: 'شرم الشيخ' },
+  { v: 'HURGHADA', l: 'الغردقة' },
+  { v: 'DAHAB', l: 'دهب' },
+  { v: 'CAIRO', l: 'القاهرة' },
+] as const;
 const BULLETS = ['INCLUDE', 'EXCLUDE', 'BRING'] as const;
 
 interface TranslationForm {
@@ -75,6 +82,7 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
   const [activeLocale, setActiveLocale] = useState<ApiLocale>('AR');
 
   const [category, setCategory] = useState<typeof CATEGORIES[number]>((initialTrip?.category as typeof CATEGORIES[number]) || 'SEA');
+  const [region, setRegion] = useState<string>((initialTrip as { region?: string } | undefined)?.region || 'SHARM');
   const [durationMinutes, setDurationMinutes] = useState(initialTrip?.durationMinutes || 240);
   const [startTime, setStartTime] = useState(initialTrip?.startTime || '09:00');
   const [meetingPoint, setMeetingPoint] = useState(initialTrip?.meetingPoint || '');
@@ -153,6 +161,7 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
     }
     const payload = {
       category,
+      region,
       durationMinutes: Number(durationMinutes),
       startTime,
       meetingPoint,
@@ -309,10 +318,15 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
       <Card>
         <CardHeader><CardTitle>تفاصيل الرحلة</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-3 gap-3">
+          <div className="grid md:grid-cols-4 gap-3">
             <Field label="الفئة">
               <select className="h-11 w-full rounded-lg border border-input bg-white px-3" value={category} onChange={(e) => setCategory(e.target.value as typeof CATEGORIES[number])}>
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </Field>
+            <Field label="المنطقة">
+              <select className="h-11 w-full rounded-lg border border-input bg-white px-3" value={region} onChange={(e) => setRegion(e.target.value)}>
+                {REGIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
               </select>
             </Field>
             <Field label="المدة (بالدقائق)">

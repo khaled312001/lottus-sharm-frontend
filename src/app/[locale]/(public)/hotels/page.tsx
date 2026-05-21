@@ -6,7 +6,7 @@ import { Reveal } from '@/components/public/motion';
 import { Star, MapPin, BedDouble, Utensils, Sparkles } from 'lucide-react';
 import { Price } from '@/components/public/price';
 import { api } from '@/lib/api';
-import { L, localeToApiCode } from '@/lib/utils';
+import { L, localeToApiCode, cn } from '@/lib/utils';
 import { buildWhatsAppLink } from '@/lib/utils';
 
 export const revalidate = 60;
@@ -22,10 +22,18 @@ interface HotelDTO {
   nights: number;
   isFeatured: boolean;
   isActive: boolean;
+  region?: string;
   heroImage?: { url: string; mediumUrl?: string | null; thumbnailUrl?: string | null; type?: 'IMAGE' | 'VIDEO' } | null;
   notes?: string | null;
   tr?: { name: string; features: string; shortDesc?: string };
 }
+
+const HOTEL_REGION_LABELS: Record<string, { ar: string; en: string; de: string; ru: string; it: string }> = {
+  SHARM:    { ar: 'شرم الشيخ', en: 'Sharm El Sheikh', de: 'Sharm El Sheikh', ru: 'Шарм-эль-Шейх', it: 'Sharm El Sheikh' },
+  HURGHADA: { ar: 'الغردقة',   en: 'Hurghada',        de: 'Hurghada',        ru: 'Хургада',        it: 'Hurghada' },
+  DAHAB:    { ar: 'دهب',        en: 'Dahab',           de: 'Dahab',           ru: 'Дахаб',          it: 'Dahab' },
+  CAIRO:    { ar: 'القاهرة',    en: 'Cairo',           de: 'Kairo',           ru: 'Каир',           it: 'Il Cairo' },
+};
 
 const AREA_LABEL: Record<string, { ar: string; en: string; de: string; ru: string; it: string }> = {
   NAMA_BAY:    { ar: 'خليج نعمة',    en: 'Naama Bay',           de: 'Naama Bay',            ru: 'Наама Бэй',           it: 'Naama Bay' },
@@ -62,16 +70,23 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function HotelsPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function HotelsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ region?: string }> }) {
   const { locale } = await params;
+  const { region } = await searchParams;
   setRequestLocale(locale);
   const isAr = locale === 'ar';
 
-  let items: HotelDTO[] = [];
+  let allItems: HotelDTO[] = [];
   try {
     const res = await api.get<{ items: HotelDTO[] }>(`/public/hotels?locale=${localeToApiCode(locale)}&pageSize=60`);
-    items = res.items;
+    allItems = res.items;
   } catch { /* ignore */ }
+
+  // Region filter (only shown when hotels span more than one destination)
+  const regionCounts: Record<string, number> = {};
+  allItems.forEach((h) => { const r = h.region || 'SHARM'; regionCounts[r] = (regionCounts[r] || 0) + 1; });
+  const regionKeys = Object.keys(regionCounts);
+  const items = region ? allItems.filter((h) => (h.region || 'SHARM') === region) : allItems;
 
   // Group by stars for visual sections
   const byStars: Record<number, HotelDTO[]> = { 5: [], 4: [], 3: [] };
@@ -119,6 +134,41 @@ export default async function HotelsPage({ params }: { params: Promise<{ locale:
           </Reveal>
         </div>
       </section>
+
+      {/* Region (destination) filter — only when hotels span more than one city */}
+      {regionKeys.length > 1 && (
+        <section className="sticky top-[64px] md:top-[88px] z-30 bg-cream/95 backdrop-blur-md border-b border-accent/15 shadow-sm">
+          <div className="container py-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <Link
+              href={'/hotels' as never}
+              className={cn(
+                'shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap',
+                !region ? 'bg-primary text-cream border-primary' : 'bg-white text-primary border-accent/25 hover:bg-accent/5',
+              )}
+            >
+              {L(locale, { ar: 'كل الوجهات', en: 'All destinations', de: 'Alle Ziele', ru: 'Все направления', it: 'Tutte le destinazioni' })}
+              <span className="text-[11px] px-1.5 rounded-full bg-accent/20">{allItems.length}</span>
+            </Link>
+            {regionKeys.map((r) => {
+              const lbl = HOTEL_REGION_LABELS[r] || { ar: r, en: r, de: r, ru: r, it: r };
+              const active = region === r;
+              return (
+                <Link
+                  key={r}
+                  href={`/hotels?region=${r}` as never}
+                  className={cn(
+                    'shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap',
+                    active ? 'bg-primary text-cream border-primary' : 'bg-white text-primary border-accent/25 hover:bg-accent/5',
+                  )}
+                >
+                  {L(locale, lbl)}
+                  <span className="text-[11px] px-1.5 rounded-full bg-accent/20">{regionCounts[r]}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="container py-12 md:py-16 space-y-12">
         {([5, 4, 3] as const).map((s) => {

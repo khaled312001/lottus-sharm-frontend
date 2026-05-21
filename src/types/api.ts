@@ -10,6 +10,7 @@ export interface MediaDTO {
   height?: number | null;
   altAr?: string | null;
   altEn?: string | null;
+  category?: string | null;
 }
 
 export interface TripTranslationDTO {
@@ -52,6 +53,7 @@ export interface TripDTO {
   id: number;
   slug: string;
   category: 'SEA' | 'DESERT' | 'CITY' | 'DIVING' | 'EVENTS' | 'SAFARI';
+  region?: string;
   durationMinutes: number;
   startTime?: string | null;
   scheduleType: 'DAILY' | 'WEEKLY' | 'CUSTOM';

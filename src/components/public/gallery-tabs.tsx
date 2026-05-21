@@ -15,23 +15,34 @@ interface MediaItem {
   alt: string;
   tripSlug: string;
   category: string;
+  folder?: string;
   type: 'IMAGE' | 'VIDEO';
 }
 
 export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; videos: MediaItem[]; locale: string }) {
   const [tab, setTab] = useState<'all' | 'photos' | 'videos'>('all');
+  const [folder, setFolder] = useState<string>('ALL');
   const [open, setOpen] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const isAr = locale === 'ar';
 
-  const items = useMemo(() => (
-    tab === 'photos' ? photos :
-    tab === 'videos' ? videos :
-    [...photos, ...videos]
-  ), [tab, photos, videos]);
+  // Admin-defined gallery sections (folders), in order of frequency.
+  const folders = useMemo(() => {
+    const counts = new Map<string, number>();
+    [...photos, ...videos].forEach((m) => { if (m.folder) counts.set(m.folder, (counts.get(m.folder) || 0) + 1); });
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([name]) => name);
+  }, [photos, videos]);
 
-  // Reset to first page whenever the tab changes
-  useEffect(() => { setPage(1); }, [tab]);
+  const byFolder = (arr: MediaItem[]) => folder === 'ALL' ? arr : arr.filter((m) => m.folder === folder);
+
+  const items = useMemo(() => {
+    const base = tab === 'photos' ? photos : tab === 'videos' ? videos : [...photos, ...videos];
+    return byFolder(base);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, photos, videos, folder]);
+
+  // Reset to first page whenever a filter changes
+  useEffect(() => { setPage(1); }, [tab, folder]);
 
   const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -80,6 +91,33 @@ export function GalleryTabs({ photos, videos, locale }: { photos: MediaItem[]; v
           ))}
         </div>
       </div>
+
+      {/* Admin-defined section filters (folders) */}
+      {folders.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-2 mb-8 -mt-3">
+          <button
+            onClick={() => setFolder('ALL')}
+            className={cn(
+              'px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors',
+              folder === 'ALL' ? 'bg-accent text-primary border-accent' : 'bg-white text-primary/70 border-accent/25 hover:bg-accent/10',
+            )}
+          >
+            {L(locale, { ar: 'كل الأقسام', en: 'All sections', de: 'Alle Bereiche', ru: 'Все разделы', it: 'Tutte le sezioni' })}
+          </button>
+          {folders.map((f) => (
+            <button
+              key={f}
+              onClick={() => setFolder(f)}
+              className={cn(
+                'px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors',
+                folder === f ? 'bg-accent text-primary border-accent' : 'bg-white text-primary/70 border-accent/25 hover:bg-accent/10',
+              )}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div

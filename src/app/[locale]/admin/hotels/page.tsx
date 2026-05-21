@@ -25,6 +25,7 @@ interface Hotel {
   isActive: boolean;
   sortOrder: number;
   notes?: string | null;
+  region?: string;
   heroImageId?: number | null;
   heroImage?: MediaDTO | null;
   translations: Translation[];
@@ -32,6 +33,13 @@ interface Hotel {
 
 const AREAS = ['NAMA_BAY','HADABA','SOHO_SQUARE','NABQ','PASHA_BAY','QUEEN_BAY','OTHER'];
 const BOARDS = ['BB','HB','FB','ALL_INCLUSIVE','HB_DRINKS'];
+// City/destination — extensible; mirrors the trips region list.
+const REGIONS = [
+  { v: 'SHARM', l: 'شرم الشيخ' },
+  { v: 'HURGHADA', l: 'الغردقة' },
+  { v: 'DAHAB', l: 'دهب' },
+  { v: 'CAIRO', l: 'القاهرة' },
+];
 
 export default function AdminHotelsPage() {
   const api = useAdminApi();
@@ -146,6 +154,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
   const [form, setForm] = useState({
     slug: initial?.slug || '',
     stars: initial?.stars || 4,
+    region: initial?.region || 'SHARM',
     area: initial?.area || 'NAMA_BAY',
     boardType: initial?.boardType || 'HB',
     priceLocalEGP: Number(initial?.priceLocalEGP) || 0,
@@ -168,7 +177,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
     if (!tr.AR.name) return toast.error('الاسم بالعربي مطلوب');
     const payload = {
       slug: form.slug || undefined,
-      stars: form.stars, area: form.area, boardType: form.boardType,
+      stars: form.stars, region: form.region, area: form.area, boardType: form.boardType,
       priceLocalEGP: form.priceLocalEGP, priceForeignUSD: form.priceForeignUSD,
       nights: form.nights, isFeatured: form.isFeatured, isActive: form.isActive,
       sortOrder: form.sortOrder, notes: form.notes || null,
@@ -223,7 +232,13 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
             <p className="text-[11px] text-muted-foreground mt-1.5">ارفع صورة أو فيديو من زر «رفع جديد»، أو اختر من المكتبة. الفيديو يُعرض تلقائياً بصمت في البطاقة.</p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-3 pt-2 border-t">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t">
+            <div>
+              <label className="text-xs font-semibold mb-1 block">المدينة / الوجهة</label>
+              <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}>
+                {REGIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
+              </select>
+            </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">المستوى</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.stars} onChange={(e) => setForm({ ...form, stars: Number(e.target.value) })}>
