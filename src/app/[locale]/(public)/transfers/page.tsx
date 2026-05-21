@@ -18,7 +18,7 @@ interface TransferDTO {
   priceLocalEGP: string;
   priceForeignUSD: string;
   isFeatured: boolean;
-  heroImage?: { url: string; mediumUrl?: string | null } | null;
+  heroImage?: { url: string; mediumUrl?: string | null; thumbnailUrl?: string | null; type?: 'IMAGE' | 'VIDEO' } | null;
   tr?: { name: string; shortDesc: string };
 }
 
@@ -172,9 +172,17 @@ function TransferCard({ t, locale }: { t: TransferDTO; locale: string }) {
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-accent/15 hover:border-accent/40 card-shadow hover:card-shadow-gold hover:-translate-y-1 transition-all flex flex-col">
-      <div className={`relative h-32 bg-gradient-to-br ${meta.color} text-white flex items-center justify-center overflow-hidden`}>
-        <Icon className="h-16 w-16 opacity-40 group-hover:scale-110 transition-transform duration-500" />
-        <span className="absolute top-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/35 backdrop-blur text-[10px] font-bold uppercase tracking-wider">
+      <div className={`relative h-32 text-white flex items-center justify-center overflow-hidden ${t.heroImage?.url ? 'bg-primary-900' : `bg-gradient-to-br ${meta.color}`}`}>
+        {t.heroImage?.url && t.heroImage.type === 'VIDEO' ? (
+          <video src={t.heroImage.url} muted loop playsInline autoPlay preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
+        ) : t.heroImage?.url ? (
+          <Image src={t.heroImage.mediumUrl || t.heroImage.url} alt={name} fill sizes="(max-width:768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <Icon className="h-16 w-16 opacity-40 group-hover:scale-110 transition-transform duration-500" />
+        )}
+        {/* Readability overlay so the badges stay legible over photos */}
+        {t.heroImage?.url && <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />}
+        <span className="absolute top-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/35 backdrop-blur text-[10px] font-bold uppercase tracking-wider z-10">
           {pickT(meta, locale)}
         </span>
         <span className="absolute top-3 end-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/15 backdrop-blur text-[10px] font-semibold">
