@@ -10,6 +10,7 @@ export interface MediaDTO {
   height?: number | null;
   altAr?: string | null;
   altEn?: string | null;
+  category?: string | null;
 }
 
 export interface TripTranslationDTO {
