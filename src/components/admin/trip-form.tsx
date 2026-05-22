@@ -10,6 +10,7 @@ import { useAdminApi } from '@/lib/admin-auth';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { MediaPicker } from './media-picker';
+import { RegionSelect } from './region-select';
 import { RichTextEditor } from './rich-text-editor';
 import type { TripDTO, MediaDTO, ApiLocale } from '@/types/api';
 
@@ -36,15 +37,6 @@ const LOCALES: { code: ApiLocale; label: string }[] = [
 ];
 
 const CATEGORIES = ['SEA', 'DESERT', 'CITY', 'DIVING', 'EVENTS', 'SAFARI'] as const;
-// Region presets are localized; admin can also type a brand-new city.
-const REGIONS = [
-  { v: 'SHARM', l: 'شرم الشيخ' },
-  { v: 'HURGHADA', l: 'الغردقة' },
-  { v: 'DAHAB', l: 'دهب' },
-  { v: 'CAIRO', l: 'القاهرة' },
-  { v: 'MARSA_ALAM', l: 'مرسى علم' },
-  { v: 'TABA', l: 'طابا' },
-] as const;
 const BULLETS = ['INCLUDE', 'EXCLUDE', 'BRING'] as const;
 
 interface TranslationForm {
@@ -327,16 +319,7 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
               </select>
             </Field>
             <Field label="المدينة / الوجهة">
-              <input
-                className="h-11 w-full rounded-lg border border-input bg-white px-3"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                list="trip-regions"
-                placeholder="اكتب مدينة أو اختر"
-              />
-              <datalist id="trip-regions">
-                {REGIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
-              </datalist>
+              <RegionSelect value={region} onChange={setRegion} />
             </Field>
             <Field label="المدة (بالدقائق)">
               <Input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value))} />

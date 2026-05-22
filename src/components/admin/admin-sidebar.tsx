@@ -5,7 +5,7 @@ import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
   Settings, Star, Mail, MessageSquare, MessagesSquare, UserCog, Image as ImageIcon, X, Send, BarChart3, Search,
-  QrCode, BedDouble, Car, MessageCircle, Bell,
+  QrCode, BedDouble, Car, MessageCircle, Bell, Facebook,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +28,7 @@ const SECTIONS = [
     { href: '/admin/pages' as const, icon: FolderOpen, label: 'الصفحات' },
     { href: '/admin/media' as const, icon: ImageIcon, label: 'مكتبة الميديا' },
     { href: '/admin/reviews' as const, icon: Star, label: 'التقييمات' },
+    { href: '/admin/fb-reviews' as const, icon: Facebook, label: 'تقييمات فيسبوك' },
     { href: '/admin/comments' as const, icon: MessagesSquare, label: 'التعليقات' },
   ]},
   { title: 'التواصل', items: [

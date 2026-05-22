@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Star, Plus, ExternalLink, Loader2, Pencil, Save, X, Trash2, BedDouble } from 'lucide-react';
 import { toast } from 'sonner';
 import { MediaPicker } from '@/components/admin/media-picker';
+import { RegionSelect } from '@/components/admin/region-select';
 import type { MediaDTO } from '@/types/api';
 
 interface Translation { locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE'; name: string; features: string }
@@ -49,15 +50,6 @@ const BOARDS: { v: string; l: string }[] = [
   { v: 'HB_DRINKS', l: 'فطار وعشاء + مشروبات' },
 ];
 const BOARD_AR: Record<string, string> = Object.fromEntries(BOARDS.map((b) => [b.v, b.l]));
-// City/destination — presets are localized; admin can also type a brand-new city.
-const REGIONS = [
-  { v: 'SHARM', l: 'شرم الشيخ' },
-  { v: 'HURGHADA', l: 'الغردقة' },
-  { v: 'DAHAB', l: 'دهب' },
-  { v: 'CAIRO', l: 'القاهرة' },
-  { v: 'MARSA_ALAM', l: 'مرسى علم' },
-  { v: 'TABA', l: 'طابا' },
-];
 
 export default function AdminHotelsPage() {
   const api = useAdminApi();
@@ -253,16 +245,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t">
             <div>
               <label className="text-xs font-semibold mb-1 block">المدينة / الوجهة</label>
-              <input
-                className="h-11 w-full rounded-lg border px-3 bg-white"
-                value={form.region}
-                onChange={(e) => setForm({ ...form, region: e.target.value })}
-                list="hotel-regions"
-                placeholder="اكتب مدينة أو اختر"
-              />
-              <datalist id="hotel-regions">
-                {REGIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
-              </datalist>
+              <RegionSelect value={form.region} onChange={(v) => setForm({ ...form, region: v })} />
             </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">المستوى</label>

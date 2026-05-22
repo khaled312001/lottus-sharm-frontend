@@ -6,7 +6,7 @@ import { TripCard } from '@/components/public/trip-card';
 import { Reveal } from '@/components/public/motion';
 import { HeroSlider } from '@/components/public/hero-slider';
 import { ReviewsCarousel, type ReviewItem } from '@/components/public/reviews-carousel';
-import { FbReviewsStrip } from '@/components/public/fb-reviews-strip';
+import { FbReviewsStrip, type FbReview } from '@/components/public/fb-reviews-strip';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
 import {
@@ -50,6 +50,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     reviewsAvg = company.average || 0;
     reviewsTotal = company.total || 0;
   } catch { reviews = []; }
+
+  let fbReviews: FbReview[] = [];
+  try {
+    const fb = await api.get<{ items: FbReview[] }>('/public/fb-reviews');
+    fbReviews = fb.items;
+  } catch { fbReviews = []; }
 
   return (
     <>
@@ -182,7 +188,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* ============ FACEBOOK REVIEWS — directly after hero ============ */}
-      <FbReviewsStrip locale={locale} />
+      <FbReviewsStrip locale={locale} reviews={fbReviews} />
 
       {/* ============ ABOUT / INTRO ============ */}
       <section className="relative py-14 md:py-24 bg-cream overflow-hidden hairline-top">

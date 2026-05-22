@@ -4,23 +4,10 @@ import Image from 'next/image';
 import { Star, ThumbsUp, Facebook, ArrowRight } from 'lucide-react';
 import { L } from '@/lib/utils';
 import { Reveal } from '@/components/public/motion';
-import fbReviews from '@/data/fb-reviews.json';
+import { api } from '@/lib/api';
+import type { FbReview } from '@/components/public/fb-reviews-strip';
 
-interface FbReview {
-  id: number;
-  slug: string;
-  name: string;
-  comment: string;
-  dateText: string;
-  recommends: boolean;
-  rating: number;
-  profileImage: string | null;
-  attachedImages: string[];
-}
-
-const REVIEWS = fbReviews as FbReview[];
-
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -42,6 +29,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function FbReviewsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  let REVIEWS: FbReview[] = [];
+  try {
+    const fb = await api.get<{ items: FbReview[] }>('/public/fb-reviews');
+    REVIEWS = fb.items;
+  } catch { REVIEWS = []; }
 
   return (
     <main className="min-h-screen bg-[#f0f2f5]">

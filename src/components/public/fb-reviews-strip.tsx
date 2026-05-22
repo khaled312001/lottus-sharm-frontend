@@ -5,11 +5,9 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Star, ThumbsUp, Facebook, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { L, cn } from '@/lib/utils';
-import fbReviews from '@/data/fb-reviews.json';
 
-interface FbReview {
+export interface FbReview {
   id: number;
-  slug: string;
   name: string;
   comment: string;
   dateText: string;
@@ -19,9 +17,8 @@ interface FbReview {
   attachedImages: string[];
 }
 
-const REVIEWS = fbReviews as FbReview[];
-
-export function FbReviewsStrip({ locale }: { locale: string }) {
+export function FbReviewsStrip({ locale, reviews }: { locale: string; reviews: FbReview[] }) {
+  const REVIEWS = reviews;
   // Duplicate the list 3x for seamless autoplay (lots of room either side)
   const loop = REVIEWS.length > 0 ? [...REVIEWS, ...REVIEWS, ...REVIEWS] : [];
   const trackRef = useRef<HTMLDivElement>(null);

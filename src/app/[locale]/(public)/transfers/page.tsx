@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { Reveal } from '@/components/public/motion';
 import { Car, Bus, Plane, Building2, MapPin, Users, Clock, ArrowRight, MessageCircle } from 'lucide-react';
 import { api } from '@/lib/api';
-import { L, localeToApiCode, buildWhatsAppLink } from '@/lib/utils';
+import { L, localeToApiCode, buildWhatsAppLink, cn } from '@/lib/utils';
+import { Link } from '@/i18n/routing';
 
 export const revalidate = 60;
 
@@ -18,32 +19,41 @@ interface TransferDTO {
   priceLocalEGP: string;
   priceForeignUSD: string;
   isFeatured: boolean;
+  region?: string;
   heroImage?: { url: string; mediumUrl?: string | null; thumbnailUrl?: string | null; type?: 'IMAGE' | 'VIDEO' } | null;
   tr?: { name: string; shortDesc: string };
 }
 
-const VEHICLE_META: Record<string, { icon: React.ComponentType<{ className?: string }>; ar: string; en: string; ru: string; it: string; color: string }> = {
-  SEDAN:    { icon: Car,    ar: 'سيارة ملاكي',  en: 'Private sedan', ru: 'Седан',        it: 'Berlina',  color: 'from-blue-500 to-blue-700' },
-  MICROBUS: { icon: Bus,    ar: 'ميكروباص',      en: 'Microbus',      ru: 'Микроавтобус', it: 'Microbus', color: 'from-emerald-500 to-emerald-700' },
-  MINIBUS:  { icon: Bus,    ar: 'ميني باص',      en: 'Minibus',       ru: 'Минибус',      it: 'Minibus',  color: 'from-teal-500 to-teal-700' },
-  COACH:    { icon: Bus,    ar: 'أوتوبيس كبير', en: 'Coach',         ru: 'Автобус',      it: 'Pullman',  color: 'from-amber-500 to-amber-700' },
-  FLIGHT:   { icon: Plane,  ar: 'طيران داخلي',  en: 'Flight',        ru: 'Авиаперелёт',  it: 'Volo',     color: 'from-rose-500 to-rose-700' },
+const VEHICLE_META: Record<string, { icon: React.ComponentType<{ className?: string }>; ar: string; en: string; ru: string; it: string; de: string; color: string }> = {
+  SEDAN:    { icon: Car,    ar: 'سيارة ملاكي',  en: 'Private sedan', ru: 'Седан',        it: 'Berlina',  de: 'Limousine',   color: 'from-blue-500 to-blue-700' },
+  MICROBUS: { icon: Bus,    ar: 'ميكروباص',      en: 'Microbus',      ru: 'Микроавтобус', it: 'Microbus', de: 'Microbus',    color: 'from-emerald-500 to-emerald-700' },
+  MINIBUS:  { icon: Bus,    ar: 'ميني باص',      en: 'Minibus',       ru: 'Минибус',      it: 'Minibus',  de: 'Minibus',     color: 'from-teal-500 to-teal-700' },
+  COACH:    { icon: Bus,    ar: 'أوتوبيس كبير', en: 'Coach',         ru: 'Автобус',      it: 'Pullman',  de: 'Reisebus',    color: 'from-amber-500 to-amber-700' },
+  FLIGHT:   { icon: Plane,  ar: 'طيران داخلي',  en: 'Flight',        ru: 'Авиаперелёт',  it: 'Volo',     de: 'Inlandsflug', color: 'from-rose-500 to-rose-700' },
 };
 
-const ROUTE_META: Record<string, { ar: string; en: string; ru: string; it: string }> = {
-  AIRPORT_TO_HOTEL:     { ar: 'من المطار للفندق',         en: 'Airport → Hotel',        ru: 'Аэропорт → Отель',         it: 'Aeroporto → Hotel' },
-  HOTEL_TO_AIRPORT:     { ar: 'من الفندق للمطار',         en: 'Hotel → Airport',        ru: 'Отель → Аэропорт',         it: 'Hotel → Aeroporto' },
-  STATION_TO_HOTEL:     { ar: 'من المحطة للفندق',         en: 'Station → Hotel',        ru: 'Вокзал → Отель',           it: 'Stazione → Hotel' },
-  HOTEL_TO_STATION:     { ar: 'من الفندق للمحطة',         en: 'Hotel → Station',        ru: 'Отель → Вокзал',           it: 'Hotel → Stazione' },
-  CAIRO_SHARM_FLIGHT:   { ar: 'القاهرة → شرم الشيخ',     en: 'Cairo → Sharm El Sheikh',ru: 'Каир → Шарм-эль-Шейх',     it: 'Cairo → Sharm El Sheikh' },
-  SHARM_CAIRO_FLIGHT:   { ar: 'شرم الشيخ → القاهرة',     en: 'Sharm El Sheikh → Cairo',ru: 'Шарм-эль-Шейх → Каир',     it: 'Sharm El Sheikh → Cairo' },
-  INTRA_CITY:           { ar: 'تنقلات داخل المدينة',       en: 'In-town transfers',      ru: 'Городские трансферы',      it: 'Trasferimenti in città' },
-  CUSTOM:               { ar: 'خدمة مخصصة',                en: 'Custom service',         ru: 'Индивидуальный',           it: 'Servizio personalizzato' },
+const ROUTE_META: Record<string, { ar: string; en: string; ru: string; it: string; de: string }> = {
+  AIRPORT_TO_HOTEL:     { ar: 'من المطار للفندق',         en: 'Airport → Hotel',        ru: 'Аэропорт → Отель',         it: 'Aeroporto → Hotel',        de: 'Flughafen → Hotel' },
+  HOTEL_TO_AIRPORT:     { ar: 'من الفندق للمطار',         en: 'Hotel → Airport',        ru: 'Отель → Аэропорт',         it: 'Hotel → Aeroporto',        de: 'Hotel → Flughafen' },
+  STATION_TO_HOTEL:     { ar: 'من المحطة للفندق',         en: 'Station → Hotel',        ru: 'Вокзал → Отель',           it: 'Stazione → Hotel',         de: 'Bahnhof → Hotel' },
+  HOTEL_TO_STATION:     { ar: 'من الفندق للمحطة',         en: 'Hotel → Station',        ru: 'Отель → Вокзал',           it: 'Hotel → Stazione',         de: 'Hotel → Bahnhof' },
+  CAIRO_SHARM_FLIGHT:   { ar: 'القاهرة → شرم الشيخ',     en: 'Cairo → Sharm El Sheikh',ru: 'Каир → Шарм-эль-Шейх',     it: 'Cairo → Sharm El Sheikh',  de: 'Kairo → Sharm El Sheikh' },
+  SHARM_CAIRO_FLIGHT:   { ar: 'شرم الشيخ → القاهرة',     en: 'Sharm El Sheikh → Cairo',ru: 'Шарм-эль-Шейх → Каир',     it: 'Sharm El Sheikh → Cairo',  de: 'Sharm El Sheikh → Kairo' },
+  INTRA_CITY:           { ar: 'تنقلات داخل المدينة',       en: 'In-town transfers',      ru: 'Городские трансферы',      it: 'Trasferimenti in città',   de: 'Transfers innerorts' },
+  CUSTOM:               { ar: 'خدمة مخصصة',                en: 'Custom service',         ru: 'Индивидуальный',           it: 'Servizio personalizzato',  de: 'Individueller Service' },
 };
 
-function pickT<T extends { ar: string; en: string; ru: string; it: string }>(o: T, locale: string): string {
-  return (o[locale as 'ar' | 'en' | 'ru' | 'it']) || o.en;
+function pickT<T extends { ar: string; en: string; ru: string; it: string; de?: string }>(o: T, locale: string): string {
+  return (o as Record<string, string>)[locale] || o.de || o.en;
 }
+
+const TRANSFER_REGION_LABELS: Record<string, { ar: string; en: string; de: string; ru: string; it: string }> = {
+  SHARM:    { ar: 'شرم الشيخ', en: 'Sharm El Sheikh', de: 'Sharm El Sheikh', ru: 'Шарм-эль-Шейх', it: 'Sharm El Sheikh' },
+  HURGHADA: { ar: 'الغردقة',   en: 'Hurghada',        de: 'Hurghada',        ru: 'Хургада',        it: 'Hurghada' },
+  DAHAB:    { ar: 'دهب',        en: 'Dahab',           de: 'Dahab',           ru: 'Дахаб',          it: 'Dahab' },
+  CAIRO:    { ar: 'القاهرة',    en: 'Cairo',           de: 'Kairo',           ru: 'Каир',           it: 'Il Cairo' },
+  MARSA_ALAM:{ ar: 'مرسى علم',  en: 'Marsa Alam',      de: 'Marsa Alam',      ru: 'Марса-Алам',     it: 'Marsa Alam' },
+};
 
 const ROUTE_GROUP_ORDER = [
   ['AIRPORT_TO_HOTEL', 'HOTEL_TO_AIRPORT'],
@@ -52,11 +62,11 @@ const ROUTE_GROUP_ORDER = [
   ['INTRA_CITY'],
 ];
 
-const GROUP_TITLES: Array<{ ar: string; en: string; ru: string; it: string; icon: React.ComponentType<{ className?: string }> }> = [
-  { ar: 'استقبال وتوصيل المطار',       en: 'Airport pickup & drop-off',        ru: 'Встреча и проводы в аэропорту', it: 'Pickup e drop-off aeroporto', icon: Car },
-  { ar: 'طيران داخلي القاهرة / شرم',  en: 'Domestic flights (Cairo / Sharm)', ru: 'Внутренние рейсы Каир / Шарм',  it: 'Voli interni Cairo / Sharm',  icon: Plane },
-  { ar: 'محطات وموانئ',                en: 'Bus stations & ports',             ru: 'Автостанции и порты',           it: 'Stazioni e porti',            icon: Building2 },
-  { ar: 'تنقلات داخلية',                en: 'In-town transfers',                ru: 'Городские перемещения',         it: 'Trasferimenti in città',      icon: MapPin },
+const GROUP_TITLES: Array<{ ar: string; en: string; ru: string; it: string; de: string; icon: React.ComponentType<{ className?: string }> }> = [
+  { ar: 'استقبال وتوصيل المطار',       en: 'Airport pickup & drop-off',        ru: 'Встреча и проводы в аэропорту', it: 'Pickup e drop-off aeroporto', de: 'Flughafen-Abholung & -Transfer', icon: Car },
+  { ar: 'طيران داخلي القاهرة / شرم',  en: 'Domestic flights (Cairo / Sharm)', ru: 'Внутренние рейсы Каир / Шарм',  it: 'Voli interni Cairo / Sharm',  de: 'Inlandsflüge (Kairo / Sharm)',   icon: Plane },
+  { ar: 'محطات وموانئ',                en: 'Bus stations & ports',             ru: 'Автостанции и порты',           it: 'Stazioni e porti',            de: 'Bahnhöfe & Häfen',               icon: Building2 },
+  { ar: 'تنقلات داخلية',                en: 'In-town transfers',                ru: 'Городские перемещения',         it: 'Trasferimenti in città',      de: 'Transfers innerorts',            icon: MapPin },
 ];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -72,16 +82,23 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function TransfersPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function TransfersPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ region?: string }> }) {
   const { locale } = await params;
+  const { region } = await searchParams;
   setRequestLocale(locale);
   const isAr = locale === 'ar';
 
-  let items: TransferDTO[] = [];
+  let allItems: TransferDTO[] = [];
   try {
     const res = await api.get<{ items: TransferDTO[] }>(`/public/transfers?locale=${localeToApiCode(locale)}`);
-    items = res.items;
+    allItems = res.items;
   } catch { /* ignore */ }
+
+  // Region filter (only shown when transfers span more than one destination)
+  const regionCounts: Record<string, number> = {};
+  allItems.forEach((t) => { const r = t.region || 'SHARM'; regionCounts[r] = (regionCounts[r] || 0) + 1; });
+  const regionKeys = Object.keys(regionCounts);
+  const items = region ? allItems.filter((t) => (t.region || 'SHARM') === region) : allItems;
 
   // Group by route order
   const groups = ROUTE_GROUP_ORDER.map((routes) => items.filter((t) => routes.includes(t.route)));
@@ -117,6 +134,35 @@ export default async function TransfersPage({ params }: { params: Promise<{ loca
           </Reveal>
         </div>
       </section>
+
+      {/* Region (destination) filter — only when transfers span more than one city */}
+      {regionKeys.length > 1 && (
+        <section className="sticky top-[64px] md:top-[88px] z-30 bg-cream/95 backdrop-blur-md border-b border-accent/15 shadow-sm">
+          <div className="container py-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <Link
+              href={'/transfers' as never}
+              className={cn('shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap', !region ? 'bg-primary text-cream border-primary' : 'bg-white text-primary border-accent/25 hover:bg-accent/5')}
+            >
+              {L(locale, { ar: 'كل الوجهات', en: 'All destinations', de: 'Alle Ziele', ru: 'Все направления', it: 'Tutte le destinazioni' })}
+              <span className="text-[11px] px-1.5 rounded-full bg-accent/20">{allItems.length}</span>
+            </Link>
+            {regionKeys.map((r) => {
+              const lbl = TRANSFER_REGION_LABELS[r] || { ar: r, en: r, de: r, ru: r, it: r };
+              const active = region === r;
+              return (
+                <Link
+                  key={r}
+                  href={`/transfers?region=${r}` as never}
+                  className={cn('shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap', active ? 'bg-primary text-cream border-primary' : 'bg-white text-primary border-accent/25 hover:bg-accent/5')}
+                >
+                  {L(locale, lbl)}
+                  <span className="text-[11px] px-1.5 rounded-full bg-accent/20">{regionCounts[r]}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="container py-12 md:py-16 space-y-12">
         {groups.map((g, idx) => {
