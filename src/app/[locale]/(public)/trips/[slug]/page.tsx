@@ -61,6 +61,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         en: `/en/trips/${slug}`,
         ru: `/ru/trips/${slug}`,
         it: `/it/trips/${slug}`,
+        de: `/de/trips/${slug}`,
+        'x-default': `/ar/trips/${slug}`,
       },
     },
   };

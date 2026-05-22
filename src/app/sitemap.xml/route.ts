@@ -9,7 +9,17 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://lotussharm.com';
-const LOCALES = ['ar', 'en', 'ru', 'it'] as const;
+const LOCALES = ['ar', 'en', 'ru', 'it', 'de'] as const;
+const DEFAULT_LOCALE = 'ar';
+
+// hreflang alternates for a path across all locales + x-default → default locale
+// (matches the `/` → /ar redirect, so Google consolidates correctly).
+function altsFor(path: string): Record<string, string> {
+  const m: Record<string, string> = {};
+  for (const l of LOCALES) m[l] = `${SITE}/${l}${path}`;
+  m['x-default'] = `${SITE}/${DEFAULT_LOCALE}${path}`;
+  return m;
+}
 
 interface Entry {
   loc: string;
@@ -37,7 +47,7 @@ function urlXml(e: Entry): string {
 export async function GET() {
   const now = new Date().toISOString();
   const urls: Entry[] = [];
-  const staticPaths = ['', '/trips', '/about', '/gallery', '/blog', '/contact', '/privacy', '/terms', '/cancellation-policy'];
+  const staticPaths = ['', '/trips', '/hotels', '/transfers', '/about', '/gallery', '/blog', '/review', '/contact', '/privacy', '/terms', '/cancellation-policy'];
 
   for (const path of staticPaths) {
     for (const loc of LOCALES) {
@@ -46,7 +56,7 @@ export async function GET() {
         lastmod: now,
         changefreq: 'weekly',
         priority: path === '' ? 1.0 : 0.7,
-        alternates: Object.fromEntries(LOCALES.map((l) => [l, `${SITE}/${l}${path}`])),
+        alternates: altsFor(path),
       });
     }
   }
@@ -61,7 +71,7 @@ export async function GET() {
           lastmod: now,
           changefreq: 'weekly',
           priority: 0.85,
-          alternates: Object.fromEntries(LOCALES.map((l) => [l, `${SITE}/${l}/trips/${t.slug}`])),
+          alternates: altsFor(`/trips/${t.slug}`),
         });
       }
     }
@@ -77,7 +87,7 @@ export async function GET() {
           lastmod: now,
           changefreq: 'monthly',
           priority: 0.6,
-          alternates: Object.fromEntries(LOCALES.map((l) => [l, `${SITE}/${l}/blog/${p.slug}`])),
+          alternates: altsFor(`/blog/${p.slug}`),
         });
       }
     }

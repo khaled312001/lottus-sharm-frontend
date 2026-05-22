@@ -16,8 +16,17 @@ export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string; page?: string }>;
+  searchParams: Promise<{ category?: string; page?: string; region?: string }>;
 }
+
+const REGION_LABELS: Record<string, { ar: string; en: string; de: string; ru: string; it: string }> = {
+  SHARM:    { ar: 'شرم الشيخ', en: 'Sharm El Sheikh', de: 'Sharm El Sheikh', ru: 'Шарм-эль-Шейх', it: 'Sharm El Sheikh' },
+  HURGHADA: { ar: 'الغردقة',   en: 'Hurghada',        de: 'Hurghada',        ru: 'Хургада',        it: 'Hurghada' },
+  DAHAB:    { ar: 'دهب',        en: 'Dahab',           de: 'Dahab',           ru: 'Дахаб',          it: 'Dahab' },
+  CAIRO:    { ar: 'القاهرة',    en: 'Cairo',           de: 'Kairo',           ru: 'Каир',           it: 'Il Cairo' },
+  MARSA_ALAM:{ ar: 'مرسى علم',  en: 'Marsa Alam',      de: 'Marsa Alam',      ru: 'Марса-Алам',     it: 'Marsa Alam' },
+  TABA:     { ar: 'طابا',       en: 'Taba',            de: 'Taba',            ru: 'Таба',           it: 'Taba' },
+};
 
 const CATEGORIES = ['SEA', 'DESERT', 'CITY', 'DIVING', 'EVENTS', 'SAFARI'] as const;
 const CATEGORY_ICON = {
@@ -37,6 +46,7 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
   const isAr = locale === 'ar';
 
   const cat = sp.category as (typeof CATEGORIES)[number] | undefined;
+  const region = sp.region;
   const page = Number(sp.page || 1);
 
   let trips: { items: TripDTO[]; total: number; totalPages: number } = { items: [], total: 0, totalPages: 0 };
@@ -44,12 +54,18 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
   try {
     const qs = new URLSearchParams({ locale: localeToApiCode(locale), page: String(page), pageSize: '12' });
     if (cat) qs.set('category', cat);
+    if (region) qs.set('region', region);
     trips = await api.get(`/public/trips?${qs}`);
     // Get all (for counts) — backend caps pageSize at 50
     allTrips = await api.get(`/public/trips?locale=${localeToApiCode(locale)}&pageSize=50`);
   } catch {
     /* ignore */
   }
+
+  // Distinct regions present (for the region filter — only shown when >1).
+  const regionCounts: Record<string, number> = {};
+  allTrips.items.forEach((tt) => { const r = (tt as TripDTO & { region?: string }).region || 'SHARM'; regionCounts[r] = (regionCounts[r] || 0) + 1; });
+  const regionKeys = Object.keys(regionCounts);
 
   const cms = await fetchCMSPage('trips', locale);
   const heroTitle = cms?.tr?.title || t('trips.title');
@@ -91,11 +107,43 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
 
       {/* FILTERS — sticky pill bar */}
       <section className="sticky top-[88px] md:top-[116px] z-30 bg-cream/95 backdrop-blur-md border-b border-accent/15 shadow-sm">
-        <div className="container py-3.5 md:py-4">
+        <div className="container py-3.5 md:py-4 space-y-2.5">
+          {/* Region row — only when trips span more than one destination */}
+          {regionKeys.length > 1 && (
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
+              <Link
+                href={{ pathname: '/trips', query: cat ? { category: cat } : {} }}
+                className={cn(
+                  'shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all whitespace-nowrap',
+                  !region ? 'bg-accent text-primary border-accent' : 'bg-white text-primary/70 border-accent/25 hover:bg-accent/10',
+                )}
+              >
+                {L(locale, { ar: 'كل الوجهات', en: 'All destinations', de: 'Alle Ziele', ru: 'Все направления', it: 'Tutte le destinazioni' })}
+                <span className="text-[10px] px-1.5 rounded-full bg-primary/10">{allTrips.items.length}</span>
+              </Link>
+              {regionKeys.map((r) => {
+                const lbl = REGION_LABELS[r] || { ar: r, en: r, de: r, ru: r, it: r };
+                const active = region === r;
+                return (
+                  <Link
+                    key={r}
+                    href={{ pathname: '/trips', query: { ...(cat ? { category: cat } : {}), region: r } }}
+                    className={cn(
+                      'shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all whitespace-nowrap',
+                      active ? 'bg-accent text-primary border-accent' : 'bg-white text-primary/70 border-accent/25 hover:bg-accent/10',
+                    )}
+                  >
+                    {L(locale, lbl)}
+                    <span className="text-[10px] px-1.5 rounded-full bg-primary/10">{regionCounts[r]}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
             {/* All */}
             <Link
-              href={{ pathname: '/trips' }}
+              href={{ pathname: '/trips', query: region ? { region } : {} }}
               className={cn(
                 'group shrink-0 inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap',
                 !cat
@@ -122,7 +170,7 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
               return (
                 <Link
                   key={c}
-                  href={{ pathname: '/trips', query: { category: c } }}
+                  href={{ pathname: '/trips', query: { category: c, ...(region ? { region } : {}) } }}
                   className={cn(
                     'group shrink-0 inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap',
                     isActive

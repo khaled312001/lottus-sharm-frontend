@@ -1,22 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAdminApi, useAdminAuth } from '@/lib/admin-auth';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Upload, Trash2, Loader2, Play, X, Image as ImageIcon, Video as VideoIcon,
-  ChevronLeft, ChevronRight, Folder, FolderPlus, FolderInput, CheckSquare, Square,
-  FolderOpen, Layers,
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Upload, Trash2, Loader2, Play, X, Image as ImageIcon, Video as VideoIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { API_BASE } from '@/lib/api';
 import type { MediaDTO } from '@/types/api';
 import { cn } from '@/lib/utils';
-
-// Special folder sentinels
-const ALL = '__ALL__';
-const UNFILED = '__UNFILED__';
+import { CategorySelect } from '@/components/admin/category-select';
 
 export default function AdminMediaPage() {
   const api = useAdminApi();
@@ -25,19 +19,17 @@ export default function AdminMediaPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<'ALL' | 'IMAGE' | 'VIDEO'>('ALL');
-  const [folder, setFolder] = useState<string>(ALL);
-  const [extraFolders, setExtraFolders] = useState<string[]>([]); // locally-created, still empty
+  const [folder, setFolder] = useState<string>('ALL'); // 'ALL' | '__none__' | <category>
+  const [uploadCategory, setUploadCategory] = useState('');
   const [preview, setPreview] = useState<MediaDTO | null>(null);
   const [page, setPage] = useState(1);
-  // Selection / move
-  const [selectMode, setSelectMode] = useState(false);
-  const [selected, setSelected] = useState<Set<number>>(new Set());
-  const [moving, setMoving] = useState(false);
   const pageSize = 24;
 
   const load = async () => {
     setLoading(true);
     try {
+      // Backend caps pageSize at 500 — fetch the max in one shot so the
+      // client-side filter/pagination here sees the full library.
       const res = await api.get<{ items: MediaDTO[]; total: number }>('/admin/media?pageSize=500');
       setItems(res.items);
     } catch (e) {
@@ -49,29 +41,15 @@ export default function AdminMediaPage() {
 
   useEffect(() => { void load(); /* eslint-disable-next-line */ }, []);
 
-  // ===== Folders (derived from items + locally-created empties) =====
-  const folders = useMemo(() => {
-    const map = new Map<string, number>();
-    items.forEach((m) => {
-      if (m.category) map.set(m.category, (map.get(m.category) || 0) + 1);
-    });
-    extraFolders.forEach((f) => { if (!map.has(f)) map.set(f, 0); });
-    return [...map.entries()]
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => a.name.localeCompare(b.name, 'ar'));
-  }, [items, extraFolders]);
-
-  const unfiledCount = items.filter((m) => !m.category).length;
-
-  // ===== Upload (into the currently-open folder, if any) =====
   const upload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     setUploading(true);
     try {
       const form = new FormData();
       Array.from(files).forEach((f) => form.append('files', f));
-      // Drop new uploads into the open folder (not ALL / not UNFILED)
-      if (folder !== ALL && folder !== UNFILED) form.append('category', folder);
+      // Upload into the typed folder, or the currently-open folder if none typed.
+      const cat = uploadCategory.trim() || (folder !== 'ALL' && folder !== '__none__' ? folder : '');
+      if (cat) form.append('category', cat);
       const res = await fetch(`${API_BASE}/admin/media/upload`, {
         method: 'POST',
         body: form,
@@ -80,7 +58,8 @@ export default function AdminMediaPage() {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) throw new Error(json.error?.message || 'Upload failed');
-      toast.success(`تم رفع ${json.data.items.length} ملف`);
+      toast.success(`تم رفع ${json.data.items.length} ملف${cat ? ` إلى «${cat}»` : ''}`);
+      setUploadCategory('');
       void load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
@@ -93,64 +72,35 @@ export default function AdminMediaPage() {
     if (!confirm('حذف الملف؟')) return;
     try {
       await api.delete(`/admin/media/${id}`);
-      setSelected((s) => { const n = new Set(s); n.delete(id); return n; });
       void load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
     }
   };
 
-  const createFolder = () => {
-    const name = prompt('اسم المجلد الجديد (مثلاً: رحلة راس محمد، التقييمات...)')?.trim();
-    if (!name) return;
-    if (folders.some((f) => f.name === name)) {
-      setFolder(name);
-      return;
-    }
-    setExtraFolders((prev) => [...prev, name]);
-    setFolder(name);
-    toast.success(`تم إنشاء المجلد "${name}" — ارفع أو انقل صور إليه`);
-  };
-
-  // ===== Selection / move =====
-  const toggleSelect = (id: number) => {
-    setSelected((s) => {
-      const n = new Set(s);
-      if (n.has(id)) n.delete(id); else n.add(id);
-      return n;
-    });
-  };
-
-  const exitSelect = () => { setSelectMode(false); setSelected(new Set()); };
-
-  const moveSelected = async (target: string) => {
-    if (selected.size === 0) return;
-    const ids = [...selected];
-    // target '' clears the folder (backend trims empty → null)
-    const category = target === UNFILED ? '' : target;
-    setMoving(true);
+  // Move a media item into a folder (category) — empty string clears it.
+  const setCategory = async (id: number, category: string) => {
     try {
-      await Promise.all(ids.map((id) => api.patch(`/admin/media/${id}`, { category })));
-      toast.success(`تم نقل ${ids.length} ملف${target === UNFILED ? ' (بدون مجلد)' : ` إلى "${target}"`}`);
-      exitSelect();
-      void load();
+      await api.patch(`/admin/media/${id}`, { category });
+      setItems((prev) => prev.map((m) => (m.id === id ? { ...m, category: category || null } : m)));
+      setPreview((p) => (p && p.id === id ? { ...p, category: category || null } : p));
+      toast.success(category ? `نُقل إلى «${category}»` : 'أُزيل من القسم');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error');
-    } finally {
-      setMoving(false);
     }
   };
 
-  // ===== Filtering =====
-  const filtered = items.filter((m) => {
-    if (filter !== 'ALL' && m.type !== filter) return false;
-    if (folder === ALL) return true;
-    if (folder === UNFILED) return !m.category;
-    return m.category === folder;
-  });
+  // Distinct folders (categories) present in the library.
+  const folders = [...new Set(items.map((m) => m.category).filter(Boolean) as string[])].sort((a, b) => a.localeCompare(b));
+
+  const filtered = items.filter((m) =>
+    (filter === 'ALL' || m.type === filter) &&
+    (folder === 'ALL' || (folder === '__none__' ? !m.category : m.category === folder)),
+  );
   const imageCount = items.filter((m) => m.type === 'IMAGE').length;
   const videoCount = items.filter((m) => m.type === 'VIDEO').length;
 
+  // Reset to page 1 whenever a filter changes
   useEffect(() => { setPage(1); }, [filter, folder]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -163,72 +113,58 @@ export default function AdminMediaPage() {
     if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const folderLabel = folder === ALL ? 'كل الملفات' : folder === UNFILED ? 'بدون مجلد' : folder;
-
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold">مكتبة الميديا</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {items.length} ملف · {imageCount} صورة · {videoCount} فيديو · {folders.length} مجلد
+            {items.length} ملف · {imageCount} صورة · {videoCount} فيديو
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={createFolder}
-            className="inline-flex items-center gap-2 h-11 px-4 rounded-lg border border-accent/30 text-primary text-sm font-semibold hover:bg-accent/10"
-          >
-            <FolderPlus className="h-4 w-4" /> مجلد جديد
-          </button>
-          <button
-            onClick={() => (selectMode ? exitSelect() : setSelectMode(true))}
-            className={cn(
-              'inline-flex items-center gap-2 h-11 px-4 rounded-lg border text-sm font-semibold transition-colors',
-              selectMode ? 'bg-accent text-primary border-accent' : 'border-accent/30 text-primary hover:bg-accent/10',
-            )}
-          >
-            <CheckSquare className="h-4 w-4" /> {selectMode ? 'إنهاء التحديد' : 'تحديد للنقل'}
-          </button>
+        <div className="flex items-center gap-2">
+          <CategorySelect
+            value={uploadCategory}
+            onChange={setUploadCategory}
+            options={folders}
+            placeholder="القسم — اختياري"
+            className="h-11 w-44 rounded-lg border px-3 text-sm bg-white"
+          />
           <label className="cursor-pointer">
             <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => upload(e.target.files)} />
             <span className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">
               {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-              رفع ملفات{folder !== ALL && folder !== UNFILED ? ` → ${folder}` : ''}
+              رفع ملفات
             </span>
           </label>
         </div>
       </div>
 
-      {/* ===== Folders bar ===== */}
-      <Card>
-        <CardContent className="p-3">
-          <div className="flex items-center gap-2 mb-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-            <Layers className="h-3.5 w-3.5" /> المجلدات
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <FolderChip
-              label="كل الملفات" count={items.length} active={folder === ALL}
-              icon={FolderOpen} onClick={() => setFolder(ALL)}
-            />
-            <FolderChip
-              label="بدون مجلد" count={unfiledCount} active={folder === UNFILED}
-              icon={Folder} onClick={() => setFolder(UNFILED)}
-            />
-            {folders.map((f) => (
-              <FolderChip
-                key={f.name} label={f.name} count={f.count} active={folder === f.name}
-                icon={Folder} onClick={() => setFolder(f.name)}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Folder (category) tabs — admin organises the gallery into sections */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="text-xs text-muted-foreground font-semibold ms-1">الأقسام:</span>
+        {([
+          { v: 'ALL', label: 'الكل' },
+          { v: '__none__', label: 'بدون قسم' },
+          ...folders.map((f) => ({ v: f, label: f })),
+        ]).map((f) => (
+          <button
+            key={f.v}
+            onClick={() => setFolder(f.v)}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors',
+              folder === f.v ? 'bg-accent text-primary border-accent' : 'bg-white border-accent/25 hover:bg-accent/10',
+            )}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
-      {/* ===== Type tabs ===== */}
+      {/* Tabs */}
       <div className="inline-flex bg-white border rounded-lg p-1 gap-1">
         {([
-          { v: 'ALL',   label: 'الكل',     icon: null,       count: filtered.length },
+          { v: 'ALL',   label: 'الكل',     icon: null,       count: items.length },
           { v: 'IMAGE', label: 'الصور',    icon: ImageIcon,  count: imageCount },
           { v: 'VIDEO', label: 'الفيديوهات', icon: VideoIcon, count: videoCount },
         ] as const).map((t) => (
@@ -242,113 +178,59 @@ export default function AdminMediaPage() {
           >
             {t.icon && <t.icon className="h-3.5 w-3.5" />}
             <span>{t.label}</span>
+            <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-bold tabular-nums', filter === t.v ? 'bg-white/20' : 'bg-muted')}>{t.count}</span>
           </button>
         ))}
       </div>
-
-      {/* ===== Selection / move bar ===== */}
-      {selectMode && (
-        <div className="sticky top-2 z-20 flex flex-wrap items-center gap-3 bg-primary text-cream rounded-xl px-4 py-3 shadow-lg">
-          <span className="font-bold text-sm inline-flex items-center gap-2">
-            <CheckSquare className="h-4 w-4" />
-            {selected.size} محدد
-          </span>
-          <button
-            onClick={() => setSelected(new Set(filtered.map((m) => m.id)))}
-            className="text-xs font-semibold underline-offset-2 hover:underline"
-          >
-            تحديد كل المعروض
-          </button>
-          {selected.size > 0 && (
-            <button onClick={() => setSelected(new Set())} className="text-xs font-semibold underline-offset-2 hover:underline opacity-80">
-              مسح التحديد
-            </button>
-          )}
-          <div className="flex items-center gap-2 ms-auto">
-            <FolderInput className="h-4 w-4 opacity-80" />
-            <span className="text-xs font-semibold">نقل إلى:</span>
-            <select
-              disabled={selected.size === 0 || moving}
-              defaultValue=""
-              onChange={(e) => { if (e.target.value) void moveSelected(e.target.value); e.target.value = ''; }}
-              className="h-9 rounded-lg border-0 bg-cream/15 text-cream px-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 [&>option]:text-primary"
-            >
-              <option value="" disabled>اختر مجلد...</option>
-              <option value={UNFILED}>— بدون مجلد —</option>
-              {folders.map((f) => <option key={f.name} value={f.name}>{f.name}</option>)}
-            </select>
-            {moving && <Loader2 className="h-4 w-4 animate-spin" />}
-          </div>
-        </div>
-      )}
 
       <Card>
         <CardContent className="p-4">
           {loading ? (
             <div className="py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>
           ) : filtered.length === 0 ? (
-            <div className="py-12 text-center text-muted-foreground">
-              <Folder className="h-10 w-10 mx-auto mb-2 opacity-30" />
-              لا توجد ملفات في «{folderLabel}»
-            </div>
+            <div className="py-12 text-center text-muted-foreground">لا توجد ملفات</div>
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2">
-              {pageItems.map((m) => {
-                const isSel = selected.has(m.id);
-                return (
-                  <div
-                    key={m.id}
-                    className={cn(
-                      'relative aspect-square rounded-lg overflow-hidden border group cursor-pointer transition-all',
-                      isSel && 'ring-2 ring-accent ring-offset-2',
-                    )}
-                    onClick={() => (selectMode ? toggleSelect(m.id) : setPreview(m))}
-                  >
-                    {m.type === 'IMAGE' ? (
-                      <Image src={m.thumbnailUrl || m.url} alt={m.altAr || m.altEn || ''} fill sizes="120px" className="object-cover" />
-                    ) : (
-                      <>
-                        {m.thumbnailUrl ? (
-                          <Image src={m.thumbnailUrl} alt="" fill sizes="120px" className="object-cover" />
-                        ) : (
-                          <video src={m.url} preload="metadata" muted playsInline className="w-full h-full object-cover bg-black" />
-                        )}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors">
-                          <Play className="h-7 w-7 text-white drop-shadow-lg" fill="currentColor" />
-                        </div>
-                        <span className="absolute top-1 start-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-black/70 text-white tracking-wider">VIDEO</span>
-                      </>
-                    )}
-
-                    {/* Folder badge */}
-                    {m.category && !selectMode && (
-                      <span className="absolute bottom-1 start-1 max-w-[90%] truncate inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-black/65 text-white text-[9px] font-semibold">
-                        <Folder className="h-2.5 w-2.5 shrink-0" /> {m.category}
-                      </span>
-                    )}
-
-                    {/* Selection checkbox */}
-                    {selectMode ? (
-                      <div className="absolute top-1.5 start-1.5 z-10">
-                        {isSel
-                          ? <CheckSquare className="h-5 w-5 text-accent drop-shadow" fill="currentColor" />
-                          : <Square className="h-5 w-5 text-white/90 drop-shadow" />}
+              {pageItems.map((m) => (
+                <div key={m.id} className="relative aspect-square rounded-lg overflow-hidden border group cursor-pointer" onClick={() => setPreview(m)}>
+                  {m.type === 'IMAGE' ? (
+                    <Image src={m.thumbnailUrl || m.url} alt={m.altAr || m.altEn || ''} fill sizes="120px" className="object-cover" />
+                  ) : (
+                    <>
+                      {m.thumbnailUrl ? (
+                        <Image src={m.thumbnailUrl} alt="" fill sizes="120px" className="object-cover" />
+                      ) : (
+                        // Use the actual video element as the thumbnail (first frame).
+                        // metadata preload is enough for browsers to render the poster frame.
+                        // Disable controls in the grid — the click opens the lightbox.
+                        <video
+                          src={m.url}
+                          preload="metadata"
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover bg-black"
+                        />
+                      )}
+                      {/* Play overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors">
+                        <Play className="h-7 w-7 text-white drop-shadow-lg" fill="currentColor" />
                       </div>
-                    ) : (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); del(m.id); }}
-                        className="absolute top-1.5 end-1.5 z-10 p-1.5 rounded-full bg-red-600 text-white shadow-lg ring-2 ring-white/80 hover:bg-red-700 active:scale-95 transition-transform"
-                        aria-label="حذف"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+                      <span className="absolute top-1 start-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-black/70 text-white tracking-wider">VIDEO</span>
+                    </>
+                  )}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); del(m.id); }}
+                    className="absolute top-1.5 end-1.5 z-10 p-1.5 rounded-full bg-red-600 text-white shadow-lg ring-2 ring-white/80 hover:bg-red-700 active:scale-95 transition-transform"
+                    aria-label="حذف"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
             </div>
           )}
 
+          {/* Pagination */}
           {!loading && filtered.length > pageSize && (
             <MediaPagination
               page={safePage}
@@ -379,40 +261,43 @@ export default function AdminMediaPage() {
             {preview.type === 'IMAGE' ? (
               <img src={preview.url} alt="" className="max-h-[80vh] max-w-full rounded-lg shadow-2xl" />
             ) : (
-              <video src={preview.url} controls autoPlay playsInline className="max-h-[80vh] max-w-full rounded-lg shadow-2xl bg-black" />
+              <video
+                src={preview.url}
+                controls
+                autoPlay
+                playsInline
+                className="max-h-[80vh] max-w-full rounded-lg shadow-2xl bg-black"
+              />
             )}
             <div className="text-center text-white/70 text-xs font-mono">
-              {preview.category && <><span className="opacity-60">المجلد:</span> {preview.category} · </>}
               <span className="opacity-60">URL:</span> {preview.url}
               {preview.width && preview.height && (
                 <> · <span className="opacity-60">{preview.width}×{preview.height}</span></>
+              )}
+              {(() => {
+                const sb = (preview as unknown as { sizeBytes?: number }).sizeBytes;
+                return sb ? <> · {(sb / 1024 / 1024).toFixed(2)} MB</> : null;
+              })()}
+            </div>
+            {/* Folder (category) editor — pick existing or add new */}
+            <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2 flex-wrap">
+              <span className="text-white/70 text-xs">القسم:</span>
+              <CategorySelect
+                key={preview.id}
+                value={preview.category || ''}
+                onChange={(v) => setCategory(preview.id, v)}
+                options={folders}
+                placeholder="بدون قسم"
+                className="h-9 rounded-md px-2.5 text-sm bg-white/90 text-primary w-48"
+              />
+              {preview.category && (
+                <button type="button" onClick={() => setCategory(preview.id, '')} className="h-9 px-3 rounded-md bg-white/15 text-white text-xs hover:bg-white/25">إزالة</button>
               )}
             </div>
           </div>
         </div>
       )}
     </div>
-  );
-}
-
-function FolderChip({
-  label, count, active, icon: Icon, onClick,
-}: {
-  label: string; count: number; active: boolean;
-  icon: typeof Folder; onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors',
-        active ? 'bg-primary text-white border-primary shadow-sm' : 'bg-white text-primary/80 border-accent/20 hover:bg-accent/10 hover:text-primary',
-      )}
-    >
-      <Icon className="h-3.5 w-3.5" />
-      <span className="max-w-[160px] truncate">{label}</span>
-      <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-bold tabular-nums', active ? 'bg-white/20' : 'bg-muted')}>{count}</span>
-    </button>
   );
 }
 
@@ -425,6 +310,7 @@ function MediaPagination({
   const first = pageStart + 1;
   const last = Math.min(pageStart + pageSize, total);
 
+  // Windowed list around the current page
   const windowed: (number | 'gap')[] = [];
   const push = (v: number | 'gap') => { if (windowed[windowed.length - 1] !== v) windowed.push(v); };
   for (let p = 1; p <= totalPages; p++) {

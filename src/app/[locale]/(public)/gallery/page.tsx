@@ -18,7 +18,7 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
   const t = await getTranslations({ locale });
   const isAr = locale === 'ar';
 
-  type Item = { url: string; thumb?: string; alt: string; tripSlug: string; category: string; type: 'IMAGE' | 'VIDEO' };
+  type Item = { url: string; thumb?: string; alt: string; tripSlug: string; category: string; folder?: string; type: 'IMAGE' | 'VIDEO' };
   const photos: Item[] = [];
   const videos: Item[] = [];
   let trips: TripDTO[] = [];
@@ -43,25 +43,26 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
     interface MediaRow {
       id: number; type: 'IMAGE' | 'VIDEO';
       url: string; thumbnailUrl?: string | null; mediumUrl?: string | null;
-      altAr?: string | null; altEn?: string | null;
+      altAr?: string | null; altEn?: string | null; category?: string | null;
     }
     const all = await api.get<{ items: MediaRow[]; total: number }>(`/public/media?pageSize=500`);
     for (const m of all.items) {
       const ctx = mediaTrip.get(m.url);
       const alt = (locale === 'ar' ? m.altAr : m.altEn) || ctx?.title || 'Lotus Sharm';
       const category = ctx?.category || 'GENERAL';
+      const folder = (m.category || '').trim(); // admin-defined gallery section
       const tripSlug = ctx?.slug || '';
       if (m.type === 'IMAGE') {
         photos.push({
           url: m.url,
           thumb: m.mediumUrl || m.thumbnailUrl || m.url,
-          alt, tripSlug, category, type: 'IMAGE',
+          alt, tripSlug, category, folder, type: 'IMAGE',
         });
       } else {
         videos.push({
           url: m.url,
           thumb: m.thumbnailUrl || undefined,
-          alt, tripSlug, category, type: 'VIDEO',
+          alt, tripSlug, category, folder, type: 'VIDEO',
         });
       }
     }

@@ -46,6 +46,13 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const [notes, setNotes] = useState('');
   const [showPayModal, setShowPayModal] = useState(false);
 
+  // ===== Coupon =====
+  const [coupon, setCoupon] = useState('');
+  const [couponInfo, setCouponInfo] = useState<
+    { valid: boolean; code?: string; discountAmount?: number; newTotal?: number; reason?: string; minBookingAmount?: number } | null
+  >(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+
   // ===== Stepper =====
   const [step, setStep] = useState<StepIdx>(0);
 
@@ -60,6 +67,44 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const childPrice = unit * (1 - trip.childDiscount / 100);
   const total = adults * unit + children * childPrice;
   const showChildrenCounter = isMarried;
+
+  // Coupon discount applies on top of the computed total.
+  const couponDiscount = couponInfo?.valid && couponInfo.discountAmount ? couponInfo.discountAmount : 0;
+  const finalTotal = Math.max(0, total - couponDiscount);
+  const couponNote = couponInfo?.valid ? `كوبون ${couponInfo.code} (خصم ${couponDiscount} ${isLocal ? 'EGP' : 'USD'})` : '';
+  const composedNotes = [notes.trim(), couponNote].filter(Boolean).join('\n');
+
+  // A change to the base total invalidates a previously-applied coupon.
+  useEffect(() => { setCouponInfo(null); }, [total]);
+
+  const applyCoupon = async () => {
+    const code = coupon.trim();
+    if (!code) return;
+    setCouponLoading(true);
+    try {
+      const r = await fetch(`${API_BASE}/public/coupons/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, amount: total }),
+      });
+      const j = await r.json();
+      setCouponInfo(j?.data || { valid: false, reason: 'ERROR' });
+      if (j?.data?.valid) {
+        toast.success(L(locale, { ar: 'تم تطبيق الكوبون ✓', en: 'Coupon applied ✓', de: 'Gutschein angewendet ✓', ru: 'Купон применён ✓', it: 'Coupon applicato ✓' }) as string);
+      } else {
+        const reasons: Record<string, { ar: string; en: string; de: string; ru: string; it: string }> = {
+          NOT_FOUND:   { ar: 'كوبون غير صالح', en: 'Invalid coupon', de: 'Ungültiger Gutschein', ru: 'Неверный купон', it: 'Coupon non valido' },
+          EXPIRED:     { ar: 'انتهت صلاحية الكوبون', en: 'Coupon expired', de: 'Gutschein abgelaufen', ru: 'Купон истёк', it: 'Coupon scaduto' },
+          NOT_STARTED: { ar: 'الكوبون غير مفعّل بعد', en: 'Coupon not active yet', de: 'Gutschein noch nicht aktiv', ru: 'Купон ещё не активен', it: 'Coupon non ancora attivo' },
+          MAX_USES:    { ar: 'انتهى عدد مرات الاستخدام', en: 'Coupon usage limit reached', de: 'Nutzungslimit erreicht', ru: 'Лимit исчерпан', it: 'Limite raggiunto' },
+          MIN_AMOUNT:  { ar: 'لم تبلغ الحد الأدنى للحجز', en: 'Minimum amount not met', de: 'Mindestbetrag nicht erreicht', ru: 'Сумма ниже минимума', it: 'Importo minimo non raggiunto' },
+        };
+        toast.error(L(locale, reasons[j?.data?.reason as string] || reasons.NOT_FOUND) as string);
+      }
+    } catch {
+      setCouponInfo({ valid: false, reason: 'ERROR' });
+    } finally { setCouponLoading(false); }
+  };
 
   // ===== Validation =====
   const phoneClean = phone.trim();
@@ -88,7 +133,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
     phone: phoneClean || undefined,
     travelerType,
     isMarried,
-    notes: notes.trim() || undefined,
+    notes: composedNotes || undefined,
   });
 
   const trackLead = () => {
@@ -99,7 +144,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
         childrenCount: showChildrenCounter ? children : 0,
         customerType: isLocal ? 'LOCAL' : 'FOREIGN',
         customer: { fullName: nameClean || undefined, phone: phoneClean || undefined, language: locale.toUpperCase() },
-        notes: `${date} — ${travelerType}${isMarried ? ' — married' : ''} — total≈${total} ${fromCurrency}${notes ? `\nNotes: ${notes}` : ''}`,
+        notes: `${date} — ${travelerType}${isMarried ? ' — married' : ''} — total≈${finalTotal} ${fromCurrency}${composedNotes ? `\nNotes: ${composedNotes}` : ''}`,
         referrer: typeof window !== 'undefined' ? window.location.pathname : '',
       });
       if (navigator.sendBeacon) {
@@ -568,6 +613,34 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                 {emailClean && <SummaryRow icon={Mail} label="" value={emailClean} valueLtr />}
               </div>
 
+              {/* Coupon */}
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <Input
+                    value={coupon}
+                    onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+                    placeholder={L(locale, { ar: 'كود الخصم', en: 'Coupon code', de: 'Gutscheincode', ru: 'Промокод', it: 'Codice sconto' }) as string}
+                    className="h-10 text-sm flex-1 uppercase"
+                    dir="ltr"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } }}
+                  />
+                  <button
+                    type="button"
+                    onClick={applyCoupon}
+                    disabled={couponLoading || !coupon.trim()}
+                    className="h-10 px-4 rounded-lg bg-primary text-cream text-sm font-bold hover:bg-primary-900 disabled:opacity-40 transition-colors shrink-0"
+                  >
+                    {couponLoading ? '...' : L(locale, { ar: 'تطبيق', en: 'Apply', de: 'Anwenden', ru: 'Применить', it: 'Applica' })}
+                  </button>
+                </div>
+                {couponInfo?.valid && (
+                  <p className="mt-1.5 text-[11px] font-bold text-emerald-700 inline-flex items-center gap-1">
+                    <Check className="h-3 w-3" />
+                    {L(locale, { ar: 'تم تطبيق الخصم', en: 'Discount applied', de: 'Rabatt angewendet', ru: 'Скидка применена', it: 'Sconto applicato' })}: −<Price amount={couponDiscount} from={fromCurrency} />
+                  </p>
+                )}
+              </div>
+
               {/* CTAs */}
               <div className="space-y-1.5">
                 <a
@@ -637,8 +710,20 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
               )}
             </div>
           </div>
-          <div className="font-serif text-xl font-bold text-accent-700 leading-none">
-            <Price amount={total} from={fromCurrency} />
+          <div className="text-end leading-none">
+            {couponDiscount > 0 && (
+              <div className="text-[11px] text-muted-foreground line-through mb-0.5">
+                <Price amount={total} from={fromCurrency} />
+              </div>
+            )}
+            <div className="font-serif text-xl font-bold text-accent-700">
+              <Price amount={finalTotal} from={fromCurrency} />
+            </div>
+            {couponDiscount > 0 && (
+              <div className="text-[10px] font-bold text-emerald-700 mt-0.5">
+                −<Price amount={couponDiscount} from={fromCurrency} /> {couponInfo?.code}
+              </div>
+            )}
           </div>
         </div>
 
@@ -718,9 +803,9 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
             isLocal,
             travelerType,
             isMarried,
-            notes: notes.trim() || undefined,
+            notes: composedNotes || undefined,
           }}
-          total={total}
+          total={finalTotal}
           currency={fromCurrency}
           onClose={() => setShowPayModal(false)}
           onSuccess={() => { /* keep modal open showing success */ }}

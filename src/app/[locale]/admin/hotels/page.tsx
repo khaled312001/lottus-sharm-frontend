@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Star, Plus, ExternalLink, Loader2, Pencil, Save, X, Trash2, BedDouble } from 'lucide-react';
 import { toast } from 'sonner';
 import { MediaPicker } from '@/components/admin/media-picker';
+import { RegionSelect } from '@/components/admin/region-select';
 import type { MediaDTO } from '@/types/api';
 
 interface Translation { locale: 'AR' | 'EN' | 'RU' | 'IT' | 'DE'; name: string; features: string }
@@ -25,13 +26,30 @@ interface Hotel {
   isActive: boolean;
   sortOrder: number;
   notes?: string | null;
+  region?: string;
   heroImageId?: number | null;
   heroImage?: MediaDTO | null;
   translations: Translation[];
 }
 
-const AREAS = ['NAMA_BAY','HADABA','SOHO_SQUARE','NABQ','PASHA_BAY','QUEEN_BAY','OTHER'];
-const BOARDS = ['BB','HB','FB','ALL_INCLUSIVE','HB_DRINKS'];
+const AREAS: { v: string; l: string }[] = [
+  { v: 'NAMA_BAY', l: 'خليج نعمة' },
+  { v: 'HADABA', l: 'الهضبة' },
+  { v: 'SOHO_SQUARE', l: 'سوهو سكوير' },
+  { v: 'NABQ', l: 'خليج نبق' },
+  { v: 'PASHA_BAY', l: 'خليج الباشا' },
+  { v: 'QUEEN_BAY', l: 'خليج القرش' },
+  { v: 'OTHER', l: 'منطقة أخرى' },
+];
+const AREA_AR: Record<string, string> = Object.fromEntries(AREAS.map((a) => [a.v, a.l]));
+const BOARDS: { v: string; l: string }[] = [
+  { v: 'BB', l: 'إفطار فقط' },
+  { v: 'HB', l: 'فطار وعشاء' },
+  { v: 'FB', l: 'إقامة كاملة' },
+  { v: 'ALL_INCLUSIVE', l: 'شامل كليًا' },
+  { v: 'HB_DRINKS', l: 'فطار وعشاء + مشروبات' },
+];
+const BOARD_AR: Record<string, string> = Object.fromEntries(BOARDS.map((b) => [b.v, b.l]));
 
 export default function AdminHotelsPage() {
   const api = useAdminApi();
@@ -102,9 +120,9 @@ export default function AdminHotelsPage() {
                         <div className="font-bold">{ar?.name || h.slug}</div>
                         <div className="text-[11px] text-muted-foreground line-clamp-1 max-w-xs">{ar?.features}</div>
                       </td>
-                      <td className="py-2 px-3 text-xs">{h.area}</td>
+                      <td className="py-2 px-3 text-xs">{AREA_AR[h.area] || h.area}</td>
                       <td className="py-2 px-3"><span className="inline-flex items-center gap-0.5 text-accent">{Array.from({ length: h.stars }).map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}</span></td>
-                      <td className="py-2 px-3 text-xs">{h.boardType}</td>
+                      <td className="py-2 px-3 text-xs">{BOARD_AR[h.boardType] || h.boardType}</td>
                       <td className="py-2 px-3 font-bold tabular-nums">{Number(h.priceLocalEGP).toLocaleString()}</td>
                       <td className="py-2 px-3 font-bold tabular-nums">{Number(h.priceForeignUSD).toLocaleString()}</td>
                       <td className="py-2 px-3">
@@ -146,6 +164,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
   const [form, setForm] = useState({
     slug: initial?.slug || '',
     stars: initial?.stars || 4,
+    region: initial?.region || 'SHARM',
     area: initial?.area || 'NAMA_BAY',
     boardType: initial?.boardType || 'HB',
     priceLocalEGP: Number(initial?.priceLocalEGP) || 0,
@@ -168,7 +187,7 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
     if (!tr.AR.name) return toast.error('الاسم بالعربي مطلوب');
     const payload = {
       slug: form.slug || undefined,
-      stars: form.stars, area: form.area, boardType: form.boardType,
+      stars: form.stars, region: form.region, area: form.area, boardType: form.boardType,
       priceLocalEGP: form.priceLocalEGP, priceForeignUSD: form.priceForeignUSD,
       nights: form.nights, isFeatured: form.isFeatured, isActive: form.isActive,
       sortOrder: form.sortOrder, notes: form.notes || null,
@@ -223,7 +242,11 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
             <p className="text-[11px] text-muted-foreground mt-1.5">ارفع صورة أو فيديو من زر «رفع جديد»، أو اختر من المكتبة. الفيديو يُعرض تلقائياً بصمت في البطاقة.</p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-3 pt-2 border-t">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t">
+            <div>
+              <label className="text-xs font-semibold mb-1 block">المدينة / الوجهة</label>
+              <RegionSelect value={form.region} onChange={(v) => setForm({ ...form, region: v })} />
+            </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">المستوى</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.stars} onChange={(e) => setForm({ ...form, stars: Number(e.target.value) })}>
@@ -233,13 +256,13 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
             <div>
               <label className="text-xs font-semibold mb-1 block">المنطقة</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })}>
-                {AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
+                {AREAS.map((a) => <option key={a.v} value={a.v}>{a.l}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">نوع الإقامة</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.boardType} onChange={(e) => setForm({ ...form, boardType: e.target.value })}>
-                {BOARDS.map((b) => <option key={b} value={b}>{b}</option>)}
+                {BOARDS.map((b) => <option key={b.v} value={b.v}>{b.l}</option>)}
               </select>
             </div>
           </div>

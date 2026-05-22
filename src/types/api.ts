@@ -53,6 +53,7 @@ export interface TripDTO {
   id: number;
   slug: string;
   category: 'SEA' | 'DESERT' | 'CITY' | 'DIVING' | 'EVENTS' | 'SAFARI';
+  region?: string;
   durationMinutes: number;
   startTime?: string | null;
   scheduleType: 'DAILY' | 'WEEKLY' | 'CUSTOM';

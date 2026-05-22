@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Loader2, Save, X, Trash2, Pencil, Car, Bus, Plane } from 'lucide-react';
 import { toast } from 'sonner';
 import { MediaPicker } from '@/components/admin/media-picker';
+import { RegionSelect } from '@/components/admin/region-select';
 import type { MediaDTO } from '@/types/api';
 
 interface Translation { locale: 'AR' | 'EN'; name: string; shortDesc: string }
@@ -22,8 +23,25 @@ interface Transfer {
   translations: Translation[];
 }
 
-const ROUTES = ['AIRPORT_TO_HOTEL','HOTEL_TO_AIRPORT','STATION_TO_HOTEL','HOTEL_TO_STATION','CAIRO_SHARM_FLIGHT','SHARM_CAIRO_FLIGHT','INTRA_CITY','CUSTOM'];
-const VEHICLES = ['SEDAN','MICROBUS','MINIBUS','COACH','FLIGHT'];
+const ROUTES: { v: string; l: string }[] = [
+  { v: 'AIRPORT_TO_HOTEL', l: 'من المطار إلى الفندق' },
+  { v: 'HOTEL_TO_AIRPORT', l: 'من الفندق إلى المطار' },
+  { v: 'STATION_TO_HOTEL', l: 'من المحطة إلى الفندق' },
+  { v: 'HOTEL_TO_STATION', l: 'من الفندق إلى المحطة' },
+  { v: 'CAIRO_SHARM_FLIGHT', l: 'طيران: القاهرة ← شرم' },
+  { v: 'SHARM_CAIRO_FLIGHT', l: 'طيران: شرم ← القاهرة' },
+  { v: 'INTRA_CITY', l: 'داخل المدينة' },
+  { v: 'CUSTOM', l: 'مخصص' },
+];
+const ROUTE_AR: Record<string, string> = Object.fromEntries(ROUTES.map((r) => [r.v, r.l]));
+const VEHICLES: { v: string; l: string }[] = [
+  { v: 'SEDAN', l: 'سيارة ملاكي' },
+  { v: 'MICROBUS', l: 'ميكروباص' },
+  { v: 'MINIBUS', l: 'ميني باص' },
+  { v: 'COACH', l: 'أتوبيس كبير' },
+  { v: 'FLIGHT', l: 'رحلة طيران' },
+];
+const VEHICLE_AR: Record<string, string> = Object.fromEntries(VEHICLES.map((v) => [v.v, v.l]));
 
 export default function AdminTransfersPage() {
   const api = useAdminApi();
@@ -93,8 +111,8 @@ export default function AdminTransfersPage() {
                         <div className="font-bold inline-flex items-center gap-2"><Icon className="h-4 w-4 text-accent" /> {ar?.name || t.slug}</div>
                         <div className="text-[11px] text-muted-foreground line-clamp-1 max-w-xs">{ar?.shortDesc}</div>
                       </td>
-                      <td className="py-2 px-3 text-xs">{t.route}</td>
-                      <td className="py-2 px-3 text-xs">{t.vehicleType}</td>
+                      <td className="py-2 px-3 text-xs">{ROUTE_AR[t.route] || t.route}</td>
+                      <td className="py-2 px-3 text-xs">{VEHICLE_AR[t.vehicleType] || t.vehicleType}</td>
                       <td className="py-2 px-3 tabular-nums">{t.capacity}</td>
                       <td className="py-2 px-3 tabular-nums">{t.durationMinutes} د</td>
                       <td className="py-2 px-3 font-bold tabular-nums">{Number(t.priceLocalEGP).toLocaleString()}</td>
@@ -133,6 +151,7 @@ function TransferForm({ initial, onClose, onSaved }: { initial: Transfer | null;
   const api = useAdminApi();
   const [form, setForm] = useState({
     slug: initial?.slug || '',
+    region: (initial as { region?: string } | null)?.region || 'SHARM',
     route: initial?.route || 'AIRPORT_TO_HOTEL',
     vehicleType: initial?.vehicleType || 'SEDAN',
     capacity: initial?.capacity || 4,
@@ -155,6 +174,7 @@ function TransferForm({ initial, onClose, onSaved }: { initial: Transfer | null;
     if (!tr.AR.name) return toast.error('الاسم بالعربي مطلوب');
     const payload = {
       slug: form.slug || undefined,
+      region: form.region,
       route: form.route, vehicleType: form.vehicleType,
       capacity: form.capacity, durationMinutes: form.durationMinutes,
       priceLocalEGP: form.priceLocalEGP, priceForeignUSD: form.priceForeignUSD,
@@ -201,17 +221,22 @@ function TransferForm({ initial, onClose, onSaved }: { initial: Transfer | null;
             <MediaPicker label="صورة الخدمة" mode="single" value={heroImage} onChange={setHeroImage} />
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-3 pt-2 border-t">
+          <div className="pt-2 border-t">
+            <label className="text-xs font-semibold mb-1 block">المدينة / الوجهة</label>
+            <RegionSelect value={form.region} onChange={(v) => setForm({ ...form, region: v })} />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-semibold mb-1 block">نوع الخط</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.route} onChange={(e) => setForm({ ...form, route: e.target.value })}>
-                {ROUTES.map((r) => <option key={r} value={r}>{r}</option>)}
+                {ROUTES.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">نوع المركبة</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.vehicleType} onChange={(e) => setForm({ ...form, vehicleType: e.target.value })}>
-                {VEHICLES.map((v) => <option key={v} value={v}>{v}</option>)}
+                {VEHICLES.map((v) => <option key={v.v} value={v.v}>{v.l}</option>)}
               </select>
             </div>
             <div>
