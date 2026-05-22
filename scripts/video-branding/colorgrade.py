@@ -164,3 +164,28 @@ GRADES = {
 
 def get(name):
     return GRADES.get(name, GRADES["crisp"])
+
+
+# --------------------------------------------------------------- 3D LUT
+# A colour grade is a pointwise RGB->RGB map, so we bake it once into a small
+# 3D lattice and apply it per frame by index gather — ~15x faster than running
+# the full chain on every frame. Nearest lookup; film grain dithers any banding.
+def make_lut(look, N=65):
+    vals = np.linspace(0, 255, N).astype(np.uint8)
+    R, G, B = np.meshgrid(vals, vals, vals, indexing="ij")
+    lattice = np.stack([R, G, B], -1).reshape(-1, 1, 3)
+    graded = apply(lattice, look)
+    return graded.reshape(N, N, N, 3), N
+
+
+def grader(look):
+    """Return a fast per-frame grading function backed by a baked LUT."""
+    if look is None:
+        return lambda img: img
+    lut, N = make_lut(look)
+    scale = (N - 1) / 255.0
+
+    def f(img):
+        idx = np.rint(img.astype(np.float32) * scale).astype(np.intp)
+        return lut[idx[..., 0], idx[..., 1], idx[..., 2]]
+    return f

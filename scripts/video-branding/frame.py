@@ -137,15 +137,17 @@ def branding_overlay(palette=None, layout="full_bleed"):
 
 
 def make_branding_clip(duration, palette=None, layout="full_bleed",
-                       fade_in=0.6):
-    """Animated branding overlay: fades/slides in, with a slow gold light sweep
-    travelling across the lower-third bar."""
+                       fade_in=0.6, sweep=False):
+    """Branding overlay that fades in. With sweep=True a slow gold light travels
+    across the lower-third bar (costs an extra per-frame pass)."""
     from moviepy import ImageClip, VideoClip, CompositeVideoClip, vfx
     from titles import clip_from_rgba
 
     base = branding_overlay(palette, layout)
     overlay = clip_from_rgba(base, duration).with_effects(
         [vfx.CrossFadeIn(fade_in)])
+    if not sweep:
+        return overlay
 
     # light sweep over the bottom bar
     pal = palette or {}

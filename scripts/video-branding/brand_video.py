@@ -66,15 +66,15 @@ def build_body(src, theme, fast=False, title_over=None, kicker_over=None,
     bw, bh = base.size
     dur = base.duration
 
-    # ---- colour grade + per-frame fx (cheap order matters) ----
-    procs = [lambda img, g=grade: colorgrade.apply(img, g)]
+    # ---- colour grade (baked LUT) + per-frame fx (cheap order matters) ----
+    procs = [colorgrade.grader(grade)]
     if not fast and fxp.get("bloom"):
         procs.append(fx.bloom(intensity=0.45, radius=9))
     if not fast and fxp.get("halation"):
         procs.append(fx.halation(intensity=0.4))
     if fxp.get("chroma"):
         procs.append(fx.chromatic_aberration(2.0))
-    if fxp.get("sharpen"):
+    if not fast and fxp.get("sharpen"):
         procs.append(fx.sharpen(fxp["sharpen"]))
     if fxp.get("grain"):
         procs.append(fx.grain(fxp["grain"]))

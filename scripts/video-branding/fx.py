@@ -60,15 +60,22 @@ def edge_glow_overlay(w=C.W, h=C.H, color=C.GOLD, strength=0.18, width=0.06):
 
 # ============================================================== frame procs
 def grain(intensity=0.05, mono=True):
-    """Per-frame film grain (varies every frame via RNG)."""
+    """Per-frame film grain. Noise is generated at half resolution and upscaled
+    (coarser, more film-like, and ~4x cheaper than full-res RNG)."""
     amp = intensity * 255.0
 
     def f(img):
         h, w = img.shape[:2]
+        hh, ww = h // 2, w // 2
+        ch = 1 if mono else 3
+        small = (np.random.standard_normal((hh, ww, ch)).astype(np.float32) * amp)
+        n = np.asarray(Image.fromarray(
+            np.clip(small[..., 0] + 128, 0, 255).astype(np.uint8)
+            if mono else np.clip(small + 128, 0, 255).astype(np.uint8))
+            .resize((w, h), Image.BILINEAR), np.float32)
+        n = (n - 128.0)
         if mono:
-            n = np.random.randn(h, w, 1).astype(np.float32) * amp
-        else:
-            n = np.random.randn(h, w, 3).astype(np.float32) * amp
+            n = n[..., None]
         return np.clip(img.astype(np.float32) + n, 0, 255).astype(np.uint8)
     return f
 
@@ -153,65 +160,91 @@ def light_leak_transform(color=(255, 170, 90), intensity=0.5, period=4.0,
     return f
 
 
-def make_bokeh_clip(duration, w=C.W, h=C.H, n=26, color=C.GOLD_LIGHT,
-                    seed=0, fps=C.FPS):
-    """Floating defocused light particles as a transparent VideoClip (mask)."""
+def _gauss_sprite(r, sigma_frac=0.5):
+    """A small radial-falloff sprite (float 0..1), side = 2r+1."""
+    r = max(1, int(r))
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1].astype(np.float32)
+    sig = max(0.6, r * sigma_frac)
+    return np.exp(-(xx * xx + yy * yy) / (2 * sig * sig)).astype(np.float32)
+
+
+def _paste_max(buf, sprite, cy, cx, gain):
+    """Additively-max paste a sprite centred at (cy, cx) into buf (clipped)."""
+    h, w = buf.shape
+    r = sprite.shape[0] // 2
+    y0, y1 = int(cy) - r, int(cy) + r + 1
+    x0, x1 = int(cx) - r, int(cx) + r + 1
+    sy0, sx0 = max(0, -y0), max(0, -x0)
+    y0c, x0c = max(0, y0), max(0, x0)
+    y1c, x1c = min(h, y1), min(w, x1)
+    if y1c <= y0c or x1c <= x0c:
+        return
+    sub = sprite[sy0:sy0 + (y1c - y0c), sx0:sx0 + (x1c - x0c)] * gain
+    region = buf[y0c:y1c, x0c:x1c]
+    np.maximum(region, sub, out=region)
+
+
+def _particle_clip(duration, w, h, n, color, seed, fps, rad_lo, rad_hi,
+                   speed_lo, speed_hi, vy_lo, vy_hi, bright_lo, bright_hi,
+                   twinkle, div):
+    """Fast particle layer: sprite-paste on a downscaled buffer, upscaled per
+    frame. Single compute is shared between the RGB clip and its mask."""
     from moviepy import VideoClip
+    lw, lh = max(8, w // div), max(8, h // div)
     rng = np.random.default_rng(seed)
     px = rng.uniform(0, 1, n)
-    speed = rng.uniform(0.01, 0.05, n)
-    drift = rng.uniform(-0.02, 0.02, n)
-    rad = rng.uniform(6, 26, n)
-    base_phase = rng.uniform(0, 1, n)
-    bright = rng.uniform(0.25, 0.7, n)
+    py = rng.uniform(0, 1, n)
+    vx = rng.uniform(speed_lo, speed_hi, n) * rng.choice([-1, 1], n)
+    vy = rng.uniform(vy_lo, vy_hi, n)
+    bright = rng.uniform(bright_lo, bright_hi, n)
+    phase = rng.uniform(0, 1, n)
+    sprites = [_gauss_sprite(rng.uniform(rad_lo, rad_hi)) for _ in range(n)]
     col = np.array(color, np.float32)
+    cache = {}
 
-    def make_frame(t):
-        img = np.zeros((h, w, 3), np.float32)
-        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    def compute(t):
+        key = round(t, 4)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+        buf = np.zeros((lh, lw), np.float32)
         for i in range(n):
-            cy = (1.0 - ((base_phase[i] + speed[i] * t) % 1.0)) * h
-            cx = (px[i] + drift[i] * t) % 1.0 * w
-            r = rad[i]
-            d = (xx - cx) ** 2 + (yy - cy) ** 2
-            tw = 0.7 + 0.3 * np.sin(2 * np.pi * (t * 0.5 + base_phase[i]))
-            img += np.exp(-d / (2 * r * r))[..., None] * col * bright[i] * tw
-        return np.clip(img, 0, 255).astype(np.uint8)
+            cy = (1.0 - ((py[i] + vy[i] * t) % 1.0)) * lh
+            cx = ((px[i] + vx[i] * t) % 1.0) * lw
+            g = bright[i]
+            if twinkle:
+                g *= 0.65 + 0.35 * np.sin(2 * np.pi * (t * 0.5 + phase[i]))
+            _paste_max(buf, sprites[i], cy, cx, g)
+        big = np.asarray(
+            Image.fromarray((np.clip(buf, 0, 1) * 255).astype(np.uint8))
+            .resize((w, h), Image.BILINEAR), np.float32) / 255.0
+        rgb = np.clip(big[..., None] * col, 0, 255).astype(np.uint8)
+        if len(cache) > 600:
+            cache.clear()
+        cache[key] = (rgb, big)
+        return rgb, big
 
-    def make_mask(t):
-        f = make_frame(t).astype(np.float32)
-        return (f.max(axis=-1) / 255.0)
-
-    clip = VideoClip(frame_function=make_frame, duration=duration)
-    mask = VideoClip(frame_function=make_mask, duration=duration, is_mask=True)
+    clip = VideoClip(lambda t: compute(t)[0], duration=duration)
+    mask = VideoClip(lambda t: compute(t)[1], duration=duration, is_mask=True)
     return clip.with_mask(mask).with_fps(fps)
 
 
-def make_dust_clip(duration, w=C.W, h=C.H, n=120, seed=1, fps=C.FPS):
+def make_bokeh_clip(duration, w=C.W, h=C.H, n=18, color=C.GOLD_LIGHT,
+                    seed=0, fps=C.FPS):
+    """Floating defocused light particles (fast sprite-paste implementation)."""
+    return _particle_clip(duration, w, h, n, color, seed, fps,
+                          rad_lo=2.0, rad_hi=7.0, speed_lo=0.01, speed_hi=0.04,
+                          vy_lo=0.01, vy_hi=0.05, bright_lo=0.3, bright_hi=0.75,
+                          twinkle=True, div=5)
+
+
+def make_dust_clip(duration, w=C.W, h=C.H, n=90, color=(255, 255, 255),
+                   seed=1, fps=C.FPS):
     """Fine drifting dust motes — subtle atmosphere."""
-    from moviepy import VideoClip
-    rng = np.random.default_rng(seed)
-    px, py = rng.uniform(0, 1, n), rng.uniform(0, 1, n)
-    vx, vy = rng.uniform(-0.01, 0.01, n), rng.uniform(0.005, 0.03, n)
-    rad = rng.uniform(1.0, 2.6, n)
-    bright = rng.uniform(0.1, 0.4, n)
-
-    def make_frame(t):
-        img = np.zeros((h, w), np.float32)
-        ys = ((py + vy * t) % 1.0 * h).astype(int)
-        xs = ((px + vx * t) % 1.0 * w).astype(int)
-        for i in range(n):
-            r = int(rad[i]) + 1
-            y0, y1 = max(0, ys[i] - r), min(h, ys[i] + r)
-            x0, x1 = max(0, xs[i] - r), min(w, xs[i] + r)
-            img[y0:y1, x0:x1] = np.maximum(img[y0:y1, x0:x1], bright[i])
-        rgb = np.stack([img] * 3, -1) * 255
-        return rgb.astype(np.uint8)
-
-    clip = VideoClip(frame_function=make_frame, duration=duration)
-    mask = VideoClip(frame_function=lambda t: make_frame(t)[..., 0] / 255.0,
-                     duration=duration, is_mask=True)
-    return clip.with_mask(mask).with_fps(fps)
+    return _particle_clip(duration, w, h, n, color, seed, fps,
+                          rad_lo=0.8, rad_hi=1.8, speed_lo=0.005, speed_hi=0.02,
+                          vy_lo=0.005, vy_hi=0.03, bright_lo=0.1, bright_hi=0.35,
+                          twinkle=False, div=3)
 
 
 # ============================================================== ken burns
