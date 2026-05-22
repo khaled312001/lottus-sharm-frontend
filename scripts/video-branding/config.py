@@ -21,6 +21,11 @@ PUBLIC_DIR = FRONTEND_ROOT / "public"
 WORK_DIR = Path(os.environ.get("LOTUS_WORK_DIR", HERE / "_work"))
 OUT_DIR = Path(os.environ.get("LOTUS_OUT_DIR", HERE / "_out"))
 
+# Drop royalty-free tracks (e.g. Pixabay "tourism" music) here; the pipeline
+# uses them automatically instead of the synthesiser when the folder is filled.
+MUSIC_DIR = Path(os.environ.get("LOTUS_MUSIC_DIR", HERE / "music_library"))
+MUSIC_EXTS = (".mp3", ".wav", ".m4a", ".aac", ".ogg", ".flac")
+
 # Logo: prefer a transparent PNG if present, else the shipped jpg.
 def _find_logo() -> Path:
     for name in ("logo.png", "logo-mark.png", "logo.jpg", "logo.jpeg"):
@@ -93,3 +98,12 @@ def font_path(key_or_name: str) -> str:
 def ensure_dirs() -> None:
     WORK_DIR.mkdir(parents=True, exist_ok=True)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    MUSIC_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def music_tracks():
+    """Sorted list of audio files in the music library (may be empty)."""
+    if not MUSIC_DIR.exists():
+        return []
+    return sorted(p for p in MUSIC_DIR.iterdir()
+                  if p.suffix.lower() in MUSIC_EXTS)

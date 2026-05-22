@@ -95,6 +95,23 @@ Each theme = colour grade + layout (full-bleed / framed) + music
 
 ---
 
+## Music: use your own royalty-free tracks
+Drop audio files into `music_library/` and the editor uses them automatically
+instead of the synthesiser (each theme picks a track by index, so a batch stays
+varied). Great with free **Pixabay** tracks (commercial use, no attribution):
+<https://pixabay.com/music/search/tourism/> — download the ones you like into
+that folder. See `music_library/README.txt`. Force a source with `--music`:
+
+```bash
+python brand_video.py clip.mp4 --music library          # the folder (default when filled)
+python brand_video.py clip.mp4 --music "songs/beach.mp3" # one exact file
+python brand_video.py clip.mp4 --music travel            # synth 'travel' genre
+python brand_video.py clip.mp4 --music synth             # theme's synth genre
+```
+
+When a real track plays, the sound-design hits are automatically softened so
+they don't fight the music.
+
 ## Editing the brand
 Everything brand-level lives at the top of `config.py` — `BRAND`, `WEBSITE`,
 `PHONE`, `TAGLINE`, the colours and the logo lookup (`public/logo.*`).

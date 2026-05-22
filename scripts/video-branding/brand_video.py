@@ -134,42 +134,73 @@ def build_body(src, theme, fast=False, title_over=None, kicker_over=None,
 
 
 # ----------------------------------------------------------------- audio
+def _load_track(path):
+    """Read an audio file -> (n,2) float stereo array at ME.SR."""
+    from moviepy import AudioFileClip
+    clip = AudioFileClip(str(path))
+    arr = clip.to_soundarray(fps=ME.SR)
+    clip.close()
+    if arr.ndim == 1:
+        arr = np.stack([arr, arr], axis=1)
+    elif arr.shape[1] == 1:
+        arr = np.repeat(arr, 2, axis=1)
+    return arr
+
+
+def _resolve_music(theme, total, music):
+    """Return (stereo_array, is_real_track).
+    `music` may be: a file path, a genre name, 'synth', 'library', or None.
+    None -> use the library if it has tracks, else the theme's synth genre."""
+    tracks = C.music_tracks()
+    # explicit file path
+    if music and Path(music).expanduser().is_file():
+        return _load_track(Path(music).expanduser()), True
+    # explicit genre / synth
+    if music and (music in ME.GENRES or music == "synth"):
+        genre = theme["music"]["genre"] if music == "synth" else music
+        wav = C.WORK_DIR / f"_music_{theme['index']}_{genre}.wav"
+        ME.render(genre, total, wav, key=theme["music"]["key"],
+                  seed=theme["music"]["seed"])
+        return _load_track(wav), False
+    # library (explicit or auto when populated)
+    if (music == "library" or music is None) and tracks:
+        track = tracks[theme["index"] % len(tracks)]   # deterministic per theme
+        return _load_track(track), True
+    # fallback: theme's synthesised genre
+    m = theme["music"]
+    wav = C.WORK_DIR / f"_music_{theme['index']}_{m['genre']}.wav"
+    ME.render(m["genre"], total, wav, key=m["key"], seed=m["seed"],
+              scale=m["scale"], prog=m["prog"])
+    return _load_track(wav), False
+
+
 def build_audio(theme, intro_d, body_d, outro_d, music_genre=None):
     total = intro_d + body_d + outro_d - 2 * CF
-    m = theme["music"]
-    genre = music_genre or m["genre"]
-    # a forced genre may not suit the theme's scale/prog — fall back to defaults
-    scale = m["scale"] if music_genre is None else None
-    prog = m["prog"] if music_genre is None else None
-    music_wav = C.WORK_DIR / f"_music_{theme['index']}_{genre}.wav"
-    ME.render(genre, total, music_wav, key=m["key"], seed=m["seed"],
-              scale=scale, prog=prog)
-
-    from moviepy import AudioFileClip
-    music = AudioFileClip(str(music_wav))
-    music_arr = music.to_soundarray(fps=ME.SR)
-    music.close()
+    music_arr, is_real = _resolve_music(theme, total, music_genre)
 
     mix = Mixer(total)
-    mix.add_bed(music_arr, gain=0.85, fade=0.6)
+    mix.add_bed(music_arr, gain=0.9 if is_real else 0.85, fade=0.6)
 
     amb = SD.AMBIENCE.get(theme["ambience"])
     if amb:
-        mix.add_bed(amb(total, seed=theme["index"]), gain=0.8, fade=1.0)
+        mix.add_bed(amb(total, seed=theme["index"]),
+                    gain=0.5 if is_real else 0.8, fade=1.0)
 
-    # sound design timeline
+    # sound design timeline — softer when a real track is carrying the mood
+    g = 0.4 if is_real else 1.0
     seed = theme["index"]
-    mix.add(SD.sparkle(1.2, seed=seed), at=0.5, gain=0.7)            # intro logo
-    mix.add(SD.riser(min(1.8, intro_d), seed=seed),
-            at=max(0, intro_d - CF - 1.4), gain=0.6)
+    mix.add(SD.sparkle(1.2, seed=seed), at=0.5, gain=0.7 * g)        # intro logo
+    if not is_real:
+        mix.add(SD.riser(min(1.8, intro_d), seed=seed),
+                at=max(0, intro_d - CF - 1.4), gain=0.6)
     t_body = intro_d - CF
-    mix.add(SD.whoosh(0.6, "up", seed=seed), at=t_body - 0.3, gain=0.7)
-    mix.add(SD.impact(1.2, seed=seed), at=t_body, gain=0.5)
+    mix.add(SD.whoosh(0.6, "up", seed=seed), at=t_body - 0.3, gain=0.7 * g)
+    mix.add(SD.impact(1.2, seed=seed), at=t_body, gain=0.5 * g)
     t_outro = intro_d - CF + body_d - CF
-    mix.add(SD.whoosh(0.6, "down", seed=seed + 1), at=t_outro - 0.3, gain=0.6)
-    mix.add(SD.impact(1.4, tone=44, seed=seed + 1), at=t_outro, gain=0.6)
+    mix.add(SD.whoosh(0.6, "down", seed=seed + 1), at=t_outro - 0.3, gain=0.6 * g)
+    mix.add(SD.impact(1.4, tone=44, seed=seed + 1), at=t_outro, gain=0.6 * g)
     mix.duck(t_outro, depth=0.4, release=0.8)
-    mix.add(SD.sparkle(1.4, seed=seed + 2), at=t_outro + 0.3, gain=0.6)
+    mix.add(SD.sparkle(1.4, seed=seed + 2), at=t_outro + 0.3, gain=0.6 * g)
 
     return mix.to_audioclip()
 
@@ -233,7 +264,9 @@ def main(argv=None):
     ap.add_argument("--all", action="store_true", help="render every theme")
     ap.add_argument("--out", help="output path (single render)")
     ap.add_argument("--title"); ap.add_argument("--kicker"); ap.add_argument("--subtitle")
-    ap.add_argument("--music", help="force a music genre on all (e.g. travel)")
+    ap.add_argument("--music", help="music source: a file path, a genre "
+                    "(travel/cinematic/...), 'synth', or 'library'. Default: use "
+                    "the music_library folder if it has tracks, else synth.")
     ap.add_argument("--no-intro", action="store_true")
     ap.add_argument("--no-outro", action="store_true")
     ap.add_argument("--fast", action="store_true", help="skip heavy glow fx")

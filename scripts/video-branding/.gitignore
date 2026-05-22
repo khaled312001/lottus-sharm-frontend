@@ -1,4 +1,7 @@
 _work/
 _out/
-*.wav
 __pycache__/
+*.wav
+# music library: ignore audio files, keep the instructions
+music_library/*
+!music_library/README.txt
