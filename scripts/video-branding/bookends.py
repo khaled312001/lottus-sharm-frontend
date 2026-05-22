@@ -124,7 +124,7 @@ def intro_clip(duration=2.6, palette=None):
     word = word.with_position(lambda t: (0, y + int((1 - U.ease_out_cubic(min(1, t / 0.7))) * 26)))
 
     comp = CompositeVideoClip([bg, logo, word], size=(C.W, C.H))
-    comp = comp.with_effects([vfx.FadeIn(0.3), vfx.FadeOut(0.4)])
+    comp = comp.with_effects([vfx.FadeIn(0.3)])      # crossfades into body
     return comp.with_duration(duration)
 
 
@@ -158,5 +158,5 @@ def outro_clip(duration=3.4, palette=None):
     block = block.with_position(lambda t: (0, y + int((1 - U.ease_out_cubic(min(1, t / 0.7))) * 24)))
 
     comp = CompositeVideoClip([bg, frame_clip, logo, block], size=(C.W, C.H))
-    comp = comp.with_effects([vfx.FadeIn(0.4), vfx.FadeOut(0.5)])
+    comp = comp.with_effects([vfx.FadeOut(0.5)])     # crossfaded in from body
     return comp.with_duration(duration)
