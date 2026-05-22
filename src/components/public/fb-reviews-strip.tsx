@@ -26,18 +26,19 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
   const loop = REVIEWS.length > 0 ? [...REVIEWS, ...REVIEWS, ...REVIEWS] : [];
   const trackRef = useRef<HTMLDivElement>(null);
   const [openImg, setOpenImg] = useState<string | null>(null);
-  const pausedRef = useRef(false); // pause flag (no effect restart)
+  const pausedRef = useRef(false);          // hard pause (drag/touch/arrow in progress)
+  const resumeAtRef = useRef(0);            // timestamp until which autoplay stays paused
   const isAr = locale === 'ar';
-  const setAutoplay = (on: boolean) => { pausedRef.current = !on; };
+  // Pause now; optionally schedule auto-resume after `delay` ms.
+  const pauseFor = (delay: number) => { resumeAtRef.current = performance.now() + delay; };
 
-  // Single continuous auto-scroll loop. Uses a ref pause flag so hovering /
-  // dragging never tears down the rAF — guarantees it always resumes.
+  // Single continuous auto-scroll loop (infinite). The rAF NEVER touches
+  // scrollLeft while paused (drag / touch / arrow / hover) — that was what
+  // broke manual control. It only advances + wraps when free to run.
   useEffect(() => {
     if (REVIEWS.length === 0) return;
     const el = trackRef.current;
     if (!el) return;
-
-    // Init at the middle copy once layout is measured
     let initialized = false;
     let raf = 0;
     let last = performance.now();
@@ -45,16 +46,11 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
     const tick = (now: number) => {
       const dt = Math.min(now - last, 64); last = now;
       const oneSet = el.scrollWidth / 3;
-      if (oneSet > 0 && !initialized) {
-        el.scrollLeft = oneSet;
-        initialized = true;
-      }
-      if (!pausedRef.current && oneSet > 0) {
-        const dir = isAr ? -1 : 1;
-        el.scrollLeft += (dt / 28) * dir; // ~36px/s
-      }
-      // Seamless wrap
-      if (oneSet > 0) {
+      if (oneSet > 0 && !initialized) { el.scrollLeft = oneSet; initialized = true; }
+      const free = !pausedRef.current && now >= resumeAtRef.current;
+      if (free && oneSet > 0) {
+        el.scrollLeft += (dt / 28) * (isAr ? -1 : 1); // ~36px/s
+        // Seamless wrap — only while auto-running so manual scrolls aren't snapped.
         if (el.scrollLeft >= oneSet * 2) el.scrollLeft -= oneSet;
         else if (el.scrollLeft <= 0) el.scrollLeft += oneSet;
       }
@@ -64,69 +60,68 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
     return () => cancelAnimationFrame(raf);
   }, [isAr]);
 
-  // Mouse / touch drag — only engages after a 6px movement threshold so
-  // simple clicks on images still fire normally (lightbox open).
+  // Normalise scrollLeft back into the middle copy after a manual scroll so
+  // dragging/arrows can loop forever without hitting an edge.
+  const normalize = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const oneSet = el.scrollWidth / 3;
+    if (oneSet <= 0) return;
+    if (el.scrollLeft >= oneSet * 2) el.scrollLeft -= oneSet;
+    else if (el.scrollLeft <= 0) el.scrollLeft += oneSet;
+  };
+
+  // Drag: hijack only for MOUSE. Touch keeps native momentum scrolling (so it
+  // feels right + works on mobile) — we just pause autoplay during the touch.
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
-    let armed = false;
     let dragging = false;
-    let pointerId = -1;
     let startX = 0;
     let startScroll = 0;
-    const DRAG_THRESHOLD = 6;
 
     const onDown = (e: PointerEvent) => {
-      // Only left mouse button or touch / pen
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      armed = true;
-      dragging = false;
-      pointerId = e.pointerId;
+      pausedRef.current = true;             // pause while finger/mouse is down
+      if (e.pointerType !== 'mouse' || e.button !== 0) return; // touch → native scroll
+      dragging = true;
       startX = e.clientX;
       startScroll = el.scrollLeft;
-      setAutoplay(false);
+      el.style.cursor = 'grabbing';
     };
     const onMove = (e: PointerEvent) => {
-      if (!armed) return;
-      const dx = e.clientX - startX;
-      if (!dragging && Math.abs(dx) > DRAG_THRESHOLD) {
-        dragging = true;
-        try { el.setPointerCapture(pointerId); } catch { /* */ }
-        el.style.cursor = 'grabbing';
-      }
-      if (dragging) {
-        el.scrollLeft = startScroll - dx;
-        e.preventDefault();
-      }
+      if (!dragging) return;
+      el.scrollLeft = startScroll - (e.clientX - startX);
+      normalize();
     };
-    const onUp = () => {
-      if (dragging) {
-        try { el.releasePointerCapture(pointerId); } catch { /* */ }
-      }
-      armed = false; dragging = false; pointerId = -1;
+    const endTouchOrDrag = () => {
+      dragging = false;
       el.style.cursor = 'grab';
+      pausedRef.current = false;
+      pauseFor(1500);                       // brief settle before autoplay resumes
+      normalize();
     };
+    const onScroll = () => { if (!dragging) normalize(); };
 
     el.addEventListener('pointerdown', onDown);
-    el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerup', onUp);
-    el.addEventListener('pointercancel', onUp);
-    el.addEventListener('pointerleave', onUp);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', endTouchOrDrag);
+    el.addEventListener('pointercancel', endTouchOrDrag);
+    el.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       el.removeEventListener('pointerdown', onDown);
-      el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerup', onUp);
-      el.removeEventListener('pointercancel', onUp);
-      el.removeEventListener('pointerleave', onUp);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', endTouchOrDrag);
+      el.removeEventListener('pointercancel', endTouchOrDrag);
+      el.removeEventListener('scroll', onScroll);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollByCard = (dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
-    setAutoplay(false);
-    el.scrollBy({ left: dir * 360, behavior: 'smooth' });
-    setTimeout(() => setAutoplay(true), 4000);
+    pauseFor(3000);
+    el.scrollBy({ left: dir * 320, behavior: 'smooth' });
   };
 
   if (REVIEWS.length === 0) return null;
@@ -164,7 +159,11 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
       </div>
 
       {/* Scroller with arrows */}
-      <div className="relative" onMouseEnter={() => setAutoplay(false)} onMouseLeave={() => setAutoplay(true)}>
+      <div
+        className="relative"
+        onMouseEnter={() => { pausedRef.current = true; }}
+        onMouseLeave={() => { pausedRef.current = false; resumeAtRef.current = 0; }}
+      >
         {/* Edge fades */}
         <div aria-hidden className="absolute inset-y-0 left-0 w-10 md:w-16 bg-gradient-to-r from-[#f0f2f5] to-transparent z-10 pointer-events-none" />
         <div aria-hidden className="absolute inset-y-0 right-0 w-10 md:w-16 bg-gradient-to-l from-[#f0f2f5] to-transparent z-10 pointer-events-none" />
@@ -190,8 +189,8 @@ export function FbReviewsStrip({ locale }: { locale: string }) {
 
         <div
           ref={trackRef}
-          className="flex gap-3 md:gap-4 overflow-x-auto fb-track px-4 md:px-12 py-2 cursor-grab select-none scroll-smooth"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex gap-3 md:gap-4 overflow-x-auto fb-track px-4 md:px-12 py-2 cursor-grab select-none"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x' }}
         >
           {loop.map((r, idx) => (
             <FbReviewCard key={`${r.id}-${idx}`} review={r} locale={locale} onOpenImage={setOpenImg} />

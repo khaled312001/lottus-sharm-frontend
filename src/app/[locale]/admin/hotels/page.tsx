@@ -31,14 +31,32 @@ interface Hotel {
   translations: Translation[];
 }
 
-const AREAS = ['NAMA_BAY','HADABA','SOHO_SQUARE','NABQ','PASHA_BAY','QUEEN_BAY','OTHER'];
-const BOARDS = ['BB','HB','FB','ALL_INCLUSIVE','HB_DRINKS'];
-// City/destination — extensible; mirrors the trips region list.
+const AREAS: { v: string; l: string }[] = [
+  { v: 'NAMA_BAY', l: 'خليج نعمة' },
+  { v: 'HADABA', l: 'الهضبة' },
+  { v: 'SOHO_SQUARE', l: 'سوهو سكوير' },
+  { v: 'NABQ', l: 'خليج نبق' },
+  { v: 'PASHA_BAY', l: 'خليج الباشا' },
+  { v: 'QUEEN_BAY', l: 'خليج القرش' },
+  { v: 'OTHER', l: 'منطقة أخرى' },
+];
+const AREA_AR: Record<string, string> = Object.fromEntries(AREAS.map((a) => [a.v, a.l]));
+const BOARDS: { v: string; l: string }[] = [
+  { v: 'BB', l: 'إفطار فقط' },
+  { v: 'HB', l: 'فطار وعشاء' },
+  { v: 'FB', l: 'إقامة كاملة' },
+  { v: 'ALL_INCLUSIVE', l: 'شامل كليًا' },
+  { v: 'HB_DRINKS', l: 'فطار وعشاء + مشروبات' },
+];
+const BOARD_AR: Record<string, string> = Object.fromEntries(BOARDS.map((b) => [b.v, b.l]));
+// City/destination — presets are localized; admin can also type a brand-new city.
 const REGIONS = [
   { v: 'SHARM', l: 'شرم الشيخ' },
   { v: 'HURGHADA', l: 'الغردقة' },
   { v: 'DAHAB', l: 'دهب' },
   { v: 'CAIRO', l: 'القاهرة' },
+  { v: 'MARSA_ALAM', l: 'مرسى علم' },
+  { v: 'TABA', l: 'طابا' },
 ];
 
 export default function AdminHotelsPage() {
@@ -110,9 +128,9 @@ export default function AdminHotelsPage() {
                         <div className="font-bold">{ar?.name || h.slug}</div>
                         <div className="text-[11px] text-muted-foreground line-clamp-1 max-w-xs">{ar?.features}</div>
                       </td>
-                      <td className="py-2 px-3 text-xs">{h.area}</td>
+                      <td className="py-2 px-3 text-xs">{AREA_AR[h.area] || h.area}</td>
                       <td className="py-2 px-3"><span className="inline-flex items-center gap-0.5 text-accent">{Array.from({ length: h.stars }).map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}</span></td>
-                      <td className="py-2 px-3 text-xs">{h.boardType}</td>
+                      <td className="py-2 px-3 text-xs">{BOARD_AR[h.boardType] || h.boardType}</td>
                       <td className="py-2 px-3 font-bold tabular-nums">{Number(h.priceLocalEGP).toLocaleString()}</td>
                       <td className="py-2 px-3 font-bold tabular-nums">{Number(h.priceForeignUSD).toLocaleString()}</td>
                       <td className="py-2 px-3">
@@ -235,9 +253,16 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t">
             <div>
               <label className="text-xs font-semibold mb-1 block">المدينة / الوجهة</label>
-              <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}>
+              <input
+                className="h-11 w-full rounded-lg border px-3 bg-white"
+                value={form.region}
+                onChange={(e) => setForm({ ...form, region: e.target.value })}
+                list="hotel-regions"
+                placeholder="اكتب مدينة أو اختر"
+              />
+              <datalist id="hotel-regions">
                 {REGIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
-              </select>
+              </datalist>
             </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">المستوى</label>
@@ -248,13 +273,13 @@ function HotelFormModal({ initial, onClose, onSaved }: { initial: Hotel | null; 
             <div>
               <label className="text-xs font-semibold mb-1 block">المنطقة</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })}>
-                {AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
+                {AREAS.map((a) => <option key={a.v} value={a.v}>{a.l}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs font-semibold mb-1 block">نوع الإقامة</label>
               <select className="h-11 w-full rounded-lg border px-3 bg-white" value={form.boardType} onChange={(e) => setForm({ ...form, boardType: e.target.value })}>
-                {BOARDS.map((b) => <option key={b} value={b}>{b}</option>)}
+                {BOARDS.map((b) => <option key={b.v} value={b.v}>{b.l}</option>)}
               </select>
             </div>
           </div>

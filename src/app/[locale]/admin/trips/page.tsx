@@ -11,6 +11,13 @@ import { useRouter } from '@/i18n/routing';
 import { toast } from 'sonner';
 import type { TripDTO } from '@/types/api';
 
+const CATEGORY_AR: Record<string, string> = {
+  SEA: 'بحر', DESERT: 'صحراء', CITY: 'مدينة', DIVING: 'غوص', EVENTS: 'فعاليات', SAFARI: 'سفاري',
+};
+const REGION_AR: Record<string, string> = {
+  SHARM: 'شرم الشيخ', HURGHADA: 'الغردقة', DAHAB: 'دهب', CAIRO: 'القاهرة', MARSA_ALAM: 'مرسى علم', TABA: 'طابا',
+};
+
 export default function AdminTripsPage() {
   const api = useAdminApi();
   const router = useRouter();
@@ -78,6 +85,7 @@ export default function AdminTripsPage() {
                 <tr className="bg-muted/40 text-right border-b">
                   <th className="py-3 px-4 font-bold">العنوان</th>
                   <th className="py-3 px-4 font-bold">الفئة</th>
+                  <th className="py-3 px-4 font-bold">المدينة</th>
                   <th className="py-3 px-4 font-bold">المدة</th>
                   <th className="py-3 px-4 font-bold">السعر (ج.م)</th>
                   <th className="py-3 px-4 font-bold">السعر ($)</th>
@@ -92,8 +100,10 @@ export default function AdminTripsPage() {
                       <div className="font-semibold">{t.translations.find((x) => x.locale === 'AR')?.title || t.translations[0]?.title}</div>
                       <div className="text-xs text-muted-foreground font-mono">{t.slug}</div>
                     </td>
-                    <td className="py-2 px-4"><Badge variant="secondary">{t.category}</Badge></td>
+                    <td className="py-2 px-4"><Badge variant="secondary">{CATEGORY_AR[t.category] || t.category}</Badge></td>
+                    <td className="py-2 px-4 text-xs">{REGION_AR[(t.region as string) || 'SHARM'] || t.region}</td>
                     <td className="py-2 px-4">{Math.floor(t.durationMinutes / 60)} ساعة</td>
+
                     <td className="py-2 px-4 font-bold">{Number(t.priceLocalEGP)}</td>
                     <td className="py-2 px-4 font-bold">${Number(t.priceForeignUSD)}</td>
                     <td className="py-2 px-4">

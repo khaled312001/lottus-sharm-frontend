@@ -33,6 +33,8 @@ const HOTEL_REGION_LABELS: Record<string, { ar: string; en: string; de: string; 
   HURGHADA: { ar: 'الغردقة',   en: 'Hurghada',        de: 'Hurghada',        ru: 'Хургада',        it: 'Hurghada' },
   DAHAB:    { ar: 'دهب',        en: 'Dahab',           de: 'Dahab',           ru: 'Дахаб',          it: 'Dahab' },
   CAIRO:    { ar: 'القاهرة',    en: 'Cairo',           de: 'Kairo',           ru: 'Каир',           it: 'Il Cairo' },
+  MARSA_ALAM:{ ar: 'مرسى علم',  en: 'Marsa Alam',      de: 'Marsa Alam',      ru: 'Марса-Алам',     it: 'Marsa Alam' },
+  TABA:     { ar: 'طابا',       en: 'Taba',            de: 'Taba',            ru: 'Таба',           it: 'Taba' },
 };
 
 const AREA_LABEL: Record<string, { ar: string; en: string; de: string; ru: string; it: string }> = {

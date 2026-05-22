@@ -36,12 +36,14 @@ const LOCALES: { code: ApiLocale; label: string }[] = [
 ];
 
 const CATEGORIES = ['SEA', 'DESERT', 'CITY', 'DIVING', 'EVENTS', 'SAFARI'] as const;
-// Regions are extensible — add an entry here to expose a new destination everywhere.
+// Region presets are localized; admin can also type a brand-new city.
 const REGIONS = [
   { v: 'SHARM', l: 'شرم الشيخ' },
   { v: 'HURGHADA', l: 'الغردقة' },
   { v: 'DAHAB', l: 'دهب' },
   { v: 'CAIRO', l: 'القاهرة' },
+  { v: 'MARSA_ALAM', l: 'مرسى علم' },
+  { v: 'TABA', l: 'طابا' },
 ] as const;
 const BULLETS = ['INCLUDE', 'EXCLUDE', 'BRING'] as const;
 
@@ -324,10 +326,17 @@ export function TripForm({ initialTrip }: { initialTrip?: TripDTO }) {
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </Field>
-            <Field label="المنطقة">
-              <select className="h-11 w-full rounded-lg border border-input bg-white px-3" value={region} onChange={(e) => setRegion(e.target.value)}>
+            <Field label="المدينة / الوجهة">
+              <input
+                className="h-11 w-full rounded-lg border border-input bg-white px-3"
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                list="trip-regions"
+                placeholder="اكتب مدينة أو اختر"
+              />
+              <datalist id="trip-regions">
                 {REGIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
-              </select>
+              </datalist>
             </Field>
             <Field label="المدة (بالدقائق)">
               <Input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value))} />
