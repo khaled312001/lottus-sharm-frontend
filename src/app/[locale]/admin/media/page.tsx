@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { API_BASE } from '@/lib/api';
 import type { MediaDTO } from '@/types/api';
 import { cn } from '@/lib/utils';
+import { CategorySelect } from '@/components/admin/category-select';
 
 export default function AdminMediaPage() {
   const api = useAdminApi();
@@ -122,16 +123,13 @@ export default function AdminMediaPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <input
+          <CategorySelect
             value={uploadCategory}
-            onChange={(e) => setUploadCategory(e.target.value)}
-            placeholder="القسم (folder) — اختياري"
+            onChange={setUploadCategory}
+            options={folders}
+            placeholder="القسم — اختياري"
             className="h-11 w-44 rounded-lg border px-3 text-sm bg-white"
-            list="media-folders"
           />
-          <datalist id="media-folders">
-            {folders.map((f) => <option key={f} value={f} />)}
-          </datalist>
           <label className="cursor-pointer">
             <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => upload(e.target.files)} />
             <span className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">
@@ -281,25 +279,17 @@ export default function AdminMediaPage() {
                 return sb ? <> · {(sb / 1024 / 1024).toFixed(2)} MB</> : null;
               })()}
             </div>
-            {/* Folder (category) editor */}
-            <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2">
+            {/* Folder (category) editor — pick existing or add new */}
+            <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2 flex-wrap">
               <span className="text-white/70 text-xs">القسم:</span>
-              <input
+              <CategorySelect
                 key={preview.id}
-                defaultValue={preview.category || ''}
-                placeholder="اكتب اسم القسم..."
-                list="media-folders"
+                value={preview.category || ''}
+                onChange={(v) => setCategory(preview.id, v)}
+                options={folders}
+                placeholder="بدون قسم"
                 className="h-9 rounded-md px-2.5 text-sm bg-white/90 text-primary w-48"
-                onKeyDown={(e) => { if (e.key === 'Enter') setCategory(preview.id, (e.target as HTMLInputElement).value.trim()); }}
-                id="preview-cat-input"
               />
-              <button
-                type="button"
-                onClick={() => { const el = document.getElementById('preview-cat-input') as HTMLInputElement | null; if (el) setCategory(preview.id, el.value.trim()); }}
-                className="h-9 px-3 rounded-md bg-accent text-primary text-xs font-bold hover:bg-accent-400"
-              >
-                حفظ
-              </button>
               {preview.category && (
                 <button type="button" onClick={() => setCategory(preview.id, '')} className="h-9 px-3 rounded-md bg-white/15 text-white text-xs hover:bg-white/25">إزالة</button>
               )}
