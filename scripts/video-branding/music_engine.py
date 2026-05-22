@@ -134,6 +134,32 @@ def i_guitar(midi, dur):
     return y * env_adsr(n, 0.003, dur * 0.6, 0.1, 0.12)
 
 
+def i_uke(midi, dur):
+    """Bright nylon ukulele pluck (happy travel staple)."""
+    n = int(dur * SR)
+    y = osc(m2f(midi), n, [(1, 1.0), (2, 0.55), (3, 0.3), (4, 0.16), (5, 0.08)],
+            kind="tri")
+    return y * env_adsr(n, 0.002, dur * 0.55, 0.0, 0.05)
+
+
+def i_whistle(midi, dur):
+    """Warm whistled lead with vibrato + a touch of breath — the 'vlog' melody."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    vib = 1.0 + 0.006 * np.sin(2 * np.pi * 5.5 * t)
+    ph = 2 * np.pi * m2f(midi) * np.cumsum(vib) / SR
+    y = np.sin(ph) + 0.12 * np.sin(2 * ph)
+    breath = highpass(np.random.randn(n), 4500) * 0.025 * np.exp(-t * 4)
+    return (y + breath) * env_adsr(n, 0.04, dur * 0.5, 0.7, 0.12) * 0.8
+
+
+def i_glock(midi, dur):
+    """Glockenspiel sparkle accent."""
+    n = int(dur * SR)
+    y = osc(m2f(midi), n, [(1, 1.0), (3.0, 0.5), (5.1, 0.25), (7.2, 0.1)])
+    return y * env_adsr(n, 0.002, dur * 0.85, 0.0, 0.05)
+
+
 # ----- drums --------------------------------------------------------------
 def d_kick(dur=0.24, punch=80):
     n = int(dur * SR); t = np.arange(n) / SR
@@ -279,6 +305,19 @@ def chord(root, scale, degrees, octave=0):
         oct_add = (dg // len(sc)) * 12
         notes.append(root + sc[dg % len(sc)] + oct_add + 12 * octave)
     return notes
+
+
+def stepwise_melody(rng, key, scale_name, n_notes, start=None):
+    """A singable, mostly-stepwise melody over a scale (gentle leaps)."""
+    sc = SCALES[scale_name]
+    span = len(sc) * 2
+    idx = start if start is not None else rng.integers(2, len(sc))
+    out = []
+    for _ in range(n_notes):
+        step = int(rng.choice([-2, -1, -1, 0, 1, 1, 2]))
+        idx = max(0, min(span - 1, idx + step))
+        out.append(key + sc[idx % len(sc)] + (idx // len(sc)) * 12)
+    return out
 
 
 # ================================================================ genres
@@ -501,7 +540,53 @@ def epic_drums(dur, key, rng, prog="cinematic", scale="minor"):
     return L
 
 
+def travel(dur, key, rng, prog="pop", scale="major"):
+    """Happy tourism / travel-vlog: ukulele strums, whistled melody, claps,
+    glockenspiel sparkles, light four-on-the-floor. Bright and inviting."""
+    bpm = int(rng.integers(102, 116))
+    beat, bar, nbars = _grid(dur, bpm)
+    n = int((nbars * bar + 1.0) * SR)
+    L = np.zeros((n, 2))
+    progr = PROGS[prog]
+    mel_idx = int(rng.integers(2, 5))
+    for b in range(nbars):
+        deg = progr[b % len(progr)]
+        ch = chord(key, scale, deg, octave=1)
+        root = key + SCALES[scale][deg[0] % 7] - 12
+        t0 = b * bar
+        # ukulele strum — every eighth, alternating soft/strong, panned
+        for s in range(8):
+            strong = 0.13 if s % 2 == 0 else 0.08
+            for v in ch:
+                place(L, t0 + s * beat / 2, i_uke(v + 12, beat * 0.46),
+                      strong, pan=0.36 + 0.28 * (s % 2))
+        # warm bass on 1 & 3
+        for k in (0, 2):
+            place(L, t0 + k * beat, i_sub(root, beat * 0.9), 0.42)
+        # kick 1&3, hand-clap 2&4, shaker eighths
+        for k in range(4):
+            if k % 2 == 0:
+                place(L, t0 + k * beat, d_kick(punch=58), 0.7)
+            else:
+                place(L, t0 + k * beat, d_clap(), 0.6, pan=0.5)
+        for s in range(8):
+            place(L, t0 + s * beat / 2, d_shaker(), 0.18, pan=0.62)
+        # whistled melody — one note per beat, singable
+        notes = stepwise_melody(rng, key + 12, "penta_major", 4, start=mel_idx)
+        mel_idx = 3
+        for i, note in enumerate(notes):
+            place(L, t0 + i * beat, i_whistle(note, beat * 0.92), 0.5, pan=0.5)
+        # glockenspiel sparkle at the top of every 2nd bar
+        if b % 2 == 0:
+            place(L, t0, i_glock(ch[2] + 24, 1.1), 0.26, pan=0.4)
+            place(L, t0 + 2.5 * beat, i_glock(ch[1] + 24, 0.9), 0.18, pan=0.6)
+    L[:, 0] = reverb(L[:, 0], 0.18)
+    L[:, 1] = reverb(L[:, 1], 0.18)
+    return L
+
+
 GENRES = {
+    "travel": travel,
     "tropical_house": tropical_house, "deep_house": deep_house, "lofi": lofi,
     "cinematic": cinematic, "ambient": ambient, "oriental": oriental,
     "synthwave": synthwave, "bossa": bossa, "folk_acoustic": folk_acoustic,

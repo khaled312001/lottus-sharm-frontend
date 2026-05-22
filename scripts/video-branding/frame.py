@@ -112,26 +112,29 @@ def branding_overlay(palette=None, layout="full_bleed"):
                         outline=U.with_alpha(gold, 230), width=2)
     mid = (by1 + by2) // 2
     f_txt = U.font("sans", 30)
-    f_brand = U.font("serif_bold", 28)
     icon_d = 40
 
+    # left block: globe + website
     g = globe_icon(icon_d, gold)
-    gx = pad + 34
+    gx = pad + 36
     img.paste(g, (gx, mid - icon_d // 2), g)
     web_x = gx + icon_d + 12
     d.text((web_x, mid), C.WEBSITE, font=f_txt, fill=C.WHITE, anchor="lm")
-    left_end = web_x + d.textlength(C.WEBSITE, font=f_txt)
 
+    # right block: phone + number (right-aligned)
     p = phone_icon(icon_d)
     pnum_w = d.textlength(C.PHONE, font=f_txt)
-    p_icon_x = w - pad - 34 - icon_d - 12 - int(pnum_w)
+    p_icon_x = w - pad - 36 - icon_d - 12 - int(pnum_w)
     img.paste(p, (p_icon_x, mid - icon_d // 2), p)
-    d.text((p_icon_x + icon_d + 12, mid), C.PHONE, font=f_txt, fill=C.WHITE, anchor="lm")
-    right_start = p_icon_x
+    d.text((p_icon_x + icon_d + 12, mid), C.PHONE, font=f_txt, fill=C.WHITE,
+           anchor="lm")
 
-    cx_brand = (left_end + right_start) / 2
-    U.draw_tracked(d, 0, by1 + bar_h // 2 - 16, C.BRAND, f_brand, gold_l, 3,
-                   anchor_center=cx_brand)
+    # centre separator — a small gold lotus diamond (no overlapping wordmark)
+    cxm = w // 2
+    d.polygon([(cxm, mid - 8), (cxm + 8, mid), (cxm, mid + 8), (cxm - 8, mid)],
+              fill=gold)
+    d.line([(cxm - 26, mid), (cxm - 10, mid)], fill=U.with_alpha(gold, 160), width=1)
+    d.line([(cxm + 10, mid), (cxm + 26, mid)], fill=U.with_alpha(gold, 160), width=1)
 
     return np.asarray(img)
 

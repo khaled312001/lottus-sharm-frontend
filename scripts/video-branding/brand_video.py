@@ -134,12 +134,16 @@ def build_body(src, theme, fast=False, title_over=None, kicker_over=None,
 
 
 # ----------------------------------------------------------------- audio
-def build_audio(theme, intro_d, body_d, outro_d):
+def build_audio(theme, intro_d, body_d, outro_d, music_genre=None):
     total = intro_d + body_d + outro_d - 2 * CF
     m = theme["music"]
-    music_wav = C.WORK_DIR / f"_music_{theme['index']}.wav"
-    ME.render(m["genre"], total, music_wav, key=m["key"], seed=m["seed"],
-              scale=m["scale"], prog=m["prog"])
+    genre = music_genre or m["genre"]
+    # a forced genre may not suit the theme's scale/prog — fall back to defaults
+    scale = m["scale"] if music_genre is None else None
+    prog = m["prog"] if music_genre is None else None
+    music_wav = C.WORK_DIR / f"_music_{theme['index']}_{genre}.wav"
+    ME.render(genre, total, music_wav, key=m["key"], seed=m["seed"],
+              scale=scale, prog=prog)
 
     from moviepy import AudioFileClip
     music = AudioFileClip(str(music_wav))
@@ -173,7 +177,7 @@ def build_audio(theme, intro_d, body_d, outro_d):
 # ----------------------------------------------------------------- assemble
 def render_one(input_path, theme, out_path, *, fast=False, fps=C.FPS, crf=19,
                max_body=None, title=None, kicker=None, subtitle=None,
-               intro=True, outro=True):
+               intro=True, outro=True, music=None):
     from moviepy import VideoFileClip, concatenate_videoclips, vfx
 
     t0 = time.time()
@@ -182,7 +186,7 @@ def render_one(input_path, theme, out_path, *, fast=False, fps=C.FPS, crf=19,
         src = src.subclipped(0, min(max_body, src.duration))
     body_d = src.duration
 
-    print(f"  · theme '{theme['name']}'  grade={theme['grade']}  "
+    print(f"  - theme '{theme['name']}'  grade={theme['grade']}  "
           f"music={theme['music']['genre']}  body={body_d:.1f}s")
 
     body = build_body(src, theme, fast=fast, title_over=title,
@@ -205,7 +209,7 @@ def render_one(input_path, theme, out_path, *, fast=False, fps=C.FPS, crf=19,
     video = video.with_fps(fps)
 
     audio = build_audio(theme, intro_d if intro else CF, body_d,
-                        outro_d if outro else CF)
+                        outro_d if outro else CF, music_genre=music)
     video = video.with_audio(audio.with_duration(video.duration))
 
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
@@ -214,17 +218,22 @@ def render_one(input_path, theme, out_path, *, fast=False, fps=C.FPS, crf=19,
         preset="medium", threads=4, logger="bar",
         ffmpeg_params=["-crf", str(crf), "-pix_fmt", "yuv420p"])
     src.close(); video.close()
-    print(f"  ✓ {out_path}  ({time.time() - t0:.0f}s)\n")
+    print(f"  OK -> {out_path}  ({time.time() - t0:.0f}s)\n")
 
 
 # ----------------------------------------------------------------- cli
 def main(argv=None):
+    try:                                  # avoid cp1252 console crashes on Windows
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
     ap = argparse.ArgumentParser(description="Lotus Sharm cinematic auto-editor")
     ap.add_argument("input", nargs="?", help="source video path")
     ap.add_argument("--theme", default="random", help="theme name / index / random")
     ap.add_argument("--all", action="store_true", help="render every theme")
     ap.add_argument("--out", help="output path (single render)")
     ap.add_argument("--title"); ap.add_argument("--kicker"); ap.add_argument("--subtitle")
+    ap.add_argument("--music", help="force a music genre on all (e.g. travel)")
     ap.add_argument("--no-intro", action="store_true")
     ap.add_argument("--no-outro", action="store_true")
     ap.add_argument("--fast", action="store_true", help="skip heavy glow fx")
@@ -260,7 +269,7 @@ def main(argv=None):
     common = dict(fast=args.fast, fps=args.fps, crf=args.crf,
                   max_body=args.max_body, title=args.title, kicker=args.kicker,
                   subtitle=args.subtitle, intro=not args.no_intro,
-                  outro=not args.no_outro)
+                  outro=not args.no_outro, music=args.music)
 
     if args.all:
         print(f"Rendering {len(TH.THEMES)} themed videos from {inp.name}\n")
