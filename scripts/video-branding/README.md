@@ -14,8 +14,11 @@ while the **intro and outro stay identical** so the channel keeps one signature.
 ## Install
 
 ```bash
-pip install moviepy imageio-ffmpeg scipy numpy pillow
+pip install moviepy imageio-ffmpeg scipy numpy pillow curl_cffi
 ```
+
+`curl_cffi` is only needed for downloading from Cloudflare-protected hosts
+(Pixabay) via the GUI; the rest of the pipeline works without it.
 
 `imageio-ffmpeg` bundles ffmpeg — no system install needed. Fonts (Georgia,
 Arial, Freestyle Script) ship with Windows; drop extras in `./fonts/`.
@@ -110,8 +113,15 @@ Each theme = colour grade + layout (full-bleed / framed) + music
 Drop audio files into `music_library/` and the editor uses them automatically
 instead of the synthesiser (each theme picks a track by index, so a batch stays
 varied). Great with free **Pixabay** tracks (commercial use, no attribution):
-<https://pixabay.com/music/search/tourism/> — download the ones you like into
-that folder. See `music_library/README.txt`. Force a source with `--music`:
+<https://pixabay.com/music/search/tourism/>.
+
+**In the GUI**, paste a Pixabay track URL (the page link, e.g.
+`https://pixabay.com/music/upbeat-tourism-362473/`) and click **Download** —
+the script clears Cloudflare, scrapes the direct CDN link, and saves the mp3
+straight into `music_library/` with the original filename.
+
+Otherwise download manually into `music_library/`. See
+`music_library/README.txt`. Force a source from the CLI with `--music`:
 
 ```bash
 python brand_video.py clip.mp4 --music library          # the folder (default when filled)

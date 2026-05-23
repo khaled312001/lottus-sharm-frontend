@@ -55,16 +55,32 @@ def _stack_image_transforms(clip, funcs):
 
 
 # ----------------------------------------------------------------- body
-def build_body(src, theme, fast=False, title_over=None, kicker_over=None,
-               sub_over=None):
+def build_body(src, theme, fast=False, clean=False, title_over=None,
+               kicker_over=None, sub_over=None):
     from moviepy import CompositeVideoClip
     fxp = theme["fx"]
     pal = theme["palette"]
-    grade = colorgrade.get(theme["grade"])
-
     base = _fit_cover(src)
     bw, bh = base.size
     dur = base.duration
+
+    # CLEAN MODE — leave the footage untouched (no grade, no fx, no overlays
+    # other than the branding lower-third and animated title).
+    if clean:
+        body = base.with_position(lambda t: ((C.W - bw) / 2, (C.H - bh) / 2))
+        title = title_over or theme["title"]
+        kicker = kicker_over if kicker_over is not None else theme["kicker"]
+        sub = sub_over if sub_over is not None else theme["subtitle"]
+        layers = [
+            body,
+            F.make_branding_clip(dur, palette=pal, layout=theme["layout"]),
+            titles.make_title(title, dur, kicker=kicker, subtitle=sub,
+                              palette=pal, style=theme["style"],
+                              start=0.6, y_frac=0.70),
+        ]
+        return CompositeVideoClip(layers, size=(C.W, C.H)).with_duration(dur)
+
+    grade = colorgrade.get(theme["grade"])
 
     # ---- colour grade (baked LUT) + per-frame fx (cheap order matters) ----
     procs = [colorgrade.grader(grade)]
@@ -206,9 +222,9 @@ def build_audio(theme, intro_d, body_d, outro_d, music_genre=None):
 
 
 # ----------------------------------------------------------------- assemble
-def render_one(input_path, theme, out_path, *, fast=False, fps=C.FPS, crf=19,
-               max_body=None, title=None, kicker=None, subtitle=None,
-               intro=True, outro=True, music=None):
+def render_one(input_path, theme, out_path, *, fast=False, clean=False,
+               fps=C.FPS, crf=19, max_body=None, title=None, kicker=None,
+               subtitle=None, intro=True, outro=True, music=None):
     from moviepy import VideoFileClip, concatenate_videoclips, vfx
 
     t0 = time.time()
@@ -220,7 +236,7 @@ def render_one(input_path, theme, out_path, *, fast=False, fps=C.FPS, crf=19,
     print(f"  - theme '{theme['name']}'  grade={theme['grade']}  "
           f"music={theme['music']['genre']}  body={body_d:.1f}s")
 
-    body = build_body(src, theme, fast=fast, title_over=title,
+    body = build_body(src, theme, fast=fast, clean=clean, title_over=title,
                       kicker_over=kicker, sub_over=subtitle)
 
     clips = []
@@ -270,6 +286,9 @@ def main(argv=None):
     ap.add_argument("--no-intro", action="store_true")
     ap.add_argument("--no-outro", action="store_true")
     ap.add_argument("--fast", action="store_true", help="skip heavy glow fx")
+    ap.add_argument("--clean", action="store_true",
+                    help="untouched footage — no grade, no visual fx, only "
+                    "the branding lower-third and title on top")
     ap.add_argument("--fps", type=int, default=C.FPS)
     ap.add_argument("--crf", type=int, default=19)
     ap.add_argument("--max", type=float, dest="max_body", help="trim body seconds")
@@ -299,7 +318,7 @@ def main(argv=None):
         safe = theme["name"].lower().replace(" ", "_")
         return C.OUT_DIR / f"{inp.stem}__{theme['index']:02d}_{safe}.mp4"
 
-    common = dict(fast=args.fast, fps=args.fps, crf=args.crf,
+    common = dict(fast=args.fast, clean=args.clean, fps=args.fps, crf=args.crf,
                   max_body=args.max_body, title=args.title, kicker=args.kicker,
                   subtitle=args.subtitle, intro=not args.no_intro,
                   outro=not args.no_outro, music=args.music)

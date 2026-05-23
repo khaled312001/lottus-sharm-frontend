@@ -21,7 +21,7 @@ import subprocess
 import sys
 import threading
 import tkinter as tk
-import urllib.request
+import urllib.parse
 from pathlib import Path
 from tkinter import filedialog, ttk
 
@@ -178,6 +178,17 @@ class Studio(tk.Tk):
         self.btn_dl = ttk.Button(r, text="Download", command=self._download)
         self.btn_dl.pack(side="left")
 
+        # Pixabay batch — scrape the tourism search and download N tracks
+        r = ttk.Frame(f); r.pack(fill="x", pady=(8, 2))
+        ttk.Label(r, text="Pixabay tourism — batch download",
+                  foreground=ACCENT_L).pack(side="left")
+        self.var_px_n = tk.StringVar(value="53")
+        ttk.Entry(r, textvariable=self.var_px_n, width=6).pack(side="left", padx=8)
+        ttk.Label(r, text="tracks", style="Muted.TLabel").pack(side="left")
+        self.btn_px = ttk.Button(r, text="Fetch from Pixabay",
+                                 command=self._pixabay_batch)
+        self.btn_px.pack(side="left", padx=10)
+
         # ---- theme + options ----
         row = ttk.Frame(body); row.pack(fill="x", pady=6)
 
@@ -193,12 +204,18 @@ class Studio(tk.Tk):
         self.var_intro = tk.BooleanVar(value=True)
         self.var_outro = tk.BooleanVar(value=True)
         self.var_fast = tk.BooleanVar(value=False)
+        self.var_clean = tk.BooleanVar(value=True)
         ttk.Checkbutton(f, text="Intro", variable=self.var_intro).pack(side="left", padx=4)
         ttk.Checkbutton(f, text="Outro", variable=self.var_outro).pack(side="left", padx=4)
-        ttk.Checkbutton(f, text="Fast (preview)", variable=self.var_fast).pack(side="left", padx=8)
-        ttk.Label(f, text="Max body (s):").pack(side="left", padx=(12, 4))
+        ttk.Checkbutton(f, text="Clean image (no FX)",
+                        variable=self.var_clean).pack(side="left", padx=8)
+        ttk.Checkbutton(f, text="Fast", variable=self.var_fast).pack(side="left", padx=4)
+        ttk.Label(f, text="Max body (s):").pack(side="left", padx=(10, 4))
         self.var_max = tk.StringVar(value="")
         ttk.Entry(f, textvariable=self.var_max, width=6).pack(side="left")
+        ttk.Label(f, text="CRF:").pack(side="left", padx=(10, 4))
+        self.var_crf = tk.StringVar(value="23")
+        ttk.Entry(f, textvariable=self.var_crf, width=4).pack(side="left")
 
         # ---- buttons ----
         bar = ttk.Frame(body); bar.pack(fill="x", pady=12)
@@ -274,42 +291,182 @@ class Studio(tk.Tk):
             self._log(f"can't open: {e}", "err")
 
     # ------------------------------------------------------------- url dl
+    _PX_AUDIO_RE = re.compile(
+        r"https?://cdn\.pixabay\.com/download/audio/[^\"'<>\s]+\.mp3[^\"'<>\s]*",
+        re.I)
+
+    def _resolve_audio_url(self, url, get):
+        """Turn a page URL into a direct audio URL when needed.
+        Currently handles pixabay.com/music/ pages by scraping the CDN link;
+        any other URL is returned unchanged."""
+        if "pixabay.com" in url and "/music/" in url:
+            self.q.put(("log", "Pixabay page detected — extracting direct link…", None))
+            r = get(url)
+            r.raise_for_status()
+            m = self._PX_AUDIO_RE.search(r.text)
+            if not m:
+                raise RuntimeError("couldn't find a download URL on that Pixabay page")
+            return m.group(0)
+        return url
+
+    def _filename_from(self, url, content_disp, content_type):
+        # 1) ?filename=... query (Pixabay)
+        q = urllib.parse.urlparse(url).query
+        params = urllib.parse.parse_qs(q)
+        if params.get("filename"):
+            return params["filename"][0]
+        # 2) Content-Disposition: filename="..."
+        if content_disp:
+            m = re.search(r'filename\*?="?([^";]+)', content_disp)
+            if m:
+                return urllib.parse.unquote(m.group(1))
+        # 3) last path segment if it has an audio ext
+        path = urllib.parse.urlparse(url).path
+        last = Path(path).name
+        if last and Path(last).suffix.lower() in C.MUSIC_EXTS:
+            return last
+        # 4) fallback to hash + extension from content-type
+        ext = ".mp3"
+        for cand, e in (("wav", ".wav"), ("aac", ".aac"), ("mp4", ".m4a"),
+                        ("ogg", ".ogg"), ("flac", ".flac")):
+            if cand in (content_type or "").lower():
+                ext = e; break
+        return "dl_" + hashlib.md5(url.encode()).hexdigest()[:10] + ext
+
     def _download(self):
         url = self.var_url.get().strip()
         if not url:
             self._log("paste a URL first.", "err"); return
-        self._log(f"downloading {url} ...")
+        self._log(f"downloading {url} …")
         self.btn_dl.state(["disabled"])
 
         def go():
             try:
-                req = urllib.request.Request(url, headers={
-                    "User-Agent": "Mozilla/5.0 (LotusSharmStudio)",
-                    "Accept": "*/*"})
-                with urllib.request.urlopen(req, timeout=60) as r:
-                    ct = (r.headers.get("Content-Type") or "").lower()
-                    ext = ".mp3"
-                    for cand, e in (("wav", ".wav"), ("aac", ".aac"),
-                                    ("mp4", ".m4a"), ("ogg", ".ogg"),
-                                    ("flac", ".flac"), ("mpeg", ".mp3"),
-                                    ("mp3", ".mp3")):
-                        if cand in ct:
-                            ext = e; break
-                    name = "dl_" + hashlib.md5(url.encode()).hexdigest()[:10] + ext
-                    out = C.MUSIC_DIR / name
-                    out.parent.mkdir(parents=True, exist_ok=True)
-                    written = 0
-                    with open(out, "wb") as f:
-                        while True:
-                            chunk = r.read(64 * 1024)
-                            if not chunk: break
-                            f.write(chunk); written += len(chunk)
-                self.q.put(("log", f"saved {written/1024:.0f} KB -> {out}", "ok"))
+                # curl_cffi impersonates Chrome's TLS handshake — required for
+                # Cloudflare-protected hosts like Pixabay.
+                try:
+                    from curl_cffi import requests as cffi_requests
+                except ImportError:
+                    raise RuntimeError(
+                        "missing 'curl_cffi' (pip install curl_cffi)")
+                get = lambda u: cffi_requests.get(
+                    u, impersonate="chrome120", timeout=60,
+                    headers={"Accept": "*/*",
+                             "Referer": "https://pixabay.com/"})
+
+                direct = self._resolve_audio_url(url, get)
+                r = get(direct)
+                r.raise_for_status()
+                if not r.content:
+                    raise RuntimeError("empty response")
+                name = self._filename_from(
+                    direct, r.headers.get("Content-Disposition"),
+                    r.headers.get("Content-Type"))
+                # ensure it has an audio extension
+                if Path(name).suffix.lower() not in C.MUSIC_EXTS:
+                    name += ".mp3"
+                out = C.MUSIC_DIR / name
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_bytes(r.content)
+                size_mb = len(r.content) / 1024 / 1024
+                self.q.put(("log",
+                            f"saved {size_mb:.1f} MB  ->  {out}", "ok"))
                 self.q.put(("setfile", str(out), None))
             except Exception as e:
                 self.q.put(("log", f"download failed: {e}", "err"))
             finally:
                 self.q.put(("dl_done", None, None))
+        threading.Thread(target=go, daemon=True).start()
+
+    # ------------------------------------------------------------- pixabay batch
+    _PX_TRACK_LINK_RE = re.compile(r'/music/([\w-]+-(\d+))/')
+
+    def _pixabay_batch(self):
+        try:
+            n = max(1, int(self.var_px_n.get().strip()))
+        except ValueError:
+            self._log("invalid count.", "err"); return
+        self.btn_px.state(["disabled"])
+        self._log(f"Pixabay tourism — collecting up to {n} tracks…")
+
+        def go():
+            try:
+                from curl_cffi import requests as cffi_requests
+            except ImportError:
+                self.q.put(("log",
+                            "missing 'curl_cffi' (pip install curl_cffi)", "err"))
+                self.q.put(("pxdone", None, None)); return
+            get = lambda u: cffi_requests.get(
+                u, impersonate="chrome120", timeout=60,
+                headers={"Accept": "*/*",
+                         "Referer": "https://pixabay.com/"})
+            try:
+                # 1) walk search pages until we have N unique track-page URLs
+                pages: list[tuple[str, str]] = []     # (track_id, page_url)
+                seen: set[str] = set()
+                for page in range(1, 50):
+                    if len(pages) >= n or self.stop_flag: break
+                    search = (f"https://pixabay.com/music/search/tourism/"
+                              f"?pagi={page}")
+                    r = get(search)
+                    if r.status_code != 200:
+                        self.q.put(("log",
+                                    f"  search page {page}: HTTP {r.status_code}, stopping", "err"))
+                        break
+                    found = 0
+                    for m in self._PX_TRACK_LINK_RE.finditer(r.text):
+                        tid = m.group(2)
+                        if tid in seen: continue
+                        seen.add(tid)
+                        pages.append((tid,
+                                      f"https://pixabay.com/music/{m.group(1)}/"))
+                        found += 1
+                        if len(pages) >= n: break
+                    self.q.put(("log",
+                                f"  search page {page}: +{found} new "
+                                f"(total {len(pages)})", None))
+                    if found == 0:
+                        break    # no more results
+                if not pages:
+                    raise RuntimeError("no tracks found")
+
+                # 2) fetch each track page, scrape the CDN mp3 link, download
+                ok_count = 0
+                for i, (tid, page_url) in enumerate(pages, 1):
+                    if self.stop_flag: break
+                    try:
+                        r = get(page_url)
+                        if r.status_code != 200:
+                            raise RuntimeError(f"page HTTP {r.status_code}")
+                        m = self._PX_AUDIO_RE.search(r.text)
+                        if not m:
+                            raise RuntimeError("no mp3 link on page")
+                        direct = m.group(0)
+                        rr = get(direct)
+                        if rr.status_code != 200:
+                            raise RuntimeError(f"mp3 HTTP {rr.status_code}")
+                        params = urllib.parse.parse_qs(
+                            urllib.parse.urlparse(direct).query)
+                        base_name = params.get("filename", [f"pixabay-{tid}.mp3"])[0]
+                        # prefix with sequence so library order matches batch order
+                        out = C.MUSIC_DIR / f"px_{i:03d}_{base_name}"
+                        out.write_bytes(rr.content)
+                        ok_count += 1
+                        self.q.put(("log",
+                                    f"  [{i}/{len(pages)}] {out.name}  "
+                                    f"({len(rr.content)/1024/1024:.1f} MB)", "ok"))
+                    except Exception as e:
+                        self.q.put(("log",
+                                    f"  [{i}/{len(pages)}] {tid}: {e}", "err"))
+                self.q.put(("log",
+                            f"Pixabay batch done — {ok_count}/{len(pages)} saved.",
+                            "ok"))
+                self.q.put(("refresh", None, None))
+            except Exception as e:
+                self.q.put(("log", f"batch failed: {e}", "err"))
+            finally:
+                self.q.put(("pxdone", None, None))
+
         threading.Thread(target=go, daemon=True).start()
 
     # ------------------------------------------------------------- render
@@ -372,7 +529,15 @@ class Studio(tk.Tk):
         out_dir = C.OUT_DIR
         out_dir.mkdir(parents=True, exist_ok=True)
         total = len(files)
-        music_args = self._music_args()
+        # In library mode, pair video[i] <-> sorted_tracks[i] explicitly so the
+        # batch is a deterministic 1-to-1 mount instead of theme-index rotation.
+        per_video_music = None
+        if self.var_music_mode.get() == "library":
+            tracks = C.music_tracks()
+            if tracks:
+                per_video_music = [str(tracks[i % len(tracks)])
+                                   for i in range(total)]
+        default_music_args = self._music_args()
 
         for i, inp in enumerate(files):
             if self.stop_flag: break
@@ -382,10 +547,14 @@ class Studio(tk.Tk):
             out = out_dir / f"{inp.stem}__{theme_idx:02d}_{safe}.mp4"
             self.q.put(("status",
                         f"[{i+1}/{total}] {inp.name}  ->  {theme['name']}", None))
+            music_args = (["--music", per_video_music[i]]
+                          if per_video_music else default_music_args)
+            crf = self.var_crf.get().strip() or "23"
             cmd = [sys.executable, "-u", str(HERE / "brand_video.py"),
                    str(inp), "--theme", str(theme_idx),
-                   "--out", str(out)] + music_args
+                   "--out", str(out), "--crf", crf] + music_args
             if self.var_fast.get(): cmd.append("--fast")
+            if self.var_clean.get(): cmd.append("--clean")
             if not self.var_intro.get(): cmd.append("--no-intro")
             if not self.var_outro.get(): cmd.append("--no-outro")
             mx = self.var_max.get().strip()
@@ -457,6 +626,12 @@ class Studio(tk.Tk):
                     self._refresh_count()
                 elif kind == "dl_done":
                     self.btn_dl.state(["!disabled"])
+                    self._refresh_count()
+                elif kind == "pxdone":
+                    self.btn_px.state(["!disabled"])
+                    self._refresh_count()
+                elif kind == "refresh":
+                    self._refresh_count()
                 elif kind == "done":
                     self.btn_all.state(["!disabled"])
                     self.btn_one.state(["!disabled"])
@@ -484,7 +659,10 @@ class Studio(tk.Tk):
                 "intro": self.var_intro.get(),
                 "outro": self.var_outro.get(),
                 "fast": self.var_fast.get(),
+                "clean": self.var_clean.get(),
                 "max": self.var_max.get(),
+                "crf": self.var_crf.get(),
+                "px_n": self.var_px_n.get(),
             }, indent=2), encoding="utf-8")
         except Exception:
             pass
@@ -502,7 +680,10 @@ class Studio(tk.Tk):
             self.var_intro.set(s.get("intro", True))
             self.var_outro.set(s.get("outro", True))
             self.var_fast.set(s.get("fast", False))
+            self.var_clean.set(s.get("clean", True))
             self.var_max.set(s.get("max", ""))
+            self.var_crf.set(s.get("crf", "23"))
+            self.var_px_n.set(s.get("px_n", "53"))
         except Exception:
             pass
 
