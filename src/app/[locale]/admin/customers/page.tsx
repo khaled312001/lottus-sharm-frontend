@@ -6,7 +6,8 @@ import { API_BASE } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Users, Download } from 'lucide-react';
+import { Search, Users, Download, Send, X, Loader2, Mail, AlertCircle } from 'lucide-react';
+import { Textarea } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +61,7 @@ export default function AdminCustomersPage() {
   const [search, setSearch] = useState('');
   const [source, setSource] = useState<Source>('ALL');
   const [loading, setLoading] = useState(true);
+  const [broadcastOpen, setBroadcastOpen] = useState(false);
 
   const load = async (nextSource: Source = source) => {
     setLoading(true);
@@ -122,10 +124,23 @@ export default function AdminCustomersPage() {
             </span>
           </p>
         </div>
-        <Button variant="outline" onClick={downloadCSV} className="text-xs">
-          <Download className="h-3.5 w-3.5" /> تصدير CSV
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setBroadcastOpen(true)} className="text-xs">
+            <Send className="h-3.5 w-3.5" /> رسالة جماعية
+          </Button>
+          <Button variant="outline" onClick={downloadCSV} className="text-xs">
+            <Download className="h-3.5 w-3.5" /> تصدير CSV
+          </Button>
+        </div>
       </div>
+
+      {broadcastOpen && (
+        <BroadcastModal
+          audience={source}
+          recipientsHint={total}
+          onClose={() => setBroadcastOpen(false)}
+        />
+      )}
 
       {/* Filter tabs + search */}
       <Card>
@@ -231,6 +246,123 @@ export default function AdminCustomersPage() {
           </table>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ============================================================================
+// Broadcast modal — sends a custom email to all (or filtered) customers
+// ============================================================================
+function BroadcastModal({
+  audience, recipientsHint, onClose,
+}: { audience: Source; recipientsHint: number; onClose: () => void }) {
+  const api = useAdminApi();
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [ctaLabel, setCtaLabel] = useState('');
+  const [ctaUrl, setCtaUrl] = useState('');
+  const [sending, setSending] = useState(false);
+  const [count, setCount] = useState<number | null>(recipientsHint);
+
+  // Re-check actual unique recipient count (server de-dupes & excludes lead emails)
+  useEffect(() => {
+    api.post<{ totalRecipients: number }>('/admin/customers/broadcast', {
+      subject: 'preview', message: 'preview', audience, dryRun: true,
+    })
+      .then((r) => setCount(r.totalRecipients))
+      .catch(() => undefined);
+    // eslint-disable-next-line
+  }, [audience]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (subject.trim().length < 2) return toast.error('اكتب موضوع للرسالة');
+    if (message.trim().length < 5) return toast.error('اكتب نص الرسالة');
+    if (ctaUrl && !/^https?:\/\//i.test(ctaUrl)) return toast.error('رابط الزر يجب أن يبدأ بـ https://');
+    if (!confirm(`سيتم إرسال البريد إلى ${count ?? '?'} عميل. هل تريد المتابعة؟`)) return;
+    setSending(true);
+    try {
+      const res = await api.post<{ totalRecipients: number; sent: number; failed: number }>(
+        '/admin/customers/broadcast',
+        {
+          subject: subject.trim(),
+          message: message.trim(),
+          audience,
+          ctaLabel: ctaLabel.trim() || null,
+          ctaUrl: ctaUrl.trim() || null,
+        },
+      );
+      toast.success(`تم إرسال ${res.sent} من ${res.totalRecipients}${res.failed ? ` · فشل ${res.failed}` : ''}`);
+      onClose();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'فشل الإرسال');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
+          <div>
+            <h3 className="font-bold text-lg inline-flex items-center gap-2">
+              <Send className="h-5 w-5 text-accent" /> رسالة جماعية للعملاء
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1.5">
+              <Mail className="h-3 w-3" />
+              ستُرسل إلى <strong className="text-foreground">{count ?? '...'}</strong> عميل
+              {audience !== 'ALL' && <span>(فلتر: {audience === 'GOOGLE' ? 'جوجل' : 'زائر'})</span>}
+            </p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-md hover:bg-muted"><X className="h-4 w-4" /></button>
+        </div>
+
+        <form onSubmit={submit} className="p-6 space-y-4">
+          <div>
+            <label className="text-xs font-bold mb-1.5 block">موضوع الرسالة *</label>
+            <Input
+              value={subject} onChange={(e) => setSubject(e.target.value)}
+              placeholder="مثلاً: عروض الصيف 2026"
+              maxLength={200}
+            />
+            <div className="text-[10px] text-muted-foreground tabular-nums text-end mt-1">{subject.length}/200</div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold mb-1.5 block">نص الرسالة *</label>
+            <Textarea
+              rows={9}
+              value={message} onChange={(e) => setMessage(e.target.value)}
+              placeholder="اكتب رسالتك هنا...&#10;&#10;ستظهر بنفس قالب لوتس شرم الرسمي مع اسم العميل في البداية."
+              maxLength={20000}
+            />
+            <div className="text-[10px] text-muted-foreground tabular-nums text-end mt-1">{message.length}/20000</div>
+          </div>
+
+          <div className="rounded-lg border border-accent/20 bg-accent/5 p-3">
+            <div className="text-xs font-bold mb-2 inline-flex items-center gap-1.5">
+              <AlertCircle className="h-3.5 w-3.5 text-accent" /> زر دعوة (اختياري)
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <Input value={ctaLabel} onChange={(e) => setCtaLabel(e.target.value)} placeholder="نص الزر (مثلاً: شاهد العروض)" />
+              <Input value={ctaUrl} onChange={(e) => setCtaUrl(e.target.value)} placeholder="https://lotussharm.com/trips" dir="ltr" />
+            </div>
+          </div>
+
+          <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2.5 leading-relaxed">
+            ⚠️ <strong>تنبيه:</strong> الرسالة تُرسل لكل العملاء مرة واحدة. تأكد من الموضوع والنص قبل الإرسال. الإرسال قد يستغرق دقائق حسب العدد.
+          </div>
+
+          <div className="sticky bottom-0 bg-white pt-3 border-t flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>إلغاء</Button>
+            <Button type="submit" disabled={sending || !subject || !message}>
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              إرسال إلى {count ?? '...'} عميل
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { Link, usePathname } from '@/i18n/routing';
 import {
   LayoutDashboard, Map, CalendarCheck, Users, CreditCard, Tag, FileText, FolderOpen,
   Settings, Star, Mail, MessageSquare, MessagesSquare, UserCog, Image as ImageIcon, X, Send, BarChart3, Search,
-  QrCode, BedDouble, Car, MessageCircle, Bell,
+  QrCode, BedDouble, Car, MessageCircle, Bell, UserCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,6 +40,7 @@ const SECTIONS = [
   { title: 'الإعدادات', items: [
     { href: '/admin/settings' as const, icon: Settings, label: 'إعدادات الموقع' },
     { href: '/admin/users' as const, icon: UserCog, label: 'المستخدمون' },
+    { href: '/admin/account' as const, icon: UserCircle, label: 'حسابي' },
   ]},
 ];
 

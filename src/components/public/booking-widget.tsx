@@ -804,6 +804,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
             travelerType,
             isMarried,
             notes: composedNotes || undefined,
+            couponCode: couponInfo?.valid ? couponInfo.code : undefined,
           }}
           total={finalTotal}
           currency={fromCurrency}

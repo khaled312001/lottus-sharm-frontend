@@ -5,6 +5,7 @@ import { MainWrapper } from '@/components/public/main-wrapper';
 import { ScrollProgress } from '@/components/motion-kit';
 import { CommandPalette } from '@/components/public/command-palette';
 import { BackToTop } from '@/components/public/back-to-top';
+import { GlobalDiscountBanner } from '@/components/public/global-discount-banner';
 import { getSiteSettings } from '@/lib/site-settings';
 
 export default async function PublicLayout({
@@ -18,6 +19,7 @@ export default async function PublicLayout({
   return (
     <div className="flex min-h-screen flex-col bg-cream">
       <ScrollProgress />
+      <GlobalDiscountBanner />
       <Header />
       <MainWrapper>{children}</MainWrapper>
       <Footer settings={settings} />

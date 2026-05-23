@@ -45,11 +45,14 @@ interface BookingItem {
   bookingDate: string;
   adultsCount: number;
   childrenCount: number;
+  subtotal: string;
+  discount: string;
   total: string;
   currency: string;
   status: Status;
   paymentStatus: PaymentStatus;
   source: Source;
+  coupon?: { code: string; discountType: 'PERCENT' | 'FIXED'; discountValue: string } | null;
   customer: { fullName: string; email: string; phone: string };
   trip: { translations: Array<{ locale: string; title: string }> };
   payments?: BookingPayment[];
@@ -326,7 +329,30 @@ export default function AdminBookingsPage() {
                         <td className="py-2 px-3 max-w-[200px]"><div className="line-clamp-2">{b.trip.translations.find((t) => t.locale === 'AR')?.title || b.trip.translations[0]?.title}</div></td>
                         <td className="py-2 px-3 text-xs">{new Date(b.bookingDate).toLocaleDateString('ar-EG')}</td>
                         <td className="py-2 px-3">{b.adultsCount}+{b.childrenCount}</td>
-                        <td className="py-2 px-3 font-bold">{Number(b.total).toLocaleString()} {b.currency}</td>
+                        <td className="py-2 px-3">
+                          {Number(b.discount) > 0 ? (
+                            <div className="leading-tight">
+                              <div className="text-[11px] text-muted-foreground line-through tabular-nums">
+                                {Number(b.subtotal).toLocaleString()} {b.currency}
+                              </div>
+                              <div className="font-bold text-emerald-700 tabular-nums">
+                                {Number(b.total).toLocaleString()} {b.currency}
+                              </div>
+                              <div className="text-[10px] text-accent-700 font-bold inline-flex items-center gap-0.5">
+                                <span>−{Number(b.discount).toLocaleString()}</span>
+                                {b.coupon?.code && (
+                                  <span className="px-1 py-0.5 rounded bg-accent/15 font-mono">
+                                    {b.coupon.code}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="font-bold tabular-nums">
+                              {Number(b.total).toLocaleString()} {b.currency}
+                            </div>
+                          )}
+                        </td>
                         <td className="py-2 px-3">
                           <Badge variant={b.paymentStatus === 'PAID' ? 'default' : 'secondary'}>{b.paymentStatus}</Badge>
                         </td>

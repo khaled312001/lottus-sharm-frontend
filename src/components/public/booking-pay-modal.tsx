@@ -31,6 +31,7 @@ interface BookingPayload {
   travelerType?: 'ADULT' | 'GEN_Z';
   isMarried?: boolean;
   notes?: string;
+  couponCode?: string;
 }
 
 type PayMethod = 'VODAFONE_CASH' | 'INSTAPAY' | 'BANK_TRANSFER' | 'CASH';
@@ -107,6 +108,7 @@ export function BookingPayModal({
       if (payload.travelerType) fd.append('travelerType', payload.travelerType);
       if (payload.isMarried) fd.append('isMarried', 'true');
       if (payload.notes) fd.append('notes', payload.notes);
+      if (payload.couponCode) fd.append('couponCode', payload.couponCode);
       if (file) fd.append('receipt', file);
 
       const res = await fetch(`${API_BASE}/public/bookings/with-receipt`, { method: 'POST', body: fd });
