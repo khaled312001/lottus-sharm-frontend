@@ -30,6 +30,27 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+
+# Pre-parse --square / --canvas so we can override the canvas constants BEFORE
+# importing modules that capture C.W/C.H in default-argument values at import.
+def _override_canvas():
+    pre = argparse.ArgumentParser(add_help=False)
+    pre.add_argument("--square", action="store_true")
+    pre.add_argument("--canvas", default=None)
+    args, _ = pre.parse_known_args()
+    import config as cfg
+    if args.square:
+        cfg.W = cfg.H = 1080
+    elif args.canvas:
+        try:
+            w, h = map(int, args.canvas.lower().split("x"))
+            cfg.W, cfg.H = w, h
+        except Exception:
+            pass
+
+
+_override_canvas()
+
 import config as C                # noqa: E402
 import frame as F                 # noqa: E402
 import titles                     # noqa: E402
@@ -86,6 +107,10 @@ def main():
                     help="seconds the title stays on screen")
     ap.add_argument("--no-intro", action="store_true")
     ap.add_argument("--no-outro", action="store_true")
+    ap.add_argument("--square", action="store_true",
+                    help="render at 1080x1080 (Instagram feed friendly)")
+    ap.add_argument("--canvas", default=None,
+                    help="custom canvas, e.g. 1080x1350 (4:5)")
     args = ap.parse_args()
 
     try:
@@ -118,10 +143,13 @@ def main():
     layers = [body, F.make_branding_clip(body_d, palette=pal,
                                          layout=theme["layout"])]
     hold = max(1.5, min(args.title_hold, body_d - 0.5))
+    # in shorter/square canvases the title lands closer to the lower-third bar,
+    # so float it higher to keep a clean gap
+    title_y_frac = 0.55 if C.H <= 1200 else 0.70
     if hold > 1:
         layers.append(titles.make_title(
             args.title, hold, kicker=args.kicker, subtitle=args.subtitle,
-            palette=pal, style=theme["style"], start=0.6, y_frac=0.70))
+            palette=pal, style=theme["style"], start=0.6, y_frac=title_y_frac))
     body_comp = CompositeVideoClip(layers, size=(C.W, C.H)).with_duration(body_d)
 
     # 4) bookends
