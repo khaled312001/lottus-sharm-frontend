@@ -11,8 +11,40 @@ import { cn } from '@/lib/utils';
 import { Compass, Sparkles, Calendar, MessageCircle, Waves, Mountain, Building2, Anchor, PartyPopper } from 'lucide-react';
 import { buildWhatsAppLink } from '@/lib/utils';
 import { fetchCMSPage } from '@/lib/cms';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, buildItemListLd, crumbLabel } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: '/trips',
+    title: {
+      ar: 'رحلات شرم الشيخ — حجز رحلات يومية، سفاري، رحلات بحرية | لوتس شرم',
+      en: 'Sharm El Sheikh Tours & Excursions — Day Trips, Safari & Sea | Lotus Sharm',
+      ru: 'Экскурсии в Шарм-эль-Шейхе — Однодневные туры, Сафари, Море | Lotus Sharm',
+      it: 'Tour ed Escursioni a Sharm El Sheikh — Gite Giornaliere, Safari, Mare | Lotus Sharm',
+      de: 'Sharm El Sheikh Touren & Ausflüge — Tagesausflüge, Safari & Meer | Lotus Sharm',
+    },
+    description: {
+      ar: 'تصفّح جميع رحلات شرم الشيخ: راس محمد، الجزيرة البيضاء، سفاري الصحراء، عرض الدلافين، كاتاماران، الكنيسة والمسجد والجامع المعلق. حجز فوري ومرشدون بـ 5 لغات.',
+      en: 'Browse every Sharm El Sheikh tour: Ras Mohammed, White Island, desert safari, dolphin show, catamaran cruise, city & culture trips. Instant booking, guides in 5 languages.',
+      ru: 'Все экскурсии Шарм-эль-Шейха: Рас-Мохаммед, Белый остров, сафари, шоу дельфинов, катамаран, культурные туры. Мгновенное бронирование, гиды на 5 языках.',
+      it: 'Tutte le escursioni di Sharm El Sheikh: Ras Mohammed, Isola Bianca, safari nel deserto, delfini, catamarano, tour culturali. Prenotazione immediata, guide in 5 lingue.',
+      de: 'Alle Sharm El Sheikh Touren: Ras Mohammed, Weiße Insel, Wüstensafari, Delfinshow, Katamaran, Kultur-Touren. Sofortige Buchung, Reiseleiter in 5 Sprachen.',
+    },
+    keywords: {
+      ar: 'رحلات شرم الشيخ, راس محمد, الجزيرة البيضاء, سفاري شرم الشيخ, عرض الدلفين, كاتاماران شرم الشيخ, رحلات بحرية شرم الشيخ',
+      en: 'sharm el sheikh tours, ras mohammed tour, white island, sharm desert safari, dolphin show, sharm catamaran, sharm sea trips, sharm day tours',
+      ru: 'экскурсии Шарм, Рас-Мохаммед, Белый остров, сафари Шарм, дельфины Шарм, катамаран Шарм',
+      it: 'tour sharm, ras mohammed, isola bianca, safari sharm, delfini sharm, catamarano sharm',
+      de: 'sharm touren, ras mohammed, weiße insel, sharm safari, delfine sharm, katamaran sharm',
+    },
+  });
+}
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -76,8 +108,22 @@ export default async function TripsPage({ params, searchParams }: PageProps) {
   allTrips.items.forEach((tt) => { counts[tt.category] = (counts[tt.category] || 0) + 1; });
   const totalCount = allTrips.items.length;
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('trips', locale), url: `${SITE_URL}/${locale}/trips` },
+  ]);
+  const itemListLd = buildItemListLd(
+    allTrips.items.slice(0, 30).map((tt) => ({
+      name: tt.tr?.title || tt.slug,
+      url: `${SITE_URL}/${locale}/trips/${tt.slug}`,
+      image: tt.heroImage?.url || null,
+    })),
+  );
+
   return (
     <>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
+      <JsonLd data={itemListLd} id="ld-itemlist" />
       {/* HERO */}
       <section className="relative bg-primary-900 text-cream py-16 md:py-28 overflow-hidden">
         <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />

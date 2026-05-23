@@ -6,8 +6,33 @@ import { Reveal } from '@/components/public/motion';
 import { Award, Heart, Compass, Shield, Sparkles, Target, Eye, ArrowRight, Phone, MapPin, Users, Calendar, Briefcase, Mic, Plane, Star, Quote, MapPinned, MessageCircle, Search, ClipboardCheck, BadgeCheck, Trophy, Globe2 } from 'lucide-react';
 import { getSiteSettings, getLocalizedName } from '@/lib/site-settings';
 import { L } from '@/lib/utils';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, crumbLabel } from '@/lib/seo';
 
 export const revalidate = 120;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: '/about',
+    title: {
+      ar: 'من نحن — لوتس شرم للسياحة | 13 سنة خبرة في شرم الشيخ',
+      en: 'About Us — Lotus Sharm Tourism | 13 Years in Sharm El Sheikh',
+      ru: 'О нас — Lotus Sharm | 13 лет в Шарм-эль-Шейхе',
+      it: 'Chi siamo — Lotus Sharm Tourism | 13 anni a Sharm El Sheikh',
+      de: 'Über uns — Lotus Sharm Tourism | 13 Jahre Erfahrung',
+    },
+    description: {
+      ar: 'تعرّف على شركة لوتس شرم للسياحة — أكثر من 13 سنة من الخبرة في تنظيم رحلات شرم الشيخ ومصر، فريق محترف بلغات متعددة، وآلاف العملاء السعداء.',
+      en: 'Meet Lotus Sharm Tourism — 13+ years organising Sharm El Sheikh & Egypt tours, multilingual professional team, thousands of happy clients.',
+      ru: 'О компании Lotus Sharm — 13+ лет организации туров по Шарм-эль-Шейху и Египту, многоязычная команда, тысячи довольных клиентов.',
+      it: 'Conosci Lotus Sharm Tourism — 13+ anni di tour a Sharm El Sheikh ed Egitto, team multilingue, migliaia di clienti soddisfatti.',
+      de: 'Lotus Sharm Tourism kennenlernen — 13+ Jahre Touren in Sharm El Sheikh & Ägypten, mehrsprachiges Team, tausende zufriedene Kunden.',
+    },
+  });
+}
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -97,8 +122,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     { v: '4.9', icon: Star, ar: 'تقييم العملاء', en: 'Rating', de: 'Bewertung', ru: 'Рейтинг', it: 'Valutazione' },
   ];
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('about', locale), url: `${SITE_URL}/${locale}/about` },
+  ]);
+
   return (
     <>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
       <section className="relative bg-primary-900 text-cream py-16 md:py-28 overflow-hidden">
         <Image src="/hero-slides/hero-05.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />

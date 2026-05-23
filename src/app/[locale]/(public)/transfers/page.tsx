@@ -6,6 +6,8 @@ import { Car, Bus, Plane, Building2, MapPin, Users, Clock, ArrowRight, MessageCi
 import { api } from '@/lib/api';
 import { L, localeToApiCode, buildWhatsAppLink, cn } from '@/lib/utils';
 import { Link } from '@/i18n/routing';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, crumbLabel } from '@/lib/seo';
 
 export const revalidate = 60;
 
@@ -71,15 +73,31 @@ const GROUP_TITLES: Array<{ ar: string; en: string; ru: string; it: string; de: 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return {
-    title: L(locale, { ar: 'خدمات النقل والاستقبال — لوتس شرم', en: 'Transfers & airport pickups — Lotus Sharm', de: 'Transfers & Flughafenabholung — Lotus Sharm', ru: 'Трансферы — Lotus Sharm', it: 'Trasferimenti — Lotus Sharm' }),
-    description: L(locale, {
-      ar: 'استقبال المطار، توصيل الفندق، طيران داخلي، تنقلات بين المحطات. سيارات، ميكروباص، أوتوبيس، طيران.',
-      en: 'Airport pickup, hotel drop-off, domestic flights, station transfers. Sedans, microbuses, coaches, flights.', de: 'Flughafenabholung, Hoteltransfer, Inlandsflüge, Bahnhofstransfers. Limousinen, Microbusse, Reisebusse, Flüge.',
-      ru: 'Трансфер из аэропорта, отель, домашние рейсы.',
-      it: 'Trasferimenti aeroporto, hotel, voli interni.',
-    }),
-  };
+  return buildPageMetadata({
+    locale,
+    path: '/transfers',
+    title: {
+      ar: 'استقبال مطار شرم الشيخ وخدمات النقل — سيارات وأوتوبيس | لوتس شرم',
+      en: 'Sharm El Sheikh Airport Transfers & Private Cars | Lotus Sharm',
+      ru: 'Трансфер из аэропорта Шарм-эль-Шейха — Машины и Автобусы | Lotus Sharm',
+      it: 'Transfer Aeroporto Sharm El Sheikh — Auto e Pullman | Lotus Sharm',
+      de: 'Flughafentransfer Sharm El Sheikh — Privatfahrzeuge & Busse | Lotus Sharm',
+    },
+    description: {
+      ar: 'احجز استقبال المطار وتوصيل الفندق وخدمات النقل في شرم الشيخ. سيارات خاصة، ميكروباص، أوتوبيس، طيران داخلي، وتنقلات بين شرم الشيخ ودهب والقاهرة والغردقة.',
+      en: 'Book Sharm El Sheikh airport pickup, hotel drop-off & private transfers. Sedans, microbus, coach, domestic flights, and inter-city transfers between Sharm, Dahab, Cairo and Hurghada.',
+      ru: 'Бронируйте трансферы из аэропорта Шарм-эль-Шейха и между городами (Шарм, Дахаб, Каир, Хургада). Машины, микроавтобусы, автобусы, внутренние рейсы.',
+      it: 'Prenota transfer dall\'aeroporto di Sharm El Sheikh e tra città (Sharm, Dahab, Il Cairo, Hurghada). Auto private, microbus, pullman, voli interni.',
+      de: 'Buchen Sie Flughafentransfers in Sharm El Sheikh und zwischen Städten (Sharm, Dahab, Kairo, Hurghada). Privatwagen, Microbus, Reisebus, Inlandsflüge.',
+    },
+    keywords: {
+      ar: 'استقبال مطار شرم الشيخ, نقل من المطار, مواصلات شرم الشيخ, نقل من شرم لدهب, نقل من شرم للقاهرة, نقل من شرم للغردقة',
+      en: 'sharm el sheikh airport transfer, sharm airport pickup, sharm to dahab transfer, sharm to cairo transfer, sharm to hurghada transfer, private car sharm',
+      ru: 'трансфер аэропорт Шарм, такси Шарм, Шарм-Дахаб трансфер, Шарм-Каир, Шарм-Хургада',
+      it: 'transfer aeroporto sharm, taxi sharm, sharm dahab transfer, sharm cairo, sharm hurghada',
+      de: 'flughafentransfer sharm, taxi sharm, sharm dahab transfer, sharm kairo, sharm hurghada',
+    },
+  });
 }
 
 export default async function TransfersPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ region?: string }> }) {
@@ -103,8 +121,14 @@ export default async function TransfersPage({ params, searchParams }: { params: 
   // Group by route order
   const groups = ROUTE_GROUP_ORDER.map((routes) => items.filter((t) => routes.includes(t.route)));
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('transfers', locale), url: `${SITE_URL}/${locale}/transfers` },
+  ]);
+
   return (
     <main>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
       <section className="relative bg-primary-900 text-cream py-16 md:py-24 overflow-hidden">
         <Image src="/hero-slides/hero-13.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />

@@ -17,8 +17,43 @@ import {
 import { localeToApiCode, L } from '@/lib/utils';
 import { getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 import { fetchCMSPage } from '@/lib/cms';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import {
+  SITE_URL, buildPageMetadata, buildTravelAgencyLd, buildWebsiteLd,
+  buildBreadcrumbLd, buildFaqLd, buildAggregateRating, crumbLabel,
+} from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: '',
+    title: {
+      ar: 'لوتس شرم للسياحة — رحلات شرم الشيخ، فنادق، سفاري، خدمات النقل',
+      en: 'Lotus Sharm Tourism — Sharm El Sheikh Tours, Hotels, Safari & Transfers',
+      ru: 'Lotus Sharm — Экскурсии и Отели в Шарм-эль-Шейхе, Сафари, Трансферы',
+      it: 'Lotus Sharm Tourism — Tour Sharm El Sheikh, Hotel, Safari, Transfer',
+      de: 'Lotus Sharm Tourism — Sharm El Sheikh Touren, Hotels, Safari & Transfers',
+    },
+    description: {
+      ar: 'احجز رحلات شرم الشيخ اليومية مع لوتس شرم: رأس محمد، الجزيرة البيضاء، سفاري الصحراء، عرض الدلافين، يخت كاتاماران، فنادق وخدمات نقل من المطار. خبرة 13 سنة وأسعار مميزة بالدولار والجنيه.',
+      en: 'Book Sharm El Sheikh day tours with Lotus Sharm: Ras Mohammed, White Island, desert safari, dolphin show, catamaran cruise, hotels and airport transfers. 13+ years of expertise — prices in USD & EGP.',
+      ru: 'Бронируйте экскурсии в Шарм-эль-Шейхе с Lotus Sharm: Рас-Мохаммед, Белый остров, сафари в пустыне, шоу дельфинов, прогулки на катамаране, отели и трансферы. 13+ лет опыта.',
+      it: 'Prenota escursioni a Sharm El Sheikh con Lotus Sharm: Ras Mohammed, Isola Bianca, safari nel deserto, spettacolo dei delfini, catamarano, hotel e transfer aeroportuali. 13+ anni di esperienza.',
+      de: 'Buchen Sie Sharm El Sheikh Tagesausflüge mit Lotus Sharm: Ras Mohammed, Weiße Insel, Wüstensafari, Delfinshow, Katamaran-Tour, Hotels und Flughafentransfers. 13+ Jahre Erfahrung.',
+    },
+    keywords: {
+      ar: 'رحلات شرم الشيخ, شرم الشيخ سياحة, راس محمد, الجزيرة البيضاء, سفاري شرم الشيخ, عرض الدولفين, يخت شرم الشيخ, فنادق شرم الشيخ, نقل مطار شرم الشيخ, لوتس شرم',
+      en: 'sharm el sheikh tours, sharm el sheikh excursions, ras mohammed, white island, sharm desert safari, dolphin show sharm, sharm catamaran, sharm hotels, sharm airport transfer, lotus sharm tourism',
+      ru: 'экскурсии Шарм-эль-Шейх, Рас-Мохаммед, Белый остров, сафари Шарм, шоу дельфинов Шарм, отели Шарм, трансфер аэропорт Шарм, Lotus Sharm',
+      it: 'tour sharm el sheikh, escursioni sharm, ras mohammed, isola bianca, safari sharm, delfini sharm, hotel sharm, transfer aeroporto sharm, lotus sharm',
+      de: 'sharm el sheikh touren, ausflüge sharm, ras mohammed, weiße insel, wüstensafari sharm, delfinshow sharm, hotels sharm, flughafentransfer sharm, lotus sharm',
+    },
+  });
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -51,8 +86,103 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     reviewsTotal = company.total || 0;
   } catch { reviews = []; }
 
+  // === Structured data (JSON-LD) for Sharm El Sheikh tourism search ===
+  const orgLd: Record<string, unknown> = buildTravelAgencyLd(settings, locale);
+  if (reviewsTotal > 0 && reviewsAvg > 0) {
+    orgLd.aggregateRating = buildAggregateRating(reviewsAvg, reviewsTotal);
+  }
+  const homeUrl = `${SITE_URL}/${locale}`;
+  const breadcrumbLd = buildBreadcrumbLd([{ name: crumbLabel('home', locale), url: homeUrl }]);
+  const websiteLd = buildWebsiteLd(locale);
+  const faqLd = buildFaqLd([
+    {
+      q: L(locale, {
+        ar: 'ما هي أفضل الرحلات في شرم الشيخ؟',
+        en: 'What are the best tours in Sharm El Sheikh?',
+        ru: 'Какие лучшие экскурсии в Шарм-эль-Шейхе?',
+        it: 'Quali sono le migliori escursioni a Sharm El Sheikh?',
+        de: 'Was sind die besten Touren in Sharm El Sheikh?',
+      }),
+      a: L(locale, {
+        ar: 'أفضل الرحلات في شرم الشيخ: محمية رأس محمد للسنوركلينج، الجزيرة البيضاء، سفاري الصحراء بالكواد والجمل، عرض الدلافين، يخت كاتاماران فاخر، ورحلة الكنيسة والمسجد والجامع المعلق.',
+        en: 'Top Sharm El Sheikh tours include Ras Mohammed snorkelling, White Island, desert quad/camel safari, dolphin show, catamaran yacht cruise, and Sharm city tour.',
+        ru: 'Лучшие экскурсии: Рас-Мохаммед со снорклингом, Белый остров, пустынное сафари на квадроциклах/верблюдах, шоу дельфинов, прогулка на катамаране.',
+        it: 'I migliori tour includono Ras Mohammed con snorkeling, Isola Bianca, safari nel deserto in quad/cammello, spettacolo dei delfini, catamarano.',
+        de: 'Top-Touren: Ras Mohammed Schnorcheln, Weiße Insel, Wüstensafari mit Quad/Kamel, Delfinshow, Katamaran-Kreuzfahrt.',
+      }),
+    },
+    {
+      q: L(locale, {
+        ar: 'كم تكلفة رحلة شرم الشيخ اليومية؟',
+        en: 'How much does a Sharm El Sheikh day tour cost?',
+        ru: 'Сколько стоит однодневная экскурсия в Шарм-эль-Шейхе?',
+        it: 'Quanto costa un tour giornaliero a Sharm El Sheikh?',
+        de: 'Wie viel kostet ein Tagesausflug in Sharm El Sheikh?',
+      }),
+      a: L(locale, {
+        ar: 'تبدأ أسعار الرحلات اليومية من 25$ للأجانب أو من 400 جنيه للمصريين، وتشمل النقل والمرشد وأحياناً الغداء حسب الرحلة.',
+        en: 'Day tours start from $25 for foreign visitors or 400 EGP for locals, including transfer, guide and often lunch depending on the trip.',
+        ru: 'Цена от $25 для иностранцев и от 400 EGP для местных. Включает трансфер, гида и часто обед.',
+        it: 'Le escursioni partono da 25$ per stranieri o 400 EGP per egiziani, includono trasferimento, guida e spesso il pranzo.',
+        de: 'Tagesausflüge ab 25 $ für ausländische Gäste oder 400 EGP für Einheimische, inklusive Transfer, Reiseleiter und oft Mittagessen.',
+      }),
+    },
+    {
+      q: L(locale, {
+        ar: 'هل توفرون استقبال من مطار شرم الشيخ؟',
+        en: 'Do you offer Sharm El Sheikh airport transfers?',
+        ru: 'Предоставляете ли вы трансфер из аэропорта Шарм-эль-Шейха?',
+        it: 'Offrite i transfer dall\'aeroporto di Sharm El Sheikh?',
+        de: 'Bieten Sie Flughafentransfers in Sharm El Sheikh an?',
+      }),
+      a: L(locale, {
+        ar: 'نعم — خدمات استقبال وتوصيل من مطار شرم الشيخ بسيارات خاصة، ميكروباص، أو أوتوبيس لأي فندق. وكذلك بين شرم الشيخ ودهب والقاهرة والغردقة.',
+        en: 'Yes — private car, microbus or coach transfers from Sharm El Sheikh airport to any hotel, and between Sharm, Dahab, Cairo and Hurghada.',
+        ru: 'Да — трансферы из аэропорта Шарм-эль-Шейха на легковом авто, микроавтобусе или автобусе до любого отеля.',
+        it: 'Sì — transfer privati, microbus o pullman dall\'aeroporto di Sharm El Sheikh a qualsiasi hotel, e tra Sharm, Dahab, Il Cairo e Hurghada.',
+        de: 'Ja — private Transfers, Microbus oder Reisebus vom Flughafen Sharm El Sheikh zu jedem Hotel, sowie zwischen Sharm, Dahab, Kairo und Hurghada.',
+      }),
+    },
+    {
+      q: L(locale, {
+        ar: 'هل أحجز فنادق شرم الشيخ من خلالكم؟',
+        en: 'Can I book Sharm El Sheikh hotels with you?',
+        ru: 'Можно ли забронировать отели Шарм-эль-Шейха у вас?',
+        it: 'Posso prenotare gli hotel di Sharm El Sheikh con voi?',
+        de: 'Kann ich Hotels in Sharm El Sheikh bei Ihnen buchen?',
+      }),
+      a: L(locale, {
+        ar: 'نعم — نوفر أفضل أسعار فنادق شرم الشيخ ودهب على نظام All Inclusive وHalf Board مع تأكيد فوري ودفع آمن.',
+        en: 'Yes — best rates on All Inclusive & Half Board hotels in Sharm El Sheikh and Dahab with instant confirmation and secure payment.',
+        ru: 'Да — лучшие цены на отели Шарм-эль-Шейха и Дахаба, All Inclusive и Half Board, с мгновенным подтверждением.',
+        it: 'Sì — migliori tariffe su hotel All Inclusive e Mezza Pensione a Sharm El Sheikh e Dahab con conferma immediata.',
+        de: 'Ja — beste Preise für All-Inclusive- und Halbpension-Hotels in Sharm El Sheikh und Dahab mit sofortiger Bestätigung.',
+      }),
+    },
+    {
+      q: L(locale, {
+        ar: 'بأي لغات تتحدث مرشدوكم؟',
+        en: 'What languages do your guides speak?',
+        ru: 'На каких языках говорят ваши гиды?',
+        it: 'Che lingue parlano le vostre guide?',
+        de: 'Welche Sprachen sprechen Ihre Reiseleiter?',
+      }),
+      a: L(locale, {
+        ar: 'مرشدونا يتحدثون العربية، الإنجليزية، الروسية، الإيطالية والألمانية.',
+        en: 'Our guides speak Arabic, English, Russian, Italian and German.',
+        ru: 'Наши гиды говорят на арабском, английском, русском, итальянском и немецком.',
+        it: 'Le nostre guide parlano arabo, inglese, russo, italiano e tedesco.',
+        de: 'Unsere Reiseleiter sprechen Arabisch, Englisch, Russisch, Italienisch und Deutsch.',
+      }),
+    },
+  ]);
+
   return (
     <>
+      <JsonLd data={orgLd} id="ld-organization" />
+      <JsonLd data={websiteLd} id="ld-website" />
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
+      <JsonLd data={faqLd} id="ld-faq" />
       {/* ============ HERO — clean, centered, conversion-focused ============ */}
       <section className="relative min-h-[100svh] flex items-center text-cream overflow-hidden">
         <HeroSlider />

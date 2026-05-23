@@ -6,8 +6,33 @@ import { getSiteSettings } from '@/lib/site-settings';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Facebook, Instagram, Youtube, Sparkles, HelpCircle, ArrowRight } from 'lucide-react';
 import { buildWhatsAppLink, L } from '@/lib/utils';
 import { fetchCMSPage } from '@/lib/cms';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, buildTravelAgencyLd, crumbLabel } from '@/lib/seo';
 
 export const revalidate = 120;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: '/contact',
+    title: {
+      ar: 'تواصل معنا — لوتس شرم للسياحة | حجز رحلات شرم الشيخ',
+      en: 'Contact Us — Lotus Sharm Tourism | Sharm El Sheikh Bookings',
+      ru: 'Контакты — Lotus Sharm | Бронирование Шарм-эль-Шейх',
+      it: 'Contattaci — Lotus Sharm Tourism | Prenotazioni Sharm El Sheikh',
+      de: 'Kontakt — Lotus Sharm Tourism | Buchungen Sharm El Sheikh',
+    },
+    description: {
+      ar: 'تواصل مع لوتس شرم للسياحة لحجز رحلات شرم الشيخ، فنادق، خدمات نقل وأي استفسار. واتساب، إيميل، تليفون متاحون 24/7.',
+      en: 'Contact Lotus Sharm Tourism to book Sharm El Sheikh tours, hotels, transfers or any enquiry. WhatsApp, email and phone available 24/7.',
+      ru: 'Свяжитесь с Lotus Sharm для бронирования экскурсий, отелей и трансферов. WhatsApp, email, телефон — 24/7.',
+      it: 'Contatta Lotus Sharm per prenotare tour, hotel e transfer a Sharm El Sheikh. WhatsApp, email, telefono — 24/7.',
+      de: 'Kontaktieren Sie Lotus Sharm für Buchungen von Touren, Hotels und Transfers in Sharm El Sheikh. WhatsApp, E-Mail, Telefon — 24/7.',
+    },
+  });
+}
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -59,8 +84,16 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   const heroSubtitle = cms?.tr?.subtitle || t('contact.subtitle');
   const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-12.jpg';
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('contact', locale), url: `${SITE_URL}/${locale}/contact` },
+  ]);
+  const orgLd = buildTravelAgencyLd(settings, locale);
+
   return (
     <>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
+      <JsonLd data={orgLd} id="ld-organization" />
       <section className="relative bg-primary-900 text-cream py-16 md:py-24 overflow-hidden">
         <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />

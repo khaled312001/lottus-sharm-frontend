@@ -22,6 +22,8 @@ import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
 import { localeToApiCode, buildWhatsAppLink, L } from '@/lib/utils';
 import { inquiryWhatsAppLink } from '@/lib/whatsapp';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildBreadcrumbLd, crumbLabel } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -433,25 +435,49 @@ export default async function TripDetailPage({ params }: PageProps) {
       />
       <RecentlyViewedStrip excludeSlug={trip.slug} />
 
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'TouristTrip',
-            name: tr?.title,
-            description: tr?.shortDesc,
-            image: trip.heroImage?.url,
-            offers: {
-              '@type': 'Offer',
-              price: Number(trip.priceForeignUSD),
-              priceCurrency: 'USD',
-              availability: 'https://schema.org/InStock',
+      {/* JSON-LD: TouristTrip + BreadcrumbList */}
+      <JsonLd
+        id="ld-tourist-trip"
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'TouristTrip',
+          name: tr?.title,
+          description: tr?.shortDesc,
+          image: trip.heroImage?.url ? [trip.heroImage.url] : undefined,
+          touristType: ['family', 'couple', 'solo', 'group'],
+          itinerary: {
+            '@type': 'Place',
+            name: 'Sharm El Sheikh',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Sharm El Sheikh',
+              addressRegion: 'South Sinai',
+              addressCountry: 'EG',
             },
-            duration: `PT${trip.durationMinutes}M`,
-          }),
+          },
+          provider: {
+            '@type': 'TravelAgency',
+            '@id': `${SITE_URL}/#organization`,
+            name: 'Lotus Sharm Tourism',
+            url: SITE_URL,
+          },
+          offers: {
+            '@type': 'Offer',
+            price: Number(trip.priceForeignUSD),
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+            url: `${SITE_URL}/${locale}/trips/${trip.slug}`,
+          },
+          duration: `PT${trip.durationMinutes}M`,
         }}
+      />
+      <JsonLd
+        id="ld-breadcrumb"
+        data={buildBreadcrumbLd([
+          { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+          { name: crumbLabel('trips', locale), url: `${SITE_URL}/${locale}/trips` },
+          { name: tr?.title || trip.slug, url: `${SITE_URL}/${locale}/trips/${trip.slug}` },
+        ])}
       />
     </article>
   );

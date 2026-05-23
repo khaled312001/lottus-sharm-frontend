@@ -8,6 +8,8 @@ import { Price } from '@/components/public/price';
 import { api } from '@/lib/api';
 import { L, localeToApiCode, cn } from '@/lib/utils';
 import { buildWhatsAppLink } from '@/lib/utils';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, buildItemListLd, crumbLabel } from '@/lib/seo';
 
 export const revalidate = 60;
 
@@ -61,15 +63,31 @@ function pick(o: { ar: string; en: string; de: string; ru: string; it: string },
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return {
-    title: L(locale, { ar: 'حجز فنادق شرم الشيخ — لوتس شرم', en: 'Sharm El Sheikh hotels — Lotus Sharm', de: 'Hotels in Sharm El Sheikh — Lotus Sharm', ru: 'Отели Шарм-эль-Шейха — Lotus Sharm', it: 'Hotel a Sharm El Sheikh — Lotus Sharm' }),
-    description: L(locale, {
-      ar: 'احجز أفضل فنادق شرم الشيخ مع لوتس شرم — 3 ليالي 4 أيام شامل الانتقالات. أكثر من 25 فندق من 3 إلى 5 نجوم.',
-      en: 'Book the best Sharm El Sheikh hotels with Lotus Sharm — 3 nights/4 days incl. transfers. 25+ hotels from 3 to 5 stars.', de: 'Buchen Sie die besten Hotels in Sharm El Sheikh mit Lotus Sharm — 3 Nächte/4 Tage inkl. Transfers. 25+ Hotels von 3 bis 5 Sternen.',
-      ru: 'Лучшие отели Шарм-эль-Шейха — 3 ночи/4 дня с трансферами. Более 25 отелей.',
-      it: 'I migliori hotel a Sharm El Sheikh — 3 notti/4 giorni con trasferimenti. Oltre 25 hotel.',
-    }),
-  };
+  return buildPageMetadata({
+    locale,
+    path: '/hotels',
+    title: {
+      ar: 'فنادق شرم الشيخ — حجز أفضل الفنادق بأسعار خاصة | لوتس شرم',
+      en: 'Sharm El Sheikh Hotels — All Inclusive, Half Board Booking | Lotus Sharm',
+      ru: 'Отели Шарм-эль-Шейха — Бронирование All Inclusive | Lotus Sharm',
+      it: 'Hotel a Sharm El Sheikh — Prenotazione All Inclusive | Lotus Sharm',
+      de: 'Hotels in Sharm El Sheikh — Buchung All-Inclusive | Lotus Sharm',
+    },
+    description: {
+      ar: 'احجز أفضل فنادق شرم الشيخ ودهب وطابا بأنظمة All Inclusive و Half Board مع نقل مجاني من المطار. أكثر من 25 فندق من 3 إلى 5 نجوم بأسعار خاصة لعملاء لوتس شرم.',
+      en: 'Book the best hotels in Sharm El Sheikh, Dahab and Taba — All Inclusive & Half Board with free airport transfers. 25+ hotels from 3 to 5 stars at special Lotus Sharm rates.',
+      ru: 'Бронируйте лучшие отели Шарм-эль-Шейха, Дахаба и Табы — All Inclusive и Half Board, бесплатный трансфер. 25+ отелей 3–5★.',
+      it: 'Prenota i migliori hotel a Sharm El Sheikh, Dahab e Taba — All Inclusive e Mezza Pensione con transfer gratuito. 25+ hotel 3–5 stelle.',
+      de: 'Buchen Sie die besten Hotels in Sharm El Sheikh, Dahab und Taba — All-Inclusive und Halbpension mit kostenlosem Transfer. 25+ Hotels 3–5 Sterne.',
+    },
+    keywords: {
+      ar: 'فنادق شرم الشيخ, حجز فنادق شرم الشيخ, فنادق شرم الشيخ all inclusive, فنادق شرم الشيخ 5 نجوم, فنادق دهب, فنادق طابا',
+      en: 'sharm el sheikh hotels, sharm hotels booking, all inclusive sharm, sharm 5 star hotels, dahab hotels, taba hotels, half board sharm',
+      ru: 'отели Шарм-эль-Шейх, бронирование отелей Шарм, All Inclusive Шарм, отели 5 звезд Шарм, отели Дахаб',
+      it: 'hotel sharm el sheikh, prenotazione hotel sharm, all inclusive sharm, hotel 5 stelle sharm, hotel dahab, hotel taba',
+      de: 'hotels sharm el sheikh, hotel buchung sharm, all inclusive sharm, 5-sterne hotels sharm, dahab hotels',
+    },
+  });
 }
 
 export default async function HotelsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ region?: string }> }) {
@@ -96,8 +114,22 @@ export default async function HotelsPage({ params, searchParams }: { params: Pro
     if (byStars[h.stars]) byStars[h.stars].push(h);
   }
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('hotels', locale), url: `${SITE_URL}/${locale}/hotels` },
+  ]);
+  const itemListLd = buildItemListLd(
+    items.slice(0, 30).map((h) => ({
+      name: h.tr?.name || h.slug,
+      url: `${SITE_URL}/${locale}/hotels`,
+      image: h.heroImage?.url || null,
+    })),
+  );
+
   return (
     <main>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
+      <JsonLd data={itemListLd} id="ld-itemlist" />
       {/* HERO */}
       <section className="relative bg-primary-900 text-cream py-16 md:py-24 overflow-hidden">
         <Image src="/hero-slides/hero-04.jpg" alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />

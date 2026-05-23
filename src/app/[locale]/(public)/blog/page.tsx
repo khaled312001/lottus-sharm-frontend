@@ -9,8 +9,33 @@ import { localeToApiCode, buildWhatsAppLink, L } from '@/lib/utils';
 import { pickCoverImage } from '@/lib/blog-images';
 import { Calendar, Clock, BookOpen, MessageCircle, ArrowRight } from 'lucide-react';
 import { fetchCMSPage } from '@/lib/cms';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, crumbLabel } from '@/lib/seo';
 
 export const revalidate = 60;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: '/blog',
+    title: {
+      ar: 'مدونة لوتس شرم — أدلة سفر ونصائح شرم الشيخ والبحر الأحمر',
+      en: 'Lotus Sharm Blog — Travel Guides, Tips for Sharm El Sheikh & Red Sea',
+      ru: 'Блог Lotus Sharm — Гайды и советы по Шарм-эль-Шейху',
+      it: 'Blog Lotus Sharm — Guide e consigli su Sharm El Sheikh',
+      de: 'Lotus Sharm Blog — Reiseführer für Sharm El Sheikh & Rotes Meer',
+    },
+    description: {
+      ar: 'أدلة سياحية كاملة، أفضل الأنشطة، مواسم الزيارة، نصائح الغوص والسفاري، وكل ما تحتاج معرفته عن شرم الشيخ وسيناء والبحر الأحمر.',
+      en: 'Complete travel guides, top activities, best seasons, diving and safari tips — everything about Sharm El Sheikh, Sinai and the Red Sea.',
+      ru: 'Подробные путеводители, лучшие активности, сезоны, советы по дайвингу и сафари — всё о Шарм-эль-Шейхе и Красном море.',
+      it: 'Guide complete, attività top, stagioni migliori, consigli su diving e safari — tutto su Sharm El Sheikh e il Mar Rosso.',
+      de: 'Komplette Reiseführer, Top-Aktivitäten, beste Reisezeiten, Tauch- und Safari-Tipps — alles über Sharm El Sheikh und das Rote Meer.',
+    },
+  });
+}
 
 // Curated travel-guide topics shown as placeholders until the client publishes real posts
 const PLACEHOLDER_TOPICS = [
@@ -43,8 +68,14 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
   const heroSubtitle = cms?.tr?.subtitle || t('blog.subtitle');
   const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-09.jpg';
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('blog', locale), url: `${SITE_URL}/${locale}/blog` },
+  ]);
+
   return (
     <>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
       <section className="relative bg-primary-900 text-cream py-16 md:py-28 overflow-hidden">
         <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30 scale-105" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/65 to-primary-900" />

@@ -9,8 +9,33 @@ import type { TripDTO } from '@/types/api';
 import { localeToApiCode, L } from '@/lib/utils';
 import { Camera, ArrowRight, Video } from 'lucide-react';
 import { fetchCMSPage } from '@/lib/cms';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, crumbLabel } from '@/lib/seo';
 
 export const revalidate = 120;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: '/gallery',
+    title: {
+      ar: 'معرض صور شرم الشيخ — أجمل صور رحلات لوتس شرم',
+      en: 'Sharm El Sheikh Photo Gallery — Lotus Sharm Tours',
+      ru: 'Фотогалерея Шарм-эль-Шейх — Туры Lotus Sharm',
+      it: 'Galleria Fotografica Sharm El Sheikh — Tour Lotus Sharm',
+      de: 'Sharm El Sheikh Fotogalerie — Lotus Sharm Touren',
+    },
+    description: {
+      ar: 'استكشف صور وفيديوهات رحلات شرم الشيخ: رأس محمد، الجزيرة البيضاء، سفاري الصحراء، عرض الدلافين، يخت كاتاماران وأكثر.',
+      en: 'Explore Sharm El Sheikh tour photos and videos: Ras Mohammed, White Island, desert safari, dolphin show, catamaran cruises and more.',
+      ru: 'Фото и видео экскурсий: Рас-Мохаммед, Белый остров, сафари, дельфины, катамаран.',
+      it: 'Foto e video delle escursioni: Ras Mohammed, Isola Bianca, safari, delfini, catamarano.',
+      de: 'Fotos und Videos der Touren: Ras Mohammed, Weiße Insel, Safari, Delfine, Katamaran.',
+    },
+  });
+}
 
 export default async function GalleryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -77,8 +102,14 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
   const heroSubtitle = cms?.tr?.subtitle || t('gallery.subtitle');
   const heroImageUrl = cms?.heroImage?.url || '/hero-slides/hero-10.jpg';
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: crumbLabel('home', locale), url: `${SITE_URL}/${locale}` },
+    { name: crumbLabel('gallery', locale), url: `${SITE_URL}/${locale}/gallery` },
+  ]);
+
   return (
     <>
+      <JsonLd data={breadcrumbLd} id="ld-breadcrumb" />
       <section className="relative bg-primary-900 text-cream py-20 md:py-28 overflow-hidden">
         <Image src={heroImageUrl} alt="" fill className="object-cover opacity-30" sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/80 via-primary-900/70 to-primary-900" />

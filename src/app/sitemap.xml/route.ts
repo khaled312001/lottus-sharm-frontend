@@ -47,15 +47,31 @@ function urlXml(e: Entry): string {
 export async function GET() {
   const now = new Date().toISOString();
   const urls: Entry[] = [];
-  const staticPaths = ['', '/trips', '/hotels', '/transfers', '/about', '/gallery', '/blog', '/review', '/contact', '/privacy', '/terms', '/cancellation-policy'];
+  // Static pages — priority tuned per business value (commercial vs informational).
+  const staticPaths: Array<{ path: string; priority: number; changefreq: Entry['changefreq'] }> = [
+    { path: '', priority: 1.0, changefreq: 'daily' },
+    { path: '/trips', priority: 0.95, changefreq: 'daily' },
+    { path: '/hotels', priority: 0.9, changefreq: 'weekly' },
+    { path: '/transfers', priority: 0.9, changefreq: 'weekly' },
+    { path: '/gallery', priority: 0.7, changefreq: 'weekly' },
+    { path: '/about', priority: 0.6, changefreq: 'monthly' },
+    { path: '/contact', priority: 0.7, changefreq: 'monthly' },
+    { path: '/blog', priority: 0.7, changefreq: 'weekly' },
+    { path: '/review', priority: 0.5, changefreq: 'weekly' },
+    { path: '/reviews', priority: 0.5, changefreq: 'weekly' },
+    { path: '/fb-reviews', priority: 0.5, changefreq: 'weekly' },
+    { path: '/privacy', priority: 0.3, changefreq: 'yearly' },
+    { path: '/terms', priority: 0.3, changefreq: 'yearly' },
+    { path: '/cancellation-policy', priority: 0.3, changefreq: 'yearly' },
+  ];
 
-  for (const path of staticPaths) {
+  for (const { path, priority, changefreq } of staticPaths) {
     for (const loc of LOCALES) {
       urls.push({
         loc: `${SITE}/${loc}${path}`,
         lastmod: now,
-        changefreq: 'weekly',
-        priority: path === '' ? 1.0 : 0.7,
+        changefreq,
+        priority,
         alternates: altsFor(path),
       });
     }
