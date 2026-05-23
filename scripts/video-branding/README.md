@@ -20,7 +20,18 @@ pip install moviepy imageio-ffmpeg scipy numpy pillow
 `imageio-ffmpeg` bundles ffmpeg — no system install needed. Fonts (Georgia,
 Arial, Freestyle Script) ship with Windows; drop extras in `./fonts/`.
 
-## Quick start
+## Quick start — desktop app (recommended)
+
+```bash
+python studio.py
+```
+
+Opens the Lotus Sharm Auto-Editor GUI: pick the input folder, choose the music
+source (library / synth / file / paste a URL & click Download), pick a theme
+(or `(rotate)` to spread the 51 themes across the batch), then **Render Batch**.
+Live progress, log, safe Stop. Settings persist across sessions.
+
+## Quick start — CLI
 
 ```bash
 # one video, a named look
