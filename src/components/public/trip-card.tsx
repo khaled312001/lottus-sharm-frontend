@@ -84,6 +84,16 @@ export function TripCard({ trip, locale, index = 0 }: { trip: TripDTO; locale: s
                   <Price amount={price} from="EGP" />
                 </div>
                 <div className="text-[10px] text-cream/60">{t('common.perPerson')}</div>
+                <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/15 border border-accent/30 text-[9px] font-bold uppercase tracking-wider text-accent">
+                  <span className="w-1 h-1 rounded-full bg-accent" />
+                  {L(locale, {
+                    ar: 'تقسيط متاح · EasyCash',
+                    en: 'Installments · EasyCash',
+                    de: 'Raten · EasyCash',
+                    ru: 'Рассрочка · EasyCash',
+                    it: 'Rate · EasyCash',
+                  })}
+                </div>
               </div>
               <div className="text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-1 pb-1">
                 {t('common.bookNow')}

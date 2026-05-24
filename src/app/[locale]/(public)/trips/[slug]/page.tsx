@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { Clock, MapPin, Calendar, Check, X, Backpack, Star, Users, Sparkles, Award, ShieldCheck, MessageCircle, ArrowRight } from 'lucide-react';
+import { Clock, MapPin, Calendar, Check, X, Backpack, Star, Users, Sparkles, Award, ShieldCheck, MessageCircle, ArrowRight, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TripGallery } from '@/components/public/trip-gallery';
@@ -182,11 +182,12 @@ export default async function TripDetailPage({ params }: PageProps) {
         <div className="lg:col-span-2 space-y-10">
           {/* Trust badges row */}
           <Reveal>
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
               {[
-                { icon: ShieldCheck, ar: 'إلغاء مجاني', en: 'Free cancel',     en_short: 'Free cancel', de: 'Kostenlose Stornierung', de_short: 'Storno', ru: 'Бесплатная отмена', ru_short: 'Отмена', it: 'Cancellazione gratuita', it_short: 'Cancellaz.', sub_ar: 'قبل 24 ساعة', sub_en: 'Up to 24h',     sub_ru: 'За 24 часа',  sub_it: 'Fino a 24h' },
-                { icon: Award,       ar: 'تقييم 4.9★', en: 'Rated 4.9★',       en_short: '4.9★ Rated',  de: 'Bewertung 4.9★', de_short: '4.9★', ru: 'Рейтинг 4.9★',      ru_short: '4.9★',   it: 'Voto 4.9★',             it_short: '4.9★',      sub_ar: '500+ تقييم',  sub_en: '500+ reviews', sub_ru: '500+ отзывов', sub_it: '500+ recensioni' },
-                { icon: MessageCircle, ar: 'تأكيد فوري', en: 'Instant confirm', en_short: 'Instant',     de: 'Sofortbestätigung', de_short: 'Sofort', ru: 'Мгн. подтверждение', ru_short: 'Мгновенно', it: 'Conferma immediata',  it_short: 'Immediata',  sub_ar: 'عبر واتساب', sub_en: 'via WhatsApp', sub_ru: 'через WhatsApp', sub_it: 'via WhatsApp' },
+                { icon: ShieldCheck, ar: 'إلغاء مجاني', en: 'Free cancel',     en_short: 'Free cancel', de: 'Kostenlose Stornierung', de_short: 'Storno', ru: 'Бесплатная отмена', ru_short: 'Отмена', it: 'Cancellazione gratuita', it_short: 'Cancellaz.', sub_ar: 'قبل 24 ساعة', sub_en: 'Up to 24h',     sub_de: 'Bis zu 24 Std.',     sub_ru: 'За 24 часа',  sub_it: 'Fino a 24h' },
+                { icon: Award,       ar: 'تقييم 4.9★', en: 'Rated 4.9★',       en_short: '4.9★ Rated',  de: 'Bewertung 4.9★', de_short: '4.9★', ru: 'Рейтинг 4.9★',      ru_short: '4.9★',   it: 'Voto 4.9★',             it_short: '4.9★',      sub_ar: '500+ تقييم',  sub_en: '500+ reviews', sub_de: '500+ Bewertungen',   sub_ru: '500+ отзывов', sub_it: '500+ recensioni' },
+                { icon: MessageCircle, ar: 'تأكيد فوري', en: 'Instant confirm', en_short: 'Instant',     de: 'Sofortbestätigung', de_short: 'Sofort', ru: 'Мгн. подтверждение', ru_short: 'Мгновенно', it: 'Conferma immediata',  it_short: 'Immediata',  sub_ar: 'عبر واتساب', sub_en: 'via WhatsApp', sub_de: 'über WhatsApp',      sub_ru: 'через WhatsApp', sub_it: 'via WhatsApp' },
+                { icon: CreditCard,  ar: 'تقسيط متاح', en: 'Pay in instalments', en_short: 'Instalments', de: 'Ratenzahlung',        de_short: 'Raten',  ru: 'Рассрочка',          ru_short: 'Рассрочка', it: 'Pagamento a rate',    it_short: 'Rate',       sub_ar: 'عبر EasyCash', sub_en: 'via EasyCash', sub_de: 'über EasyCash',      sub_ru: 'через EasyCash', sub_it: 'tramite EasyCash' },
               ].map((b, i) => (
                 <div
                   key={i}
@@ -201,7 +202,7 @@ export default async function TripDetailPage({ params }: PageProps) {
                       <span className="sm:hidden">{L(locale, { ar: b.ar, en: b.en_short, ru: b.ru_short, it: b.it_short, de: b.de_short })}</span>
                       <span className="hidden sm:inline">{L(locale, { ar: b.ar, en: b.en, ru: b.ru, it: b.it, de: b.de })}</span>
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-normal break-words mt-0.5">{L(locale, { ar: b.sub_ar, en: b.sub_en, ru: b.sub_ru, it: b.sub_it, de: b.sub_en })}</div>
+                    <div className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-normal break-words mt-0.5">{L(locale, { ar: b.sub_ar, en: b.sub_en, ru: b.sub_ru, it: b.sub_it, de: b.sub_de })}</div>
                   </div>
                 </div>
               ))}

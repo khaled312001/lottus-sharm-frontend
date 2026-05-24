@@ -709,6 +709,134 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* ============ EASYCASH INSTALMENTS — NEW SERVICE ============ */}
+      <section className="relative py-14 md:py-20 bg-gradient-to-b from-cream via-muted/40 to-cream overflow-hidden hairline-top">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+        <div aria-hidden className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+
+        <div className="container relative">
+          <Reveal className="text-center max-w-2xl mx-auto mb-10 md:mb-14 flex flex-col items-center">
+            <span className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-accent/15 border border-accent/40 text-accent text-[11px] font-extrabold uppercase tracking-[0.18em]">
+              <Sparkles className="h-3.5 w-3.5" />
+              {L(locale, { ar: 'خدمة جديدة', en: 'New service', de: 'Neuer Service', ru: 'Новая услуга', it: 'Nuovo servizio' })}
+            </span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
+              {L(locale, {
+                ar: 'اقسّط رحلتك بسهولة مع EasyCash',
+                en: 'Pay your trip in instalments — with EasyCash',
+                de: 'Zahlen Sie Ihre Reise in Raten — mit EasyCash',
+                ru: 'Оплачивайте поездку в рассрочку — с EasyCash',
+                it: 'Paga il tuo viaggio a rate — con EasyCash',
+              })}
+            </h2>
+            <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-xl">
+              {L(locale, {
+                ar: 'كل رحلاتنا في شرم الشيخ متاحة الآن بالتقسيط — سهل، سريع، وبدون تعقيد.',
+                en: 'All our Sharm El Sheikh trips are now available in instalments — simple, fast, and hassle-free.',
+                de: 'Alle unsere Sharm-El-Sheikh-Touren sind ab sofort in Raten erhältlich — einfach, schnell und unkompliziert.',
+                ru: 'Все наши экскурсии в Шарм-эль-Шейхе теперь доступны в рассрочку — просто, быстро и без лишних формальностей.',
+                it: 'Tutti i nostri tour a Sharm El Sheikh sono ora disponibili a rate — semplice, veloce e senza complicazioni.',
+              })}
+            </p>
+          </Reveal>
+
+          <Reveal>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8 items-stretch">
+              {/* Logo + tagline card */}
+              <div className="lg:col-span-2 relative rounded-3xl overflow-hidden bg-gradient-to-br from-primary via-primary-800 to-primary-900 text-cream p-8 md:p-10 flex flex-col justify-between min-h-[280px] shadow-xl">
+                <div aria-hidden className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-accent/20 blur-2xl" />
+                <div aria-hidden className="absolute top-3 right-3 h-px w-24 bg-gradient-to-r from-transparent to-accent/60" />
+
+                <div className="relative inline-flex items-center justify-center rounded-2xl bg-cream p-5 self-start shadow-lg">
+                  <Image
+                    src="/logo-easycash.png"
+                    alt="EasyCash"
+                    width={140}
+                    height={140}
+                    className="h-20 w-20 md:h-24 md:w-24 object-contain"
+                  />
+                </div>
+
+                <div className="relative mt-6">
+                  <div className="text-[11px] uppercase tracking-[0.2em] text-accent font-bold mb-2">
+                    {L(locale, {
+                      ar: 'الشريك الرسمي للتقسيط',
+                      en: 'Our official instalment partner',
+                      de: 'Unser offizieller Ratenzahlungspartner',
+                      ru: 'Наш официальный партнёр по рассрочке',
+                      it: 'Il nostro partner ufficiale per le rate',
+                    })}
+                  </div>
+                  <p className="font-serif text-2xl md:text-3xl leading-tight font-bold">
+                    {L(locale, {
+                      ar: 'احجز رحلتك دلوقتي… وادفعها على دفعات.',
+                      en: 'Book your trip now — pay over time.',
+                      de: 'Buchen Sie jetzt — zahlen Sie in Raten.',
+                      ru: 'Бронируйте сейчас — платите частями.',
+                      it: 'Prenota ora — paga a rate.',
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Benefits grid */}
+              <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
+                {[
+                  {
+                    icon: Clock,
+                    title: L(locale, { ar: 'موافقة في دقايق', en: 'Approval in minutes', de: 'Zusage in Minuten', ru: 'Одобрение за минуты', it: 'Approvazione in pochi minuti' }),
+                    body: L(locale, { ar: 'بدون أوراق معقّدة ولا انتظار طويل.', en: 'No paperwork, no waiting around.', de: 'Kein Papierkram, keine langen Wartezeiten.', ru: 'Без сложных бумаг и долгого ожидания.', it: 'Niente burocrazia, niente attese.' }),
+                  },
+                  {
+                    icon: CreditCard,
+                    title: L(locale, { ar: 'دفعات مرنة', en: 'Flexible plans', de: 'Flexible Pläne', ru: 'Гибкие планы', it: 'Piani flessibili' }),
+                    body: L(locale, { ar: 'اختار خطة الدفع اللي بتناسبك على عدة شهور.', en: 'Pick a plan that fits you across several months.', de: 'Wählen Sie einen Plan über mehrere Monate.', ru: 'Выберите план оплаты на несколько месяцев.', it: 'Scegli un piano su più mesi.' }),
+                  },
+                  {
+                    icon: ShieldCheck,
+                    title: L(locale, { ar: 'آمن ومضمون', en: 'Safe & secure', de: 'Sicher & geprüft', ru: 'Безопасно и надёжно', it: 'Sicuro e affidabile' }),
+                    body: L(locale, { ar: 'كل المعاملات تتم عبر منصة EasyCash المعتمدة.', en: 'All transactions handled by the trusted EasyCash platform.', de: 'Alle Zahlungen über die geprüfte EasyCash-Plattform.', ru: 'Все операции через проверенную платформу EasyCash.', it: 'Tutto gestito dalla piattaforma EasyCash certificata.' }),
+                  },
+                ].map((f, i) => (
+                  <div key={i} className="group bg-white rounded-2xl p-5 md:p-6 border border-accent/15 hover:border-accent/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
+                    <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-accent/25 to-accent/10 text-accent-700 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                      <f.icon className="h-5 w-5 md:h-6 md:w-6" />
+                    </div>
+                    <h3 className="font-serif text-lg md:text-xl font-bold text-primary leading-tight mb-2">{f.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{f.body}</p>
+                  </div>
+                ))}
+
+                <div className="sm:col-span-3 flex flex-col sm:flex-row items-center justify-between gap-4 mt-1 px-5 py-4 rounded-2xl bg-gradient-to-r from-accent/15 via-accent/10 to-accent/15 border border-accent/30">
+                  <p className="text-sm md:text-base text-primary font-semibold text-center sm:text-start">
+                    {L(locale, {
+                      ar: 'متاح على كل الرحلات — بحرية، سفاري، غوص وغيرها.',
+                      en: 'Available on every trip — sea tours, safaris, diving and more.',
+                      de: 'Verfügbar für alle Touren — Seefahrten, Safaris, Tauchen und mehr.',
+                      ru: 'Доступно для всех экскурсий — морских туров, сафари, дайвинга и других.',
+                      it: 'Disponibile per ogni tour — gite in mare, safari, immersioni e altro.',
+                    })}
+                  </p>
+                  <Button asChild size="sm" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-md shadow-accent/25 group whitespace-nowrap">
+                    <Link href="/trips">
+                      {L(locale, {
+                        ar: 'احجز واقسّط الآن',
+                        en: 'Book & pay in instalments',
+                        de: 'Jetzt buchen & in Raten zahlen',
+                        ru: 'Бронировать в рассрочку',
+                        it: 'Prenota a rate',
+                      })}
+                      <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ============ REVIEWS CAROUSEL ============ */}
       {reviews.length > 0 && (
         <section className="relative py-10 md:py-16 bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 text-cream overflow-hidden hairline-top">

@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { Link } from '@/i18n/routing';
-import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, Code2, Star, ArrowRight } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, Code2, Star, ArrowRight, CreditCard } from 'lucide-react';
 import { NewsletterForm } from './newsletter-form';
 import { Logo } from './logo';
 import { getLocalizedTagline } from '@/lib/site-settings';
@@ -95,6 +96,48 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
             </div>
             <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
           </Link>
+        </div>
+      </div>
+
+      {/* Payment methods strip — EasyCash installments */}
+      <div className="relative border-t border-cream/10">
+        <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        <div className="container py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-4">
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-cream/70 font-bold">
+              <CreditCard className="h-3.5 w-3.5 text-accent" />
+              {L(locale, {
+                ar: 'وسائل الدفع المتاحة',
+                en: 'Available payment options',
+                de: 'Verfügbare Zahlungsoptionen',
+                ru: 'Доступные способы оплаты',
+                it: 'Opzioni di pagamento disponibili',
+              })}
+            </div>
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-cream/95 border border-accent/30 shadow-md">
+              <Image
+                src="/logo-easycash.png"
+                alt="EasyCash"
+                width={48}
+                height={48}
+                className="h-10 w-10 object-contain"
+              />
+              <div className="text-start leading-tight">
+                <div className="text-[10px] uppercase tracking-wider text-primary/70 font-bold">
+                  {L(locale, { ar: 'الآن متاح', en: 'Now available', de: 'Jetzt verfügbar', ru: 'Теперь доступно', it: 'Ora disponibile' })}
+                </div>
+                <div className="text-sm font-extrabold text-primary">
+                  {L(locale, {
+                    ar: 'التقسيط عبر EasyCash',
+                    en: 'Installments via EasyCash',
+                    de: 'Ratenzahlung über EasyCash',
+                    ru: 'Рассрочка через EasyCash',
+                    it: 'Rate con EasyCash',
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
