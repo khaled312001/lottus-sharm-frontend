@@ -723,7 +723,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
               {L(locale, {
-                ar: 'اقسّط رحلتك بسهولة مع EasyCash',
+                ar: 'قسط رحلتك — أقساط ميسرة مع EasyCash',
                 en: 'Pay your trip in instalments — with EasyCash',
                 de: 'Zahlen Sie Ihre Reise in Raten — mit EasyCash',
                 ru: 'Оплачивайте поездку в рассрочку — с EasyCash',
