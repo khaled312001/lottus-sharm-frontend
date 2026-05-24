@@ -6,19 +6,23 @@ import { ScrollProgress } from '@/components/motion-kit';
 import { CommandPalette } from '@/components/public/command-palette';
 import { BackToTop } from '@/components/public/back-to-top';
 import { GlobalDiscountBanner } from '@/components/public/global-discount-banner';
+import { EasyCashTopBar } from '@/components/public/easycash-top-bar';
 import { getSiteSettings } from '@/lib/site-settings';
 
 export default async function PublicLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   const settings = await getSiteSettings();
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
       <ScrollProgress />
+      <EasyCashTopBar locale={locale} />
       <GlobalDiscountBanner />
       <Header />
       <MainWrapper>{children}</MainWrapper>

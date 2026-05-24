@@ -128,6 +128,22 @@
 }
 
 @layer components {
+  /* EasyCash top bar — seamless infinite ticker. Content is rendered twice;
+     translating the track by -50% lines copy-2's start exactly on copy-1's,
+     so the loop has no visible seam. */
+  @keyframes ec-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .ec-marquee-track {
+    animation: ec-marquee 42s linear infinite;
+    will-change: transform;
+  }
+  .ec-marquee-track:hover { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .ec-marquee-track { animation: none; }
+  }
+
   .gradient-sea {
     background: linear-gradient(135deg, #0a2828 0%, #0d3a3a 50%, #134949 100%);
   }

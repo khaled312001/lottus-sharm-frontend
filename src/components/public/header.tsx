@@ -86,7 +86,7 @@ export function Header() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={cn(
-        'fixed top-0 inset-x-0 z-50 transition-all duration-500',
+        'fixed top-9 inset-x-0 z-50 transition-all duration-500',
         transparent
           ? 'bg-transparent border-b border-transparent'
           : 'bg-primary-900/95 backdrop-blur-md border-b border-accent/15 shadow-[0_4px_30px_-12px_rgba(10,40,40,0.4)]',
