@@ -47,16 +47,34 @@ def normalize_url(u):
     return urllib.parse.urljoin("https://lotussharm.com", u)
 
 
+_GARBAGE_RX = [
+    re.compile(r"\d+\s*(جنيه|دولار|EGP|\$|USD|euro|€)", re.I),
+    re.compile(r"\bالفرد\s+(المصري|الأجنبي|العربي|للأجنبي|للمصري)\b"),
+    re.compile(r"\d+:\d+"),                              # 2:30
+    re.compile(r"^\s*\d+\s*(صباح|ص\.?|مساء|م\.?|ضهر|عصر|am|pm)\b", re.I),
+    re.compile(r"^(التاسعة|العاشرة|الحادية|الثانية|الثالثة|الرابعة|الخامسة|"
+               r"السادسة|السابعة|الثامنة|اتنين ونص|أربعة ونص|ثلاثة ونص)\b"),
+]
+
+
+def _is_garbage(txt: str) -> bool:
+    return any(rx.search(txt) for rx in _GARBAGE_RX)
+
+
 def extract_highlights(html: str, n=4):
-    """Pick up to n <li> bullets from a long-description HTML."""
+    """Pick the FIRST meaningful <li> bullets from a long-description HTML —
+    filtering out schedule (times) and price-only items."""
     if not html: return []
     items = re.findall(r"<li[^>]*>(.*?)</li>", html, flags=re.S | re.I)
     out = []
     for it in items:
         txt = re.sub(r"<[^>]+>", "", it).strip()
         txt = re.sub(r"\s+", " ", txt)
-        if txt and len(txt) <= 90:
-            out.append(txt)
+        if not txt: continue
+        if len(txt) < 15: continue
+        if len(txt) > 90: continue
+        if _is_garbage(txt): continue
+        out.append(txt)
         if len(out) >= n: break
     return out
 

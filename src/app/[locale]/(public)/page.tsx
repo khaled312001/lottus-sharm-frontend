@@ -6,7 +6,6 @@ import { TripCard } from '@/components/public/trip-card';
 import { Reveal } from '@/components/public/motion';
 import { HeroSlider } from '@/components/public/hero-slider';
 import { ReviewsCarousel, type ReviewItem } from '@/components/public/reviews-carousel';
-import { FacebookReviewsWidget } from '@/components/public/facebook-reviews-widget';
 import { api } from '@/lib/api';
 import type { TripDTO } from '@/types/api';
 import {
@@ -462,8 +461,58 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* ============ FACEBOOK REVIEWS — directly after hero ============ */}
-      <FacebookReviewsWidget />
+      {/* ============ FACEBOOK REVIEWS — CTA card linking to FB page ============ */}
+      <section className="relative py-10 md:py-12 bg-gradient-to-b from-[#f0f2f5] via-white to-[#f0f2f5]">
+        <div className="container">
+          <Reveal>
+            <div className="relative max-w-3xl mx-auto rounded-2xl overflow-hidden bg-gradient-to-br from-[#1877F2] via-[#0e63d4] to-[#0a4d9e] text-white p-6 md:p-8 shadow-xl">
+              <div aria-hidden className="absolute -top-16 -end-16 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+              <div className="relative flex flex-col md:flex-row items-center md:items-start gap-5 text-center md:text-start">
+                <div className="shrink-0 inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/15 backdrop-blur">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-8 w-8 md:h-9 md:w-9 text-white">
+                    <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3V22A10 10 0 0 0 22 12Z"/>
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] uppercase tracking-[0.2em] text-white/80 font-bold mb-1">
+                    {L(locale, { ar: 'تقييمات حقيقية من زوارنا', en: 'Real reviews from our guests', de: 'Echte Bewertungen unserer Gäste', ru: 'Настоящие отзывы наших гостей', it: 'Recensioni reali dai nostri ospiti' })}
+                  </div>
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold leading-tight mb-2">
+                    {L(locale, {
+                      ar: 'شوف تقييمات لوتس شرم على فيسبوك',
+                      en: 'See Lotus Sharm reviews on Facebook',
+                      de: 'Lotus-Sharm-Bewertungen auf Facebook ansehen',
+                      ru: 'Смотрите отзывы Lotus Sharm на Facebook',
+                      it: 'Vedi le recensioni Lotus Sharm su Facebook',
+                    })}
+                  </h2>
+                  <p className="text-sm md:text-base text-white/90 mb-4 max-w-xl">
+                    {L(locale, {
+                      ar: 'كل تقييمات صفحتنا الرسمية على فيسبوك من ضيوف حقيقيين بأسمائهم وصورهم — بدون أي تعديل.',
+                      en: 'All reviews on our official Facebook page — real guests, real names, real photos. Unedited.',
+                      de: 'Alle Bewertungen auf unserer offiziellen Facebook-Seite — echte Gäste, echte Namen, echte Fotos.',
+                      ru: 'Все отзывы с нашей официальной страницы Facebook — реальные гости и фотографии.',
+                      it: 'Tutte le recensioni sulla nostra pagina Facebook ufficiale — ospiti reali, nomi reali, foto reali.',
+                    })}
+                  </p>
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61550600242507&sk=reviews"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1877F2] font-bold text-sm hover:bg-white/95 hover:-translate-y-0.5 transition-all shadow-lg"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                      <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3V22A10 10 0 0 0 22 12Z"/>
+                    </svg>
+                    {L(locale, { ar: 'افتح التقييمات على فيسبوك', en: 'Open reviews on Facebook', de: 'Bewertungen auf Facebook ansehen', ru: 'Открыть отзывы в Facebook', it: 'Apri recensioni su Facebook' })}
+                    <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* ============ ABOUT / INTRO ============ */}
       <section className="relative py-14 md:py-24 bg-cream overflow-hidden hairline-top">

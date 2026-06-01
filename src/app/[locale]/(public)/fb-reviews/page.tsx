@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { Facebook, ArrowRight } from 'lucide-react';
 import { L } from '@/lib/utils';
 import { Reveal } from '@/components/public/motion';
-import { FacebookReviewsWidget } from '@/components/public/facebook-reviews-widget';
 
 export const dynamic = 'force-static';
 
@@ -73,8 +72,27 @@ export default async function FbReviewsPage({ params }: { params: Promise<{ loca
         </div>
       </section>
 
-      {/* Live Facebook reviews (Elfsight) */}
-      <FacebookReviewsWidget />
+      {/* Body: hand the visitor straight to Facebook with another CTA card */}
+      <section className="container py-10 md:py-12 text-center">
+        <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+          {L(locale, {
+            ar: 'الزر اللي تحت هياخدك على صفحة التقييمات على فيسبوك مباشرة.',
+            en: 'The button below opens the Facebook reviews page directly.',
+            de: 'Der Button unten öffnet die Facebook-Bewertungen direkt.',
+            ru: 'Кнопка ниже откроет страницу отзывов в Facebook.',
+            it: 'Il pulsante qui sotto apre direttamente la pagina recensioni su Facebook.',
+          })}
+        </p>
+        <a
+          href="https://www.facebook.com/profile.php?id=61550600242507&sk=reviews"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1877F2] hover:bg-[#0e63d4] text-white font-bold shadow-lg transition-all"
+        >
+          <Facebook className="h-5 w-5" />
+          {L(locale, { ar: 'افتح التقييمات على فيسبوك', en: 'Open reviews on Facebook', de: 'Bewertungen auf Facebook ansehen', ru: 'Открыть отзывы в Facebook', it: 'Apri recensioni su Facebook' })}
+        </a>
+      </section>
     </main>
   );
 }

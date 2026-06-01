@@ -104,14 +104,35 @@ def _ken_burns(clip, kind=0):
     return zoomed.with_position(pos)
 
 
-def build_slideshow(images, body_d, area_w, area_h, cf=0.6):
-    """Crossfaded Ken-Burns slideshow. Returns (clip, actual_duration).
-    Auto-adapts per-image time so 3 images stretch and 15 images don't blur."""
+def _apply_transition(clip, mode, cf):
+    """One of 5 incoming-clip transition styles — gives the slideshow real
+    variety (slide-in, zoom-in punch, fade…)."""
+    from moviepy import vfx
+    if mode == 1:
+        return clip.with_effects([vfx.SlideIn(cf, "left"),
+                                  vfx.CrossFadeIn(cf * 0.6)])
+    if mode == 2:
+        return clip.with_effects([vfx.SlideIn(cf, "right"),
+                                  vfx.CrossFadeIn(cf * 0.6)])
+    if mode == 3:                                          # zoom-in punch
+        def scale(t):
+            k = min(1.0, t / cf)
+            return 1.18 - 0.18 * U.ease_out_cubic(k)
+        return clip.with_effects([vfx.Resize(scale),
+                                  vfx.CrossFadeIn(cf)])
+    if mode == 4:
+        return clip.with_effects([vfx.SlideIn(cf, "top"),
+                                  vfx.CrossFadeIn(cf * 0.6)])
+    return clip.with_effects([vfx.CrossFadeIn(cf)])         # classic fade
+
+
+def build_slideshow(images, body_d, area_w, area_h, cf=0.55):
+    """Ken-Burns slideshow with VARIED transitions. Returns (clip, duration)."""
     from moviepy import ImageClip, concatenate_videoclips, vfx
     n = len(images)
     if n == 0:
         raise ValueError("no images")
-    per = max(2.5, min(6.0, (body_d + (n - 1) * cf) / n))
+    per = max(3.0, min(6.0, (body_d + (n - 1) * cf) / n))
     actual = n * per - (n - 1) * cf
     clips = []
     for i, p in enumerate(images):
@@ -119,20 +140,31 @@ def build_slideshow(images, body_d, area_w, area_h, cf=0.6):
         fitted = _fit_to_area(clip, area_w, area_h)
         zoomed = _ken_burns(fitted, kind=i)
         if i > 0:
-            zoomed = zoomed.with_effects([vfx.CrossFadeIn(cf)])
+            zoomed = _apply_transition(zoomed, mode=(i % 5), cf=cf)
         clips.append(zoomed)
     body = concatenate_videoclips(clips, method="compose", padding=-cf)
     return body, actual
 
 
 # ============================================================ text overlays
+def _measure_w(draw, text, font):
+    """Use textbbox for true rendered width (textlength under-measures
+    joined Arabic ligatures)."""
+    try:
+        b = draw.textbbox((0, 0), text, font=font)
+        return b[2] - b[0]
+    except Exception:
+        return draw.textlength(text, font=font)
+
+
 def _wrap_lines(draw, text, font, max_w):
-    """Word-wrap a string into lines that fit within max_w pixels."""
+    """Word-wrap LOGICAL text. Shape each candidate line for measurement so
+    Arabic ligatures are sized correctly."""
     words = text.split()
     lines, cur = [], ""
     for w in words:
         trial = (cur + " " + w).strip()
-        if draw.textlength(trial, font=font) <= max_w:
+        if _measure_w(draw, U.shape_ar(trial), font) <= max_w:
             cur = trial
         else:
             if cur: lines.append(cur)
@@ -154,49 +186,49 @@ def _render_card(title, lines, palette, max_w, accent_pill=None):
     y = 20
 
     if accent_pill:
-        f_pill = U.font("sans_bold", 20)
+        f_pill = U.font("sans_bold", 28)
         text = U.shape_ar(accent_pill)
-        tw = d.textlength(text, font=f_pill)
-        pad_x = 18
+        tw = _measure_w(d, text, f_pill)
+        pad_x = 26
         pill_w = int(tw) + 2 * pad_x
-        pill_h = 36
+        pill_h = 52
         x0 = cx - pill_w // 2
         d.rounded_rectangle([x0, y, x0 + pill_w, y + pill_h], radius=pill_h // 2,
-                            fill=U.with_alpha(accent, 230))
+                            fill=U.with_alpha(accent, 240))
         d.text((cx, y + pill_h // 2), text, font=f_pill,
                fill=C.TEAL_DEEP, anchor="mm")
-        y += pill_h + 18
+        y += pill_h + 22
 
-    # title — auto-fit
+    # title — bigger, auto-fit + wrap; shape per-line; textbbox-based measure
     if title:
-        ttl = U.shape_ar(title)
-        size = 64
-        # use sans_bold to cover Arabic glyphs cleanly
-        while size > 28:
+        size = 80                                    # much bigger default
+        while size > 40:
             f_main = U.font("sans_bold", size)
-            if d.textlength(ttl, font=f_main) <= max_w:
+            wrap = _wrap_lines(d, title, f_main, max_w)
+            longest = max((_measure_w(d, U.shape_ar(l), f_main) for l in wrap),
+                          default=0)
+            if len(wrap) <= 2 and longest <= max_w:
                 break
             size -= 4
-        # may still overflow — wrap
         f_main = U.font("sans_bold", size)
-        wrap = _wrap_lines(d, ttl, f_main, max_w)
-        for line in wrap[:3]:
-            d.text((cx, y), line, font=f_main, fill=C.WHITE, anchor="mt",
-                   stroke_width=2, stroke_fill=(0, 0, 0, 200))
-            y += size + 8
-        y += 12
+        wrap = _wrap_lines(d, title, f_main, max_w)
+        for line in wrap[:2]:
+            d.text((cx, y), U.shape_ar(line), font=f_main, fill=C.WHITE,
+                   anchor="mt", stroke_width=4, stroke_fill=(0, 0, 0, 240))
+            y += size + 14
+        y += 18
 
-    # description lines
+    # description / highlights — bigger sans-bold body text
     if lines:
-        f_sub = U.font("sans", 26)
+        f_sub = U.font("sans_bold", 44)
         for raw in lines[:3]:
-            line = U.shape_ar(raw)
-            wrap = _wrap_lines(d, line, f_sub, max_w)
+            wrap = _wrap_lines(d, raw, f_sub, max_w)
             for w in wrap[:2]:
-                d.text((cx, y), w, font=f_sub, fill=U.with_alpha(accent_l, 245),
-                       anchor="mt", stroke_width=2, stroke_fill=(0, 0, 0, 180))
-                y += 32
-            y += 6
+                d.text((cx, y), U.shape_ar(w), font=f_sub,
+                       fill=C.WHITE, anchor="mt",
+                       stroke_width=3, stroke_fill=(0, 0, 0, 230))
+                y += 56
+            y += 10
 
     # tight crop
     bbox = img.getbbox()
@@ -276,12 +308,31 @@ def _animated_text(card, start, duration, y_top, fade_in=0.5, fade_out=0.5,
     return clip.with_position(pos)
 
 
+import re as _re
+
+
+def _augment_highlights(meta, lang="ar"):
+    """Use real highlights when available, fall back to sentence-splitting
+    shortDesc for trips with poor structured data."""
+    out = list(meta["highlights"][lang])
+    if len(out) >= 3:
+        return out[:3]
+    short = meta["shortDesc"][lang] or meta["shortDesc"]["en"] or ""
+    for p in _re.split(r"[.。…!?؟;:،]+", short):
+        p = p.strip()
+        if 18 <= len(p) <= 90 and p not in out:
+            out.append(p)
+            if len(out) >= 3:
+                break
+    return out[:3]
+
+
 def build_text_schedule(meta, body_d, palette):
     """Decide what text appears when, and return a list of moviepy clips."""
     title = meta["title"]["ar"] or meta["title"]["en"]
     title_en = meta["title"]["en"]
     short = meta["shortDesc"]["ar"] or meta["shortDesc"]["en"]
-    highlights = meta["highlights"]["ar"][:3] or meta["highlights"]["en"][:3]
+    highlights = _augment_highlights(meta, "ar")
     duration_min = meta.get("durationMinutes") or 0
     egp = meta["priceLocalEGP"]
     usd = meta["priceForeignUSD"]
@@ -292,35 +343,36 @@ def build_text_schedule(meta, body_d, palette):
     upper_y = text_area_top + 40                         # for the title block
     lower_y = text_area_bot - 360                        # for the highlights / price
 
-    # ---- Phase 1: title + arabic short (0 .. body_d * 0.35) ----
-    t_phase1_end = max(4.0, body_d * 0.35)
+    # ---- Phase 1: title-only card (0 .. body_d * 0.32) ----
+    t_phase1_end = max(4.0, body_d * 0.32)
     card1, h1 = _render_card(
         title=title,
-        lines=([short] if short else []),
+        lines=None,
         palette=palette,
-        max_w=C.W - 100,
-        accent_pill="رحلة جديدة · Lotus Sharm",
+        max_w=C.W - 200,                            # safety margin for Arabic
+        accent_pill="رحلة جديدة · NEW TRIP",
     )
-    clips = [_animated_text(card1, 0.4, t_phase1_end - 0.4, upper_y)]
+    clips = [_animated_text(card1, 0.4, t_phase1_end - 0.4,
+                            upper_y, fade_in=0.6, fade_out=0.5)]
 
-    # ---- Phase 2: highlights one-by-one (35% .. 70%) ----
-    t_phase2_start = t_phase1_end + 0.3
+    # ---- Phase 2: highlights one-by-one (32% .. 70%) ----
+    t_phase2_start = t_phase1_end + 0.2
     t_phase2_end = body_d * 0.70
     hl_clips = []
     if highlights:
-        per = max(1.8, (t_phase2_end - t_phase2_start) / max(1, len(highlights)))
+        per = max(2.0, (t_phase2_end - t_phase2_start) / max(1, len(highlights)))
         for i, h in enumerate(highlights):
             card, ch = _render_card(
                 title=None,
                 lines=[h],
                 palette=palette,
-                max_w=C.W - 140,
-                accent_pill=f"•  Highlight {i + 1}",
+                max_w=C.W - 200,
+                accent_pill=f"•  {i + 1} / {len(highlights)}",
             )
             st = t_phase2_start + i * per
             hl_clips.append(_animated_text(
-                card, st, min(per + 0.4, t_phase2_end - st + 0.4),
-                lower_y - ch // 2 + 220, fade_in=0.4, fade_out=0.4, rise=14))
+                card, st, min(per + 0.5, t_phase2_end - st + 0.5),
+                lower_y + 240 - ch // 2, fade_in=0.4, fade_out=0.4, rise=14))
     clips += hl_clips
 
     # ---- Phase 3: price callout (70% .. 92%) ----
@@ -349,27 +401,38 @@ def build_text_schedule(meta, body_d, palette):
 
 
 # ============================================================ audio
+AD_LIBRARY = HERE / "ad_library"
+EXTS = (".mp3", ".wav", ".m4a", ".aac", ".ogg", ".flac")
+
+
 def _resolve_music(music_arg, total_dur, index):
-    """Return a stereo numpy array sized to `total_dur` seconds, or None."""
+    """Return a stereo numpy array sized to `total_dur` seconds, or None.
+    Priority: explicit file > 'ads' (ad_library) > 'library' (music_library) >
+    synth genre > best available."""
     if music_arg == "silent":
         return None
-    # explicit file?
     if music_arg and Path(music_arg).is_file():
         return _load_audio(music_arg)
-    # library auto-pick
-    library = sorted(p for p in LIBRARY.iterdir()
-                     if p.suffix.lower() in (".mp3", ".wav", ".m4a", ".aac",
-                                              ".ogg", ".flac"))
-    if music_arg in (None, "library") and library:
-        return _load_audio(library[index % len(library)])
-    # genre synthesis fallback
+
+    def _pick(dir_):
+        if not dir_.exists():
+            return None
+        tracks = sorted(p for p in dir_.iterdir() if p.suffix.lower() in EXTS)
+        return tracks[index % len(tracks)] if tracks else None
+
+    ad = _pick(AD_LIBRARY)
+    lib = _pick(LIBRARY)
+    if music_arg in (None, "ads", "library"):
+        # default = ad_library (tourism / advertising vocals) when populated
+        if ad:
+            return _load_audio(ad)
+        if lib:
+            return _load_audio(lib)
     if music_arg in ME.GENRES:
         wav = C.WORK_DIR / f"_trip_{music_arg}_{index}.wav"
         ME.render(music_arg, total_dur, wav, seed=index * 7 + 3)
         return _load_audio(wav)
-    if library:
-        return _load_audio(library[index % len(library)])
-    return None
+    return _load_audio(ad) if ad else (_load_audio(lib) if lib else None)
 
 
 def _load_audio(path):
@@ -392,6 +455,70 @@ def build_audio(music_arr, total_dur, index):
     mix.add(SD.whoosh(0.5, "up", seed=index + 11), at=0.05, gain=0.35)
     mix.add(SD.whoosh(0.5, "down", seed=index + 23), at=max(0, total_dur - 1.0), gain=0.35)
     return mix.to_audioclip().with_duration(total_dur)
+
+
+# ============================================================ bookends
+def _intro_segment(meta, palette, area_w, area_h, duration=2.8):
+    """Trip-specific intro: first image (cover-fit + Ken Burns) + scrim +
+    title reveal. Sized to the image-area band (NOT canvas)."""
+    from moviepy import ImageClip, CompositeVideoClip, vfx
+    img_dir = TRIP_ROOT / meta["slug"] / "images"
+    images = sorted(img_dir.glob("*"))
+    bg = ImageClip(str(images[0])).with_duration(duration).with_fps(30)
+    bg = _ken_burns(_fit_to_area(bg, area_w, area_h), kind=2)
+
+    # darker scrim for title legibility (band across centre)
+    scrim_full = TF.build_text_scrim(zone="mid")
+    # crop scrim to area_h × area_w (it was made canvas-sized)
+    scrim_arr = scrim_full[TF.TOP_H:TF.TOP_H + area_h, :area_w]
+    scrim = clip_from_rgba(scrim_arr, duration)
+
+    title = meta["title"]["ar"] or meta["title"]["en"]
+    card, ch = _render_card(
+        title=title,
+        lines=[U.shape_ar("اكتشف رحلتك القادمة مع لوتس شرم")],
+        palette=palette,
+        max_w=area_w - 100,
+        accent_pill="DISCOVER · شرم الشيخ",
+    )
+    title_y = max(40, (area_h - ch) // 2)
+    title_clip = _animated_text(
+        card, 0.4, duration - 0.4, title_y,
+        fade_in=0.8, fade_out=0.5, rise=36)
+
+    intro = CompositeVideoClip([bg, scrim, title_clip],
+                               size=(area_w, area_h)).with_duration(duration)
+    return intro
+
+
+def _outro_segment(meta, palette, area_w, area_h, duration=3.0):
+    """Trip-specific outro: last image + scrim + CTA card + contact info."""
+    from moviepy import ImageClip, CompositeVideoClip, vfx
+    img_dir = TRIP_ROOT / meta["slug"] / "images"
+    images = sorted(img_dir.glob("*"))
+    bg = ImageClip(str(images[-1])).with_duration(duration).with_fps(30)
+    bg = _ken_burns(_fit_to_area(bg, area_w, area_h), kind=1)
+
+    scrim_full = TF.build_text_scrim(zone="mid")
+    scrim_arr = scrim_full[TF.TOP_H:TF.TOP_H + area_h, :area_w]
+    scrim = clip_from_rgba(scrim_arr, duration)
+
+    card, ch = _render_card(
+        title="احجز رحلتك الآن",
+        lines=["Book your trip today",
+               U.shape_ar("واتساب · ") + C.PHONE],
+        palette=palette,
+        max_w=area_w - 100,
+        accent_pill="lotussharm.com",
+    )
+    y = max(40, (area_h - ch) // 2)
+    cta_clip = _animated_text(
+        card, 0.4, duration - 0.4, y,
+        fade_in=0.7, fade_out=0.5, rise=28)
+
+    outro = CompositeVideoClip([bg, scrim, cta_clip],
+                               size=(area_w, area_h)).with_duration(duration)
+    return outro
 
 
 # ============================================================ orchestrator
@@ -417,13 +544,24 @@ def render_trip(slug, music="library", out=None, body_d=30.0, crf=20,
           f"price={meta['priceLocalEGP']} EGP / ${meta['priceForeignUSD']}",
           flush=True)
 
-    # ---- slideshow in the image area (adapts duration to image count) ----
+    # ---- intro + slideshow + outro in the image-area band ----
+    from moviepy import concatenate_videoclips, vfx
     area_w = C.W
     area_h = C.H - TF.TOP_H - TF.BOT_H
-    slideshow, actual_d = build_slideshow(images, body_d, area_w, area_h)
-    slideshow = slideshow.with_position((0, TF.TOP_H))
-    body_d = actual_d
-    print(f"  actual body: {body_d:.1f}s", flush=True)
+    intro_d, outro_d, seg_cf = 2.8, 3.0, 0.5
+
+    intro = _intro_segment(meta, pal, area_w, area_h, intro_d)
+    slides, slides_d = build_slideshow(images, body_d, area_w, area_h)
+    outro = _outro_segment(meta, pal, area_w, area_h, outro_d)
+
+    slides = slides.with_effects([vfx.CrossFadeIn(seg_cf)])
+    outro = outro.with_effects([vfx.CrossFadeIn(seg_cf)])
+    image_track = concatenate_videoclips(
+        [intro, slides, outro], method="compose", padding=-seg_cf)
+    slideshow = image_track.with_position((0, TF.TOP_H))
+    body_d = image_track.duration
+    print(f"  intro {intro_d}s + slides {slides_d:.1f}s + outro {outro_d}s = "
+          f"{body_d:.1f}s total", flush=True)
 
     # ---- canvas-sized teal background (so areas behind the brand strips are dark) ----
     bg = np.zeros((C.H, C.W, 3), dtype=np.uint8)
@@ -434,8 +572,10 @@ def render_trip(slug, music="library", out=None, body_d=30.0, crf=20,
     brand_rgba = TF.build_overlay(palette=pal)
     brand_clip = clip_from_rgba(brand_rgba, body_d)
 
-    # ---- text overlays schedule ----
-    text_clips = build_text_schedule(meta, body_d, pal)
+    # ---- text overlays — scheduled across the SLIDESHOW window only ----
+    text_clips = build_text_schedule(meta, slides_d, pal)
+    shift = intro_d - seg_cf        # slides begin at this absolute timeline t
+    text_clips = [c.with_start((c.start or 0) + shift) for c in text_clips]
 
     # ---- compose ----
     body = CompositeVideoClip(
