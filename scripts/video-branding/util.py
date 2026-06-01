@@ -20,6 +20,19 @@ def font(key_or_name: str, size: int) -> ImageFont.FreeTypeFont:
         return ImageFont.load_default()
 
 
+def shape_ar(text: str) -> str:
+    """Reshape Arabic letters (so they join) and apply bidi for RTL display.
+    No-op for non-Arabic text. Returns the input unchanged if libs missing."""
+    if not text or not any("؀" <= ch <= "ۿ" for ch in text):
+        return text
+    try:
+        import arabic_reshaper
+        from bidi.algorithm import get_display
+        return get_display(arabic_reshaper.reshape(text))
+    except Exception:
+        return text
+
+
 # ----------------------------------------------------------------- easing
 def clamp(x, lo=0.0, hi=1.0):
     return max(lo, min(hi, x))

@@ -1,0 +1,44 @@
+{
+  "slug": "glass-bottom-submarine",
+  "category": "SEA",
+  "priceLocalEGP": 800,
+  "priceForeignUSD": 30,
+  "durationMinutes": 90,
+  "meetingPoint": "الميناء البحري — شرم الشيخ",
+  "startTime": "09:00",
+  "title": {
+    "ar": "الغواصة ذات القاع الزجاجي — شرم الشيخ",
+    "en": "Glass-Bottom Submarine — Sharm El Sheikh",
+    "ru": "Подводная лодка со стеклянным дном — Шарм-эль-Шейх"
+  },
+  "shortDesc": {
+    "ar": "رحلة الغواصة لمشاهدة الشعاب المرجانية والأسماك الملونة بقاع زجاجي شفاف. 3 مواعيد يومياً.",
+    "en": "Glass-bottom submarine cruise to view coral reefs and tropical fish of the Red Sea. 3 daily departures.",
+    "ru": "Круиз на подлодке со стеклянным дном для просмотра коралловых рифов Красного моря. 3 рейса в день."
+  },
+  "highlights": {
+    "ar": [
+      "التاسعة صباحاً",
+      "11 صباحاً",
+      "اتنين ونص ضهراً",
+      "الفرد المصري: 800 جنيه"
+    ],
+    "en": [
+      "9:00 AM",
+      "11:00 AM",
+      "2:30 PM",
+      "Egyptian: EGP 800"
+    ],
+    "ru": [
+      "09:00",
+      "11:00",
+      "14:30",
+      "Местные: 800 EGP"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/ee69c4c7-958d-41c2-97cd-279ef7ac2dc5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/73f923dc-fe8d-4c9c-9620-e3671ea04562-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/1dee6914-596b-4dc2-9b9e-7c407d7c9de2-medium.jpg"
+  ]
+}

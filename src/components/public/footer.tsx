@@ -7,6 +7,7 @@ import { Logo } from './logo';
 import { getLocalizedTagline } from '@/lib/site-settings';
 import { L } from '@/lib/utils';
 import type { SiteSettingsDTO } from '@/types/api';
+import { PAYMENT_METHODS } from '@/lib/payment-methods';
 
 export function Footer({ settings }: { settings: SiteSettingsDTO }) {
   const t = useTranslations();
@@ -99,10 +100,10 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
         </div>
       </div>
 
-      {/* Payment methods strip — EasyCash installments */}
+      {/* Payment methods strip — EasyCash installments + full method grid */}
       <div className="relative border-t border-cream/10">
         <div aria-hidden className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
-        <div className="container py-5">
+        <div className="container py-6 space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-4">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-cream/70 font-bold">
               <CreditCard className="h-3.5 w-3.5 text-accent" />
@@ -138,6 +139,9 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
               </div>
             </div>
           </div>
+
+          {/* All 15 EasyKash payment methods as branded pills */}
+          <PaymentMethodsGrid />
         </div>
       </div>
 
@@ -214,6 +218,39 @@ export function Footer({ settings }: { settings: SiteSettingsDTO }) {
         </a>
       </div>
     </footer>
+  );
+}
+
+// PAYMENT_METHODS is imported from `@/lib/payment-methods` — single source of
+// truth shared with the home page's EasyCash section.
+
+function PaymentMethodsGrid() {
+  return (
+    <div
+      className="flex flex-wrap justify-center gap-1.5 sm:gap-2"
+      dir="ltr"
+      aria-label="Accepted payment methods"
+    >
+      {PAYMENT_METHODS.map((m) => (
+        <span
+          key={`${m.name}-${m.suffix ?? ''}`}
+          className="inline-flex items-center justify-center gap-1.5 h-8 px-2 rounded-md bg-cream/95 ring-1 ring-black/10 shadow-sm"
+          title={m.name}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={m.src}
+            alt={m.name}
+            className="h-5 w-auto max-w-[44px] object-contain rounded-sm"
+            loading="lazy"
+            decoding="async"
+          />
+          {m.suffix && (
+            <span className="text-[10px] font-extrabold text-primary leading-none">{m.suffix}</span>
+          )}
+        </span>
+      ))}
+    </div>
   );
 }
 

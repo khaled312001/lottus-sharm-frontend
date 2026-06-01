@@ -1,0 +1,49 @@
+{
+  "slug": "dahab-tuwailat-valley",
+  "category": "CITY",
+  "priceLocalEGP": 500,
+  "priceForeignUSD": 15,
+  "durationMinutes": 480,
+  "meetingPoint": "فندق الإقامة في شرم الشيخ",
+  "startTime": "08:00",
+  "title": {
+    "ar": "رحلة من شرم الشيخ إلى دهب — وادي الطويلات",
+    "en": "Dahab Day Trip — Tuwailat Valley",
+    "ru": "Экскурсия в Дахаб — Долина Тувайлат"
+  },
+  "shortDesc": {
+    "ar": "يوم كامل في سحر دهب: شاي بدوي على جبال الطويلات، مصنع العطور، ركوب جمال، سنوركلينج في أبو جالوم، وغداء بدوي.",
+    "en": "A full day of Dahab magic: Bedouin tea on Tuwailat mountains, perfume factory, camel riding, snorkeling at Abu Galum, and Bedouin lunch.",
+    "ru": "Целый день волшебства в Дахабе: бедуинский чай в горах Тувайлат, фабрика парфюмов, верблюды, снорклинг в Абу-Галум и обед."
+  },
+  "highlights": {
+    "ar": [
+      "زيارة جبال الطويلات وشرب الشاي البدوي والتقاط أجمل الصور وسط جبال سيناء",
+      "زيارة مصنع العطور والزيوت الطبيعية",
+      "التوجه إلى محمية أبو جالوم للاستمتاع بركوب الجمال والدراجات الرباعية بيتش باجي",
+      "السنوركلينج لمدة 45 دقيقة لمشاهدة الشعاب المرجانية والأسماك"
+    ],
+    "en": [
+      "Stop at the natural perfumes and oils factory",
+      "Head to Abu Galum Reserve for camel riding and optional beach buggies",
+      "45 minutes of snorkeling to discover coral reefs and tropical fish",
+      "Lunch at a Bedouin restaurant"
+    ],
+    "ru": [
+      "Посещение гор Тувайлат, традиционный бедуинский чай и потрясающие фото среди Синайских гор",
+      "Остановка на фабрике натуральных парфюмов и масел",
+      "Заповедник Абу-Галум: катание на верблюдах и опционально на багги",
+      "45 минут снорклинга в коралловых рифах"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/3404663b-e112-4391-8e83-4f6f3e452ccd-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/59b2e6d5-f4ab-4097-9379-574f4627bae5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/b7c09bb4-72a6-4760-a8f2-9d4346feed61-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/78e6c9ec-6bd7-48b4-9e34-29c4d76b9d34-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/55c9adb0-a5c3-42a8-9b76-4bcf7fd67ac5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/8a127470-62ff-4da2-b393-ad4c90fa016a-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/f4289ada-42c8-4f80-a77c-2baff9b9e55f-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/5e30ef74-2319-4701-99ba-977dc8957569-medium.jpg"
+  ]
+}

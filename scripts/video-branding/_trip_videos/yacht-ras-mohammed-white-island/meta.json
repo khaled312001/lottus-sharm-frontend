@@ -1,0 +1,56 @@
+{
+  "slug": "yacht-ras-mohammed-white-island",
+  "category": "DIVING",
+  "priceLocalEGP": 1250,
+  "priceForeignUSD": 30,
+  "durationMinutes": 540,
+  "meetingPoint": "الميناء البحري — شرم الشيخ",
+  "startTime": "08:00",
+  "title": {
+    "ar": "يخت فاخر — راس محمد والجزيرة البيضاء",
+    "en": "Luxury Yacht — Ras Mohammed & White Island",
+    "ru": "Роскошная яхта — Рас-Мохаммед и Белый остров"
+  },
+  "shortDesc": {
+    "ar": "يوم كامل على يخت فاخر — وقفتين سنوركلينج في راس محمد + غداء مفتوح + مشروبات مجانية.",
+    "en": "Full-day luxury yacht to Ras Mohammed — two snorkeling stops + open buffet lunch + free drinks.",
+    "ru": "Целый день на роскошной яхте в Рас-Мохаммед: две остановки для снорклинга, обед-буфет и напитки."
+  },
+  "highlights": {
+    "ar": [
+      "وقفتين للسباحة والغطس في محمية راس محمد",
+      "الاستمتاع بمشاهدة الشعاب المرجانية والأسماك الملونة",
+      "مشروبات غازية طوال اليوم + شاي + نسكافيه",
+      "الغداء على المركب — أوبن بوفيه"
+    ],
+    "en": [
+      "Two snorkeling/swimming stops in Ras Mohammed",
+      "Spectacular coral reefs and tropical fish",
+      "Unlimited soft drinks, tea and coffee",
+      "Open-buffet lunch on board"
+    ],
+    "ru": [
+      "Две остановки для снорклинга в Рас-Мохаммед",
+      "Удивительные коралловые рифы и тропические рыбы",
+      "Неограниченные напитки, чай и кофе",
+      "Обед-буфет на борту"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/0f6b9d7a-f210-4bc6-bf05-7da06403859f-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/aac52ed9-c129-49a6-8196-63fde992f206-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/4bac7c3c-0e36-431c-af8a-d246b0bda9d0-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/87b09332-7150-41da-92ff-1a22fad6aef5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/5e67cb3f-e9f0-42f1-ba30-0e6733411ec5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/675ac3bd-f7b2-40f5-893d-ff51d196c662-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/640c75aa-b612-4441-883d-a5e2df9052f1-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/0b21f096-0bc8-496b-84de-7673030310d4-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/3347bf9b-4f74-40ba-83c6-f768d4e1b8ce-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/ed43482c-164b-438f-9cb0-21fda03c1021-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/89396906-b8a3-4906-ad1b-55bb784de6ff-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/90cd15cd-79ce-42de-a988-a45ff07c9b5d-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/aa9be801-d381-40db-8e5c-5213e6e39ae5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/c4c510e7-bfe3-47c1-94b3-d6e9b64dbd4c-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/f42b95cc-abb2-4a67-9dd7-25c0748d2dcd-poster.jpg"
+  ]
+}

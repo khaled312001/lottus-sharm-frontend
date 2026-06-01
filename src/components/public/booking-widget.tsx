@@ -45,6 +45,7 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
   const [showPayModal, setShowPayModal] = useState(false);
+  const [easykashLoading, setEasykashLoading] = useState(false);
 
   // ===== Coupon =====
   const [coupon, setCoupon] = useState('');
@@ -116,6 +117,38 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
   const step1Ready = adults >= 1 && date >= minDate;
   const step2Ready = isNameValid && isPhoneValid && isEmailValid;
   const formReady = step1Ready && step2Ready;
+
+  // ===== EasyKash hosted-payment (creates booking + payment session in one
+  // request and sends the customer straight to EasyKash's checkout page). =====
+  const payEasykash = async () => {
+    if (!formReady) return;
+    setEasykashLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/public/payments/easykash/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tripId: trip.id,
+          bookingDate: date,
+          adultsCount: adults,
+          childrenCount: children,
+          customerType: isLocal ? 'LOCAL' : 'FOREIGN',
+          fullName: nameClean,
+          phone: phoneClean,
+          email: emailClean || 'guest@lotussharm.com',
+          language: locale.toUpperCase(),
+          notes: notes || undefined,
+          couponCode: coupon?.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data?.error?.message || 'EasyKash failed');
+      window.location.href = data.data.checkoutUrl;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'EasyKash error');
+      setEasykashLoading(false);
+    }
+  };
 
   const stepLabels = [
     L(locale, { ar: 'الرحلة', en: 'Trip', de: 'Ausflug', ru: 'Тур', it: 'Tour' }) as string,
@@ -667,6 +700,31 @@ export function BookingWidget({ trip }: { trip: TripDTO }) {
                   </span>
                   <span className="flex-1 h-px bg-accent/20" />
                 </div>
+
+                {/* EasyCash hosted payment — cards / wallets / instalments up to 18 months */}
+                <button
+                  type="button"
+                  onClick={payEasykash}
+                  disabled={!formReady || easykashLoading}
+                  className={cn(
+                    'relative inline-flex items-center justify-center gap-2 w-full h-11 rounded-xl font-bold text-sm transition-all group overflow-hidden',
+                    formReady
+                      ? 'bg-gradient-to-r from-primary via-primary-800 to-primary-900 text-cream hover:-translate-y-0.5 shadow-lg shadow-primary/40 ring-1 ring-accent/40'
+                      : 'bg-muted text-muted-foreground cursor-not-allowed',
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo-easycash.png" alt="" className="h-5 w-5 object-contain bg-cream rounded-sm p-0.5" />
+                  {easykashLoading
+                    ? L(locale, { ar: 'جارٍ التحويل…', en: 'Redirecting…', de: 'Weiterleitung…', ru: 'Перенаправление…', it: 'Reindirizzamento…' })
+                    : L(locale, {
+                        ar: 'ادفع أو قسّط مع EasyCash',
+                        en: 'Pay or pay later with EasyCash',
+                        de: 'Zahlen oder in Raten — EasyCash',
+                        ru: 'Оплата / рассрочка — EasyCash',
+                        it: 'Paga o rate — EasyCash',
+                      })}
+                </button>
 
                 <button
                   type="button"

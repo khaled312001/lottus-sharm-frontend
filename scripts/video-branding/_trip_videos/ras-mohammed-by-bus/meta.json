@@ -1,0 +1,52 @@
+{
+  "slug": "ras-mohammed-by-bus",
+  "category": "SEA",
+  "priceLocalEGP": 750,
+  "priceForeignUSD": 20,
+  "durationMinutes": 240,
+  "meetingPoint": "فندق الإقامة في شرم الشيخ",
+  "startTime": "09:00",
+  "title": {
+    "ar": "راس محمد ( بوابة الله و البحيرة المسحورة )",
+    "en": "Ras Mohammed by Bus",
+    "ru": "Рас-Мохаммед на автобусе"
+  },
+  "shortDesc": {
+    "ar": "جولة كاملة لاكتشاف محمية راس محمد — خمس وقفات لأجمل الشعاب المرجانية والمناظر الطبيعية في شرم الشيخ.",
+    "en": "A full guided tour of Ras Mohammed Protected Area — five stops covering coral reefs and breathtaking natural wonders.",
+    "ru": "Полная экскурсия по заповеднику Рас-Мохаммед — пять остановок: коралловые рифы и природные чудеса Шарм-эль-Шейха."
+  },
+  "highlights": {
+    "ar": [
+      "بوابة الله الشهيرة",
+      "قناة أشجار المانجروف",
+      "منطقة شق الزلازل",
+      "البحيرة المسحورة"
+    ],
+    "en": [
+      "The famous Gate of Allah",
+      "Mangrove tree channel",
+      "Earthquake Crack zone",
+      "The Enchanted Lake"
+    ],
+    "ru": [
+      "Знаменитые «Врата Аллаха»",
+      "Мангровая роща",
+      "Зона «Земного разлома» (Earthquake Crack)",
+      "Заколдованное озеро"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/b5549d6d-6181-4b9c-b3bf-19f1527fece6-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/11eaae88-1cd1-47c8-a6a5-8c1e9b11b4d0-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/99cc99d9-a23e-498a-a98f-276004d7bba3-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/6e84837c-cc9e-4b1f-a215-e1d2f4a9e1cf-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/63a5e176-6410-4696-bdcf-ee5151a1749d-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/a1aa729d-4014-4cbf-99c2-ee25c4ac34a0-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/14ac3071-7979-48ae-9ba1-dd5133434d35-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/3906fc49-bf41-4584-b5ec-529080fce8e7-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/cda9a0f1-de73-4be4-b7e5-a8794a1bd629-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/93c7298b-85b0-4a97-8eb0-fd6df8dd474a-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/fce12008-f501-43a5-bca5-ceefbdfc1206-medium.jpg"
+  ]
+}

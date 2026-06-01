@@ -19,6 +19,7 @@ import { getLocalizedTagline, getSiteSettings } from '@/lib/site-settings';
 import { fetchCMSPage } from '@/lib/cms';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/seo/json-ld';
+import { PAYMENT_METHODS } from '@/lib/payment-methods';
 import {
   SITE_URL, buildPageMetadata, buildTravelAgencyLd, buildWebsiteLd,
   buildBreadcrumbLd, buildFaqLd, buildAggregateRating, crumbLabel,
@@ -290,6 +291,156 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
 
+      </section>
+
+      {/* ============ EASYCASH SECTION — directly after hero ============ */}
+      <section className="relative py-12 md:py-16 bg-gradient-to-b from-cream via-muted/30 to-cream overflow-hidden">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+        <div aria-hidden className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+
+        <div className="container relative">
+          {/* Heading */}
+          <Reveal className="text-center max-w-3xl mx-auto mb-8 md:mb-10 flex flex-col items-center">
+            <span className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-accent/15 border border-accent/40 text-accent text-[11px] font-extrabold uppercase tracking-[0.18em]">
+              <Sparkles className="h-3.5 w-3.5" />
+              {L(locale, { ar: 'دفع آمن وتقسيط لحد 18 شهر', en: 'Secure payment & up to 18-month instalments', de: 'Sichere Zahlung & bis zu 18 Monate Raten', ru: 'Безопасная оплата и рассрочка до 18 месяцев', it: 'Pagamento sicuro & rate fino a 18 mesi' })}
+            </span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary leading-tight text-balance">
+              {L(locale, {
+                ar: 'ادفع أو قسّط رحلتك مع EasyCash',
+                en: 'Pay now or in instalments — with EasyCash',
+                de: 'Sofort zahlen oder in Raten — mit EasyCash',
+                ru: 'Оплатите сразу или в рассрочку — с EasyCash',
+                it: 'Paga subito o a rate — con EasyCash',
+              })}
+            </h2>
+            <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-2xl">
+              {L(locale, {
+                ar: 'احجز أي رحلة في شرم الشيخ ودفع بالطريقة اللي تناسبك — كارت بنكي، محفظة، Apple Pay، أو تقسيط مع البنك الأهلي / valU / Aman / Souhoola / Forsa / Tru / Klivvr.',
+                en: 'Book any Sharm El Sheikh trip and pay the way that fits you — card, wallet, Apple Pay, or instalments through NBE / valU / Aman / Souhoola / Forsa / Tru / Klivvr.',
+                de: 'Buchen Sie eine Sharm-El-Sheikh-Tour und zahlen Sie nach Wahl — Karte, Wallet, Apple Pay oder in Raten über NBE / valU / Aman / Souhoola / Forsa / Tru / Klivvr.',
+                ru: 'Бронируйте экскурсии и платите удобно — карта, кошелёк, Apple Pay или рассрочка NBE / valU / Aman / Souhoola / Forsa / Tru / Klivvr.',
+                it: 'Prenota qualsiasi tour e paga come preferisci — carta, wallet, Apple Pay o rate con NBE / valU / Aman / Souhoola / Forsa / Tru / Klivvr.',
+              })}
+            </p>
+          </Reveal>
+
+          {/* Logo + benefits row */}
+          <Reveal>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 md:gap-6 items-stretch mb-8 md:mb-10">
+              {/* Logo card */}
+              <div className="lg:col-span-2 relative rounded-3xl overflow-hidden bg-gradient-to-br from-primary via-primary-800 to-primary-900 text-cream p-7 md:p-9 flex flex-col justify-between min-h-[240px] shadow-xl">
+                <div aria-hidden className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-accent/20 blur-2xl" />
+                <div className="relative inline-flex items-center justify-center rounded-2xl bg-cream p-4 self-start shadow-lg">
+                  <Image src="/logo-easycash.png" alt="EasyCash" width={120} height={120} className="h-16 w-16 md:h-20 md:w-20 object-contain" />
+                </div>
+                <div className="relative mt-5">
+                  <div className="text-[11px] uppercase tracking-[0.2em] text-accent font-bold mb-1.5">
+                    {L(locale, { ar: 'الشريك الرسمي للتقسيط', en: 'Our official instalment partner', de: 'Offizieller Ratenpartner', ru: 'Партнёр по рассрочке', it: 'Partner ufficiale per le rate' })}
+                  </div>
+                  <p className="font-serif text-xl md:text-2xl leading-tight font-bold">
+                    {L(locale, {
+                      ar: 'احجز دلوقتي… وادفع كاش أو على دفعات.',
+                      en: 'Book now — pay full or in instalments.',
+                      de: 'Jetzt buchen — voll oder in Raten zahlen.',
+                      ru: 'Бронируйте — оплачивайте сразу или частями.',
+                      it: 'Prenota ora — paga subito o a rate.',
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Benefits */}
+              <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { icon: Clock, title: L(locale, { ar: 'موافقة في دقايق', en: 'Approval in minutes', de: 'Zusage in Minuten', ru: 'Одобрение за минуты', it: 'Approvazione rapida' }), body: L(locale, { ar: 'بدون أوراق معقّدة.', en: 'No paperwork hassle.', de: 'Kein Papierkram.', ru: 'Без сложных бумаг.', it: 'Niente burocrazia.' }) },
+                  { icon: CreditCard, title: L(locale, { ar: 'دفعات مرنة', en: 'Flexible plans', de: 'Flexible Pläne', ru: 'Гибкие планы', it: 'Piani flessibili' }), body: L(locale, { ar: 'من شهر لحد 18 شهر.', en: 'From 1 to 18 months.', de: 'Von 1 bis 18 Monaten.', ru: 'От 1 до 18 месяцев.', it: 'Da 1 a 18 mesi.' }) },
+                  { icon: ShieldCheck, title: L(locale, { ar: 'آمن ومضمون', en: 'Safe & secure', de: 'Sicher & geprüft', ru: 'Безопасно', it: 'Sicuro' }), body: L(locale, { ar: 'منصة EasyCash المعتمدة.', en: 'Trusted EasyCash platform.', de: 'Geprüfte EasyCash-Plattform.', ru: 'Проверенная платформа.', it: 'Piattaforma certificata.' }) },
+                ].map((f, i) => (
+                  <div key={i} className="group bg-white rounded-2xl p-4 md:p-5 border border-accent/15 hover:border-accent/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/25 to-accent/10 text-accent-700 flex items-center justify-center mb-3">
+                      <f.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-serif text-base md:text-lg font-bold text-primary leading-tight mb-1">{f.title}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{f.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Payment methods grid — every option supported, grouped */}
+          <Reveal delay={0.15}>
+            <div className="bg-white rounded-3xl border border-accent/20 shadow-md p-5 md:p-7">
+              {/* Pay now group */}
+              <div className="mb-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <CreditCard className="h-4 w-4 text-accent" />
+                  <h3 className="font-serif text-sm md:text-base font-extrabold text-primary uppercase tracking-wider">
+                    {L(locale, { ar: 'الدفع الفوري', en: 'Pay now', de: 'Sofortzahlung', ru: 'Оплата сейчас', it: 'Paga subito' })}
+                  </h3>
+                  <span className="flex-1 h-px bg-accent/20" />
+                </div>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                  {PAYMENT_METHODS.filter((m) => !m.installment).map((m) => (
+                    <div key={m.name} className="group flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-cream/60 hover:bg-cream hover:border-accent/40 border border-transparent transition-all">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={m.src} alt={m.name} className="h-10 w-auto max-w-[64px] object-contain" loading="lazy" />
+                      <span className="text-[10px] font-bold text-primary/80 leading-none text-center">{m.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Instalments group */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="h-4 w-4 text-accent" />
+                  <h3 className="font-serif text-sm md:text-base font-extrabold text-primary uppercase tracking-wider">
+                    {L(locale, { ar: 'التقسيط (لحد 18 شهر)', en: 'Instalments (up to 18 months)', de: 'Raten (bis 18 Monate)', ru: 'Рассрочка (до 18 мес.)', it: 'Rate (fino a 18 mesi)' })}
+                  </h3>
+                  <span className="flex-1 h-px bg-accent/20" />
+                </div>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2.5">
+                  {PAYMENT_METHODS.filter((m) => m.installment).map((m) => (
+                    <div key={`${m.name}-${m.suffix ?? ''}`} className="group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-cream/60 hover:bg-cream hover:border-accent/40 border border-transparent transition-all">
+                      {m.suffix && (
+                        <span className="absolute top-1 end-1 text-[9px] font-extrabold text-accent-700 bg-accent/20 px-1 rounded">
+                          {m.suffix}
+                        </span>
+                      )}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={m.src} alt={m.name} className="h-10 w-auto max-w-[64px] object-contain" loading="lazy" />
+                      <span className="text-[10px] font-bold text-primary/80 leading-none text-center">
+                        {m.name.replace(/ \d+m$/, '')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-5 border-t border-accent/15">
+                <p className="text-sm text-primary font-semibold text-center sm:text-start">
+                  {L(locale, {
+                    ar: 'متاح على كل الرحلات — بحرية، سفاري، غوص وغيرها.',
+                    en: 'Available on every trip — sea tours, safaris, diving and more.',
+                    de: 'Für alle Touren — Seefahrten, Safaris, Tauchen und mehr.',
+                    ru: 'Доступно для всех экскурсий.',
+                    it: 'Disponibile per ogni tour.',
+                  })}
+                </p>
+                <Button asChild size="sm" className="bg-accent text-primary hover:bg-accent-400 font-bold shadow-md shadow-accent/25 group whitespace-nowrap">
+                  <Link href="/trips">
+                    {L(locale, { ar: 'احجز واقسّط الآن', en: 'Book & pay in instalments', de: 'Jetzt buchen & in Raten zahlen', ru: 'Бронировать в рассрочку', it: 'Prenota a rate' })}
+                    <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* Mobile stats — separate band below hero (no overlap) */}
@@ -709,8 +860,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* ============ EASYCASH INSTALMENTS — NEW SERVICE ============ */}
-      <section className="relative py-14 md:py-20 bg-gradient-to-b from-cream via-muted/40 to-cream overflow-hidden hairline-top">
+      {/* (EasyCash section moved directly under the hero — search for
+           "EASYCASH SECTION — directly after hero" below.) */}
+      <section className="hidden">
         <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
         <div aria-hidden className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
         <div aria-hidden className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-3xl pointer-events-none" />

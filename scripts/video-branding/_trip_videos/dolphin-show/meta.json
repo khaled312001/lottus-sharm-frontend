@@ -1,0 +1,46 @@
+{
+  "slug": "dolphin-show",
+  "category": "EVENTS",
+  "priceLocalEGP": 800,
+  "priceForeignUSD": 20,
+  "durationMinutes": 60,
+  "meetingPoint": "الدولفيناريوم — شرم الشيخ",
+  "startTime": "14:30",
+  "title": {
+    "ar": "عرض الدولفين — شرم الشيخ",
+    "en": "Dolphin Show — Sharm El Sheikh",
+    "ru": "Шоу дельфинов — Шарм-эль-Шейх"
+  },
+  "shortDesc": {
+    "ar": "عرض دولفين تفاعلي مدته ساعة، شامل الانتقالات من وإلى الفندق. كل يوم الساعة 2:30 ظهراً.",
+    "en": "A 1-hour interactive dolphin show in Sharm El Sheikh — transfers included, daily at 2:30 PM.",
+    "ru": "Часовое шоу дельфинов в Шарм-эль-Шейхе — трансфер включён, ежедневно в 14:30."
+  },
+  "highlights": {
+    "ar": [
+      "مدة العرض: ساعة كاملة من المتعة",
+      "الميعاد: كل يوم الساعة 2:30 ظهراً",
+      "شامل الانتقالات: توصيل من وإلى الفندق",
+      "عرض حركي تفاعلي مع الدلافين"
+    ],
+    "en": [
+      "Duration: 1 full hour",
+      "Schedule: Daily at 2:30 PM",
+      "Includes: Round-trip hotel transfers",
+      "Interactive dolphin choreography"
+    ],
+    "ru": [
+      "Длительность: 1 час",
+      "Время: Ежедневно в 14:30",
+      "Включено: Трансфер из отеля и обратно",
+      "Интерактивные номера с дельфинами"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/9fc813c7-4c55-4c2a-9a8b-2110bad3007c-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/414a6b52-a43b-44a6-9abc-c3a6f6a0054f-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/19aac76d-43fe-40c6-8b88-b3ee74620628-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/f81168a0-0ff3-412f-ac4d-5bc2e306acb5-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/8d778630-1fb1-4d8c-8005-e305a3d6ba0d-medium.jpg"
+  ]
+}

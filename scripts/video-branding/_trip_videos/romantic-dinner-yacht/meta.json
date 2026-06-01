@@ -1,0 +1,45 @@
+{
+  "slug": "romantic-dinner-yacht",
+  "category": "EVENTS",
+  "priceLocalEGP": 1250,
+  "priceForeignUSD": 25,
+  "durationMinutes": 180,
+  "meetingPoint": "الميناء البحري — شرم الشيخ",
+  "startTime": "18:00",
+  "title": {
+    "ar": "عشاء رومانسي على اليخت — سهرة مسائية",
+    "en": "Romantic Dinner on a Yacht — Evening Cruise",
+    "ru": "Романтический ужин на яхте — Вечерний круиз"
+  },
+  "shortDesc": {
+    "ar": "حفلة مسائية على يخت VIP فاخر مع رقص شرقي وساحر ومطرب وعشاء أوبن بوفيه (جمبري + فراخ).",
+    "en": "Evening cruise on a VIP yacht with belly dance, magician, singer, and open-buffet dinner (shrimp + chicken).",
+    "ru": "Вечерний круиз на VIP-яхте с восточными танцами, фокусником, певцом и ужином-буфетом (креветки + курица)."
+  },
+  "highlights": {
+    "ar": [
+      "الرقص الشرقي",
+      "فقرة الساحر",
+      "المطرب",
+      "جمبري"
+    ],
+    "en": [
+      "Belly dance show",
+      "Magic show",
+      "Live singer",
+      "Shrimp"
+    ],
+    "ru": [
+      "Восточные танцы",
+      "Шоу фокусника",
+      "Живой певец",
+      "Креветки"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/8e95892b-f919-4f99-bf2f-c6c6caab6ef1-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/e7ba8fa8-ada4-4bc4-85da-57b18ac0d1fb-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/425814e2-09df-4329-ada4-24a5a9c79285-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/65388e96-82ac-4b91-aae2-000f48982c9a-medium.jpg"
+  ]
+}

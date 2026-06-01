@@ -88,6 +88,39 @@ export function BookingPayModal({
   };
 
   const isCashOnArrival = method === 'CASH';
+
+  // EasyKash hosted-payment flow: creates booking + payment session in one
+  // call on the backend, then redirects the browser to EasyKash's checkout.
+  const payEasykash = async () => {
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${API_BASE}/public/payments/easykash/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tripId: trip.id,
+          bookingDate: payload.date,
+          adultsCount: payload.adults,
+          childrenCount: payload.children,
+          customerType: payload.isLocal ? 'LOCAL' : 'FOREIGN',
+          fullName: payload.fullName,
+          phone: payload.phone,
+          email: payload.email || 'guest@lotussharm.com',
+          language: locale.toUpperCase(),
+          notes: payload.notes,
+          couponCode: payload.couponCode,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data?.error?.message || 'EasyKash failed');
+      // Send the customer to EasyKash's hosted checkout page.
+      window.location.href = data.data.checkoutUrl;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'EasyKash error');
+      setSubmitting(false);
+    }
+  };
+
   const submit = async () => {
     if (!isCashOnArrival && !file) {
       return toast.error(L(locale, { ar: 'ارفع صورة الإيصال أولاً', en: 'Please attach the receipt', de: 'Bitte fügen Sie den Beleg bei', ru: 'Прикрепите чек', it: 'Allega la ricevuta' }) as string);
@@ -256,6 +289,64 @@ export function BookingPayModal({
               {payload.email && (<><span>·</span><Mail className="h-3 w-3 text-accent" /><span dir="ltr">{payload.email}</span></>)}
             </div>
           </div>
+        </div>
+
+        {/* EasyKash hosted-payment CTA — installments + cards + wallets */}
+        <div className="relative rounded-2xl overflow-hidden border border-accent/40 bg-gradient-to-br from-primary via-primary-800 to-primary-900 text-cream p-5">
+          <div aria-hidden className="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-accent/15 blur-2xl pointer-events-none" />
+          <div className="relative flex items-start gap-4 flex-wrap">
+            <div className="shrink-0 inline-flex items-center justify-center bg-cream rounded-lg p-2 shadow-md">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-easycash.png" alt="EasyCash" className="h-9 w-auto object-contain" />
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-accent font-bold">
+                {L(locale, { ar: 'الدفع الفوري والتقسيط', en: 'Pay now or in installments', de: 'Sofort oder in Raten', ru: 'Сейчас или в рассрочку', it: 'Subito o a rate' })}
+              </div>
+              <h4 className="font-serif text-lg md:text-xl font-bold leading-tight mt-1">
+                {L(locale, {
+                  ar: 'قسط رحلتك مع EasyCash',
+                  en: 'Pay your trip in installments with EasyCash',
+                  de: 'Zahlen Sie Ihre Reise in Raten mit EasyCash',
+                  ru: 'Оплачивайте поездку в рассрочку с EasyCash',
+                  it: 'Paga il tuo viaggio a rate con EasyCash',
+                })}
+              </h4>
+              <p className="text-xs text-cream/80 mt-1.5 leading-relaxed">
+                {L(locale, {
+                  ar: 'كارت بنكي، محفظة، أو تقسيط حتى 18 شهر (الأهلي / valU / Aman / Souhoola / Forsa). تأكيد فوري للحجز بعد الدفع.',
+                  en: 'Card, wallet, or instalments up to 18 months (NBE / valU / Aman / Souhoola / Forsa). Booking auto-confirmed after payment.',
+                  de: 'Karte, Wallet oder Raten bis zu 18 Monate. Buchung wird nach Zahlung automatisch bestätigt.',
+                  ru: 'Карта, кошелёк или рассрочка до 18 месяцев. Бронь подтверждается автоматически.',
+                  it: 'Carta, wallet o rate fino a 18 mesi. Prenotazione confermata automaticamente.',
+                })}
+              </p>
+              <Button
+                type="button"
+                onClick={payEasykash}
+                disabled={submitting}
+                className="mt-3 bg-accent text-primary hover:bg-accent-400 font-bold w-full sm:w-auto"
+              >
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {L(locale, {
+                  ar: 'احجز وقسّط الآن',
+                  en: 'Book & pay with EasyCash',
+                  de: 'Buchen & mit EasyCash zahlen',
+                  ru: 'Забронировать и оплатить через EasyCash',
+                  it: 'Prenota e paga con EasyCash',
+                })}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center gap-3">
+          <span className="flex-1 h-px bg-border" />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
+            {L(locale, { ar: 'أو الدفع اليدوي', en: 'Or pay manually', de: 'Oder manuell zahlen', ru: 'Или вручную', it: 'O paga manualmente' })}
+          </span>
+          <span className="flex-1 h-px bg-border" />
         </div>
 
         {/* Method picker */}

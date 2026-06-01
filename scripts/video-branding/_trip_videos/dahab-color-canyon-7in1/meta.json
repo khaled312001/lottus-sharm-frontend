@@ -1,0 +1,46 @@
+{
+  "slug": "dahab-color-canyon-7in1",
+  "category": "SAFARI",
+  "priceLocalEGP": 1200,
+  "priceForeignUSD": 28,
+  "durationMinutes": 540,
+  "meetingPoint": "فندق الإقامة في شرم الشيخ",
+  "startTime": "08:00",
+  "title": {
+    "ar": "دهب والكانيون الملون (7 × 1)",
+    "en": "Dahab & Color Canyon (7-in-1)",
+    "ru": "Дахаб и Цветной каньон (7-в-1)"
+  },
+  "shortDesc": {
+    "ar": "يوم كامل من المغامرة: جيب سفاري، كانيون ملون، جمال، بيتش باجي، سنوركلينج، شاي بدوي، ومصنع العطور.",
+    "en": "A full day of adventure: jeep safari, color canyon, camels, beach buggies, snorkeling, Bedouin tea, and perfume factory.",
+    "ru": "Целый день приключений: джип-сафари, Цветной каньон, верблюды, багги, снорклинг, бедуинский чай и фабрика парфюмов."
+  },
+  "highlights": {
+    "ar": [
+      "ركوب الجمال والدراجات الرباعية بيتش باجي",
+      "تناول وجبة الغداء",
+      "التوجه لزيارة مصنع العطور والزيوت",
+      "التوجه لمنطقة وادي غزالة (حوالي 40 كم عن دهب)"
+    ],
+    "en": [
+      "Camel rides and beach buggies",
+      "Bedouin restaurant and 45 minutes of snorkeling at the reefs",
+      "Lunch",
+      "Visit the natural perfumes and oils factory"
+    ],
+    "ru": [
+      "Катание на верблюдах и багги",
+      "Бедуинский ресторан и 45 минут снорклинга",
+      "Обед",
+      "Фабрика натуральных парфюмов и масел"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/61f04662-b74b-4cc6-a080-9f50dc35f1e8-medium.webp",
+    "https://lotussharm.com/uploads/2026/05/11a10d0c-bcc9-4e84-9a99-9ab37f30c492-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/e4344370-e4ad-458a-a747-1e365fab853f-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/1c6e6d37-884e-406a-a217-8c1cbb27be90-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/4814731c-2059-45d3-9852-90b90bc46031-medium.jpg"
+  ]
+}

@@ -93,9 +93,58 @@ export default async function GalleryPage({ params }: { params: Promise<{ locale
     }
   } catch { /* ignore */ }
 
-  // Dedupe by URL (same image may sit in multiple trip galleries)
-  const seenP = new Set<string>(); const dedPhotos = photos.filter((m) => seenP.has(m.url) ? false : seenP.add(m.url));
-  const seenV = new Set<string>(); const dedVideos = videos.filter((m) => seenV.has(m.url) ? false : seenV.add(m.url));
+  // Build an exclusion set: any image used by a Hotel or a Transfer is
+  // out-of-scope for the gallery (those have their own dedicated pages).
+  const excludeUrls = new Set<string>();
+  try {
+    interface MiniWithHero { heroImage?: { url?: string | null } | null }
+    const [hotels, transfers] = await Promise.all([
+      api.get<{ items: MiniWithHero[] }>(`/public/hotels?locale=${localeToApiCode(locale)}&pageSize=60`),
+      api.get<{ items: MiniWithHero[] }>(`/public/transfers?locale=${localeToApiCode(locale)}`),
+    ]);
+    [...hotels.items, ...transfers.items].forEach((x) => {
+      const u = x.heroImage?.url;
+      if (u) excludeUrls.add(u);
+    });
+  } catch { /* ignore — leave gallery showing everything if fetch fails */ }
+
+  // Pull customer-review media (photos + videos attached to /review submissions)
+  // into the gallery under a "تقييمات العملاء" folder so visitors see real proof.
+  const REVIEW_FOLDER = L(locale, {
+    ar: 'تقييمات العملاء',
+    en: 'Customer reviews',
+    de: 'Kundenbewertungen',
+    ru: 'Отзывы клиентов',
+    it: 'Recensioni dei clienti',
+  }) as string;
+  try {
+    interface ReviewRow { customerName: string; images?: string[] }
+    const r = await api.get<{ items: ReviewRow[] }>(`/public/reviews/company?limit=200`);
+    for (const rev of r.items) {
+      if (!Array.isArray(rev.images)) continue;
+      for (const url of rev.images) {
+        if (!url) continue;
+        const isVid = /\.(mp4|mov|webm|mkv|avi)(\?|$)/i.test(url);
+        const item = {
+          url,
+          thumb: isVid ? undefined : url,
+          alt: rev.customerName || 'Lotus Sharm guest',
+          tripSlug: '',
+          category: 'REVIEWS',
+          folder: REVIEW_FOLDER,
+          type: (isVid ? 'VIDEO' : 'IMAGE') as 'IMAGE' | 'VIDEO',
+        };
+        if (isVid) videos.push(item); else photos.push(item);
+      }
+    }
+  } catch { /* ignore — gallery still works without review media */ }
+
+  // Dedupe by URL (same image may sit in multiple trip galleries),
+  // and drop anything used as a hotel/transfer hero.
+  const seenP = new Set<string>();
+  const dedPhotos = photos.filter((m) => !excludeUrls.has(m.url) && (seenP.has(m.url) ? false : seenP.add(m.url)));
+  const seenV = new Set<string>();
+  const dedVideos = videos.filter((m) => !excludeUrls.has(m.url) && (seenV.has(m.url) ? false : seenV.add(m.url)));
 
   const cms = await fetchCMSPage('gallery', locale);
   const heroTitle = cms?.tr?.title || t('gallery.title');

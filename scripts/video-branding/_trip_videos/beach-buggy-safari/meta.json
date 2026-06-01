@@ -1,0 +1,52 @@
+{
+  "slug": "beach-buggy-safari",
+  "category": "SAFARI",
+  "priceLocalEGP": 550,
+  "priceForeignUSD": 15,
+  "durationMinutes": 240,
+  "meetingPoint": "فندق الإقامة في شرم الشيخ",
+  "startTime": "15:00",
+  "title": {
+    "ar": "سفاري البيتش باجي  Atv ",
+    "en": "Beach Buggy Safari — Sinai Desert",
+    "ru": "Сафари на багги — Синайская пустыня"
+  },
+  "shortDesc": {
+    "ar": "مغامرة البيتش باجي في صحراء سيناء مع وقفة صدى الصوت والشاي البدوي وغروب لا يُنسى.",
+    "en": "Beach buggy adventure across Sinai desert: Echo Point, Bedouin tea, and an unforgettable sunset.",
+    "ru": "Приключение на багги по Синайской пустыне: Эхо-Поинт, бедуинский чай и незабываемый закат."
+  },
+  "highlights": {
+    "ar": [
+      "الانتقالات من والى الفندق",
+      "ركوب البيتش باجي واستكشاف صحراء سيناء",
+      "وقفة صدى الصوت",
+      "التصوير بين الجبال ومشاهدة الغروب أو الشروق"
+    ],
+    "en": [
+      "Round-trip hotel transfers",
+      "Beach buggy ride across the Sinai desert",
+      "Echo Point stop",
+      "Photos between the mountains + sunset/sunrise view"
+    ],
+    "ru": [
+      "Трансфер из отеля и обратно",
+      "Поездка на багги по пустыне",
+      "Остановка на «Эхо-Поинт»",
+      "Фотосессия среди гор + закат или восход"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/a828c16d-f43a-4a12-884e-0670bd586829-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/56c1a079-dc01-42d8-991b-39ba77f167de-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/f5784d92-d60f-4249-aef6-68ca0a98ae69-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/a55fe662-e55d-4f3c-8b59-0394e1643f28-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/e66f0ae3-b72d-4950-93d5-1e6e3ebb71d6-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/cc175cb9-343c-43bd-b56c-5aeaaea3b314-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/930e4c0c-e303-41e5-a08e-f427f444d5b6-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/ce72e2cd-9755-49e5-9878-96f26a7f3d3d-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/cb64f438-ba99-47b4-8647-fc898bb4b072-poster.jpg",
+    "https://lotussharm.com/uploads/2026/05/94bfc285-d21b-4c8b-941b-0a43c5871b32-poster.jpg",
+    "https://lotussharm.com/uploads/2026/05/d9624244-4bc1-4a34-85d4-abc55701c515-poster.jpg"
+  ]
+}

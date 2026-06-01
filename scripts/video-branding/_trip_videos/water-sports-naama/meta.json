@@ -1,0 +1,46 @@
+{
+  "slug": "water-sports-naama",
+  "category": "SEA",
+  "priceLocalEGP": 800,
+  "priceForeignUSD": 16,
+  "durationMinutes": 90,
+  "meetingPoint": "خليج نعمة — السوق القديم  شرم الشيخ",
+  "startTime": "09:00",
+  "title": {
+    "ar": "الألعاب البحرية — باراشوت، بانانا، تيوبا",
+    "en": "Water Sports — Parachute, Banana, Tube",
+    "ru": "Водные виды спорта — Парашют, Банан, Тюбинг"
+  },
+  "shortDesc": {
+    "ar": "مغامرة بحرية: باراشوت، بانانا، تيوبا في شرم الشيخ. سعر سنجل 800 جنيه، دبل 750 جنيه/فرد.",
+    "en": "Watersports adventure in Sharm El Sheikh: parasail, banana boat, tube. Single EGP 800, double EGP 750/person.",
+    "ru": "Водные развлечения в Шарм-эль-Шейхе: парасейл, банан, тюбинг. Одиночное 800 EGP, парное 750 EGP с человека."
+  },
+  "highlights": {
+    "ar": [
+      "باراشوت (مظلة): الطيران فوق البحر برؤية بانورامية",
+      "بانانا: ركوب الموزة المطاطية على الأمواج",
+      "تيوبا (دونات): جولة سريعة على إطار مطاطي",
+      "الفرد سنجل (مفرد): 800 جنيه"
+    ],
+    "en": [
+      "Parasail: Fly above the sea with panoramic views",
+      "Banana boat: Ride the inflatable banana on waves",
+      "Tube (donut): Fast tow ride on an inflatable ring",
+      "Single rider: EGP 800"
+    ],
+    "ru": [
+      "Парасейл: Полёт над морем с панорамным видом",
+      "Банан: Катание на надувном банане",
+      "Тюбинг: Скоростная буксировка на надувном кольце",
+      "Одиночный: 800 EGP"
+    ]
+  },
+  "images": [
+    "https://lotussharm.com/uploads/2026/05/2745c5b3-0965-4f68-8751-f93ea68774de-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/1f97d416-a7e1-4791-be95-6ddeb5b20cf3-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/859a2629-7738-49c6-9f8a-97c98b1160e1-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/135a93a9-e876-4bb8-becc-1dca5bd5c680-medium.jpg",
+    "https://lotussharm.com/uploads/2026/05/4a1ba1a9-eb47-4d0b-9b7f-e07e40135f1d-medium.jpg"
+  ]
+}
