@@ -78,16 +78,18 @@ def _fit_to_area(clip, w, h):
 
 
 def _ken_burns(clip, kind=0):
-    """Slow push / pull with optional drift, returning a clip the same size."""
+    """Stronger push / pull / drift / diagonal — gives every slide motion."""
     from moviepy import vfx
     dur = clip.duration
     w, h = clip.size
-    if kind % 3 == 0:
-        z0, z1, panx, pany = 1.00, 1.08, 0.0, 0.0       # gentle push
-    elif kind % 3 == 1:
-        z0, z1, panx, pany = 1.08, 1.00, 0.0, 0.0       # gentle pull
-    else:
-        z0, z1, panx, pany = 1.05, 1.10, 0.03, 0.01     # push + drift
+    table = [
+        (1.00, 1.18, 0.00, 0.00),      # strong push
+        (1.18, 1.00, 0.00, 0.00),      # strong pull
+        (1.06, 1.16, 0.04, 0.02),      # push + right drift
+        (1.06, 1.16, -0.04, 0.02),     # push + left drift
+        (1.10, 1.18, 0.02, -0.03),     # push + up drift
+    ]
+    z0, z1, panx, pany = table[kind % len(table)]
 
     def scale(t):
         k = (t / dur) if dur else 0
@@ -240,59 +242,102 @@ def _render_card(title, lines, palette, max_w, accent_pill=None):
 
 
 def _render_price_card(price_egp, price_usd, palette):
-    """Big price callout card."""
+    """Premium PRICE callout — gold gradient pill, big numbers, subtle glow."""
     pal = palette or {}
     accent = pal.get("accent", C.GOLD)
     accent_l = pal.get("accent_light", C.GOLD_LIGHT)
-    img = Image.new("RGBA", (C.W, 360), (0, 0, 0, 0))
+    img = Image.new("RGBA", (C.W, 460), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     cx = C.W // 2
     y = 20
 
-    # eyebrow
-    f_eye = U.font("sans_bold", 22)
-    d.text((cx, y), U.shape_ar("السعر"), font=f_eye, fill=accent_l, anchor="mt")
-    y += 30
+    # eyebrow pill — "ابتداءً من / starting from"
+    f_eye = U.font("sans_bold", 26)
+    eye_text = U.shape_ar("ابتداءً من · STARTING FROM")
+    eye_w = _measure_w(d, eye_text, f_eye)
+    pad_x = 26
+    pill_w = int(eye_w) + 2 * pad_x
+    x0 = cx - pill_w // 2
+    d.rounded_rectangle([x0, y, x0 + pill_w, y + 46], radius=23,
+                        fill=U.with_alpha(C.TEAL_DEEP, 230),
+                        outline=accent, width=2)
+    d.text((cx, y + 23), eye_text, font=f_eye, fill=accent_l, anchor="mm")
+    y += 64
 
-    # big price
-    f_big = U.font("serif_bold", 88)
+    # MAIN GOLD PILL — two-tone (light → mid gold) with thick border + glow
     egp = f"{price_egp:,} EGP"
     usd = f"${price_usd}"
-    pill_text = f"{egp}   ·   {usd}"
-    # measure
-    tw = d.textlength(pill_text, font=f_big)
-    size = 88
-    while tw > C.W - 80 and size > 40:
-        size -= 4
+
+    f_big = U.font("serif_bold", 112)
+    f_sep = U.font("serif_bold", 96)
+    pill_text = f"{egp}    ·    {usd}"
+    size = 112
+    while _measure_w(d, pill_text, f_big) > C.W - 60 and size > 56:
+        size -= 6
         f_big = U.font("serif_bold", size)
-        tw = d.textlength(pill_text, font=f_big)
 
-    pill_h = size + 28
-    pill_w = int(tw) + 80
+    tw = _measure_w(d, pill_text, f_big)
+    pill_h = size + 44
+    pill_w = int(tw) + 90
     x0 = cx - pill_w // 2
-    d.rounded_rectangle([x0, y, x0 + pill_w, y + pill_h], radius=pill_h // 2,
-                        fill=U.with_alpha(accent, 240),
-                        outline=accent_l, width=3)
-    d.text((cx, y + pill_h // 2), pill_text, font=f_big,
-           fill=C.TEAL_DEEP, anchor="mm")
-    y += pill_h + 16
 
-    # subtitle
-    f_sub = U.font("sans", 24)
-    d.text((cx, y), U.shape_ar("للفرد · يشمل غداء"), font=f_sub,
-           fill=U.with_alpha(C.WHITE, 240), anchor="mt",
-           stroke_width=2, stroke_fill=(0, 0, 0, 180))
-    y += 32
-    d.text((cx, y), "Per person · Lunch included", font=f_sub,
-           fill=U.with_alpha(C.WHITE, 220), anchor="mt",
-           stroke_width=2, stroke_fill=(0, 0, 0, 180))
-    y += 38
+    # gold-on-gold pill background (with subtle vertical gradient)
+    band = U.vertical_gradient(pill_w, pill_h,
+                               [(0.0, accent_l), (0.5, accent),
+                                (1.0, (max(0, accent[0] - 30),
+                                       max(0, accent[1] - 30),
+                                       max(0, accent[2] - 30)))]).convert("RGBA")
+    mask = Image.new("L", (pill_w, pill_h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle(
+        [0, 0, pill_w - 1, pill_h - 1], radius=pill_h // 2, fill=255)
+    img.paste(band, (x0, y), mask)
+    # gold rim
+    d.rounded_rectangle([x0, y, x0 + pill_w, y + pill_h], radius=pill_h // 2,
+                        outline=accent_l, width=4)
+    # inner shadow line
+    d.rounded_rectangle([x0 + 4, y + 4, x0 + pill_w - 4, y + pill_h - 4],
+                        radius=pill_h // 2 - 4,
+                        outline=U.with_alpha((180, 130, 60), 200), width=1)
+
+    d.text((cx, y + pill_h // 2), pill_text, font=f_big,
+           fill=C.TEAL_DEEP, anchor="mm",
+           stroke_width=2, stroke_fill=(0, 0, 0, 80))
+    y += pill_h + 24
+
+    # subtitle — bigger
+    f_sub = U.font("sans_bold", 32)
+    d.text((cx, y), U.shape_ar("للفرد · شامل الخدمات"), font=f_sub,
+           fill=C.WHITE, anchor="mt",
+           stroke_width=3, stroke_fill=(0, 0, 0, 220))
+    y += 44
+    d.text((cx, y), "Per person · All-inclusive", font=f_sub,
+           fill=U.with_alpha(accent_l, 240), anchor="mt",
+           stroke_width=3, stroke_fill=(0, 0, 0, 220))
+    y += 50
 
     # tight crop
     bbox = img.getbbox()
     if bbox:
-        img = img.crop((0, max(0, bbox[1] - 8), C.W, min(360, bbox[3] + 10)))
+        img = img.crop((0, max(0, bbox[1] - 10), C.W, min(460, bbox[3] + 14)))
     return np.asarray(img), img.height
+
+
+def _animated_price(card, start, duration, y_top, fade_in=0.6, fade_out=0.5):
+    """Zoom-in punch reveal for the price card (scales 1.15 -> 1.0)."""
+    from moviepy import vfx
+    h, w = card.shape[:2]
+    clip = clip_from_rgba(card, duration).with_start(start)
+    clip = clip.with_effects([vfx.CrossFadeIn(fade_in), vfx.CrossFadeOut(fade_out)])
+
+    def scale(t):
+        k = min(1.0, t / fade_in)
+        return 1.15 - 0.15 * U.ease_out_back(k)
+    clip = clip.with_effects([vfx.Resize(scale)])
+
+    def pos(t):
+        s = scale(t)
+        return ((C.W - w * s) / 2, y_top - (h * s - h) / 2)
+    return clip.with_position(pos)
 
 
 def _animated_text(card, start, duration, y_top, fade_in=0.5, fade_out=0.5,
@@ -343,60 +388,53 @@ def build_text_schedule(meta, body_d, palette):
     upper_y = text_area_top + 40                         # for the title block
     lower_y = text_area_bot - 360                        # for the highlights / price
 
-    # ---- Phase 1: title-only card (0 .. body_d * 0.32) ----
-    t_phase1_end = max(4.0, body_d * 0.32)
+    # ---- Phase 1: title-only card (0 .. body_d * 0.38) — longer hold ----
+    t_phase1_end = max(5.0, body_d * 0.38)
     card1, h1 = _render_card(
         title=title,
         lines=None,
         palette=palette,
-        max_w=C.W - 200,                            # safety margin for Arabic
+        max_w=C.W - 220,
         accent_pill="رحلة جديدة · NEW TRIP",
     )
-    clips = [_animated_text(card1, 0.4, t_phase1_end - 0.4,
-                            upper_y, fade_in=0.6, fade_out=0.5)]
+    centre_y_upper = (C.H - h1) // 2 - 120        # well-centred upper area
+    clips = [_animated_text(card1, 0.5, t_phase1_end - 0.5,
+                            centre_y_upper, fade_in=0.8, fade_out=0.6,
+                            rise=44)]
 
-    # ---- Phase 2: highlights one-by-one (32% .. 70%) ----
-    t_phase2_start = t_phase1_end + 0.2
+    # ---- Phase 2: highlights one-by-one (38% .. 70%) ----
+    t_phase2_start = t_phase1_end + 0.3
     t_phase2_end = body_d * 0.70
     hl_clips = []
     if highlights:
-        per = max(2.0, (t_phase2_end - t_phase2_start) / max(1, len(highlights)))
+        # at least 3.0s per highlight so the viewer can READ it
+        per = max(3.0, (t_phase2_end - t_phase2_start) / max(1, len(highlights)))
         for i, h in enumerate(highlights):
             card, ch = _render_card(
                 title=None,
                 lines=[h],
                 palette=palette,
-                max_w=C.W - 200,
+                max_w=C.W - 220,
                 accent_pill=f"•  {i + 1} / {len(highlights)}",
             )
             st = t_phase2_start + i * per
+            y_h = (C.H - ch) // 2 + 80              # centred mid-image area
             hl_clips.append(_animated_text(
-                card, st, min(per + 0.5, t_phase2_end - st + 0.5),
-                lower_y + 240 - ch // 2, fade_in=0.4, fade_out=0.4, rise=14))
+                card, st, min(per + 0.6, t_phase2_end - st + 0.6),
+                y_h, fade_in=0.5, fade_out=0.5, rise=22))
     clips += hl_clips
 
-    # ---- Phase 3: price callout (70% .. 92%) ----
+    # ---- Phase 3: PRICE callout (70% .. end) — final body reveal.
+    # NOTE: a separate "احجز / Book now" CTA lives in the outro segment so
+    # we don't double-up CTAs back-to-back inside the body.
     t_phase3_start = max(t_phase2_end + 0.3, body_d * 0.72)
-    t_phase3_end = body_d * 0.92
+    t_phase3_end = body_d - 0.4
     card3, h3 = _render_price_card(egp, usd, palette)
-    clips.append(_animated_text(
-        card3, t_phase3_start, t_phase3_end - t_phase3_start,
-        lower_y + 80 - h3 // 2, fade_in=0.5, fade_out=0.5, rise=20))
+    y3 = (C.H - h3) // 2 + 40
+    clips.append(_animated_price(
+        card3, t_phase3_start, t_phase3_end - t_phase3_start, y3,
+        fade_in=0.6, fade_out=0.6))
 
-    # ---- Phase 4: CTA (92% .. end) ----
-    cta_start = t_phase3_end
-    cta_card, cta_h = _render_card(
-        title="احجز الآن  ·  Book now",
-        lines=["WhatsApp +20 109 076 7278"],
-        palette=palette,
-        max_w=C.W - 100,
-        accent_pill="lotussharm.com",
-    )
-    clips.append(_animated_text(
-        cta_card, cta_start, body_d - cta_start + 0.2,
-        lower_y - cta_h // 2 + 100, fade_in=0.5, fade_out=0.4, rise=22))
-
-    # title duration check — clamp to body_d
     return clips
 
 
@@ -491,9 +529,83 @@ def _intro_segment(meta, palette, area_w, area_h, duration=2.8):
     return intro
 
 
-def _outro_segment(meta, palette, area_w, area_h, duration=3.0):
-    """Trip-specific outro: last image + scrim + CTA card + contact info."""
-    from moviepy import ImageClip, CompositeVideoClip, vfx
+def _render_outro_card(palette, area_w):
+    """Premium outro CTA — single 'Book now' block, clean typography, no
+    trailing punctuation. Returns (rgba, height)."""
+    pal = palette or {}
+    accent = pal.get("accent", C.GOLD)
+    accent_l = pal.get("accent_light", C.GOLD_LIGHT)
+    img = Image.new("RGBA", (area_w, 640), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    cx = area_w // 2
+    y = 30
+    max_w = area_w - 220
+
+    # accent pill — the website
+    f_pill = U.font("sans_bold", 30)
+    pill_text = "lotussharm.com"
+    tw = _measure_w(d, pill_text, f_pill)
+    pad_x = 36
+    pill_w = int(tw) + 2 * pad_x
+    pill_h = 60
+    x0 = cx - pill_w // 2
+    d.rounded_rectangle([x0, y, x0 + pill_w, y + pill_h], radius=30,
+                        fill=U.with_alpha(accent, 245),
+                        outline=accent_l, width=3)
+    d.text((cx, y + pill_h // 2), pill_text, font=f_pill,
+           fill=C.TEAL_DEEP, anchor="mm")
+    y += pill_h + 38
+
+    # main bilingual headline — Arabic line then English line
+    f_ar = U.font("sans_bold", 94)
+    ar_text = U.shape_ar("احجز رحلتك الآن")
+    size_ar = 94
+    while _measure_w(d, ar_text, f_ar) > max_w and size_ar > 56:
+        size_ar -= 6
+        f_ar = U.font("sans_bold", size_ar)
+    d.text((cx, y), ar_text, font=f_ar, fill=C.WHITE, anchor="mt",
+           stroke_width=4, stroke_fill=(0, 0, 0, 230))
+    y += size_ar + 12
+
+    f_en = U.font("serif_bold", 64)
+    en_text = "Book your trip today"
+    size_en = 64
+    while _measure_w(d, en_text, f_en) > max_w and size_en > 40:
+        size_en -= 4
+        f_en = U.font("serif_bold", size_en)
+    d.text((cx, y), en_text, font=f_en, fill=accent_l, anchor="mt",
+           stroke_width=3, stroke_fill=(0, 0, 0, 220))
+    y += size_en + 40
+
+    # gold thin separator
+    d.line([(cx - 80, y), (cx - 12, y)], fill=accent_l, width=2)
+    d.line([(cx + 12, y), (cx + 80, y)], fill=accent_l, width=2)
+    d.polygon([(cx, y - 7), (cx + 8, y), (cx, y + 7), (cx - 8, y)],
+              fill=accent)
+    y += 26
+
+    # phone number — big, no punctuation at the end
+    f_phone = U.font("sans_bold", 52)
+    d.text((cx, y), C.PHONE, font=f_phone, fill=C.WHITE, anchor="mt",
+           stroke_width=3, stroke_fill=(0, 0, 0, 230))
+    y += 60
+
+    # smaller WhatsApp label below the number
+    f_label = U.font("sans", 28)
+    d.text((cx, y), U.shape_ar("WhatsApp  ·  واتساب"), font=f_label,
+           fill=U.with_alpha(accent_l, 235), anchor="mt",
+           stroke_width=2, stroke_fill=(0, 0, 0, 200))
+    y += 40
+
+    bbox = img.getbbox()
+    if bbox:
+        img = img.crop((0, max(0, bbox[1] - 8), area_w, min(640, bbox[3] + 14)))
+    return np.asarray(img), img.height
+
+
+def _outro_segment(meta, palette, area_w, area_h, duration=3.5):
+    """Trip-specific outro — last image + scrim + premium 'Book now' card."""
+    from moviepy import ImageClip, CompositeVideoClip
     img_dir = TRIP_ROOT / meta["slug"] / "images"
     images = sorted(img_dir.glob("*"))
     bg = ImageClip(str(images[-1])).with_duration(duration).with_fps(30)
@@ -503,18 +615,11 @@ def _outro_segment(meta, palette, area_w, area_h, duration=3.0):
     scrim_arr = scrim_full[TF.TOP_H:TF.TOP_H + area_h, :area_w]
     scrim = clip_from_rgba(scrim_arr, duration)
 
-    card, ch = _render_card(
-        title="احجز رحلتك الآن",
-        lines=["Book your trip today",
-               U.shape_ar("واتساب · ") + C.PHONE],
-        palette=palette,
-        max_w=area_w - 100,
-        accent_pill="lotussharm.com",
-    )
+    card, ch = _render_outro_card(palette, area_w)
     y = max(40, (area_h - ch) // 2)
     cta_clip = _animated_text(
         card, 0.4, duration - 0.4, y,
-        fade_in=0.7, fade_out=0.5, rise=28)
+        fade_in=0.8, fade_out=0.6, rise=36)
 
     outro = CompositeVideoClip([bg, scrim, cta_clip],
                                size=(area_w, area_h)).with_duration(duration)
@@ -522,7 +627,7 @@ def _outro_segment(meta, palette, area_w, area_h, duration=3.0):
 
 
 # ============================================================ orchestrator
-def render_trip(slug, music="library", out=None, body_d=30.0, crf=20,
+def render_trip(slug, music="library", out=None, body_d=36.0, crf=20,
                 fps=30, square=False, palette=None):
     from moviepy import (VideoFileClip, ImageClip, CompositeVideoClip,
                          concatenate_videoclips, vfx)
@@ -548,7 +653,7 @@ def render_trip(slug, music="library", out=None, body_d=30.0, crf=20,
     from moviepy import concatenate_videoclips, vfx
     area_w = C.W
     area_h = C.H - TF.TOP_H - TF.BOT_H
-    intro_d, outro_d, seg_cf = 2.8, 3.0, 0.5
+    intro_d, outro_d, seg_cf = 2.8, 3.6, 0.5
 
     intro = _intro_segment(meta, pal, area_w, area_h, intro_d)
     slides, slides_d = build_slideshow(images, body_d, area_w, area_h)
