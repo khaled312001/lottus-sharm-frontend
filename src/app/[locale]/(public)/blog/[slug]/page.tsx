@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
@@ -31,7 +31,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   const { slug, locale } = await params;
   setRequestLocale(locale);
   const post = await fetchPost(slug, locale);
-  if (!post) notFound();
+  // Unknown / removed blog slug — redirect 308 to the blog listing so old
+  // external links don't surface as 404s in Search Console.
+  if (!post) permanentRedirect(`/${locale}/blog`);
 
   const coverSrc = post.coverImage?.url || pickCoverImage(post.slug);
   const content = injectSectionImages(stripLeadMeta(post.tr?.content || ''), post.slug);

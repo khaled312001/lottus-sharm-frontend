@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
@@ -74,7 +74,10 @@ export default async function TripDetailPage({ params }: PageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const trip = await fetchTrip(slug, locale);
-  if (!trip) notFound();
+  // Unknown / removed trip slug — redirect 308 to the trips listing instead
+  // of returning a 404. Cleans up Google Search Console reports for old or
+  // mistyped URLs that external sites still link to.
+  if (!trip) permanentRedirect(`/${locale}/trips`);
   const t = await getTranslations({ locale });
   const tr = trip.tr;
   const isAr = locale === 'ar';
