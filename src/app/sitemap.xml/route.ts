@@ -93,9 +93,9 @@ export async function GET() {
     }
   } catch {/* ignore */}
 
-  // Blog posts
+  // Blog posts (from API)
   try {
-    const res = await api.get<{ items: Array<{ slug: string }> }>(`/public/blog?locale=AR&pageSize=100`);
+    const res = await api.get<{ items: Array<{ slug: string }> }>(`/public/blog?locale=AR&pageSize=50`);
     for (const p of res.items) {
       for (const loc of LOCALES) {
         urls.push({
@@ -108,6 +108,20 @@ export async function GET() {
       }
     }
   } catch {/* ignore */}
+
+  // Static blog articles (always present, no API dependency)
+  const staticSlugs = ['افضل-10-رحلات-شرم-الشيخ-2026', 'دليل-السفر-الى-شرم-الشيخ'];
+  for (const slug of staticSlugs) {
+    for (const loc of LOCALES) {
+      urls.push({
+        loc: `${SITE}/${loc}/blog/${encodeURIComponent(slug)}`,
+        lastmod: now,
+        changefreq: 'monthly',
+        priority: 0.75,
+        alternates: altsFor(`/blog/${encodeURIComponent(slug)}`),
+      });
+    }
+  }
 
   const xml =
     '<?xml version="1.0" encoding="UTF-8"?>\n' +

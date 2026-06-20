@@ -10,12 +10,26 @@ const intl = createMiddleware(routing);
 const MALFORMED_ROOT = /^\/[^a-zA-Z0-9]$/;
 
 export default function middleware(req: NextRequest) {
+  // ── 1. www → bare domain (301 permanent) ──────────────────────────
+  // Runs at the edge BEFORE Next.js route handling, so it's a single hop
+  // instead of going through next.config redirects which run later.
+  const host = req.headers.get('host') || '';
+  if (host.startsWith('www.')) {
+    const url = req.nextUrl.clone();
+    url.host = host.replace(/^www\./, '');
+    url.port = '';
+    return NextResponse.redirect(url, 301);
+  }
+
+  // ── 2. Malformed root paths → clean root ──────────────────────────
   if (MALFORMED_ROOT.test(req.nextUrl.pathname)) {
     const url = req.nextUrl.clone();
     url.pathname = '/';
     url.search = '';
     return NextResponse.redirect(url, 301);
   }
+
+  // ── 3. next-intl locale routing ───────────────────────────────────
   return intl(req);
 }
 

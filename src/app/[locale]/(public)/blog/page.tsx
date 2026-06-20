@@ -4,7 +4,7 @@ import { Link } from '@/i18n/routing';
 import { Reveal } from '@/components/public/motion';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
-import type { BlogPostDTO } from '@/types/api';
+import type { BlogPostDTO, ApiLocale } from '@/types/api';
 import { localeToApiCode, buildWhatsAppLink, L } from '@/lib/utils';
 import { pickCoverImage } from '@/lib/blog-images';
 import { Calendar, Clock, BookOpen, MessageCircle, ArrowRight } from 'lucide-react';
@@ -12,6 +12,7 @@ import { fetchCMSPage } from '@/lib/cms';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/seo/json-ld';
 import { SITE_URL, buildPageMetadata, buildBreadcrumbLd, crumbLabel } from '@/lib/seo';
+import { STATIC_ARTICLES } from './[slug]/static-articles';
 
 export const revalidate = 60;
 
@@ -58,6 +59,56 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
     const res = await api.get<{ items: BlogPostDTO[] }>(`/public/blog?locale=${localeToApiCode(locale)}&pageSize=12`);
     posts = res.items;
   } catch { /* ignore */ }
+
+  // Map static articles to the BlogPostDTO structure so they display properly in the list
+  const staticMapped: BlogPostDTO[] = STATIC_ARTICLES.map((art, idx) => {
+    const translation = art.tr[locale] || art.tr['ar']; // Fallback to ar if locale translation doesn't exist
+    const apiCode = localeToApiCode(locale);
+
+    // Convert translations object to the array structure needed for BlogPostDTO
+    const translations = Object.entries(art.tr).map(([lang, tData]) => ({
+      locale: localeToApiCode(lang) as ApiLocale,
+      title: tData.title,
+      excerpt: tData.excerpt,
+      content: tData.content,
+      metaTitle: tData.metaTitle,
+      metaDesc: tData.metaDesc,
+    }));
+
+    return {
+      id: -(idx + 1), // Negative unique id for static posts
+      slug: art.slug,
+      status: 'PUBLISHED',
+      publishedAt: art.publishedAt,
+      readTime: art.readTime,
+      coverImage: {
+        id: -(idx + 1),
+        type: 'IMAGE',
+        url: art.coverImage,
+        mediumUrl: art.coverImage,
+        thumbnailUrl: art.coverImage,
+        width: 1200,
+        height: 675,
+      },
+      translations,
+      tr: {
+        locale: apiCode as ApiLocale,
+        title: translation?.title || '',
+        excerpt: translation?.excerpt || '',
+        content: translation?.content || '',
+        metaTitle: translation?.metaTitle || '',
+        metaDesc: translation?.metaDesc || '',
+      },
+    };
+  });
+
+  // Combine static and dynamic posts, placing static ones first or sorting by publication date
+  posts = [...staticMapped, ...posts];
+  posts.sort((a, b) => {
+    const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+    const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+    return dateB - dateA;
+  });
 
   const hasPosts = posts.length > 0;
   const featured = posts[0];
