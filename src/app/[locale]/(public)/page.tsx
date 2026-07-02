@@ -442,6 +442,51 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* ============ FEATURED TRIPS — directly after EasyCash section ============ */}
+      <section className="relative py-14 md:py-24 bg-gradient-to-b from-cream to-muted/40 overflow-hidden">
+        <div aria-hidden className="orb-accent absolute top-1/3 -start-32 pointer-events-none animate-blob" />
+        <div aria-hidden className="orb-accent absolute bottom-0 -end-40 pointer-events-none animate-blob" style={{ animationDelay: '5s' }} />
+        {/* Marquee strip on top */}
+        <div aria-hidden className="absolute top-0 inset-x-0 overflow-hidden opacity-[0.07] pointer-events-none">
+          <div className="flex gap-12 whitespace-nowrap py-3 animate-marquee font-serif text-2xl md:text-4xl font-bold text-primary">
+            {Array.from({ length: 6 }).flatMap(() => [
+              <span key={`a-${Math.random()}`}>SHARM EL SHEIKH</span>,
+              <span key={`b-${Math.random()}`} className="text-accent">✦</span>,
+              <span key={`c-${Math.random()}`}>RED SEA</span>,
+              <span key={`d-${Math.random()}`} className="text-accent">✦</span>,
+              <span key={`e-${Math.random()}`}>LUXURY TOURS</span>,
+              <span key={`f-${Math.random()}`} className="text-accent">✦</span>,
+            ])}
+          </div>
+        </div>
+
+        <div className="container relative">
+          <Reveal className="flex items-end justify-between flex-wrap gap-4 mb-8 md:mb-12">
+            <div>
+              <span className="eyebrow">{L(locale, { ar: 'رحلاتنا المميزة', en: 'Curated experiences', de: 'Sorgfältig kuratierte Erlebnisse', ru: 'Лучшие туры', it: 'Esperienze selezionate' })}</span>
+              <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-2 leading-tight text-balance">{t('home.featuredTrips')}</h2>
+              <p className="text-sm md:text-base text-muted-foreground max-w-md leading-relaxed">{t('home.featuredTripsDesc')}</p>
+            </div>
+            <Button asChild variant="ghost" className="text-accent-700 hover:text-accent hover:bg-accent/10 group">
+              <Link href="/trips" className="link-underline-grow">
+                {t('common.viewAll')}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+          </Reveal>
+
+          {trips.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground italic">{t('trips.noTrips')}</div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+              {trips.map((trip, i) => (
+                <TripCard key={trip.id} trip={trip} locale={locale} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Mobile stats — separate band below hero (no overlap) */}
       <section className="md:hidden bg-primary-900 text-cream py-5">
         <div className="container">
@@ -689,51 +734,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ============ FEATURED TRIPS ============ */}
-      <section className="relative py-14 md:py-24 bg-gradient-to-b from-cream to-muted/40 overflow-hidden">
-        <div aria-hidden className="orb-accent absolute top-1/3 -start-32 pointer-events-none animate-blob" />
-        <div aria-hidden className="orb-accent absolute bottom-0 -end-40 pointer-events-none animate-blob" style={{ animationDelay: '5s' }} />
-        {/* Marquee strip on top */}
-        <div aria-hidden className="absolute top-0 inset-x-0 overflow-hidden opacity-[0.07] pointer-events-none">
-          <div className="flex gap-12 whitespace-nowrap py-3 animate-marquee font-serif text-2xl md:text-4xl font-bold text-primary">
-            {Array.from({ length: 6 }).flatMap(() => [
-              <span key={`a-${Math.random()}`}>SHARM EL SHEIKH</span>,
-              <span key={`b-${Math.random()}`} className="text-accent">✦</span>,
-              <span key={`c-${Math.random()}`}>RED SEA</span>,
-              <span key={`d-${Math.random()}`} className="text-accent">✦</span>,
-              <span key={`e-${Math.random()}`}>LUXURY TOURS</span>,
-              <span key={`f-${Math.random()}`} className="text-accent">✦</span>,
-            ])}
-          </div>
-        </div>
-
-        <div className="container relative">
-          <Reveal className="flex items-end justify-between flex-wrap gap-4 mb-8 md:mb-12">
-            <div>
-              <span className="eyebrow">{L(locale, { ar: 'رحلاتنا المميزة', en: 'Curated experiences', de: 'Sorgfältig kuratierte Erlebnisse', ru: 'Лучшие туры', it: 'Esperienze selezionate' })}</span>
-              <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-2 leading-tight text-balance">{t('home.featuredTrips')}</h2>
-              <p className="text-sm md:text-base text-muted-foreground max-w-md leading-relaxed">{t('home.featuredTripsDesc')}</p>
-            </div>
-            <Button asChild variant="ghost" className="text-accent-700 hover:text-accent hover:bg-accent/10 group">
-              <Link href="/trips" className="link-underline-grow">
-                {t('common.viewAll')}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-          </Reveal>
-
-          {trips.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground italic">{t('trips.noTrips')}</div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-              {trips.map((trip, i) => (
-                <TripCard key={trip.id} trip={trip} locale={locale} index={i} />
-              ))}
-            </div>
-          )}
         </div>
       </section>
 

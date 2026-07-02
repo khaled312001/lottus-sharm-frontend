@@ -426,8 +426,12 @@ export default async function TripDetailPage({ params }: PageProps) {
         </section>
       )}
 
-      {/* Quick-book FAB — appears when the booking widget is off-screen */}
-      <QuickBookFab targetId="book" />
+      {/* Quick-book FAB — desktop only. On mobile the BookingWidget already
+          renders an always-visible sticky bottom CTA bar that opens the
+          booking modal in one tap, so a floating pill there just overlaps it. */}
+      <div className="hidden lg:block">
+        <QuickBookFab targetId="book" />
+      </div>
 
       {/* Recently viewed strip + tracker for this trip */}
       <TripTrackView

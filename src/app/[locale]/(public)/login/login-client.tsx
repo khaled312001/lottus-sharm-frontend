@@ -17,11 +17,17 @@ export function LoginClient({ locale }: { locale: string }) {
   const [exchanging, setExchanging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Post-login destination. Google echoes the `state` param we sent (the
+  // origin page, e.g. /ar/review). Fall back to a ?next= query, then to the
+  // account dashboard. Only accept same-site relative paths (open-redirect guard).
+  const rawDest = sp?.get('state') || sp?.get('next') || `/${locale}/account`;
+  const dest = /^\/[^/\\]/.test(rawDest) ? rawDest : `/${locale}/account`;
+  const isCallback = !!sp?.get('code'); // we're mid-OAuth exchange
+
   // If we land here with ?code=..., immediately exchange it for a session.
   useEffect(() => {
     const code = sp?.get('code');
     const err = sp?.get('error');
-    const next = sp?.get('next') || `/${locale}/account`;
     if (err) {
       setError(err);
       return;
@@ -41,7 +47,7 @@ export function LoginClient({ locale }: { locale: string }) {
         if (!r.ok || !j.ok) throw new Error(j?.error?.message || 'Sign-in failed');
         await refresh();
         toast.success(L(locale, { ar: 'تم تسجيل الدخول', en: 'Signed in', de: 'Angemeldet', ru: 'Вход выполнен', it: 'Accesso effettuato' }) as string);
-        router.replace(next);
+        router.replace(dest);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Sign-in failed');
       } finally {
@@ -51,14 +57,16 @@ export function LoginClient({ locale }: { locale: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Already logged in → straight to dashboard
+  // Already logged in and NOT in the middle of an OAuth callback → go to the
+  // requested destination (dashboard by default). The `!isCallback` guard
+  // prevents this from racing the exchange effect's own router.replace(dest).
   useEffect(() => {
-    if (customer) router.replace(`/${locale}/account`);
-  }, [customer, locale, router]);
+    if (customer && !isCallback) router.replace(dest);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customer, isCallback]);
 
   const startGoogle = () => {
-    const next = sp?.get('next') || `/${locale}/account`;
-    window.location.href = `${API_BASE}/auth/customer/google?next=${encodeURIComponent(next)}`;
+    window.location.href = `${API_BASE}/auth/customer/google?next=${encodeURIComponent(dest)}`;
   };
 
   return (

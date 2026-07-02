@@ -135,13 +135,21 @@ export function DatePicker({ value, onChange, min, max, locale, className }: Dat
           </span>
         </span>
         {selected && (
+          // role="button" (not <button>) because this sits inside the trigger
+          // <button> — nesting real buttons is invalid HTML. Enlarged to a
+          // 36px hit area (was 24px) so it's comfortably tappable on mobile,
+          // with keyboard support for accessibility.
           <span
             role="button"
+            tabIndex={0}
             aria-label={clearLabel}
             onClick={(e) => { e.stopPropagation(); onChange(''); }}
-            className="inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onChange(''); }
+            }}
+            className="inline-flex items-center justify-center w-9 h-9 -me-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors shrink-0"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-4 w-4" />
           </span>
         )}
       </button>
